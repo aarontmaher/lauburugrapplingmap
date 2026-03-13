@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 # tools/watch-and-push.sh
 #
-# Watches ~/GrapplingMap/exports/ for new .opml files.
+# Watches ~/GrapplingMap/exports/ AND ~/Downloads/ for new .opml files.
 # On detection:
-#   1. Copies newest .opml to repo/grappling.opml (canonical path)
+#   1. Copies newest .opml to repo/grappling.opml  (canonical path)
 #   2. Archives a timestamped copy in ~/GrapplingMap/exports/archive/
 #   3. Runs opml_to_sections.py to update const SECTIONS in index.html
 #   4. git add grappling.opml index.html && git commit && git push
@@ -19,6 +19,7 @@ set -euo pipefail
 # Configuration
 EXPORTS_DIR="${HOME}/GrapplingMap/exports"
 ARCHIVE_DIR="${HOME}/GrapplingMap/exports/archive"
+DOWNLOADS_DIR="${HOME}/Downloads"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 CANONICAL_OPML="${REPO_ROOT}/grappling.opml"
@@ -53,7 +54,8 @@ mkdir -p "${EXPORTS_DIR}" "${ARCHIVE_DIR}"
 echo ""
 echo "----------------------------------------------------"
 echo "  Grappling Map OPML Watcher"
-echo "  Watching : ${EXPORTS_DIR}/*.opml"
+echo "  Watching : ${EXPORTS_DIR}"
+echo "           : ${DOWNLOADS_DIR}"
 echo "  Repo     : ${REPO_ROOT}"
 echo "  Press Ctrl-C to stop"
 echo "----------------------------------------------------"
@@ -62,21 +64,20 @@ echo ""
 handle_new_opml() {
     local changed_file="$1"
 
+    # Only process .opml files
     [[ "${changed_file}" == *.opml ]] || return 0
+
+    # Skip anything inside the archive folder
     [[ "${changed_file}" == "${ARCHIVE_DIR}"* ]] && return 0
+
+    # Skip if it doesn't exist (e.g. delete events)
     [[ -f "${changed_file}" ]] || return 0
 
     log "Detected: ${changed_file}"
 
-    local newest
-    newest=$(find "${EXPORTS_DIR}" -maxdepth 1 -name "*.opml" -type f \
-        | xargs ls -t 2>/dev/null | head -1)
-
-    if [[ -z "${newest}" ]]; then
-        warn "No .opml files found in ${EXPORTS_DIR} -- skipping"
-        return 0
-    fi
-    log "Using newest export: $(basename "${newest}")"
+    # Use the file that was just saved (works for both exports + Downloads)
+    local newest="${changed_file}"
+    log "Processing: $(basename "${newest}")"
 
     # Archive timestamped copy
     local ts
@@ -118,8 +119,9 @@ handle_new_opml() {
     echo ""
 }
 
-# Watch loop
-fswatch -0 --event Created --event Updated --event Renamed "${EXPORTS_DIR}" \
+# Watch both the exports folder AND Downloads
+fswatch -0 --event Created --event Updated --event Renamed \
+    "${EXPORTS_DIR}" "${DOWNLOADS_DIR}" \
     | while IFS= read -r -d '' changed_file; do
         handle_new_opml "${changed_file}" || true
     done
