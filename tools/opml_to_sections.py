@@ -131,9 +131,9 @@ def opml_to_sections(opml_path):
         title = _normalize_text(section_el.get('text', '').strip())
         if not title:
             continue
-        if title == 'TEMPLATES':
+        if title in ('TEMPLATES', 'Main topic'):
             continue
-        color = COLORS[idx % len(COLORS)]
+        color = COLORS[len(sections) % len(COLORS)]
         nodes = []
         for child in section_el:
             if (child.tag == 'outline'
