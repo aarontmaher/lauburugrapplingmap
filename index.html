@@ -97,15 +97,12 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
 #g3dCanvas { display: block; }
 .g3d-toolbar { display: flex; align-items: center; gap: 8px; padding: 8px 16px; background: rgba(2,4,8,0.9); border-bottom: 1px solid #0a0f1a; }
 
-/* ── MINDOMO VIEW ── */
-#mapView { }
-
 /* ── SHARED MAP/GRAPH CONTROLS ── */
 .mctrl { width: 30px; height: 30px; background: var(--surface2); border: 1px solid var(--border); color: var(--text-muted); font-size: 16px; cursor: pointer; border-radius: 3px; transition: all 0.15s; font-family: 'DM Mono', monospace; display: flex; align-items: center; justify-content: center; }
 .mctrl:hover { border-color: var(--accent); color: var(--accent); }
 .mctrl-label { font-size: 10px; letter-spacing: 1px; text-transform: uppercase; padding: 0 10px; height: 30px; width: auto; }
 
-/* ── NODE POPUP (used in 2D and 3D) ── */
+/* ── NODE POPUP ── */
 .node-popup {
   position: absolute; bottom: 60px; left: 50%; transform: translateX(-50%);
   background: var(--surface); border: 1px solid var(--border); border-radius: 6px;
@@ -178,6 +175,45 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
 .g3d-toggle input:checked + .g3d-toggle-track { background:var(--accent);border-color:var(--accent); }
 .g3d-toggle-track::after { content:'';position:absolute;left:2px;top:50%;transform:translateY(-50%);width:11px;height:11px;background:#4a5568;border-radius:50%;transition:all 0.2s; }
 .g3d-toggle input:checked + .g3d-toggle-track::after { left:calc(100% - 13px);background:#000; }
+
+/* ── MOBILE ── */
+@media (max-width: 768px) {
+  /* Header: stack logo and stats */
+  header { flex-wrap: wrap; gap: 8px; padding: 10px 14px; }
+  .logo { font-size: 22px; }
+  .stats { gap: 14px; }
+  .stat-num { font-size: 18px; }
+
+  /* Toolbar: let filter buttons wrap */
+  .toolbar { gap: 6px; padding: 8px 10px; }
+  .search-wrap { min-width: 140px; }
+  .filter-tabs { gap: 3px; }
+  .tab { font-size: 9px; padding: 4px 7px; }
+  .toolbar-btn { font-size: 9px; padding: 4px 7px; }
+
+  /* Reference: tighter section padding */
+  .sections { padding: 8px 8px; }
+  .section-header { padding: 10px 12px; gap: 8px; }
+  .section-title { font-size: 14px; }
+  .node { padding: 4px 8px 4px 4px; }
+
+  /* 3D detail panel: full-width slide-up on mobile */
+  #g3dDetail { width: 100% !important; border-left: none !important; border-top: 1px solid rgba(255,255,255,0.06); }
+  #g3dLegend { right: 16px !important; }
+
+  /* 3D bottom toolbar: compact */
+  #g3dToolbar { left: 8px !important; right: 8px !important; transform: none !important; bottom: 10px !important; max-width: 100% !important; gap: 1px !important; padding: 4px !important; }
+  .g3d-tb-btn { font-size: 10px; padding: 0 8px; height: 28px; }
+
+  /* 3D options panel: full-width */
+  #g3dOptions { left: 8px !important; right: 8px !important; transform: none !important; min-width: 0 !important; }
+
+  /* Note panel: more padding on mobile */
+  .note-panel { padding: 14px; }
+
+  /* Node popup: wider on mobile */
+  .node-popup { width: calc(100vw - 24px); }
+}
 
 </style>
 </head>
