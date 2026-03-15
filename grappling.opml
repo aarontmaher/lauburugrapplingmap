@@ -3,175 +3,12 @@
 	<head>
 		<title>grappling</title>
 		<dateCreated>2026-03-05 02:36:15</dateCreated>
-		<dateModified>2026-03-15 07:00:12</dateModified>
+		<dateModified>2026-03-15 09:19:48</dateModified>
 		<ownerName>Aaron Maher</ownerName>
 	</head>
 	<body>
 	<outline text="Grappling Mind Map">
 		<outline text="Wrestling">
-			<outline text="Hand fighting (ARCHIVE)">
-				<outline text="You">
-					<outline text="Setups / Entries" />
-					<outline text="Control" />
-					<outline text="Offence">
-						<outline text="Inside Tie">
-							<outline text="Inside Tie to Sweep Single">
-								<outline text="Instructional video" />
-								<outline text="Live video" />
-							</outline>
-						</outline>
-						<outline text="Over/Under">
-							<outline text="Arm drag">
-								<outline text="Instructional video" />
-								<outline text="Live video" />
-							</outline>
-							<outline text="Sweep single">
-								<outline text="Attacker">
-									<outline text="Setups / Entries">
-										<outline text="Instructional video" />
-										<outline text="Live video" />
-									</outline>
-									<outline text="Control" />
-									<outline text="Offence" />
-									<outline text="Defence / Escapes" />
-									<outline text="Submissions" />
-									<outline text="Offensive transitions" />
-								</outline>
-								<outline text="Defender">
-									<outline text="Setups / Entries" />
-									<outline text="Control" />
-									<outline text="Offence" />
-									<outline text="Defence / Escapes" />
-									<outline text="Submissions" />
-									<outline text="Offensive transitions" />
-								</outline>
-							</outline>
-							<outline text="Snatch single">
-								<outline text="Instructional video" />
-								<outline text="Live video" />
-							</outline>
-							<outline text="Inside leg trip">
-								<outline text="Instructional video" />
-								<outline text="Live video" />
-							</outline>
-							<outline text="Inside leg trip to scissor takedown">
-								<outline text="Instructional video" />
-								<outline text="Live video" />
-							</outline>
-							<outline text="Knee tap">
-								<outline text="Instructional video" />
-								<outline text="Live video" />
-							</outline>
-						</outline>
-						<outline text="Underhook">
-							<outline text="Head inside double">
-								<outline text="Instructional video" />
-								<outline text="Live video" />
-							</outline>
-							<outline text="run the pipe">
-								<outline text="Instructional video" />
-								<outline text="Live video" />
-							</outline>
-							<outline text="foot lift">
-								<outline text="Instructional video" />
-								<outline text="Live video" />
-							</outline>
-							<outline text="Side bodylock">
-								<outline text="Front side uchimata">
-									<outline text="Instructional video" />
-									<outline text="Live video" />
-								</outline>
-								<outline text="Lift and dump">
-									<outline text="Instructional video" />
-									<outline text="Live video" />
-								</outline>
-							</outline>
-							<outline text="Rear bodylock throwby">
-								<outline text="Mat return">
-									<outline text="Instructional video" />
-									<outline text="Live video" />
-								</outline>
-								<outline text="Cran ride entry">
-									<outline text="Back take">
-										<outline text="Instructional video" />
-										<outline text="Live video" />
-									</outline>
-									<outline text="Knee staple">
-										<outline text="Instructional video" />
-										<outline text="Live video" />
-									</outline>
-								</outline>
-								<outline text="Lift and dump">
-									<outline text="Instructional video" />
-									<outline text="Live video" />
-								</outline>
-							</outline>
-							<outline text="Snatch head inside Single">
-								<outline text="Instructional video" />
-								<outline text="Live video" />
-							</outline>
-							<outline text="Knee tap">
-								<outline text="Instructional video" />
-								<outline text="Live video" />
-							</outline>
-							<outline text="Front headlock">
-								<outline text="Instructional video" />
-								<outline text="Live video" />
-							</outline>
-							<outline text="Snatch head outside sngle">
-								<outline text="Instructional video" />
-								<outline text="Live video" />
-							</outline>
-							<outline text="head inside single">
-								<outline text="Instructional video" />
-								<outline text="Live video" />
-							</outline>
-							<outline text="head outside single">
-								<outline text="Instructional video" />
-								<outline text="Live video" />
-							</outline>
-						</outline>
-						<outline text="Outside tie">
-							<outline text="Knee Pull Sweep Single">
-								<outline text="Instructional video" />
-								<outline text="Live video" />
-							</outline>
-							<outline text="throw by">
-								<outline text="Instructional video" />
-								<outline text="Live video" />
-							</outline>
-							<outline text="collar tie throw by">
-								<outline text="Instructional video" />
-								<outline text="Live video" />
-							</outline>
-							<outline text="head inside single">
-								<outline text="Instructional video" />
-								<outline text="Live video" />
-							</outline>
-							<outline text="double leg">
-								<outline text="Instructional video" />
-								<outline text="Live video" />
-							</outline>
-							<outline text="brush by">
-								<outline text="Instructional video" />
-								<outline text="Live video" />
-							</outline>
-							<outline text="2 on 1">
-								<outline text="Instructional video" />
-								<outline text="Live video" />
-							</outline>
-						</outline>
-					</outline>
-					<outline text="Offensive transitions" />
-				</outline>
-				<outline text="Opponent">
-					<outline text="Setups / Entries" />
-					<outline text="Control" />
-					<outline text="Offence" />
-					<outline text="Defence" />
-					<outline text="Offensive transitions" />
-				</outline>
-			</outline>
 			<outline text="Hand fighting (NEW)">
 				<outline text="Outside tie (You)">
 					<outline text="You">
@@ -398,6 +235,10 @@
 						<outline text="Setups / Entries" />
 						<outline text="Control" />
 						<outline text="Offence">
+							<outline text="Sweep single">
+								<outline text="Live video" />
+								<outline text="Instructional video" />
+							</outline>
 							<outline text="Arm drag">
 								<outline text="Instructional video" />
 								<outline text="Live video" />
@@ -411,13 +252,14 @@
 								<outline text="Live video" />
 							</outline>
 							<outline text="Knee tap">
+								<outline text="Live video" />
 								<outline text="Instructional video" />
-								<outline text="" />
 							</outline>
 						</outline>
 						<outline text="Defence" />
 						<outline text="Offensive transitions">
 							<outline text="Snatch single from over/under → Snatch single">
+								<outline text="Live video" />
 								<outline text="Instructional video" />
 							</outline>
 						</outline>
@@ -1099,8 +941,8 @@
 							<outline text="Live video" />
 						</outline>
 						<outline text="Foot lift">
+							<outline text="Live video" />
 							<outline text="Instructional video" />
-							<outline text="" />
 						</outline>
 					</outline>
 				</outline>
