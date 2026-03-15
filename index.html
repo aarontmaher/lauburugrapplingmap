@@ -1131,6 +1131,7 @@ window.initGraph3D = (function() {
     else if(nd.status==='drilling')b.innerHTML+=`<span style="background:#47c8ff20;color:#47c8ff;border:1px solid #47c8ff40;font-family:'Barlow Condensed',monospace;font-size:10px;letter-spacing:1px;padding:2px 7px;border-radius:3px;">⟳ DRILLING</span>`;
     else b.innerHTML+=`<span style="background:#1e2330;color:#4a5568;border:1px solid rgba(255,255,255,0.06);font-family:'Barlow Condensed',monospace;font-size:10px;letter-spacing:1px;padding:2px 7px;border-radius:3px;">NOT STARTED</span>`;
     if(nd.has_video)b.innerHTML+=`<span style="background:#ff6b3520;color:#ff9966;border:1px solid #ff6b3540;font-family:'Barlow Condensed',monospace;font-size:10px;letter-spacing:1px;padding:2px 7px;border-radius:3px;cursor:pointer;" onclick="window.open('${nd.video_url}','_blank')">▶ VIDEO</span>`;
+    b.innerHTML+=`<span style="background:#ffffff10;color:#8899aa;border:1px solid rgba(255,255,255,0.08);font-family:'Barlow Condensed',monospace;font-size:10px;letter-spacing:1px;padding:2px 7px;border-radius:3px;cursor:pointer;margin-left:auto;" onclick="switchToReferenceNode('${nd.label.replace(/'/g,"\\'")}')">→ REF</span>`;
     document.getElementById('g3dStatW').textContent=Math.round(nd._w||0);
     document.getElementById('g3dStatIn').textContent=Math.round(nd._in||0);
     document.getElementById('g3dStatOut').textContent=Math.round(nd._out||0);
