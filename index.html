@@ -1224,6 +1224,7 @@ window.initGraph3D = (function() {
       let st=0;
       window._g3dfsim=setInterval(()=>{runForce3d(simNodes3d.filter(n=>aIds.has(n.id)),aEdges,4);syncEdges3d(aIds);st+=4;if(st>=140)clearInterval(window._g3dfsim);},16);
     }
+    if(builtOut3d) applyBuiltOut3d();
   }
 
   function drawLabels3d(){
