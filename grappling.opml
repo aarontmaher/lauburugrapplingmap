@@ -3,7 +3,7 @@
 	<head>
 		<title>grappling</title>
 		<dateCreated>2026-03-05 02:36:15</dateCreated>
-		<dateModified>2026-03-14 01:30:09</dateModified>
+		<dateModified>2026-03-15 07:00:12</dateModified>
 		<ownerName>Aaron Maher</ownerName>
 	</head>
 	<body>
@@ -177,7 +177,7 @@
 					<outline text="You">
 						<outline text="Setups / Entries">
 							<outline text="Outside tie">
-								<outline text="Knee Pull Sweep Single">
+								<outline text="knee pull sweep single">
 									<outline text="Instructional video" />
 									<outline text="Live video" />
 								</outline>
@@ -230,8 +230,8 @@
 				<outline text="Inside tie (You)">
 					<outline text="You">
 						<outline text="Setups / Entries">
-							<outline text="Inside Tie">
-								<outline text="Inside Tie to Sweep Single">
+							<outline text="Inside tie">
+								<outline text="Inside tie to sweep single">
 									<outline text="Instructional video" />
 									<outline text="Live video" />
 								</outline>
@@ -343,7 +343,10 @@
 						</outline>
 						<outline text="Offensive transitions">
 							<outline text="Underhook throw by to wrestling bodylock → Wrestling bodylock" />
-							<outline text="Underhook to head inside snatch single → Head inside snatch single" />
+							<outline text="Underhook to head inside snatch single → Head inside snatch single">
+								<outline text="Instructional video" />
+								<outline text="Live video" />
+							</outline>
 							<outline text="Underhook to front headlock → Front headlock" />
 							<outline text="Underhook to snatch head outside single → Snatch head outside single" />
 							<outline text="Underhook to head inside single → Head inside single" />
@@ -395,14 +398,28 @@
 						<outline text="Setups / Entries" />
 						<outline text="Control" />
 						<outline text="Offence">
-							<outline text="Arm drag" />
-							<outline text="Inside leg trip" />
-							<outline text="Inside leg trip to scissor takedown" />
-							<outline text="Knee tap" />
+							<outline text="Arm drag">
+								<outline text="Instructional video" />
+								<outline text="Live video" />
+							</outline>
+							<outline text="Inside leg trip">
+								<outline text="Instructional video" />
+								<outline text="Live video" />
+							</outline>
+							<outline text="Inside leg trip to scissor takedown">
+								<outline text="Instructional video" />
+								<outline text="Live video" />
+							</outline>
+							<outline text="Knee tap">
+								<outline text="Instructional video" />
+								<outline text="" />
+							</outline>
 						</outline>
 						<outline text="Defence" />
 						<outline text="Offensive transitions">
-							<outline text="Snatch single from over/under → Snatch single" />
+							<outline text="Snatch single from over/under → Snatch single">
+								<outline text="Instructional video" />
+							</outline>
 						</outline>
 					</outline>
 				</outline>
@@ -682,34 +699,33 @@
 					<outline text="Tripod bodylock" />
 				</outline>
 				<outline text="Offence">
+					<outline text="Wrestling rear bodylock mat return">
+						<outline text="Instructional video" />
+						<outline text="Live video" />
+					</outline>
 					<outline text="Wrestling rear bodylock lift and dump" />
-					<outline text="Wrestling side bodylock front side uchimata" />
-					<outline text="Wrestling side bodylock lift and dump" />
+					<outline text="Wrestling side bodylock front side uchimata">
+						<outline text="Instructional video" />
+						<outline text="Live video" />
+					</outline>
+					<outline text="Wrestling side bodylock lift and dump">
+						<outline text="Instructional video" />
+						<outline text="Live video" />
+					</outline>
 				</outline>
 				<outline text="Offensive transitions">
 					<outline text="Wrestling rear bodylock to turtle → Turtle" />
 					<outline text="Wrestling rear bodylock to crab ride → Crab ride" />
-					<outline text="Wrestling rear bodylock to knee staple → Knee staple" />
+					<outline text="Wrestling rear bodylock to knee staple → Knee staple">
+						<outline text="Instructional video" />
+						<outline text="Live video" />
+					</outline>
 				</outline>
 			</outline>
 			<outline text="Shots (NEW)">
 				<outline text="Double leg">
-					<outline text="Attacker">
-						<outline text="Setups / Entries" />
-						<outline text="Control" />
-						<outline text="Offence" />
-						<outline text="Defence" />
-						<outline text="Submissions" />
-						<outline text="Offensive transitions" />
-					</outline>
-					<outline text="Defender">
-						<outline text="Setups / Entries" />
-						<outline text="Control" />
-						<outline text="Offence" />
-						<outline text="Defence" />
-						<outline text="Submissions" />
-						<outline text="Offensive transitions" />
-					</outline>
+					<outline text="Attacker" />
+					<outline text="Defender" />
 				</outline>
 				<outline text="Head inside single leg">
 					<outline text="Attacker">
@@ -741,7 +757,7 @@
 								</outline>
 							</outline>
 							<outline text="Tripod Defence">
-								<outline text="Rear Body Lock counter to Tripod Defence">
+								<outline text="Rear Bodylock counter to Tripod Defence">
 									<outline text="Instructional video" />
 									<outline text="Live video" />
 								</outline>
@@ -767,7 +783,7 @@
 									<outline text="Instructional video" />
 									<outline text="Live video" />
 								</outline>
-								<outline text="Shelfing leg through Grounded Shin Whizzer">
+								<outline text="Shelfing Leg through Grounded Shin Whizzer">
 									<outline text="Instructional video" />
 									<outline text="Live video" />
 								</outline>
@@ -777,7 +793,7 @@
 								</outline>
 							</outline>
 						</outline>
-						<outline text="Defence">
+						<outline text="Defence / Escapes">
 							<outline text="Near Side Block">
 								<outline text="Tripod Defence Near Side Block">
 									<outline text="Instructional video" />
@@ -863,7 +879,7 @@
 								</outline>
 							</outline>
 							<outline text="Tripod Defence">
-								<outline text="Rear Body Lock counter to Tripod Defence">
+								<outline text="Rear Bodylock counter to Tripod Defence">
 									<outline text="Instructional video" />
 									<outline text="Live video" />
 								</outline>
@@ -889,7 +905,7 @@
 									<outline text="Instructional video" />
 									<outline text="Live video" />
 								</outline>
-								<outline text="Shelfing leg through Grounded Shin Whizzer">
+								<outline text="Shelfing Leg through Grounded Shin Whizzer">
 									<outline text="Instructional video" />
 									<outline text="Live video" />
 								</outline>
@@ -899,7 +915,7 @@
 								</outline>
 							</outline>
 						</outline>
-						<outline text="Defence">
+						<outline text="Defence / Escapes">
 							<outline text="Near Side Block">
 								<outline text="Tripod Defence Near Side Block">
 									<outline text="Instructional video" />
@@ -974,7 +990,7 @@
 							<outline text="Example: Control extended below the knee" />
 						</outline>
 						<outline text="Offence">
-							<outline text="Running the pipe">
+							<outline text="Running the Pipe">
 								<outline text="Instructional video" />
 								<outline text="Live video" />
 							</outline>
@@ -984,12 +1000,12 @@
 									<outline text="Live video" />
 								</outline>
 								<outline text="Split grip">
-									<outline text="complete double">
+									<outline text="Complete double">
 										<outline text="Instructional video" />
 										<outline text="Live video" />
 									</outline>
-									<outline text="Cut to rear body lock">
-										<outline text="tripod breakdown">
+									<outline text="Cut to rear bodylock">
+										<outline text="Tripod breakdown">
 											<outline text="Instructional video" />
 											<outline text="Live video" />
 										</outline>
@@ -1001,7 +1017,7 @@
 								<outline text="Live video" />
 							</outline>
 						</outline>
-						<outline text="Defence">
+						<outline text="Defence / Escapes">
 							<outline text="Example: Crotch hold" />
 						</outline>
 						<outline text="Submissions">
@@ -1014,7 +1030,7 @@
 						<outline text="Setups / Entries" />
 						<outline text="Control" />
 						<outline text="Offence">
-							<outline text="Running the pipe">
+							<outline text="Running the Pipe">
 								<outline text="Instructional video" />
 								<outline text="Live video" />
 							</outline>
@@ -1024,12 +1040,12 @@
 									<outline text="Live video" />
 								</outline>
 								<outline text="Split grip">
-									<outline text="complete double">
+									<outline text="Complete double">
 										<outline text="Instructional video" />
 										<outline text="Live video" />
 									</outline>
-									<outline text="Cut to rear body lock">
-										<outline text="tripod breakdown">
+									<outline text="Cut to rear bodylock">
+										<outline text="Tripod breakdown">
 											<outline text="Instructional video" />
 											<outline text="Live video" />
 										</outline>
@@ -1041,7 +1057,7 @@
 								<outline text="Live video" />
 							</outline>
 						</outline>
-						<outline text="Defence" />
+						<outline text="Defence / Escapes" />
 						<outline text="Submissions" />
 						<outline text="Offensive transitions" />
 					</outline>
@@ -1055,7 +1071,7 @@
 						</outline>
 						<outline text="Control" />
 						<outline text="Offence" />
-						<outline text="Defence" />
+						<outline text="Defence / Escapes" />
 						<outline text="Submissions" />
 						<outline text="Offensive transitions" />
 					</outline>
@@ -1063,7 +1079,7 @@
 						<outline text="Setups / Entries" />
 						<outline text="Control" />
 						<outline text="Offence" />
-						<outline text="Defence">
+						<outline text="Defence / Escapes">
 							<outline text="Sprawl" />
 							<outline text="Whizzer" />
 							<outline text="Crossface" />
@@ -1074,9 +1090,18 @@
 				</outline>
 				<outline text="Head inside snatch single">
 					<outline text="Offence">
-						<outline text="Head inside double" />
-						<outline text="Run the pipe" />
-						<outline text="Foot lift" />
+						<outline text="Head inside double">
+							<outline text="Instructional video" />
+							<outline text="Live video" />
+						</outline>
+						<outline text="Run the pipe">
+							<outline text="Instructional video" />
+							<outline text="Live video" />
+						</outline>
+						<outline text="Foot lift">
+							<outline text="Instructional video" />
+							<outline text="" />
+						</outline>
 					</outline>
 				</outline>
 			</outline>
@@ -5856,7 +5881,10 @@
 					<outline text="Offensive transitions" />
 				</outline>
 				<outline text="Offensive transitions">
-					<outline text="Crab ride to back control → Back control" />
+					<outline text="Crab ride to back control → Back control">
+						<outline text="Instructional video" />
+						<outline text="Live video" />
+					</outline>
 				</outline>
 			</outline>
 			<outline text="Grounded 50/50">
