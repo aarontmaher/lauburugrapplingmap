@@ -10,6 +10,7 @@ Usage:
 import xml.etree.ElementTree as ET
 import json
 import os
+import re
 import sys
 
 COLORS = ['#e8ff47', '#ff6b35', '#a78bfa', '#47c8ff', '#34d399']
@@ -145,36 +146,109 @@ def opml_to_sections(opml_path):
     return sections
 
 
-def update_index_html(sections, dry_run=False):
-    """Replace const SECTIONS = [...] in index.html with new data."""
-    # Explicit UTF-8 encoding required: index.html uses non-ASCII characters
-    # (e.g. → U+2192) that must round-trip correctly through read and write.
+# ---------------------------------------------------------------------------
+# NET_NODES / NET_EDGES generation
+# ---------------------------------------------------------------------------
+
+def _make_key(section_title, text):
+    """Python equivalent of makeKey() in index.html."""
+    return re.sub(r'\s+', '_', (section_title + '|' + text).lower())
+
+
+def sections_to_network(sections):
+    """Flatten SECTIONS into NET_NODES and NET_EDGES arrays."""
+    nodes = []
+    edges = []
+    node_id = 0
+
+    def walk(node, section_title, section_idx, depth, parent_id):
+        nonlocal node_id
+        my_id = node_id
+        node_id += 1
+        children = node.get('c', [])
+        in_net = depth <= 2
+        entry = {
+            'id': my_id,
+            'label': node['t'],
+            'section': section_title,
+            'section_idx': section_idx,
+            'depth': depth,
+            'parent_id': parent_id,
+            'children_ids': [],
+            'has_video': 'v' in node,
+            'video_url': node.get('v', ''),
+            'key': _make_key(section_title, node['t']),
+            'in_network': in_net,
+        }
+        nodes.append(entry)
+        # Edge from parent to this node (both must be in_network)
+        if parent_id is not None and in_net:
+            edges.append({
+                'source': parent_id,
+                'target': my_id,
+                'type': 'leads_to',
+                'weight': 2,
+            })
+        # Recurse into children — collect actual IDs
+        for c in children:
+            child_id = node_id  # next ID that walk() will assign
+            entry['children_ids'].append(child_id)
+            walk(c, section_title, section_idx, depth + 1, my_id)
+
+    for si, s in enumerate(sections):
+        for top_node in s['nodes']:
+            walk(top_node, s['title'], si, 1, None)
+
+    return nodes, edges
+
+
+def update_index_html(sections, net_nodes, net_edges, dry_run=False):
+    """Replace const SECTIONS, NET_NODES, NET_EDGES in index.html."""
     with open(INDEX_PATH, 'r', encoding='utf-8') as f:
         content = f.read()
 
+    # --- Replace SECTIONS ---
     marker_start = 'const SECTIONS = '
     marker_end   = '\nconst COLORS'
-
     start = content.find(marker_start)
     if start == -1:
         raise ValueError('"const SECTIONS = " not found in index.html')
     end = content.find(marker_end, start)
     if end == -1:
         raise ValueError('"const COLORS" not found after SECTIONS block')
-
-    # ensure_ascii=False preserves → and other non-ASCII as literal Unicode;
-    # the file is written as UTF-8, so no information is lost.
     sections_json = json.dumps(sections, ensure_ascii=False)
-    new_line = marker_start + sections_json
-    new_content = content[:start] + new_line + content[end:]
+    content = content[:start] + marker_start + sections_json + content[end:]
+
+    # --- Replace NET_NODES ---
+    nn_start_marker = '  const NET_NODES = '
+    nn_start = content.find(nn_start_marker)
+    if nn_start == -1:
+        raise ValueError('"const NET_NODES = " not found in index.html')
+    nn_end = content.find(';\n', nn_start)
+    if nn_end == -1:
+        raise ValueError('Could not find end of NET_NODES line')
+    nn_json = json.dumps(net_nodes, ensure_ascii=False)
+    content = content[:nn_start] + nn_start_marker + nn_json + content[nn_end:]
+
+    # --- Replace NET_EDGES ---
+    ne_start_marker = '  const NET_EDGES = '
+    ne_start = content.find(ne_start_marker)
+    if ne_start == -1:
+        raise ValueError('"const NET_EDGES = " not found in index.html')
+    ne_end = content.find(';\n', ne_start)
+    if ne_end == -1:
+        raise ValueError('Could not find end of NET_EDGES line')
+    ne_json = json.dumps(net_edges, ensure_ascii=False)
+    content = content[:ne_start] + ne_start_marker + ne_json + content[ne_end:]
 
     if dry_run:
-        print(f'[DRY RUN] Would write {len(sections_json)} chars of SECTIONS data')
+        print(f'[DRY RUN] SECTIONS: {len(sections_json)} chars, '
+              f'NET_NODES: {len(nn_json)} chars ({len(net_nodes)} nodes), '
+              f'NET_EDGES: {len(ne_json)} chars ({len(net_edges)} edges)')
         return len(sections_json)
 
-    # Explicit UTF-8 + Unix line endings
     with open(INDEX_PATH, 'w', encoding='utf-8', newline='\n') as f:
-        f.write(new_content)
+        f.write(content)
 
     return len(sections_json)
 
@@ -190,7 +264,11 @@ if __name__ == '__main__':
         section_names = [s['title'] for s in sections]
         print(f'Parsed {len(sections)} sections: {section_names}')
 
-        chars = update_index_html(sections, dry_run=dry_run)
+        net_nodes, net_edges = sections_to_network(sections)
+        in_net = sum(1 for n in net_nodes if n['in_network'])
+        print(f'Network: {len(net_nodes)} total nodes, {in_net} in_network, {len(net_edges)} edges')
+
+        chars = update_index_html(sections, net_nodes, net_edges, dry_run=dry_run)
         if not dry_run:
             print(f'Updated index.html ({chars} chars of SECTIONS data)')
     except Exception as e:
