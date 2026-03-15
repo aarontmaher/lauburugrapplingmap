@@ -1064,7 +1064,7 @@ window.initGraph3D = (function() {
 
   function runForce3d(nodes,edges,steps){
     const byId={};nodes.forEach(n=>byId[n.id]=n);
-    const rep=26000,k=90,att=0.004,damp=0.78;
+    const rep=4000,k=90,att=0.004,damp=0.78;
     for(let s=0;s<steps;s++){
       for(let i=0;i<nodes.length;i++)for(let j=i+1;j<nodes.length;j++){
         const a=nodes[i],b=nodes[j],dx=b.x-a.x,dy=b.y-a.y,dz=b.z-a.z;
