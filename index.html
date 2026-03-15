@@ -245,6 +245,7 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
       <button class="tab" data-filter="drilling">Drilling</button>
       <button class="tab" data-filter="learned">Learned</button>
       <button class="tab" data-filter="video">Video</button>
+      <button class="tab" data-filter="builtout">Built-out</button>
     </div>
     <button class="toolbar-btn" id="refCollapseAll">Collapse All</button>
     <button class="toolbar-btn" id="refExpandAll">Expand All</button>
@@ -827,6 +828,16 @@ function buildSections() {
   updateStats();
 }
 
+function markBuiltOut() {
+  const items = Array.from(document.querySelectorAll('.tree-item'));
+  items.reverse().forEach(li => {
+    const hasVideo = li.dataset.hasVideo === '1';
+    const children = li.querySelectorAll(':scope > .children > .tree-item');
+    const anyChildBuilt = children.length > 0 && Array.from(children).some(c => c.dataset.builtout === '1');
+    li.dataset.builtout = (hasVideo || anyChildBuilt) ? '1' : '0';
+  });
+}
+
 // ─── NOTE PANEL ───────────────────────────────────────────────────────────────
 function openNotePanel(key, title) {
   STATE.currentNoteKey = key;
@@ -892,6 +903,7 @@ function applyRefFilter(filter) {
     if (filter === 'drilling') show = li.dataset.progress === 'drilling';
     else if (filter === 'learned') show = li.dataset.progress === 'learned';
     else if (filter === 'video') show = li.dataset.hasVideo === '1';
+    else if (filter === 'builtout') show = li.dataset.builtout === '1';
     li.style.display = show ? '' : 'none';
   });
   document.querySelectorAll('.section').forEach(sec => {
@@ -1485,6 +1497,7 @@ document.addEventListener('keydown', e => {
 });
 loadState();
 buildSections();
+markBuiltOut();
 updateStats();
 </script>
 </body>
