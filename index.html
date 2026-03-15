@@ -844,7 +844,7 @@ function markBuiltOut() {
     let hasContentChild = false;
     if (!isSchema && hasChildren) {
       hasContentChild = Array.from(children).some(c =>
-        c.dataset.schema === '0' && c.querySelector(':scope > .children > .tree-item')
+        c.dataset.schema === '0' && c.querySelector(':scope > .children > .tree-item[data-schema="0"]')
       );
     }
     li.dataset.builtout = (hasVideo || anyChildBuilt || hasContentChild) ? '1' : '0';
