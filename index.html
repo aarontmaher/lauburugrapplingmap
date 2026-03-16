@@ -404,6 +404,9 @@ function loadState() {
 function makeKey(sectionTitle, text) {
   return (sectionTitle + '|' + text).toLowerCase().replace(/\s+/g, '_');
 }
+function makePathKey(parentKey, text) {
+  return parentKey + '|' + text.toLowerCase().replace(/\s+/g, '_');
+}
 
 const EXPANDED = new Set();
 let SELECTED_NODE = null; // shared across all tabs: { key, label, section }
@@ -474,16 +477,9 @@ function syncSelectedToTab(view) {
 function toggleExpanded(key) {
   if (EXPANDED.has(key)) {
     EXPANDED.delete(key);
-    // Remove all descendants from EXPANDED too
-    const walkAll = (nd, st) => { EXPANDED.delete(makeKey(st, nd.t)); if(nd.c) nd.c.forEach(c=>walkAll(c,st)); };
-    const find = (nd, s) => {
-      if(makeKey(s.title, nd.t) === key) { if(nd.c) nd.c.forEach(c=>walkAll(c,s.title)); return true; }
-      return nd.c ? nd.c.some(c=>find(c,s)) : false;
-    };
-    SECTIONS.forEach(s => {
-      if(makeKey(s.title, s.title) === key) s.nodes.forEach(n=>walkAll(n,s.title));
-      else s.nodes.forEach(n=>find(n,s));
-    });
+    // Remove all descendants from EXPANDED (path-aware: descendants share key prefix)
+    const prefix = key + '|';
+    EXPANDED.forEach(k => { if (k.startsWith(prefix)) EXPANDED.delete(k); });
   } else {
     EXPANDED.add(key);
   }
@@ -671,7 +667,7 @@ function buildPopup(popupEl, node, sectionTitle, color) {
 }
 
 // ─── REFERENCE VIEW ──────────────────────────────────────────────────────────
-function buildNode(node, sectionTitle, depth, parentUl) {
+function buildNode(node, sectionTitle, depth, parentUl, parentKey) {
   // Hoist video URLs from marker children onto parent technique node
   if (node.c && node.c.length) {
     node.c.forEach(ch => {
@@ -684,7 +680,7 @@ function buildNode(node, sectionTitle, depth, parentUl) {
   }
   const li = document.createElement('li');
   li.className = 'tree-item';
-  const key = makeKey(sectionTitle, node.t);
+  const key = parentKey ? makePathKey(parentKey, node.t) : makeKey(sectionTitle, node.t);
   li.dataset.key = key;
   li.dataset.hasVideo = (node.v || node.l) ? '1' : '0';
   li.dataset.schema = SCHEMA_NAMES.has(node.t.trim()) ? '1' : '0';
@@ -786,7 +782,7 @@ function buildNode(node, sectionTitle, depth, parentUl) {
   if (hasChildren) {
     const childUl = document.createElement('ul');
     childUl.className = 'children';
-    node.c.forEach(child => buildNode(child, sectionTitle, depth + 1, childUl));
+    node.c.forEach(child => buildNode(child, sectionTitle, depth + 1, childUl, key));
     li.appendChild(childUl);
     toggle.addEventListener('click', e => {
       e.stopPropagation();
@@ -836,7 +832,8 @@ function buildSections() {
     body.className = 'section-body';
     const ul = document.createElement('ul');
     ul.className = 'tree';
-    section.nodes.forEach(node => buildNode(node, section.title, 0, ul));
+    const sectionKey = makeKey(section.title, section.title);
+    section.nodes.forEach(node => buildNode(node, section.title, 0, ul, sectionKey));
     body.appendChild(ul);
     div.appendChild(header);
     div.appendChild(body);
@@ -961,11 +958,11 @@ document.getElementById('refCollapseAll').addEventListener('click', () => {
   if(window.g3dSyncExpanded) window.g3dSyncExpanded();
 });
 document.getElementById('refExpandAll').addEventListener('click', () => {
-  const addAll = (nd, st) => {
-    const k = makeKey(st, nd.t);
-    if (nd.c && nd.c.length) { EXPANDED.add(k); nd.c.forEach(c => addAll(c, st)); }
+  const addAll = (nd, pk) => {
+    const k = makePathKey(pk, nd.t);
+    if (nd.c && nd.c.length) { EXPANDED.add(k); nd.c.forEach(c => addAll(c, k)); }
   };
-  SECTIONS.forEach(s => { EXPANDED.add(makeKey(s.title, s.title)); s.nodes.forEach(n => addAll(n, s.title)); });
+  SECTIONS.forEach(s => { const sk = makeKey(s.title, s.title); EXPANDED.add(sk); s.nodes.forEach(n => addAll(n, sk)); });
   refSyncExpanded();
   if(window.cmSyncExpanded) window.cmSyncExpanded();
   if(window.g3dSyncExpanded) window.g3dSyncExpanded();
@@ -1454,8 +1451,8 @@ window.initGraph3D = (function() {
       });
       document.getElementById('g3dCollapseAll').addEventListener('click',()=>{EXPANDED.clear();if(window.cmSyncExpanded)window.cmSyncExpanded();if(window.refSyncExpanded)window.refSyncExpanded();if(window.g3dSyncExpanded)window.g3dSyncExpanded();});
       document.getElementById('g3dCollapseAllTop').addEventListener('click',()=>{EXPANDED.clear();if(window.cmSyncExpanded)window.cmSyncExpanded();if(window.refSyncExpanded)window.refSyncExpanded();if(window.g3dSyncExpanded)window.g3dSyncExpanded();});
-      document.getElementById('g3dExpandAllTop').addEventListener('click',()=>{const addAll=(nd,st)=>{const k=makeKey(st,nd.t);if(nd.c&&nd.c.length){EXPANDED.add(k);nd.c.forEach(c=>addAll(c,st));}};SECTIONS.forEach(s=>{EXPANDED.add(makeKey(s.title,s.title));s.nodes.forEach(n=>addAll(n,s.title));});if(window.cmSyncExpanded)window.cmSyncExpanded();if(window.refSyncExpanded)window.refSyncExpanded();if(window.g3dSyncExpanded)window.g3dSyncExpanded();});
-      document.getElementById('g3dExpandAll').addEventListener('click',()=>{const addAll=(nd,st)=>{const k=makeKey(st,nd.t);if(nd.c&&nd.c.length){EXPANDED.add(k);nd.c.forEach(c=>addAll(c,st));}};SECTIONS.forEach(s=>{EXPANDED.add(makeKey(s.title,s.title));s.nodes.forEach(n=>addAll(n,s.title));});if(window.cmSyncExpanded)window.cmSyncExpanded();if(window.refSyncExpanded)window.refSyncExpanded();if(window.g3dSyncExpanded)window.g3dSyncExpanded();});
+      document.getElementById('g3dExpandAllTop').addEventListener('click',()=>{const addAll=(nd,pk)=>{const k=makePathKey(pk,nd.t);if(nd.c&&nd.c.length){EXPANDED.add(k);nd.c.forEach(c=>addAll(c,k));}};SECTIONS.forEach(s=>{const sk=makeKey(s.title,s.title);EXPANDED.add(sk);s.nodes.forEach(n=>addAll(n,sk));});if(window.cmSyncExpanded)window.cmSyncExpanded();if(window.refSyncExpanded)window.refSyncExpanded();if(window.g3dSyncExpanded)window.g3dSyncExpanded();});
+      document.getElementById('g3dExpandAll').addEventListener('click',()=>{const addAll=(nd,pk)=>{const k=makePathKey(pk,nd.t);if(nd.c&&nd.c.length){EXPANDED.add(k);nd.c.forEach(c=>addAll(c,k));}};SECTIONS.forEach(s=>{const sk=makeKey(s.title,s.title);EXPANDED.add(sk);s.nodes.forEach(n=>addAll(n,sk));});if(window.cmSyncExpanded)window.cmSyncExpanded();if(window.refSyncExpanded)window.refSyncExpanded();if(window.g3dSyncExpanded)window.g3dSyncExpanded();});
       document.getElementById('g3dReset').addEventListener('click',()=>{tRX=0;tRY=0;tZ3d=800;resetHL3d();closeDetail3d();});
       document.getElementById('g3dDetailClose').addEventListener('click',()=>{resetHL3d();closeDetail3d();});
 
