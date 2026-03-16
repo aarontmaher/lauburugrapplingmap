@@ -257,7 +257,7 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
 
 <!-- ══ 3D GRAPH ════════════════════════════════════════════════════════════ -->
 <div
-  id="graph3dView" style="display:none; flex-direction:column; position:relative; height:calc(100vh - 48px);">
+  id="graph3dView" style="display:none; flex-direction:column; position:relative; height:calc(100vh - 97px);">
   <!-- Top toolbar -->
   <div class="toolbar" style="position:relative;z-index:20;flex-shrink:0;">
     <div class="filter-tabs">
@@ -881,6 +881,16 @@ document.getElementById('noteClearBtn').addEventListener('click', () => { docume
 document.getElementById('noteCloseBtn').addEventListener('click', closeNotePanel);
 document.getElementById('overlay').addEventListener('click', closeNotePanel);
 
+// ─── Ancestor propagation helper ──────────────────────────────────────────────
+function revealAncestorItems() {
+  document.querySelectorAll('.tree-item').forEach(li => {
+    if (li.style.display !== 'none') {
+      let a = li.parentElement.closest('.tree-item');
+      while (a) { a.style.display = ''; a = a.parentElement.closest('.tree-item'); }
+    }
+  });
+}
+
 // ─── SEARCH (Reference) ───────────────────────────────────────────────────────
 document.getElementById('refSearch').addEventListener('input', function() {
   const q = this.value.toLowerCase().trim();
@@ -890,6 +900,7 @@ document.getElementById('refSearch').addEventListener('input', function() {
     const match = !q || label.textContent.toLowerCase().includes(q);
     li.style.display = match ? '' : 'none';
   });
+  if (q) revealAncestorItems();
   document.querySelectorAll('.section').forEach(sec => {
     const visible = Array.from(sec.querySelectorAll('.tree-item')).some(li => li.style.display !== 'none');
     sec.style.display = visible ? '' : 'none';
@@ -917,6 +928,7 @@ function applyRefFilter(filter) {
     else if (filter === 'builtout') show = li.dataset.builtout === '1';
     li.style.display = show ? '' : 'none';
   });
+  if (filter !== 'all') revealAncestorItems();
   document.querySelectorAll('.section').forEach(sec => {
     const visible = Array.from(sec.querySelectorAll('.tree-item')).some(li => li.style.display !== 'none');
     sec.style.display = visible ? '' : 'none';
