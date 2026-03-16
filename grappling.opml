@@ -3,7 +3,7 @@
 	<head>
 		<title>grappling</title>
 		<dateCreated>2026-03-05 02:36:15</dateCreated>
-		<dateModified>2026-03-16 07:52:41</dateModified>
+		<dateModified>2026-03-16 10:44:03</dateModified>
 		<ownerName>Aaron Maher</ownerName>
 	</head>
 	<body>
@@ -88,16 +88,256 @@
 				</outline>
 				<outline text="Collar tie (You)">
 					<outline text="You">
-						<outline text="Setups / Entries" />
+						<outline text="Setups / Entries">
+							<outline text="Collar tie">
+								<outline text="Instructional video">
+									<outline text="" type="video" url="https://youtu.be/Kf0wQ00FPBg" />
+								</outline>
+								<outline text="Live video" />
+							</outline>
+							<outline text="Outside tie">
+								<outline text="Instructional video">
+									<outline text="" type="video" url="https://youtu.be/Ye-Jvn023XI" />
+								</outline>
+								<outline text="Live video" />
+							</outline>
+						</outline>
 						<outline text="Control" />
-						<outline text="Offence" />
+						<outline text="Offence">
+							<outline text="2 on 1">
+								<outline text="Offence">
+									<outline text="Climb to back">
+										<outline text="Instructional video">
+											<outline text="" type="video" url="https://youtu.be/r0-5x2mBL84" />
+										</outline>
+										<outline text="Live video" />
+									</outline>
+									<outline text="Snatch single">
+										<outline text="Instructional video">
+											<outline text="" type="video" url="https://youtu.be/cdQakEraYKE" />
+										</outline>
+										<outline text="Live video" />
+									</outline>
+									<outline text="ankle pick">
+										<outline text="Instructional video">
+											<outline text="" type="video" url="https://youtu.be/6RapDAy2HQQ" />
+										</outline>
+										<outline text="Live video" />
+									</outline>
+									<outline text="front headlock">
+										<outline text="Instructional video">
+											<outline text="" type="video" url="https://youtu.be/DzxwkbNuUBw" />
+										</outline>
+										<outline text="Live video" />
+									</outline>
+								</outline>
+								<outline text="Defence">
+									<outline text="Framing on head">
+										<outline text="Instructional video" />
+										<outline text="Live video" />
+									</outline>
+									<outline text="Pulling far elbow">
+										<outline text="Underhook">
+											<outline text="Instructional video" />
+											<outline text="Live video" />
+										</outline>
+									</outline>
+								</outline>
+							</outline>
+							<outline text="Snap downs">
+								<outline text="Collar Tie and Inside Tie Snap Down">
+									<outline text="Instructional video">
+										<outline text="" type="video" url="https://youtu.be/WZ--OY1yQXU" />
+									</outline>
+									<outline text="Live video" />
+								</outline>
+								<outline text="Overtie snap">
+									<outline text="Instructional video">
+										<outline text="" type="video" url="https://youtu.be/NlIBlkV5PVY" />
+									</outline>
+									<outline text="Live video" />
+								</outline>
+								<outline text="Brush by snap">
+									<outline text="Instructional video">
+										<outline text="" type="video" url="https://youtu.be/QE8PS6puob0" />
+									</outline>
+									<outline text="Live video" />
+								</outline>
+							</outline>
+							<outline text="Throw by">
+								<outline text="Head to head">
+									<outline text="Instructional video">
+										<outline text="" type="video" url="https://youtu.be/1wOwMfPHMDs" />
+									</outline>
+									<outline text="Live video" />
+								</outline>
+								<outline text="Head to shoulder">
+									<outline text="Instructional video">
+										<outline text="" type="video" url="https://youtu.be/m42WTwg3Feo" />
+									</outline>
+									<outline text="Live video" />
+								</outline>
+								<outline text="Outside tie">
+									<outline text="Instructional video">
+										<outline text="" type="video" url="https://youtu.be/ZLbj39rn6pU" />
+									</outline>
+									<outline text="Live video" />
+								</outline>
+							</outline>
+							<outline text="Brush by" note="Most effective when opponent is heavy on collar tie">
+								<outline text="Disengaging">
+									<outline text="Instructional video">
+										<outline text="" type="video" url="https://youtu.be/oejTa6J72gE" />
+									</outline>
+									<outline text="Live video" />
+								</outline>
+								<outline text="Rear body lock">
+									<outline text="Instructional video">
+										<outline text="" type="video" url="https://youtu.be/oXuG3DJBMEE" />
+									</outline>
+									<outline text="Live video" />
+								</outline>
+								<outline text="Snatch head inside single">
+									<outline text="Instructional video">
+										<outline text="" type="video" url="https://youtu.be/B6jTl90lucM" />
+									</outline>
+									<outline text="Live video" />
+								</outline>
+								<outline text="Snatch head outside single">
+									<outline text="Instructional video">
+										<outline text="" type="video" url="https://youtu.be/WtUX-OiWYkU" />
+									</outline>
+									<outline text="Live video" />
+								</outline>
+							</outline>
+						</outline>
 						<outline text="Defence" />
 						<outline text="Offensive transitions" />
 					</outline>
 					<outline text="Opponent">
-						<outline text="Setups / Entries" />
+						<outline text="Setups / Entries">
+							<outline text="Collar tie">
+								<outline text="Instructional video">
+									<outline text="" type="video" url="https://youtu.be/Kf0wQ00FPBg" />
+								</outline>
+								<outline text="Live video" />
+							</outline>
+							<outline text="Outside tie">
+								<outline text="Instructional video">
+									<outline text="" type="video" url="https://youtu.be/Ye-Jvn023XI" />
+								</outline>
+								<outline text="Live video" />
+							</outline>
+						</outline>
 						<outline text="Control" />
-						<outline text="Offence" />
+						<outline text="Offence">
+							<outline text="2 on 1">
+								<outline text="Offence">
+									<outline text="Climb to back">
+										<outline text="Instructional video">
+											<outline text="" type="video" url="https://youtu.be/r0-5x2mBL84" />
+										</outline>
+										<outline text="Live video" />
+									</outline>
+									<outline text="Snatch single">
+										<outline text="Instructional video">
+											<outline text="" type="video" url="https://youtu.be/cdQakEraYKE" />
+										</outline>
+										<outline text="Live video" />
+									</outline>
+									<outline text="ankle pick">
+										<outline text="Instructional video">
+											<outline text="" type="video" url="https://youtu.be/6RapDAy2HQQ" />
+										</outline>
+										<outline text="Live video" />
+									</outline>
+									<outline text="front headlock">
+										<outline text="Instructional video">
+											<outline text="" type="video" url="https://youtu.be/DzxwkbNuUBw" />
+										</outline>
+										<outline text="Live video" />
+									</outline>
+								</outline>
+								<outline text="Defence">
+									<outline text="Framing on head">
+										<outline text="Instructional video" />
+										<outline text="Live video" />
+									</outline>
+									<outline text="Pulling far elbow">
+										<outline text="Underhook">
+											<outline text="Instructional video" />
+											<outline text="Live video" />
+										</outline>
+									</outline>
+								</outline>
+							</outline>
+							<outline text="Snap downs">
+								<outline text="Collar Tie and Inside Tie Snap Down">
+									<outline text="Instructional video">
+										<outline text="" type="video" url="https://youtu.be/WZ--OY1yQXU" />
+									</outline>
+									<outline text="Live video" />
+								</outline>
+								<outline text="Overtie snap">
+									<outline text="Instructional video">
+										<outline text="" type="video" url="https://youtu.be/NlIBlkV5PVY" />
+									</outline>
+									<outline text="Live video" />
+								</outline>
+								<outline text="Brush by snap">
+									<outline text="Instructional video">
+										<outline text="" type="video" url="https://youtu.be/QE8PS6puob0" />
+									</outline>
+									<outline text="Live video" />
+								</outline>
+							</outline>
+							<outline text="Throw by">
+								<outline text="Head to head">
+									<outline text="Instructional video">
+										<outline text="" type="video" url="https://youtu.be/1wOwMfPHMDs" />
+									</outline>
+									<outline text="Live video" />
+								</outline>
+								<outline text="Head to shoulder">
+									<outline text="Instructional video">
+										<outline text="" type="video" url="https://youtu.be/m42WTwg3Feo" />
+									</outline>
+									<outline text="Live video" />
+								</outline>
+								<outline text="Outside tie">
+									<outline text="Instructional video">
+										<outline text="" type="video" url="https://youtu.be/ZLbj39rn6pU" />
+									</outline>
+									<outline text="Live video" />
+								</outline>
+							</outline>
+							<outline text="Brush by" note="Most effective when opponent is heavy on collar tie">
+								<outline text="Disengaging">
+									<outline text="Instructional video">
+										<outline text="" type="video" url="https://youtu.be/oejTa6J72gE" />
+									</outline>
+									<outline text="Live video" />
+								</outline>
+								<outline text="Rear body lock">
+									<outline text="Instructional video">
+										<outline text="" type="video" url="https://youtu.be/oXuG3DJBMEE" />
+									</outline>
+									<outline text="Live video" />
+								</outline>
+								<outline text="Snatch head inside single">
+									<outline text="Instructional video">
+										<outline text="" type="video" url="https://youtu.be/B6jTl90lucM" />
+									</outline>
+									<outline text="Live video" />
+								</outline>
+								<outline text="Snatch head outside single">
+									<outline text="Instructional video">
+										<outline text="" type="video" url="https://youtu.be/WtUX-OiWYkU" />
+									</outline>
+									<outline text="Live video" />
+								</outline>
+							</outline>
+						</outline>
 						<outline text="Defence" />
 						<outline text="Offensive transitions" />
 					</outline>
@@ -263,270 +503,6 @@
 								<outline text="Instructional video" />
 							</outline>
 						</outline>
-					</outline>
-				</outline>
-				<outline text="Collar Tie">
-					<outline text="Attacker">
-						<outline text="Setups / Entries" />
-						<outline text="Control" />
-						<outline text="Offence">
-							<outline text="Entries">
-								<outline text="Outside tie">
-									<outline text="Instructional video">
-										<outline text="" type="video" url="https://youtu.be/Ye-Jvn023XI" />
-									</outline>
-									<outline text="Live video" />
-								</outline>
-								<outline text="Collar tie">
-									<outline text="Instructional video">
-										<outline text="" type="video" url="https://youtu.be/Kf0wQ00FPBg" />
-									</outline>
-									<outline text="Live video" />
-								</outline>
-							</outline>
-							<outline text="Offence">
-								<outline text="Brush by" note="Most effective when opponent is heavy on collar tie">
-									<outline text="Disengaging">
-										<outline text="Instructional video">
-											<outline text="" type="video" url="https://youtu.be/oejTa6J72gE" />
-										</outline>
-										<outline text="Live video" />
-									</outline>
-									<outline text="Rear body lock">
-										<outline text="Instructional video">
-											<outline text="" type="video" url="https://youtu.be/oXuG3DJBMEE" />
-										</outline>
-										<outline text="Live video" />
-									</outline>
-									<outline text="Snatch head inside single">
-										<outline text="Instructional video">
-											<outline text="" type="video" url="https://youtu.be/B6jTl90lucM" />
-										</outline>
-										<outline text="Live video" />
-									</outline>
-									<outline text="Snatch head outside single">
-										<outline text="Instructional video">
-											<outline text="" type="video" url="https://youtu.be/WtUX-OiWYkU" />
-										</outline>
-										<outline text="Live video" />
-									</outline>
-								</outline>
-								<outline text="Throw by">
-									<outline text="Head to head">
-										<outline text="Instructional video">
-											<outline text="" type="video" url="https://youtu.be/1wOwMfPHMDs" />
-										</outline>
-										<outline text="Live video" />
-									</outline>
-									<outline text="Head to shoulder">
-										<outline text="Instructional video">
-											<outline text="" type="video" url="https://youtu.be/m42WTwg3Feo" />
-										</outline>
-										<outline text="Live video" />
-									</outline>
-									<outline text="Outside tie">
-										<outline text="Instructional video">
-											<outline text="" type="video" url="https://youtu.be/ZLbj39rn6pU" />
-										</outline>
-										<outline text="Live video" />
-									</outline>
-								</outline>
-								<outline text="Snap downs">
-									<outline text="Collar Tie and Inside Tie Snap Down">
-										<outline text="Instructional video">
-											<outline text="" type="video" url="https://youtu.be/WZ--OY1yQXU" />
-										</outline>
-										<outline text="Live video" />
-									</outline>
-									<outline text="Overtie snap">
-										<outline text="Instructional video">
-											<outline text="" type="video" url="https://youtu.be/NlIBlkV5PVY" />
-										</outline>
-										<outline text="Live video" />
-									</outline>
-									<outline text="Brush by snap">
-										<outline text="Instructional video">
-											<outline text="" type="video" url="https://youtu.be/QE8PS6puob0" />
-										</outline>
-										<outline text="Live video" />
-									</outline>
-								</outline>
-								<outline text="2 on 1">
-									<outline text="Offence">
-										<outline text="Climb to back">
-											<outline text="Instructional video">
-												<outline text="" type="video" url="https://youtu.be/r0-5x2mBL84" />
-											</outline>
-											<outline text="Live video" />
-										</outline>
-										<outline text="Snatch single">
-											<outline text="Instructional video">
-												<outline text="" type="video" url="https://youtu.be/cdQakEraYKE" />
-											</outline>
-											<outline text="Live video" />
-										</outline>
-										<outline text="ankle pick">
-											<outline text="Instructional video">
-												<outline text="" type="video" url="https://youtu.be/6RapDAy2HQQ" />
-											</outline>
-											<outline text="Live video" />
-										</outline>
-										<outline text="front headlock">
-											<outline text="Instructional video">
-												<outline text="" type="video" url="https://youtu.be/DzxwkbNuUBw" />
-											</outline>
-											<outline text="Live video" />
-										</outline>
-									</outline>
-									<outline text="Defence">
-										<outline text="Framing on head">
-											<outline text="Instructional video" />
-											<outline text="Live video" />
-										</outline>
-										<outline text="Pulling far elbow">
-											<outline text="Underhook">
-												<outline text="Instructional video" />
-												<outline text="Live video" />
-											</outline>
-										</outline>
-									</outline>
-								</outline>
-							</outline>
-						</outline>
-						<outline text="Defence / Escapes" />
-						<outline text="Submissions" />
-						<outline text="Offensive transitions" />
-					</outline>
-					<outline text="Defender">
-						<outline text="Setups / Entries" />
-						<outline text="Control" />
-						<outline text="Offence">
-							<outline text="Entries">
-								<outline text="Outside tie">
-									<outline text="Instructional video">
-										<outline text="" type="video" url="https://youtu.be/Ye-Jvn023XI" />
-									</outline>
-									<outline text="Live video" />
-								</outline>
-								<outline text="Collar tie">
-									<outline text="Instructional video">
-										<outline text="" type="video" url="https://youtu.be/Kf0wQ00FPBg" />
-									</outline>
-									<outline text="Live video" />
-								</outline>
-							</outline>
-							<outline text="Offence">
-								<outline text="Brush by" note="Most effective when opponent is heavy on collar tie">
-									<outline text="Disengaging">
-										<outline text="Instructional video">
-											<outline text="" type="video" url="https://youtu.be/oejTa6J72gE" />
-										</outline>
-										<outline text="Live video" />
-									</outline>
-									<outline text="Rear body lock">
-										<outline text="Instructional video">
-											<outline text="" type="video" url="https://youtu.be/oXuG3DJBMEE" />
-										</outline>
-										<outline text="Live video" />
-									</outline>
-									<outline text="Snatch head inside single">
-										<outline text="Instructional video">
-											<outline text="" type="video" url="https://youtu.be/B6jTl90lucM" />
-										</outline>
-										<outline text="Live video" />
-									</outline>
-									<outline text="Snatch head outside single">
-										<outline text="Instructional video">
-											<outline text="" type="video" url="https://youtu.be/WtUX-OiWYkU" />
-										</outline>
-										<outline text="Live video" />
-									</outline>
-								</outline>
-								<outline text="Throw by">
-									<outline text="Head to head">
-										<outline text="Instructional video">
-											<outline text="" type="video" url="https://youtu.be/1wOwMfPHMDs" />
-										</outline>
-										<outline text="Live video" />
-									</outline>
-									<outline text="Head to shoulder">
-										<outline text="Instructional video">
-											<outline text="" type="video" url="https://youtu.be/m42WTwg3Feo" />
-										</outline>
-										<outline text="Live video" />
-									</outline>
-									<outline text="Outside tie">
-										<outline text="Instructional video">
-											<outline text="" type="video" url="https://youtu.be/ZLbj39rn6pU" />
-										</outline>
-										<outline text="Live video" />
-									</outline>
-								</outline>
-								<outline text="Snap downs">
-									<outline text="Collar Tie and Inside Tie Snap Down">
-										<outline text="Instructional video">
-											<outline text="" type="video" url="https://youtu.be/WZ--OY1yQXU" />
-										</outline>
-										<outline text="Live video" />
-									</outline>
-									<outline text="Overtie snap">
-										<outline text="Instructional video">
-											<outline text="" type="video" url="https://youtu.be/NlIBlkV5PVY" />
-										</outline>
-										<outline text="Live video" />
-									</outline>
-									<outline text="Brush by snap">
-										<outline text="Instructional video">
-											<outline text="" type="video" url="https://youtu.be/QE8PS6puob0" />
-										</outline>
-										<outline text="Live video" />
-									</outline>
-								</outline>
-								<outline text="2 on 1">
-									<outline text="Offence">
-										<outline text="Climb to back">
-											<outline text="Instructional video">
-												<outline text="" type="video" url="https://youtu.be/r0-5x2mBL84" />
-											</outline>
-											<outline text="Live video" />
-										</outline>
-										<outline text="Snatch single">
-											<outline text="Instructional video">
-												<outline text="" type="video" url="https://youtu.be/cdQakEraYKE" />
-											</outline>
-											<outline text="Live video" />
-										</outline>
-										<outline text="ankle pick">
-											<outline text="Instructional video">
-												<outline text="" type="video" url="https://youtu.be/6RapDAy2HQQ" />
-											</outline>
-											<outline text="Live video" />
-										</outline>
-										<outline text="front headlock">
-											<outline text="Instructional video">
-												<outline text="" type="video" url="https://youtu.be/DzxwkbNuUBw" />
-											</outline>
-											<outline text="Live video" />
-										</outline>
-									</outline>
-									<outline text="Defence">
-										<outline text="Framing on head">
-											<outline text="Instructional video" />
-											<outline text="Live video" />
-										</outline>
-										<outline text="Pulling far elbow">
-											<outline text="Underhook">
-												<outline text="Instructional video" />
-												<outline text="Live video" />
-											</outline>
-										</outline>
-									</outline>
-								</outline>
-							</outline>
-						</outline>
-						<outline text="Defence / Escapes" />
-						<outline text="Submissions" />
-						<outline text="Offensive transitions" />
 					</outline>
 				</outline>
 			</outline>
