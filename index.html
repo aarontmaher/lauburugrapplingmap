@@ -839,17 +839,13 @@ function markBuiltOut() {
   const items = Array.from(document.querySelectorAll('.tree-item'));
   items.reverse().forEach(li => {
     const hasVideo = li.dataset.hasVideo === '1';
-    const isSchema = li.dataset.schema === '1';
     const children = li.querySelectorAll(':scope > .children > .tree-item');
     const hasChildren = children.length > 0;
     const anyChildBuilt = hasChildren && Array.from(children).some(c => c.dataset.builtout === '1');
-    let hasContentChild = false;
-    if (!isSchema && hasChildren) {
-      hasContentChild = Array.from(children).some(c =>
-        c.dataset.schema === '0' && c.querySelector(':scope > .children > .tree-item[data-schema="0"]')
-      );
-    }
-    li.dataset.builtout = (hasVideo || anyChildBuilt || hasContentChild) ? '1' : '0';
+    const nonSchemaCount = hasChildren
+      ? Array.from(children).filter(c => c.dataset.schema === '0').length
+      : 0;
+    li.dataset.builtout = (hasVideo || anyChildBuilt || nonSchemaCount >= 3) ? '1' : '0';
   });
 }
 
@@ -1318,7 +1314,7 @@ window.initGraph3D = (function() {
     if(!W||!H){setTimeout(initGraph3D,50);return;}
 
     if(!ready){
-      ready=true;
+      try{
       const THREE=window.THREE;
       const g3dLeg=document.getElementById('g3dLegend');
       if(g3dLeg) g3dLeg.innerHTML=SECTIONS.map((s,i)=>`<div style="display:flex;align-items:center;gap:5px;"><span style="width:6px;height:6px;border-radius:50%;background:${SECT_CSS3[i]||s.color};display:inline-block;"></span><span>${s.title.split(' ').slice(0,3).join(' ')}</span></div>`).join('');
@@ -1505,6 +1501,8 @@ window.initGraph3D = (function() {
         renderer3d.setSize(r.width,r.height);camera3d.aspect=r.width/r.height;camera3d.updateProjectionMatrix();
         lc.width=r.width;lc.height=r.height;
       });
+      ready=true;
+      }catch(err){ready=false;console.error('3D init failed, will retry:',err);}
     } else {
       applyProg3d();
       rebuildFilter3d(statusFilter3d);
