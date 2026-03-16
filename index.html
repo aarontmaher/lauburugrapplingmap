@@ -251,6 +251,7 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
     <button class="toolbar-btn" id="refExpandAll">Expand All</button>
   </div>
   <div class="sections" id="sections"></div>
+  <div id="refEmpty" style="display:none;text-align:center;padding:60px 20px;color:var(--text-muted);font-family:'Barlow Condensed',sans-serif;font-size:14px;letter-spacing:1px;"></div>
 </div>
 
 
@@ -908,11 +909,16 @@ document.getElementById('refSearch').addEventListener('input', function() {
     li.style.display = match ? '' : 'none';
   });
   if (q) revealAncestorItems();
+  let anyVisible = false;
   document.querySelectorAll('.section').forEach(sec => {
     const visible = Array.from(sec.querySelectorAll('.tree-item')).some(li => li.style.display !== 'none');
     sec.style.display = visible ? '' : 'none';
+    if (visible) anyVisible = true;
     if (q && visible) sec.classList.remove('collapsed');
   });
+  const emptyEl = document.getElementById('refEmpty');
+  if (q && !anyVisible) { emptyEl.textContent = 'No results for "' + q + '"'; emptyEl.style.display = 'block'; }
+  else { emptyEl.style.display = 'none'; }
 });
 
 // ─── FILTER (Reference) ──────────────────────────────────────────────────────
@@ -936,11 +942,19 @@ function applyRefFilter(filter) {
     li.style.display = show ? '' : 'none';
   });
   if (filter !== 'all') revealAncestorItems();
+  let anyVisible = false;
   document.querySelectorAll('.section').forEach(sec => {
     const visible = Array.from(sec.querySelectorAll('.tree-item')).some(li => li.style.display !== 'none');
     sec.style.display = visible ? '' : 'none';
+    if (visible) anyVisible = true;
     if (filter !== 'all' && visible) sec.classList.remove('collapsed');
   });
+  const emptyEl = document.getElementById('refEmpty');
+  if (filter !== 'all' && !anyVisible) {
+    const labels = {drilling:'No techniques marked as Drilling yet',learned:'No techniques marked as Learned yet',video:'No video content found',builtout:'No built-out positions found'};
+    emptyEl.textContent = labels[filter] || 'No matching items';
+    emptyEl.style.display = 'block';
+  } else { emptyEl.style.display = 'none'; }
 }
 
 // ─── COLLAPSE ALL / EXPAND ALL (Reference) ───────────────────────────────────
@@ -1020,6 +1034,8 @@ function refreshAllViews() {
     if (nb) nb.className = STATE.notes[key] ? 'btn-note has-note' : 'btn-note';
     li.dataset.hasNote = STATE.notes[key] ? '1' : '0';
   });
+  // Re-apply current filter so items leaving a state disappear immediately
+  if (STATE.currentFilter && STATE.currentFilter !== 'all') applyRefFilter(STATE.currentFilter);
   // Update 3D node colours if initialized
   if (window.g3dRefreshNodes) window.g3dRefreshNodes();
 }
