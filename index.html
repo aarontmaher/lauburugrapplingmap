@@ -672,8 +672,16 @@ function buildPopup(popupEl, node, sectionTitle, color) {
 
 // ─── REFERENCE VIEW ──────────────────────────────────────────────────────────
 function buildNode(node, sectionTitle, depth, parentUl) {
-  if (node.t === 'Instructional video' && !node.v) return;
-  if (node.t === 'Live video' && !node.l) return;
+  // Hoist video URLs from marker children onto parent technique node
+  if (node.c && node.c.length) {
+    node.c.forEach(ch => {
+      if (ch.t === 'Instructional video' && ch.v && !node.v) node.v = ch.v;
+      if (ch.t === 'Live video' && ch.l && !node.l) node.l = ch.l;
+    });
+    node.c = node.c.filter(ch =>
+      !((ch.t === 'Instructional video') || (ch.t === 'Live video'))
+    );
+  }
   const li = document.createElement('li');
   li.className = 'tree-item';
   const key = makeKey(sectionTitle, node.t);
