@@ -778,7 +778,7 @@ function clearTechniqueSelection() {
   var sel = document.querySelector('.tree-item.technique-selected');
   if (sel) sel.classList.remove('technique-selected');
 }
-function buildNode(node, sectionTitle, depth, parentUl, parentKey, disambig) {
+function buildNode(node, sectionTitle, depth, parentUl, parentKey, disambig, posEntry) {
   // Hoist video URLs from marker children onto parent technique node
   if (node.c && node.c.length) {
     node.c.forEach(ch => {
@@ -792,6 +792,13 @@ function buildNode(node, sectionTitle, depth, parentUl, parentKey, disambig) {
   const li = document.createElement('li');
   li.className = 'tree-item';
   const key = (parentKey ? makePathKey(parentKey, node.t) : makeKey(sectionTitle, node.t)) + (disambig || '');
+  // FIX 1: Populate _techPositionMap in-place (single source of truth for keys)
+  if (depth === 0) {
+    posEntry = { section: sectionTitle, positionLabel: node.t, positionNorm: normalizeSegment(node.t) };
+  }
+  if (posEntry && window._techPositionMap) {
+    window._techPositionMap.set(key, posEntry);
+  }
   li.dataset.key = key;
   li.dataset.hasVideo = (node.v || node.l) ? '1' : '0';
   li.dataset.schema = SCHEMA_NAMES.has(node.t.trim()) ? '1' : '0';
@@ -908,7 +915,7 @@ function buildNode(node, sectionTitle, depth, parentUl, parentKey, disambig) {
       const seg = normalizeSegment(child.t);
       sibCounts[seg] = (sibCounts[seg] || 0) + 1;
       const childDisambig = sibCounts[seg] > 1 ? '~' + sibCounts[seg] : '';
-      buildNode(child, sectionTitle, depth + 1, childUl, key, childDisambig);
+      buildNode(child, sectionTitle, depth + 1, childUl, key, childDisambig, posEntry);
     });
     li.appendChild(childUl);
     toggle.addEventListener('click', e => {
@@ -1119,32 +1126,60 @@ function markBuiltOut() {
 
 // ─── INIT DATA FROM SECTIONS (boot step 2 — SECTIONS-based, no DOM) ──────────
 function initDataFromSections() {
-  // Build _techPositionMap: maps every path-key at any depth → position info.
-  // Key format (KEY_VERSION=2): section|section|position[|perspective|heading|technique...]
-  // Value: { section, positionLabel, positionNorm }
-  //   section = top-level section label (e.g. "Guard")
-  //   positionLabel = exact depth-1 node label (e.g. "Closed Guard")
-  //   positionNorm = normalizeSegment(positionLabel) for matching against NET_NODES
-  var techMap = new Map();
+  // Initialize _techPositionMap — populated by buildNode() during buildSections()
+  // traversal so keys are IDENTICAL to STATE.progress keys by construction.
+  window._techPositionMap = new Map();
+
+  // FIX 2: Build _transitionOccurrences + _edgeBaseWeight once on load.
+  // Walk all positions → perspectives → find transition leaves (text contains →).
+  // Collect: { srcPositionLabel, contextLabel, destLabel, edgeKey }
+  var ARROW_CHAR = '\u2192';
+  var SKIP_LABELS = { 'Offensive transitions': 1, 'Notes': 1, 'Instructional video': 1, 'Live video': 1 };
+  var occurrences = [];
+  var baseWeight = new Map();
+
   SECTIONS.forEach(function(sec) {
-    var sectionKey = makeKey(sec.title, sec.title);
     sec.nodes.forEach(function(posNode) {
-      var posLabel = posNode.t;
-      var posNorm = normalizeSegment(posLabel);
-      var posKey = sectionKey + '|' + posNorm;
-      var entry = { section: sec.title, positionLabel: posLabel, positionNorm: posNorm };
-      // Map position key itself
-      techMap.set(posKey, entry);
-      // Walk all descendants and record key → entry
-      if (posNode.c && posNode.c.length) {
-        walkWithKeys(posNode.c, posKey, function(nd, k) {
-          techMap.set(k, entry);
+      var srcPositionLabel = posNode.t;
+      // Walk all descendants recursively looking for transition leaves
+      (function walkTrans(nodes) {
+        if (!nodes) return;
+        nodes.forEach(function(nd) {
+          var t = nd.t;
+          if (t) t = t.replace(/\u00e2\u0086\u0092/g, ARROW_CHAR); // fix mojibake
+          // Skip non-leaf nodes (has non-media children)
+          var realChildren = (nd.c || []).filter(function(ch) {
+            return ch.t !== 'Instructional video' && ch.t !== 'Live video';
+          });
+          // Skip schema/heading labels and non-transition text
+          if (SKIP_LABELS[t]) { if (nd.c && nd.c.length) walkTrans(nd.c); return; }
+          // Only process true leaves with → in text
+          if (t && t.indexOf(ARROW_CHAR) !== -1 && realChildren.length === 0) {
+            var parts = t.split(ARROW_CHAR);
+            if (parts.length === 2 && parts[0].trim() && parts[1].trim()) {
+              var contextLabel = parts[0].trim();
+              var destLabel = parts[1].trim();
+              var edgeKey = normalizeSegment(srcPositionLabel) + '|' + normalizeSegment(destLabel);
+              occurrences.push({
+                srcPositionLabel: srcPositionLabel,
+                contextLabel: contextLabel,
+                destLabel: destLabel,
+                edgeKey: edgeKey
+              });
+              baseWeight.set(edgeKey, (baseWeight.get(edgeKey) || 0) + 1);
+            }
+          }
+          if (nd.c && nd.c.length) walkTrans(nd.c);
         });
-      }
+      })(posNode.c);
     });
   });
-  window._techPositionMap = techMap;
-  console.log('TechPositionMap built:', window._techPositionMap.size);
+
+  window._transitionOccurrences = occurrences;
+  window._edgeBaseWeight = baseWeight;
+  console.log('_transitionOccurrences:', occurrences.length,
+    '_edgeBaseWeight:', baseWeight.size,
+    '_techPositionMap will be populated by buildSections()');
 }
 
 // ─── NOTE PANEL ───────────────────────────────────────────────────────────────
@@ -1678,9 +1713,42 @@ window.initGraph3D = (function() {
 
     const aIds=new Set(active.map(n=>n.id));
     const aEdges=NET_EDGES.filter(e=>aIds.has(e.source)&&aIds.has(e.target));
+
+    // FIX 2/3: Recompute visible edge weights from _transitionOccurrences
+    // filtered to positions that survive the current filter.
+    if (isPositionFilter && matched && matched.labels.size > 0 && window._transitionOccurrences) {
+      var visibleWeights = new Map();
+      window._transitionOccurrences.forEach(function(t) {
+        if (!matched.labels.has(t.srcPositionLabel)) return;
+        visibleWeights.set(t.edgeKey, (visibleWeights.get(t.edgeKey) || 0) + 1);
+      });
+      // Store on edges for rendering (do NOT mutate edge.weight)
+      aEdges.forEach(function(e) {
+        var srcN = nodeMap3d[e.source], tgtN = nodeMap3d[e.target];
+        if (srcN && tgtN) {
+          var ek = normalizeSegment(srcN.label) + '|' + normalizeSegment(tgtN.label);
+          e.visibleWeight = visibleWeights.get(ek) || e.weight;
+        } else {
+          e.visibleWeight = e.weight;
+        }
+      });
+    } else {
+      // ALL filter: use _edgeBaseWeight (full transition counts) or original weight
+      var ebw = window._edgeBaseWeight;
+      NET_EDGES.forEach(function(e) {
+        if (ebw && ebw.size > 0) {
+          var srcN = nodeMap3d[e.source], tgtN = nodeMap3d[e.target];
+          if (srcN && tgtN) {
+            var ek = normalizeSegment(srcN.label) + '|' + normalizeSegment(tgtN.label);
+            e.visibleWeight = ebw.get(ek) || e.weight;
+          } else { e.visibleWeight = e.weight; }
+        } else { e.visibleWeight = e.weight; }
+      });
+    }
+
     const inn={},out={};
     active.forEach(n=>{inn[n.id]=0;out[n.id]=0;});
-    aEdges.forEach(e=>{inn[e.target]=(inn[e.target]||0)+e.weight;out[e.source]=(out[e.source]||0)+e.weight;});
+    aEdges.forEach(e=>{var w=e.visibleWeight||e.weight;inn[e.target]=(inn[e.target]||0)+w;out[e.source]=(out[e.source]||0)+w;});
     active.forEach(n=>{
       if(n.depth===1){n._in=(inn[n.id]||0)+1;n._out=out[n.id]||0;n._w=n._in*1.5+n._out+8;n._r=Math.max(2.5,2.5+Math.sqrt(n._w)*4.2);}
       else{n._in=inn[n.id]||0;n._out=out[n.id]||0;n._w=2;n._r=2.0;}
@@ -1697,7 +1765,7 @@ window.initGraph3D = (function() {
     });
     edgeMeshes3d.forEach(e=>{
       if(isEmpty){e.line.visible=true;e._base=0.04;e._mat.opacity=0.04;return;}
-      const vis=aIds.has(e.source)&&aIds.has(e.target);e.line.visible=vis;e._base=vis?Math.min(0.06+e.weight*0.06,globalEdgeOpac):0;if(vis)e._mat.opacity=e._base;
+      const vis=aIds.has(e.source)&&aIds.has(e.target);var ew=e.visibleWeight||e.weight;e.line.visible=vis;e._base=vis?Math.min(0.06+ew*0.06,globalEdgeOpac):0;if(vis)e._mat.opacity=e._base;
     });
     if(sf!=='all'&&aIds.size>0){
       const asn=simNodes3d.filter(n=>aIds.has(n.id));
@@ -1866,7 +1934,8 @@ window.initGraph3D = (function() {
         const mat=new THREE.LineBasicMaterial({color:cs,transparent:true,opacity:base});
         const geo=new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0,0,0),new THREE.Vector3(1,1,1)]);
         const line=new THREE.Line(geo,mat);pivot3d.add(line);
-        edgeMeshes3d.push({line,source:e.source,target:e.target,weight:e.weight,_mat:mat,_base:base});
+        var ek=normalizeSegment((nodeMap3d[e.source]||{}).label||'')+'|'+normalizeSegment((nodeMap3d[e.target]||{}).label||'');
+        edgeMeshes3d.push({line,source:e.source,target:e.target,weight:e.weight,edgeKey:ek,_mat:mat,_base:base});
       });
 
       // Initial force sim
@@ -1982,7 +2051,7 @@ window.initGraph3D = (function() {
       document.getElementById('g3dOptEdge').addEventListener('input',function(){
         globalEdgeOpac=this.value/100;
         document.getElementById('g3dOptEdgeVal').textContent=this.value+'%';
-        edgeMeshes3d.forEach(e=>{e._base=Math.min(0.06+e.weight*0.06,globalEdgeOpac);if(e.line.visible&&!selectedId3d)e._mat.opacity=e._base;});
+        edgeMeshes3d.forEach(e=>{var ew=e.visibleWeight||e.weight;e._base=Math.min(0.06+ew*0.06,globalEdgeOpac);if(e.line.visible&&!selectedId3d)e._mat.opacity=e._base;});
       });
 
       // Orphan debug toggle — lazy-creates meshes on first enable
@@ -2073,6 +2142,7 @@ checkKeyVersion();
 loadState();
 initDataFromSections();
 buildSections();
+console.log('TechPositionMap built:', window._techPositionMap.size);
 markBuiltOut();
 updateStats();
 // DIAG: verify NET_NODES key format for position-matching branch selection
