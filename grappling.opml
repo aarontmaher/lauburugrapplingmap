@@ -3,7 +3,7 @@
 	<head>
 		<title>grappling</title>
 		<dateCreated>2026-03-05 02:36:15</dateCreated>
-		<dateModified>2026-03-17 06:47:59</dateModified>
+		<dateModified>2026-03-17 07:22:47</dateModified>
 		<ownerName>Aaron Maher</ownerName>
 	</head>
 	<body>
@@ -3919,11 +3919,6 @@
 					</outline>
 					<outline text="Offensive transitions">
 						<outline text="Offensive transitions" />
-						<outline text="Seat belt back take → Back Control" />
-						<outline text="Spiral ride near side tip over → Side Control" />
-						<outline text="Spiral ride far side tip over → Mount" />
-						<outline text="Crab hook → Side Control" />
-						<outline text="Single hook → Back Control" />
 					</outline>
 				</outline>
 			</outline>
@@ -4854,34 +4849,6 @@
 								<outline text="Instructional video" />
 								<outline text="Live video" />
 							</outline>
-							<outline text="Side control to mount via knee on belly → Mount">
-								<outline text="High step to mount">
-									<outline text="Instructional video" />
-									<outline text="Live video" />
-								</outline>
-								<outline text="Gift wrap to back">
-									<outline text="Instructional video" />
-									<outline text="Live video" />
-								</outline>
-								<outline text="Seat belt to back">
-									<outline text="Instructional video" />
-									<outline text="Live video" />
-								</outline>
-								<outline text="Control points">
-									<outline text="Tight waist">
-										<outline text="Instructional video" />
-										<outline text="Live video" />
-									</outline>
-									<outline text="Near side underhook">
-										<outline text="Instructional video" />
-										<outline text="Live video" />
-									</outline>
-									<outline text="Crossface">
-										<outline text="Instructional video" />
-										<outline text="Live video" />
-									</outline>
-								</outline>
-							</outline>
 						</outline>
 					</outline>
 				</outline>
@@ -5127,7 +5094,6 @@
 					<outline text="Submissions">
 						<outline text="Submissions" />
 					</outline>
-					<outline text="" />
 					<outline text="Offensive transitions">
 						<outline text="Offensive transitions" />
 					</outline>
@@ -5351,9 +5317,7 @@
 						</outline>
 					</outline>
 					<outline text="Submissions" />
-					<outline text="Offensive transitions">
-						<outline text="" />
-					</outline>
+					<outline text="Offensive transitions" />
 				</outline>
 			</outline>
 		</outline>
