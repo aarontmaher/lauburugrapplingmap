@@ -3,7 +3,7 @@
 	<head>
 		<title>grappling</title>
 		<dateCreated>2026-03-05 02:36:15</dateCreated>
-		<dateModified>2026-03-17 07:22:47</dateModified>
+		<dateModified>2026-03-17 07:47:35</dateModified>
 		<ownerName>Aaron Maher</ownerName>
 	</head>
 	<body>
@@ -587,7 +587,7 @@
 					<outline text="Offensive transitions" />
 				</outline>
 			</outline>
-			<outline text="Shots (NEW)">
+			<outline text="Shots">
 				<outline text="Head inside snatch single">
 					<outline text="Offence">
 						<outline text="Head inside double">
@@ -970,8 +970,22 @@
 					</outline>
 				</outline>
 				<outline text="Double leg">
-					<outline text="Attacker" />
-					<outline text="Defender" />
+					<outline text="Attacker">
+						<outline text="Setups / Entries" />
+						<outline text="Control" />
+						<outline text="Offence" />
+						<outline text="Defence" />
+						<outline text="Submissions" />
+						<outline text="Offensive transitions" />
+					</outline>
+					<outline text="Defender">
+						<outline text="Setups / Entries" />
+						<outline text="Control" />
+						<outline text="Offence" />
+						<outline text="Defence" />
+						<outline text="Submissions" />
+						<outline text="Offensive transitions" />
+					</outline>
 				</outline>
 			</outline>
 		</outline>
