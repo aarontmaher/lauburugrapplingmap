@@ -3,7 +3,7 @@
 	<head>
 		<title>grappling</title>
 		<dateCreated>2026-03-05 02:36:15</dateCreated>
-		<dateModified>2026-03-17 04:48:01</dateModified>
+		<dateModified>2026-03-17 05:10:58</dateModified>
 		<ownerName>Aaron Maher</ownerName>
 	</head>
 	<body>
@@ -513,8 +513,42 @@
 					<outline text="Collar tie throw by to wrestling bodylock → Wrestling bodylock" />
 				</outline>
 				<outline text="Control">
-					<outline text="Wrestling rear bodylock" />
-					<outline text="Wrestling side bodylock" />
+					<outline text="Wrestling rear bodylock">
+						<outline text="Attacker">
+							<outline text="Setups / Entries" />
+							<outline text="Control" />
+							<outline text="Offence" />
+							<outline text="Defence" />
+							<outline text="Submissions" />
+							<outline text="Offensive transitions" />
+						</outline>
+						<outline text="Defender">
+							<outline text="Setups / Entries" />
+							<outline text="Control" />
+							<outline text="Offence" />
+							<outline text="Defence" />
+							<outline text="Submissions" />
+							<outline text="Offensive transitions" />
+						</outline>
+					</outline>
+					<outline text="Wrestling side bodylock">
+						<outline text="Attacker">
+							<outline text="Setups / Entries" />
+							<outline text="Control" />
+							<outline text="Offence" />
+							<outline text="Defence" />
+							<outline text="Submissions" />
+							<outline text="Offensive transitions" />
+						</outline>
+						<outline text="Defender">
+							<outline text="Setups / Entries" />
+							<outline text="Control" />
+							<outline text="Offence" />
+							<outline text="Defence" />
+							<outline text="Submissions" />
+							<outline text="Offensive transitions" />
+						</outline>
+					</outline>
 					<outline text="Tripod bodylock" />
 				</outline>
 				<outline text="Offence">
