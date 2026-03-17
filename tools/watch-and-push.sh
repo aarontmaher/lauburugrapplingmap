@@ -109,6 +109,17 @@ handle_new_opml() {
     git add grappling.opml index.html
     git commit -m "Update grappling map from Mindomo export [${ts}]"
 
+    log "Pulling latest from GitHub (in case worktree pushed)..."
+    if ! git pull --no-rebase origin main 2>/dev/null; then
+        # Conflict — accept ours (watcher's pipeline output is latest)
+        if git diff --name-only --diff-filter=U | grep -q .; then
+            git checkout --ours index.html 2>/dev/null || true
+            git add index.html
+            git commit --no-edit 2>/dev/null || true
+            log "Resolved merge conflict (accepted our pipeline output)"
+        fi
+    fi
+
     log "Pushing to GitHub..."
     if git push; then
         log "Done! GitHub Pages will update in ~30-60 seconds."
