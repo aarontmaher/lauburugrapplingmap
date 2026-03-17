@@ -195,8 +195,8 @@ def _build_transition_edges(sections, node_id_by_label):
     Walk algorithm uses a canonical_stack (push on enter, pop on leave) so
     nested canonical positions are tracked correctly.
 
-    Edge key = (contextLabel, destLabel) — 2-part key only, no srcPositionLabel.
-    Same context→dest from different source positions sums weights.
+    Edge key = (srcPositionLabel, contextLabel, destLabel) — 3-part key.
+    Same context→dest from different source positions = separate edges.
     Same dest with different contextLabels = separate edges.
 
     Returns:
@@ -235,10 +235,9 @@ def _build_transition_edges(sections, node_id_by_label):
         })
 
     # 2. Walk tree with canonical_stack — collect OT leaves only
-    #    edge_counter key = (contextLabel, destLabel) — 2-part key
-    #    same context→dest from different sources sums weights
-    edge_counter = Counter()          # (context, dest_label) -> count
-    edge_sources = {}                 # (context, dest_label) -> src_label (first seen)
+    #    edge_counter key = (srcPositionLabel, contextLabel, destLabel) — 3-part key
+    #    same context→dest from different source positions = separate edges
+    edge_counter = Counter()          # (src, context, dest_label) -> count
     warnings = []
     canonical_stack = []              # push/pop as we enter/leave canonical nodes
 
@@ -322,10 +321,8 @@ def _build_transition_edges(sections, node_id_by_label):
                     else:
                         # Exactly 1 match — valid edge
                         resolved_dest = matches[0]['label']
-                        key = (context_label, resolved_dest)
+                        key = (current_canonical, context_label, resolved_dest)
                         edge_counter[key] += 1
-                        if key not in edge_sources:
-                            edge_sources[key] = current_canonical
             else:
                 # Recurse into non-leaf OT children
                 _walk_ot_children(children, section_title)
@@ -334,10 +331,9 @@ def _build_transition_edges(sections, node_id_by_label):
         for node in sec['nodes']:
             _walk_tree(node, sec['title'])
 
-    # 3. Build edges list — one edge per unique (context, dest) pair
+    # 3. Build edges list — one edge per unique (src, context, dest) triple
     edges = []
-    for (context_label, tgt_label), weight in edge_counter.items():
-        src_label = edge_sources[(context_label, tgt_label)]
+    for (src_label, context_label, tgt_label), weight in edge_counter.items():
         src_id = node_id_by_label.get(src_label)
         tgt_id = node_id_by_label.get(tgt_label)
         if src_id is None or tgt_id is None:
