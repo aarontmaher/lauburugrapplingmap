@@ -356,13 +356,12 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
     </div>
   </div>
 
-  <!-- Legend -->
+  <!-- Legend — static fallback; overwritten by initGraph3D from SECTIONS -->
   <div id="g3dLegend" style="position:absolute;top:52px;right:280px;font-family:'DM Mono',monospace;font-size:9px;color:#4a5568;pointer-events:none;z-index:5;line-height:1.9;transition:right 0.25s;">
     <div style="display:flex;align-items:center;gap:5px;"><span style="width:6px;height:6px;border-radius:50%;background:#f0c040;display:inline-block;"></span>Wrestling</div>
-    <div style="display:flex;align-items:center;gap:5px;"><span style="width:6px;height:6px;border-radius:50%;background:#e05a30;display:inline-block;"></span>Guard Passing</div>
-    <div style="display:flex;align-items:center;gap:5px;"><span style="width:6px;height:6px;border-radius:50%;background:#9b72f5;display:inline-block;"></span>Dom. Positions</div>
-    <div style="display:flex;align-items:center;gap:5px;"><span style="width:6px;height:6px;border-radius:50%;background:#3abfaa;display:inline-block;"></span>Guard Playing</div>
-    <div style="display:flex;align-items:center;gap:5px;"><span style="width:6px;height:6px;border-radius:50%;background:#50c878;display:inline-block;"></span>Crab / Beri</div>
+    <div style="display:flex;align-items:center;gap:5px;"><span style="width:6px;height:6px;border-radius:50%;background:#e05a30;display:inline-block;"></span>Guard</div>
+    <div style="display:flex;align-items:center;gap:5px;"><span style="width:6px;height:6px;border-radius:50%;background:#9b72f5;display:inline-block;"></span>Dominant Positions</div>
+    <div style="display:flex;align-items:center;gap:5px;"><span style="width:6px;height:6px;border-radius:50%;background:#3abfaa;display:inline-block;"></span>Scrambles</div>
   </div>
 
   <!-- Tooltip -->
@@ -1131,20 +1130,32 @@ function initDataFromSections() {
   window._techPositionMap = new Map();
 
   // FIX 2: Build _transitionOccurrences + _edgeBaseWeight once on load.
-  // Walk all positions → perspectives → find transition leaves (text contains →).
-  // Collect: { srcPositionLabel, contextLabel, destLabel, edgeKey }
+  // Walk positions → find transition leaves (text contains →).
+  // srcPositionLabel = nearest ancestor whose children include a perspective
+  // (Attacker/Defender/Passer/Guard player/You/Opponent/Initiative/Defensive).
   var ARROW_CHAR = '\u2192';
   var SKIP_LABELS = { 'Offensive transitions': 1, 'Notes': 1, 'Instructional video': 1, 'Live video': 1 };
+  var PERSPECTIVE_NAMES = { 'Attacker':1, 'Defender':1, 'Passer':1, 'Guard player':1,
+    'You':1, 'Opponent':1, 'Initiative':1, 'Defensive':1 };
   var occurrences = [];
   var baseWeight = new Map();
 
+  // Check if a node has at least one child that is a perspective name
+  function hasPerspectiveChild(nd) {
+    if (!nd.c || !nd.c.length) return false;
+    return nd.c.some(function(ch) { return PERSPECTIVE_NAMES[ch.t]; });
+  }
+
   SECTIONS.forEach(function(sec) {
     sec.nodes.forEach(function(posNode) {
-      var srcPositionLabel = posNode.t;
-      // Walk all descendants recursively looking for transition leaves
-      (function walkTrans(nodes) {
+      // Walk descendants, tracking nearest ancestor with perspective children
+      // posNode itself is the default srcPositionLabel (depth-1 position)
+      (function walkTrans(nodes, currentPosLabel) {
         if (!nodes) return;
         nodes.forEach(function(nd) {
+          // If this node has perspective children, it's a (sub-)position
+          var posLabel = hasPerspectiveChild(nd) ? nd.t : currentPosLabel;
+
           var t = nd.t;
           if (t) t = t.replace(/\u00e2\u0086\u0092/g, ARROW_CHAR); // fix mojibake
           // Skip non-leaf nodes (has non-media children)
@@ -1152,26 +1163,30 @@ function initDataFromSections() {
             return ch.t !== 'Instructional video' && ch.t !== 'Live video';
           });
           // Skip schema/heading labels and non-transition text
-          if (SKIP_LABELS[t]) { if (nd.c && nd.c.length) walkTrans(nd.c); return; }
+          if (SKIP_LABELS[t]) { if (nd.c && nd.c.length) walkTrans(nd.c, posLabel); return; }
           // Only process true leaves with → in text
           if (t && t.indexOf(ARROW_CHAR) !== -1 && realChildren.length === 0) {
-            var parts = t.split(ARROW_CHAR);
-            if (parts.length === 2 && parts[0].trim() && parts[1].trim()) {
-              var contextLabel = parts[0].trim();
-              var destLabel = parts[1].trim();
-              var edgeKey = normalizeSegment(srcPositionLabel) + '|' + normalizeSegment(destLabel);
-              occurrences.push({
-                srcPositionLabel: srcPositionLabel,
-                contextLabel: contextLabel,
-                destLabel: destLabel,
-                edgeKey: edgeKey
-              });
-              baseWeight.set(edgeKey, (baseWeight.get(edgeKey) || 0) + 1);
+            if (!posLabel) {
+              console.warn('NO-SRC-POSITION: skipped leaf', t);
+            } else {
+              var parts = t.split(ARROW_CHAR);
+              if (parts.length === 2 && parts[0].trim() && parts[1].trim()) {
+                var contextLabel = parts[0].trim();
+                var destLabel = parts[1].trim();
+                var edgeKey = normalizeSegment(posLabel) + '|' + normalizeSegment(destLabel);
+                occurrences.push({
+                  srcPositionLabel: posLabel,
+                  contextLabel: contextLabel,
+                  destLabel: destLabel,
+                  edgeKey: edgeKey
+                });
+                baseWeight.set(edgeKey, (baseWeight.get(edgeKey) || 0) + 1);
+              }
             }
           }
-          if (nd.c && nd.c.length) walkTrans(nd.c);
+          if (nd.c && nd.c.length) walkTrans(nd.c, posLabel);
         });
-      })(posNode.c);
+      })(posNode.c, hasPerspectiveChild(posNode) ? posNode.t : null);
     });
   });
 
