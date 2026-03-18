@@ -302,8 +302,12 @@ def _build_transition_edges(sections, node_id_by_label):
                                      if canonical_stack else None)
 
                 if not context_label or not dest_raw:
-                    warnings.append(
-                        f'MALFORMED: "{t}" (section "{section_title}")')
+                    # Suppress known bare-arrow entries awaiting canonical promotion
+                    if not context_label and dest_raw:
+                        print(f'  HELD: → {dest_raw} (awaiting context label)')
+                    else:
+                        warnings.append(
+                            f'MALFORMED: "{t}" (section "{section_title}")')
                 elif current_canonical is None:
                     warnings.append(
                         f'NO_SRC: "{t}" — no canonical ancestor '

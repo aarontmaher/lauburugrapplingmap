@@ -1577,6 +1577,7 @@ window.initGraph3D = (function() {
         n._r=2.0;
       }
     });
+    maxIn3d=Math.max(1,...nodes.filter(n=>n.depth===1).map(n=>n._in||0));
   }
 
   function nodeCol3d(n,THREE){
@@ -1587,6 +1588,7 @@ window.initGraph3D = (function() {
 
   function randSph3d(r){const u=Math.random(),v=Math.random(),t=2*Math.PI*u,p=Math.acos(2*v-1);return[r*Math.sin(p)*Math.cos(t),r*Math.sin(p)*Math.sin(t),r*Math.cos(p)];}
 
+  var maxIn3d=1; // max indegree for hub centering bias (updated by computeW3d)
   function runForce3d(nodes,edges,steps){
     const byId={};nodes.forEach(n=>byId[n.id]=n);
     const rep=4000,k=90,att=0.004,damp=0.78;
@@ -1603,7 +1605,13 @@ window.initGraph3D = (function() {
         a.vx+=f*ux;a.vy+=f*uy;a.vz+=f*uz;b.vx-=f*ux;b.vy-=f*uy;b.vz-=f*uz;
       });
       nodes.forEach(n=>{
+        // Centering force: base pull toward origin
         n.vx-=n.x*0.001;n.vy-=n.y*0.001;n.vz-=n.z*0.001;
+        // Hub centering bias: high indegree nodes pulled toward centre more
+        var normIn=(n._in||0)/maxIn3d;
+        var targetR=350*(1-normIn*0.8); // high indegree → small target radius
+        var dist=Math.sqrt(n.x*n.x+n.y*n.y+n.z*n.z)||1;
+        if(dist>targetR){var pull=0.0008*(dist-targetR)/dist;n.vx-=n.x*pull;n.vy-=n.y*pull;n.vz-=n.z*pull;}
         n.vx*=damp;n.vy*=damp;n.vz*=damp;
         n.x+=n.vx;n.y+=n.vy;n.z+=n.vz;
         const nd=nodeMap3d[n.id];if(nd){nd.x=n.x;nd.y=n.y;nd.z=n.z;}
@@ -2070,7 +2078,7 @@ window.initGraph3D = (function() {
     });
     edgeMeshes3d.forEach(e=>{
       if(isEmpty){e.line.visible=true;e._base=0.04;e._mat.opacity=0.04;return;}
-      const vis=aIds.has(e.source)&&aIds.has(e.target);var ew=e.visibleWeight||e.weight;e.line.visible=vis;e._base=vis?Math.min(0.06+ew*0.06,globalEdgeOpac):0;if(vis)e._mat.opacity=e._base;
+      const vis=aIds.has(e.source)&&aIds.has(e.target);var ew=e.visibleWeight||e.weight;e.line.visible=vis;e._base=vis?Math.min(Math.max(0.2,0.2+ew*0.08),globalEdgeOpac):0;if(vis)e._mat.opacity=e._base;
     });
     if(sf!=='all'&&aIds.size>0){
       const asn=simNodes3d.filter(n=>aIds.has(n.id));
@@ -2253,8 +2261,8 @@ window.initGraph3D = (function() {
         const src=nodeMap3d[e.source],tgt=nodeMap3d[e.target];if(!src||!tgt)return;
         const cs=new THREE.Color(SECT_HEX3[src.section_idx]||0x334466);
         cs.lerp(new THREE.Color(SECT_HEX3[tgt.section_idx]||0x334466),0.5).multiplyScalar(0.65);
-        const base=Math.min(0.06+e.weight*0.06,globalEdgeOpac);
-        const mat=new THREE.LineBasicMaterial({color:cs,transparent:true,opacity:base});
+        const base=Math.min(Math.max(0.2,0.2+e.weight*0.08),globalEdgeOpac);
+        const mat=new THREE.LineBasicMaterial({color:cs,transparent:true,opacity:base,linewidth:1.5});
         const geo=new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0,0,0),new THREE.Vector3(1,1,1)]);
         const line=new THREE.Line(geo,mat);pivot3d.add(line);
         var ek=e.edgeKey || (normalizeSegment((nodeMap3d[e.source]||{}).label||'')+'|'+normalizeSegment((nodeMap3d[e.target]||{}).label||''));
@@ -2290,7 +2298,7 @@ window.initGraph3D = (function() {
 
       // Camera controls
       let downX=0,downY=0,isDrag=false;
-      canvas.addEventListener('mousedown',e=>{downX=e.clientX;downY=e.clientY;isDrag=false;});
+      canvas.addEventListener('mousedown',e=>{downX=e.clientX;downY=e.clientY;isDrag=false;autoRotate3d=false;});
       canvas.addEventListener('mousemove',e=>{
         if(e.buttons){if(Math.abs(e.clientX-downX)>3||Math.abs(e.clientY-downY)>3)isDrag=true;tRY+=(e.clientX-downX)*0.004;tRX+=(e.clientY-downY)*0.004;downX=e.clientX;downY=e.clientY;}
         else{
@@ -2324,12 +2332,12 @@ window.initGraph3D = (function() {
         if(id===selectedId3d){resetHL3d();closeDetail3d();return;}
         selectNode3d(id);
       });
-      canvas.addEventListener('wheel',e=>{e.preventDefault();tZ3d=Math.min(2200,Math.max(80,tZ3d+e.deltaY*0.8));},{passive:false});
+      canvas.addEventListener('wheel',e=>{e.preventDefault();autoRotate3d=false;tZ3d=Math.min(2200,Math.max(80,tZ3d+e.deltaY*0.8));},{passive:false});
       canvas.addEventListener('mouseleave',()=>{hoveredId3d=null;document.getElementById('g3dTooltip').style.display='none';});
 
       // Touch controls (mobile: single-finger drag to rotate, tap to select)
       let touchX=0,touchY=0,isTouchDrag=false;
-      canvas.addEventListener('touchstart',e=>{if(e.touches.length!==1)return;const t=e.touches[0];touchX=t.clientX;touchY=t.clientY;isTouchDrag=false;},{passive:true});
+      canvas.addEventListener('touchstart',e=>{if(e.touches.length!==1)return;autoRotate3d=false;const t=e.touches[0];touchX=t.clientX;touchY=t.clientY;isTouchDrag=false;},{passive:true});
       canvas.addEventListener('touchmove',e=>{if(e.touches.length!==1)return;e.preventDefault();const t=e.touches[0];if(Math.abs(t.clientX-touchX)>3||Math.abs(t.clientY-touchY)>3)isTouchDrag=true;tRY+=(t.clientX-touchX)*0.004;tRX+=(t.clientY-touchY)*0.004;touchX=t.clientX;touchY=t.clientY;},{passive:false});
       canvas.addEventListener('touchend',e=>{if(isTouchDrag)return;const t=e.changedTouches[0];const rect=wrap.getBoundingClientRect(),mx=((t.clientX-rect.left)/rect.width)*2-1,my=-((t.clientY-rect.top)/rect.height)*2+1;camera3d.updateMatrixWorld();const ray=new THREE.Raycaster();ray.setFromCamera({x:mx,y:my},camera3d);const vis=Object.values(meshMap3d).filter(m=>m.visible&&m.material.opacity>0.25);const hits=ray.intersectObjects(vis);if(!hits.length){resetHL3d();closeDetail3d();return;}const id=hits[0].object.userData.id;if(id===selectedId3d){resetHL3d();closeDetail3d();return;}selectNode3d(id);});
 
@@ -2395,7 +2403,7 @@ window.initGraph3D = (function() {
       document.getElementById('g3dOptEdge').addEventListener('input',function(){
         globalEdgeOpac=this.value/100;
         document.getElementById('g3dOptEdgeVal').textContent=this.value+'%';
-        edgeMeshes3d.forEach(e=>{var ew=e.visibleWeight||e.weight;e._base=Math.min(0.06+ew*0.06,globalEdgeOpac);if(e.line.visible&&!selectedId3d)e._mat.opacity=e._base;});
+        edgeMeshes3d.forEach(e=>{var ew=e.visibleWeight||e.weight;e._base=Math.min(Math.max(0.2,0.2+ew*0.08),globalEdgeOpac);if(e.line.visible&&!selectedId3d)e._mat.opacity=e._base;});
       });
 
       // Orphan debug toggle — lazy-creates meshes on first enable
@@ -2438,7 +2446,7 @@ window.initGraph3D = (function() {
         requestAnimationFrame(loop);
         rotX+=(tRX-rotX)*0.08;rotY+=(tRY-rotY)*0.08;zoom3d+=(tZ3d-zoom3d)*0.08;
         pivot3d.rotation.x=rotX;pivot3d.rotation.y=rotY;camera3d.position.z=zoom3d;
-        if(autoRotate3d)tRY+=0.00018;
+        if(autoRotate3d)tRY+=0.005;
         // Animate selection pulse ring
         if(selRing3d&&selRing3d.visible){const t=Date.now()*0.003;selRing3d.material.opacity=0.35+0.25*Math.sin(t);selRing3d.quaternion.copy(camera3d.quaternion);const snd=nodeMap3d[selectedId3d];if(snd)selRing3d.position.set(snd.x,snd.y,snd.z);}
         Object.values(ringMap3d).forEach(r=>{if(r.visible)r.quaternion.copy(camera3d.quaternion);});
