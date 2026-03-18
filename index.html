@@ -1530,64 +1530,19 @@ window.initGraph3D = (function() {
   function buildTransitionEdges() {
     if (transEdgesBuilt) return;
     transEdgesBuilt = true;
-    var ebw = window._edgeBaseWeight;
-    if (!ebw || ebw.size === 0) {
-      console.warn('TRANSITION-EDGES: falling back to structural edges (_edgeBaseWeight empty)');
-      ACTIVE_EDGES = NET_EDGES;
-      return;
-    }
-    // Build norm→node lookup for depth-1 (position) nodes only
-    var normToNode = {};
-    NET_NODES.forEach(function(n) {
-      if (n.depth === 1) {
-        var norm = normalizeSegment(n.label);
-        normToNode[norm] = n;
-      }
-    });
-    var skipped = 0;
-    ebw.forEach(function(weight, edgeKey) {
-      var parts = edgeKey.split('|');
-      if (parts.length !== 2) { skipped++; return; }
-      var srcNorm = parts[0], destNorm = parts[1];
-      var srcNode = normToNode[srcNorm], destNode = normToNode[destNorm];
-      if (!srcNode || !destNode) { skipped++; return; }
-      TRANSITION_EDGES.push({
-        source: srcNode.id,
-        target: destNode.id,
-        weight: weight,
-        type: 'transition',
-        edgeKey: edgeKey,
-        source_label: srcNode.label,
-        target_label: destNode.label
-      });
-    });
-    if (TRANSITION_EDGES.length > 0) {
+    // Use Python-generated NET_EDGES directly (more thorough canonical + OT parsing).
+    // Python pipeline resolves edges with full canonical_stack walk and 3-part keys.
+    // Preserve Python-set in_network flags on NET_NODES (includes edge participants
+    // plus shallow children of participants).
+    if (NET_EDGES.length > 0) {
       useTransitionEdges = true;
-      ACTIVE_EDGES = TRANSITION_EDGES;
-      // in_network derived from transition edges ONLY — no structural hierarchy
-      var inNetworkIds = new Set();
-      ACTIVE_EDGES.forEach(function(e) {
-        inNetworkIds.add(e.source);
-        inNetworkIds.add(e.target);
-      });
-      NET_NODES.forEach(function(n) {
-        n.in_network = inNetworkIds.has(n.id);
-      });
-      var inNetCount = NET_NODES.filter(function(n){ return n.in_network; }).length;
-      // Fail-safe: if no transition edges, show all depth-1 nodes
-      if (inNetworkIds.size === 0) {
-        console.warn('in_network: no transition edges found, showing all nodes');
-        NET_NODES.forEach(function(n) {
-          if (n.depth === 1 && !GRAPH_EXCLUDE_LABELS.has(n.label)) n.in_network = true;
-        });
-        inNetCount = NET_NODES.filter(function(n){ return n.in_network; }).length;
-      }
-      console.log('TRANSITION-EDGES: built', TRANSITION_EDGES.length, 'edges from _edgeBaseWeight,',
-        'in_network nodes:', inNetCount,
-        '(skipped', skipped, 'unresolvable)');
-    } else {
-      console.warn('TRANSITION-EDGES: falling back to structural edges (0 edges resolved)');
+      TRANSITION_EDGES = NET_EDGES.slice();
       ACTIVE_EDGES = NET_EDGES;
+      var inNetCount = NET_NODES.filter(function(n){ return n.in_network; }).length;
+      console.log('TRANSITION-EDGES: using', NET_EDGES.length, 'Python-generated edges,',
+        'in_network nodes:', inNetCount);
+    } else {
+      console.warn('TRANSITION-EDGES: no edges in NET_EDGES');
     }
   }
 
@@ -1923,7 +1878,10 @@ window.initGraph3D = (function() {
           (function(srcLabel) {
             item.addEventListener('click', function() {
               var match = NET_NODES.find(function(n) { return n.depth === 1 && n.label === srcLabel; });
-              if (match) { selectedId3d = null; selectNode3d(match.id); }
+              if (match) {
+                var secTitle = SECTIONS[match.section_idx] ? SECTIONS[match.section_idx].title : '';
+                switchToReferenceNode(srcLabel, secTitle);
+              }
             });
           })(v.src);
           cl.appendChild(item);
@@ -1946,7 +1904,10 @@ window.initGraph3D = (function() {
           (function(destLabel) {
             item.addEventListener('click', function() {
               var match = NET_NODES.find(function(n) { return n.depth === 1 && n.label === destLabel; });
-              if (match) { selectedId3d = null; selectNode3d(match.id); }
+              if (match) {
+                var secTitle = SECTIONS[match.section_idx] ? SECTIONS[match.section_idx].title : '';
+                switchToReferenceNode(destLabel, secTitle);
+              }
             });
           })(v.dest);
           cl.appendChild(item);
