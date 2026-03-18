@@ -3,7 +3,7 @@
 	<head>
 		<title>grappling</title>
 		<dateCreated>2026-03-05 02:36:15</dateCreated>
-		<dateModified>2026-03-17 02:39:35</dateModified>
+		<dateModified>2026-03-18 02:55:43</dateModified>
 		<ownerName>Aaron Maher</ownerName>
 	</head>
 	<body>
@@ -38,6 +38,7 @@
 									<outline text="Instructional video" />
 									<outline text="Live video" />
 								</outline>
+								<outline text="Collar tie throw by to wrestling bodylock" />
 								<outline text="2 on 1">
 									<outline text="Instructional video" />
 									<outline text="Live video" />
@@ -52,7 +53,6 @@
 							<outline text="Outside tie to 2-on-1 → 2-on-1" />
 							<outline text="Outside tie to double leg → Double leg" />
 							<outline text="Outside tie to head inside single → Head inside single leg" />
-							<outline text="Collar tie throw by to wrestling bodylock" />
 							<outline text="Knee pull to sweep single → Head inside single leg" />
 						</outline>
 					</outline>
@@ -413,21 +413,21 @@
 									<outline text="Live video" />
 								</outline>
 							</outline>
+							<outline text="Underhook throw by to wrestling bodylock" />
 							<outline text="Over/Under" />
 						</outline>
 						<outline text="Offence">
 							<outline text="Knee tap" />
 						</outline>
 						<outline text="Offensive transitions">
-							<outline text="Underhook throw by to wrestling bodylock" />
-							<outline text="Underhook to head inside snatch single → Head inside snatch single">
+							<outline text="Underhook to head inside single → Head inside single leg">
 								<outline text="Instructional video" />
 								<outline text="Live video" />
 							</outline>
 							<outline text="Underhook to front headlock → Front Headlock" />
-							<outline text="Underhook to snatch head outside single → Snatch head outside single" />
+							<outline text="Underhook to head outside single leg → Head outside single leg" />
 							<outline text="Underhook to head inside single → Head inside single leg" />
-							<outline text="Underhook to head outside single → Head outside single" />
+							<outline text="Underhook to head outside single → Head outside single leg" />
 						</outline>
 					</outline>
 					<outline text="Opponent">
@@ -498,7 +498,7 @@
 						</outline>
 						<outline text="Defence" />
 						<outline text="Offensive transitions">
-							<outline text="Snatch single from over/under → Snatch single">
+							<outline text="Snap down from over/under → Head inside single leg">
 								<outline text="Live video" />
 								<outline text="Instructional video" />
 							</outline>
