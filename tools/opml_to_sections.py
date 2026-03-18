@@ -97,9 +97,18 @@ def convert_node(outline):
     if video_children and video_children[0].get('url'):
         node['v'] = video_children[0].get('url')
 
+    # Deduplicate children with identical text (Mindomo data duplication)
+    seen_texts = set()
+    deduped_children = []
+    for c in other_children:
+        ct = c.get('text', '').strip()
+        if ct not in seen_texts:
+            seen_texts.add(ct)
+            deduped_children.append(c)
+
     # Recurse into real children
-    if other_children:
-        node['c'] = [convert_node(c) for c in other_children]
+    if deduped_children:
+        node['c'] = [convert_node(c) for c in deduped_children]
 
     return node
 
