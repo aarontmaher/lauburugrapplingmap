@@ -3,7 +3,7 @@
 	<head>
 		<title>grappling</title>
 		<dateCreated>2026-03-05 02:36:15</dateCreated>
-		<dateModified>2026-03-18 09:41:35</dateModified>
+		<dateModified>2026-03-18 12:27:48</dateModified>
 		<ownerName>Aaron Maher</ownerName>
 	</head>
 	<body>
@@ -45,10 +45,12 @@
 								</outline>
 							</outline>
 						</outline>
+						<outline text="Control" />
 						<outline text="Offence">
 							<outline text="Brush by" />
 							<outline text="Throw by" />
 						</outline>
+						<outline text="Defence" />
 						<outline text="Offensive transitions">
 							<outline text="Outside tie to 2-on-1 → 2-on-1 (You)" />
 							<outline text="Outside tie to double leg → Double leg" />
@@ -74,6 +76,9 @@
 								</outline>
 							</outline>
 						</outline>
+						<outline text="Control" />
+						<outline text="Offence" />
+						<outline text="Defence" />
 						<outline text="Offensive transitions">
 							<outline text="Inside tie to sweep single → Head inside single leg" />
 						</outline>
@@ -416,9 +421,11 @@
 							<outline text="Underhook throw by to wrestling bodylock" />
 							<outline text="Over/Under" />
 						</outline>
+						<outline text="Control" />
 						<outline text="Offence">
 							<outline text="Knee tap" />
 						</outline>
+						<outline text="Defence" />
 						<outline text="Offensive transitions">
 							<outline text="Underhook to head inside single → Head inside single leg">
 								<outline text="Instructional video" />
@@ -502,8 +509,14 @@
 								<outline text="Live video" />
 								<outline text="Instructional video" />
 							</outline>
+							<outline text="Opponent">
+								<outline text="Setups / Entries" />
+								<outline text="Control" />
+								<outline text="Offence" />
+								<outline text="Defence" />
+								<outline text="Offensive transitions" />
+							</outline>
 						</outline>
-						<outline text="Opponent" />
 					</outline>
 				</outline>
 			</outline>
