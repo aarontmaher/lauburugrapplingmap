@@ -3,7 +3,7 @@
 	<head>
 		<title>grappling</title>
 		<dateCreated>2026-03-05 02:36:15</dateCreated>
-		<dateModified>2026-03-18 08:01:49</dateModified>
+		<dateModified>2026-03-18 08:57:23</dateModified>
 		<ownerName>Aaron Maher</ownerName>
 	</head>
 	<body>
@@ -475,7 +475,7 @@
 						<outline text="Setups / Entries" />
 						<outline text="Control" />
 						<outline text="Offence">
-							<outline text="Sweep single wefgw">
+							<outline text="Sweep single">
 								<outline text="Live video" />
 								<outline text="Instructional video" />
 							</outline>
