@@ -3,7 +3,7 @@
 	<head>
 		<title>grappling</title>
 		<dateCreated>2026-03-05 02:36:15</dateCreated>
-		<dateModified>2026-03-18 08:57:23</dateModified>
+		<dateModified>2026-03-18 09:41:35</dateModified>
 		<ownerName>Aaron Maher</ownerName>
 	</head>
 	<body>
@@ -5092,12 +5092,20 @@
 			<outline text="Back Control">
 				<outline text="Attacker">
 					<outline text="Setups / Entries">
+						<outline text="Seat belt" />
+						<outline text="Body triangle" />
 						<outline text="Setups / Entries" />
 					</outline>
 					<outline text="Control">
+						<outline text="Chin strap" />
+						<outline text="Chest to back pressure" />
+						<outline text="Body triangle" />
+						<outline text="Seat belt grip" />
 						<outline text="Control" />
 					</outline>
 					<outline text="Offence">
+						<outline text="Arm bar from back" />
+						<outline text="Rear naked choke" />
 						<outline text="Offence" />
 					</outline>
 					<outline text="Defence / Escapes">
