@@ -164,6 +164,11 @@ Scripts:
 - ~/Chat-gpt/results.md — auto-updated by pipeline after each push.
 - Contains LATEST-RESULT markers for programmatic reading.
 - Siri integration: archived (docs/archive/), not active. Scripts remain in tools/siri/ for future use.
+DAILY PASTE-BACK WORKFLOW:
+1. Open results.md (raw.githubusercontent.com/aarontmaher/Chat-gpt/main/results.md)
+2. Copy LATEST-RESULT block
+3. Paste to Claude Chat in one message
+That's it — Chat reads Code + Cowork results from one paste.
 ---
 ## OPML PIPELINE
 Single source of truth: ~/GrapplingMap/exports/grappling.opml
