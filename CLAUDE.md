@@ -220,3 +220,34 @@ Cowork: -- FROM: COWORK
 Code: -- FROM: CODE
 Aaron: -- FROM: AARON
 ChatGPT: -- FROM: CHATGPT
+
+---
+## SESSION LOG — 2026-03-19
+### New learnings:
+COWORK RULE ADDITION: Schema verification = visual expand + scroll only.
+Using find tool or read_page for programmatic search is a rule violation.
+Call it out each time.
+TECHNIQUE CONTENT INCIDENT (DP-06): Claude issued a prompt containing invented
+technique names including Gi techniques (bow and arrow choke, collar choke)
+and a non-existent technique (straight jacket choke). All were removed from Mindomo.
+Rule hardened permanently: Claude never provides technique names in any prompt.
+This applies to Chat, Code, and Cowork.
+LIVE FOOTAGE: 574 technique folders created. Commit 93c5b88.
+Phase 1 operational. Phase 2 (YouTube upload) pending.
+SCHEMA FULLY VERIFIED (2026-03-19):
+- All 12 Guard positions: Passer + Guard player + 6 headings correct.
+- Berimbolo + Crab ride + Grounded 50/50: all verified.
+- Side bodylock + Wrestling rear bodylock: both verified.
+- OT restructure complete: HGP, RDLR, K guard, Grounded 50/50 all cleaned.
+- 0 schema flags remaining.
+BARE OT DESTINATIONS STILL PENDING (Aaron to provide context labels):
+- Half Guard Passing Passer OT: bare "Mount"
+- Reverse de la riva Guard player OT: bare "Crab ride"
+Note: Cowork's find tool reported these as not found — may have been cleaned
+in OT restructure. Code to verify after next pipeline run.
+DEMO GIF: ~/Downloads/grappling-map-demo-v2.gif (235KB).
+Shows: rotating graph, BUILT-OUT filter, Turtle panel, REF navigation.
+Graph shows: Back Control, Turtle, Mount, Berimbolo, Side Control,
+North South, Front Headlock, Crab ride all visible with edges. Demo-ready.
+CLAUDE.md UPDATE RULE: Read CLAUDE.md at start of every session.
+Update it at least once per session with new decisions, fixes, and state.
