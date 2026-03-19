@@ -89,6 +89,12 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
 .progress-pill:hover { border-color: var(--text-muted); color: var(--text); }
 .progress-pill.drilling { border-color: var(--blue); color: var(--blue); }
 .progress-pill.learned { border-color: var(--accent); color: var(--accent); background: rgba(232,255,71,0.05); }
+.track-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; display: none; }
+.track-dot.drilling { display: inline-block; background: var(--blue); }
+.track-dot.learned { display: inline-block; background: var(--accent); }
+.pos-count { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--text-muted); letter-spacing: 0.5px; margin-left: 6px; }
+.btn-track-all { font-family: 'DM Mono', monospace; font-size: 8px; letter-spacing: 0.5px; padding: 2px 6px; border: 1px solid var(--border); color: var(--text-muted); background: transparent; cursor: pointer; border-radius: 2px; margin-left: auto; text-transform: uppercase; transition: all 0.15s; }
+.btn-track-all:hover { border-color: var(--blue); color: var(--blue); }
 .children { list-style: none; }
 .tree-item.collapsed > .children { display: none; }
 .inline-player { }
@@ -851,6 +857,12 @@ function buildNode(node, sectionTitle, depth, parentUl, parentKey, disambig, pos
   label.textContent = node.t;
   content.appendChild(label);
 
+  // Tracking dot (always visible indicator)
+  var _dotProg = STATE.progress[key] || 'none';
+  var trackDot = document.createElement('span');
+  trackDot.className = 'track-dot' + (_dotProg !== 'none' ? ' ' + _dotProg : '');
+  content.appendChild(trackDot);
+
   const actions = document.createElement('div');
   actions.className = 'node-actions';
 
@@ -908,6 +920,8 @@ function buildNode(node, sectionTitle, depth, parentUl, parentKey, disambig, pos
     else if (next === 'drilling') { STATE.progress[key] = 'drilling'; prog.className = 'progress-pill drilling'; prog.textContent = 'Drilling'; }
     else { STATE.progress[key] = 'learned'; prog.className = 'progress-pill learned'; prog.textContent = 'Learned'; }
     li.dataset.progress = next;
+    var dot = li.querySelector('.track-dot');
+    if (dot) dot.className = 'track-dot' + (next !== 'none' ? ' ' + next : '');
     saveState(); updateStats(); refreshAllViews();
   });
   li.dataset.progress = curProg;
@@ -947,6 +961,29 @@ function buildNode(node, sectionTitle, depth, parentUl, parentKey, disambig, pos
       if(window.g3dSyncExpanded) window.g3dSyncExpanded();
     });
     const isHeading = SCHEMA_NAMES.has(node.t.trim());
+    if (isHeading && depth > 0) {
+      // "Track all in heading" button
+      var trackAllBtn = document.createElement('button');
+      trackAllBtn.className = 'btn-track-all';
+      trackAllBtn.textContent = 'Track all';
+      trackAllBtn.addEventListener('click', function(ev) {
+        ev.stopPropagation();
+        var items = li.querySelectorAll(':scope > .children > .tree-item');
+        items.forEach(function(child) {
+          var ck = child.dataset.key;
+          if (ck && !STATE.progress[ck]) {
+            STATE.progress[ck] = 'drilling';
+            child.dataset.progress = 'drilling';
+            var dot = child.querySelector('.track-dot');
+            if (dot) dot.className = 'track-dot drilling';
+            var pill = child.querySelector('.progress-pill');
+            if (pill) { pill.className = 'progress-pill drilling'; pill.textContent = 'Drilling'; }
+          }
+        });
+        saveState(); updateStats(); refreshAllViews();
+      });
+      actions.appendChild(trackAllBtn);
+    }
     if (isHeading) {
       // Heading click: scroll + highlight + expand only — no selection, no detail view
       nodeDiv.addEventListener('click', () => {
@@ -991,6 +1028,21 @@ function buildNode(node, sectionTitle, depth, parentUl, parentKey, disambig, pos
     }
   }
 
+  // Position-level technique count
+  if (depth === 0 && hasChildren) {
+    var _techCount = 0, _trackedCount = 0;
+    li.querySelectorAll('.tree-item').forEach(function(child) {
+      if (child.dataset.schema === '0') {
+        _techCount++;
+        var cp = child.dataset.progress;
+        if (cp && cp !== 'none') _trackedCount++;
+      }
+    });
+    var posCountEl = document.createElement('span');
+    posCountEl.className = 'pos-count';
+    posCountEl.textContent = '(' + _techCount + ' tech' + (_trackedCount > 0 ? ', ' + _trackedCount + ' tracked' : '') + ')';
+    content.appendChild(posCountEl);
+  }
   STATE.totalNodes++;
   parentUl.appendChild(li);
 }
@@ -1740,12 +1792,12 @@ window.initGraph3D = (function() {
       if(!m.visible)return;
       var nidN=Number(nid);var nnd=nodeMap3d[nid];
       if(nidN===id){m.material.opacity=1.0;m.material.emissiveIntensity=0.8;}
-      else if(connected.has(nidN)){m.material.opacity=0.75;m.material.emissiveIntensity=0.4;}
+      else if(connected.has(nidN)){m.material.opacity=0.85;m.material.emissiveIntensity=0.5;}
       else if(nnd&&!nnd.in_network){m.material.opacity=ORPHAN_OPACITY;m.material.emissiveIntensity=0.05;}
-      else{m.material.opacity=0.04;m.material.emissiveIntensity=0;}
+      else{m.material.opacity=0.15;m.material.emissiveIntensity=0;}
     });
     Object.entries(ringMap3d).forEach(function([nid,r]){if(!r.visible)return;var nidN=Number(nid);r.material.opacity=nidN===id?0.6:connected.has(nidN)?0.3:0.04;});
-    edgeMeshes3d.forEach(function(e){if(!e.line.visible)return;e._mat.opacity=(e.source===id||e.target===id)?0.8:0.01;});
+    edgeMeshes3d.forEach(function(e){if(!e.line.visible)return;e._mat.opacity=(e.source===id||e.target===id)?1.0:0.05;});
     openDetail3d(nd3,inE,outE);
   }
 
