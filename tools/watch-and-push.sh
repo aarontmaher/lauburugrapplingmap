@@ -79,25 +79,33 @@ handle_new_opml() {
     local ts
     ts=$(date +"%Y%m%d_%H%M%S")
 
-    # ── STEP 1: Ensure canonical OPML is up-to-date ──────────────────
-    # Find newest Downloads export
-    local latest_dl
-    latest_dl=$(ls -t "${DOWNLOADS_DIR}"/grappling*.opml 2>/dev/null | head -n 1)
+    # ── STEP 1: Determine OPML source safely ──────────────────────────
+    # If change event IS the canonical file: use as-is (Code edited it directly).
+    # If change event is a Downloads file: copy to canonical only if newer.
+    # Other events: just run pipeline from canonical.
+    local cf canon dl
+    cf="$(python3 -c 'import os,sys; print(os.path.realpath(sys.argv[1]))' "${changed_file}" 2>/dev/null || echo "${changed_file}")"
+    canon="$(python3 -c 'import os; print(os.path.realpath(os.path.expanduser("~/GrapplingMap/exports/grappling.opml")))')"
+    dl="$(python3 -c 'import os; print(os.path.realpath(os.path.expanduser("~/Downloads")))')"
 
-    if [[ -n "${latest_dl}" && -f "${latest_dl}" ]]; then
-        # Stale-guard: always copy newest Downloads → canonical
-        cp "${latest_dl}" "${CANONICAL_OPML}"
-        log "OPML_SOURCE=downloads:${latest_dl}"
-    elif [[ -f "${CANONICAL_OPML}" ]]; then
-        log "OPML_SOURCE=exports:${CANONICAL_OPML} (no newer download)"
+    if [[ "$cf" == "$canon" ]]; then
+        log "OPML_SOURCE=direct-edit:${canon}"
+    elif [[ "$cf" == "$dl"* ]]; then
+        if [[ ! -f "$canon" ]] || [[ "$cf" -nt "$canon" ]]; then
+            cp "$cf" "${CANONICAL_OPML}"
+            log "OPML_SOURCE=downloads-copied:${cf}"
+        else
+            log "OPML_SOURCE=downloads-older (skipped copy):${cf}"
+        fi
     else
-        err "No OPML found in Downloads or exports. Checked:"
-        err "  Downloads: ${DOWNLOADS_DIR}/grappling*.opml"
-        err "  Canonical: ${CANONICAL_OPML}"
+        log "OPML_SOURCE=other-event (no copy):${cf}"
+    fi
+
+    if [[ ! -f "${CANONICAL_OPML}" ]]; then
+        err "No canonical OPML found at ${CANONICAL_OPML}"
         return 1
     fi
 
-    log "OPML_SOURCE=exports:${CANONICAL_OPML}"
     log "OPML_MTIME=$(stat -f '%Sm' -t '%Y-%m-%dT%H:%M:%S' "${CANONICAL_OPML}" 2>/dev/null || date -r "${CANONICAL_OPML}" '+%Y-%m-%dT%H:%M:%S' 2>/dev/null || echo 'unknown')"
 
     # Archive timestamped copy
