@@ -16,6 +16,7 @@
 | Pipeline converter | ~/Chat-gpt/tools/opml_to_sections.py |
 | Exports path | ~/GrapplingMap/exports/grappling.opml (single source of truth) |
 | Live footage root | ~/GrapplingMap/live-footage/ |
+| Results feed | ~/Chat-gpt/results.md (Code writes after every task via tools/write-result.sh) |
 ---
 ## MISSION
 Build a demo-ready proof of product:
@@ -205,6 +206,7 @@ Guard OT status: 17/19 positions have zero OT lines. Only HGP + RDLR have edges.
 | HGP Passer OT | "Half guard passing to mount (knee slide) → Mount" |
 | RDLR GP OT | "Reverse de la riva inversion to crab ride → Crab ride" |
 | Boot sequence | loadState->initDataFromSections->buildSections->markBuiltOut->updateStats->initGraph3D |
+| Results feed | results.md written after every Code task. Schema: prompt_id, timestamp, summary, edges, commit, flags. |
 ---
 ## PROMPT-ID LOG
 | ID | Task | Status |
@@ -227,6 +229,7 @@ Guard OT status: 17/19 positions have zero OT lines. Only HGP + RDLR have edges.
 | SITE-CLAUDE-MD | Create this file | done 50d9d9e |
 | SITE-BATCH-07 | Built-out fix + live playlists | done |
 | SITE-BATCH-08 | UX polish + DIAG + canonical logging | this |
+| RESULTS-WRITER-01 | results.md feed + write-result.sh + pipeline hook + site fetch | done |
 ---
 ## SIGN-OFF TAGS
 Claude Chat: -- FROM: CLAUDE CHAT
