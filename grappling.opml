@@ -728,7 +728,8 @@
           <outline text="Head inside single leg">
             <outline text="Attacker">
               <outline text="Setups / Entries">
-                </outline>
+                <outline text="SMOKE-TEST-HARDEN" />
+              </outline>
               <outline text="Control">
                 <outline text="Sweep single" />
               </outline>
