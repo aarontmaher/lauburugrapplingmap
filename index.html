@@ -67,7 +67,7 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
 .section.collapsed .section-body { display: none; }
 .tree { list-style: none; padding: 0 0 8px; }
 .tree-item { }
-.tree-item.technique-selected { background: rgba(232,255,71,0.06); box-shadow: inset 2px 0 0 rgba(232,255,71,0.35); }
+.tree-item.technique-selected { background: rgba(232,255,71,0.10); box-shadow: inset 3px 0 0 rgba(232,255,71,0.50); }
 .node { display: flex; align-items: flex-start; gap: 6px; padding: 4px 16px 4px 8px; transition: background 0.1s; min-height: 32px; }
 .node:hover { background: rgba(255,255,255,0.03); }
 .node-toggle { width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; font-size: 11px; color: var(--text-muted); cursor: pointer; flex-shrink: 0; margin-top: 2px; border-radius: 2px; transition: all 0.15s; font-family: 'DM Mono', monospace; }
@@ -1773,7 +1773,7 @@ window.initGraph3D = (function() {
 
     // ── Badges: keep → REF only ───────────────────────────────────────
     var b=document.getElementById('g3dDetailBadges');b.innerHTML='';
-    b.innerHTML='<span style="background:#ffffff10;color:#8899aa;border:1px solid rgba(255,255,255,0.08);font-family:\'Barlow Condensed\',monospace;font-size:10px;letter-spacing:1px;padding:2px 7px;border-radius:3px;cursor:pointer;margin-left:auto;" onclick="switchToReferenceNode(\''+nd.label.replace(/'/g,"\\'")+'\',\''+nd.section.replace(/'/g,"\\'")+'\')">→ REF</span>';
+    b.innerHTML='<span style="background:#ffffff10;color:#8899aa;border:1px solid rgba(255,255,255,0.08);font-family:\'Barlow Condensed\',monospace;font-size:10px;letter-spacing:1px;padding:2px 7px;border-radius:3px;cursor:pointer;margin-left:auto;" onclick="closeDetail3d();switchToReferenceNode(\''+nd.label.replace(/'/g,"\\'")+'\',\''+nd.section.replace(/'/g,"\\'")+'\')">→ REF</span>';
 
     // ── Look up position in SECTIONS ──────────────────────────────────
     var sectNode = null;
@@ -1951,6 +1951,9 @@ window.initGraph3D = (function() {
       document.getElementById('g3dStatIn').textContent = 'n/a';
       document.getElementById('g3dStatOut').textContent = 'n/a';
     }
+
+    // Auto-scroll Reference to this position (background — don't switch tab)
+    if (typeof referenceReveal === 'function') referenceReveal(nd.label, nd.section);
   }
 
   function closeDetail3d(){
@@ -2724,6 +2727,28 @@ updateStats();
           '<div class="diag-val">Transition edges: ' + net.edgeCount + '</div>' +
           '<div class="diag-val">In-network: ' + (net.nodes ? net.nodes.filter(function(n){return n.in_network;}).length : '?') + '</div>' +
           '<div class="diag-val">Max edge weight: ' + maxW + ' | Max indegree: ' + maxIn + '</div>';
+        // Built-out positions
+        var boItems = document.querySelectorAll('[data-builtout="1"]');
+        var boNames = [];
+        boItems.forEach(function(item) {
+          var lbl = item.querySelector('.node-content .node-label');
+          if (lbl) boNames.push(lbl.textContent.trim());
+        });
+        if (boNames.length) {
+          el.innerHTML += '<div class="diag-val" style="margin-top:4px;">Built-out (' + boNames.length + '): ' + boNames.join(', ') + '</div>';
+        }
+        // Section edge breakdown
+        var secEdges = {};
+        if (net.edges) net.edges.forEach(function(e) {
+          var srcNode = net.nodes ? net.nodes.find(function(n){return n.id===e.source;}) : null;
+          var sec = srcNode && typeof SECTIONS !== 'undefined' && SECTIONS[srcNode.section_idx] ? SECTIONS[srcNode.section_idx].title : '?';
+          secEdges[sec] = (secEdges[sec] || 0) + 1;
+        });
+        var secParts = [];
+        for (var sk in secEdges) secParts.push(sk + ' ' + secEdges[sk]);
+        if (secParts.length) {
+          el.innerHTML += '<div class="diag-val">Edge breakdown: ' + secParts.join(' | ') + '</div>';
+        }
       } else {
         el.innerHTML = '<div class="diag-label">3D Graph</div><div class="diag-val" style="color:#4a5568;">Not initialized</div>';
       }

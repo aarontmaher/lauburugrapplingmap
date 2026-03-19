@@ -174,6 +174,9 @@ CLAUDE.md: live, commit 50d9d9e
 Code: PIPE-LIVE-01B (verify live button wiring), SITE-BATCH-07 (this batch)
 Cowork: GUARD-03 done (HGP→Mount + RDLR→Crab ride landed, edges=36)
 Aaron decisions: Saddle canonical name TBD
+Half guard flag: listed as 19th Guard canonical in CLAUDE.md but NOT found in OPML (only 18 positions).
+  Pending Aaron: is "Half guard" a standalone position or covered by "Half Guard Passing"?
+Guard OT status: 17/19 positions have zero OT lines. Only HGP + RDLR have edges. Content needed from Aaron.
 ---
 ## LOCKED DECISIONS
 | Decision | Resolution |
@@ -220,9 +223,10 @@ Aaron decisions: Saddle canonical name TBD
 | SCR-01 to 04 | Scrambles fixes | done |
 | GUARD-01 | Guard OT check | done |
 | GUARD-02 | HGP + RDLR bare OT flags | done (fixed by GUARD-03) |
-| GUARD-03 | Add 2 new OT lines (HGP→Mount, RDLR→Crab ride) | running |
+| GUARD-03 | Add 2 new OT lines (HGP→Mount, RDLR→Crab ride) | done |
 | SITE-CLAUDE-MD | Create this file | done 50d9d9e |
-| SITE-BATCH-07 | Built-out fix + live playlists | this |
+| SITE-BATCH-07 | Built-out fix + live playlists | done |
+| SITE-BATCH-08 | UX polish + DIAG + canonical logging | this |
 ---
 ## SIGN-OFF TAGS
 Claude Chat: -- FROM: CLAUDE CHAT

@@ -517,6 +517,27 @@ if __name__ == '__main__':
         total_weight = sum(e['weight'] for e in net_edges)
         max_weight = max((e['weight'] for e in net_edges), default=0)
         print(f'Canonical positions: {len(canonical_set)}')
+
+        # Track canonical position changes across runs
+        last_canonical_path = os.path.expanduser(
+            '~/GrapplingMap/exports/last_canonical.json')
+        prev_canonical = set()
+        if os.path.exists(last_canonical_path):
+            try:
+                with open(last_canonical_path) as _lc:
+                    prev_canonical = set(json.load(_lc))
+            except Exception:
+                pass
+        new_canonical = canonical_set - prev_canonical
+        lost_canonical = prev_canonical - canonical_set
+        if new_canonical:
+            print(f'  NEW_CANONICAL: {sorted(new_canonical)}')
+        if lost_canonical:
+            print(f'  LOST_CANONICAL: {sorted(lost_canonical)}')
+        if not dry_run:
+            with open(last_canonical_path, 'w') as _lc:
+                json.dump(sorted(canonical_set), _lc)
+
         print(f'Transition edges: {matched} unique | '
               f'total weight: {total_weight} | max weight: {max_weight}')
 
