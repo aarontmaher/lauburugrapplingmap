@@ -201,11 +201,12 @@ CLAUDE.md: live, commit 50d9d9e
 ## PENDING TASKS
 # Update this section every session.
 Code: PIPE-LIVE-01B (verify live button wiring), SITE-BATCH-07 (done)
-Cowork: GUARD-03 done (HGP→Mount + RDLR→Crab ride landed, edges=36)
+Cowork: RETIRED — patch system + Chat verification replaces Cowork for structural work.
 Aaron decisions: Saddle canonical name TBD
 Half guard: RESOLVED — created 2026-03-19 by Cowork. Now 19 Guard canonical positions.
 Guard OT status: 16/19 positions have zero OT lines. Only HGP + RDLR have edges. Content needed from Aaron.
-OPML audit: OPML is complete source of truth. 0 non-standard attrs. Safe to drop Mindomo as editor.
+OPML audit (2026-03-19): 3592 paths, 808 technique leaves, 48 canonical, 27 OT leaves,
+  0 non-standard attrs, fingerprint cb7b55fb. Safe to drop Mindomo as editor: YES.
 ---
 ## LOCKED DECISIONS
 | Decision | Resolution |
