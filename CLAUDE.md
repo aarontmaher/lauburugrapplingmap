@@ -226,7 +226,7 @@ Aaron: SC OT nested (PATCH-002 A/B/C)
 Aaron: NS Back Control children (PATCH-003 A/B/C)
 Aaron: Front Headlock OT labels (PATCH-004 — 78 techniques ready)
 Aaron: Saddle canonical name TBD
-Guard OT status: 16/19 positions have zero OT lines. Only HGP + RDLR have edges. Content needed from Aaron.
+Guard OT status: deferred — techniques first. 16/19 positions have zero OT lines. Only HGP + RDLR have edges.
 OPML audit (2026-03-19): 3592 paths, 808 technique leaves, 48 canonical, 27 OT leaves,
   0 non-standard attrs, fingerprint cb7b55fb. Safe to drop Mindomo as editor: YES.
 NEXT SESSION PRIORITIES:
