@@ -160,31 +160,10 @@ Scripts:
 - ~/GrapplingMap/live-footage/live-index.json (manifest: 574 entries)
 - ~/Chat-gpt/live-playlists.json (keyed by technique path key)
 ---
-## SIRI + VOICE INTEGRATION
-
-### Siri Shortcuts (install from Shortcuts app):
-- "GrapplingMap Status" → speaks latest results.md entry
-- "Send GrapplingMap Prompt" → POSTs clipboard to Zapier webhook
-- "Run GrapplingMap Pipeline" → triggers watch-and-push.sh (future)
-- "What's Next GrapplingMap" → speaks PENDING TASKS from CLAUDE.md
-
-### Scripts:
-- ~/Chat-gpt/tools/siri/send-prompt.sh
-- ~/Chat-gpt/tools/siri/get-status.sh
-- ~/Chat-gpt/tools/siri/get-next.sh
-
-### Voice Claude workflow:
-1. "Hey Siri GrapplingMap Status" → hear what happened
-2. Open Claude voice chat → paste voice-claude-template.md → speak instructions
-3. Claude voice generates prompt → copy it
-4. "Hey Siri Send GrapplingMap Prompt" → fires to Zapier → Code runs
-5. Back to rolling/editing
-
-### .env.zapier:
-~/Chat-gpt/.env.zapier (chmod 600)
-  GITHUB_PAT=<token>
-  ZAPIER_WEBHOOK=<url after Zapier setup>
-  ZAPIER_PIPELINE_WEBHOOK=<url future>
+## RESULTS FEED
+- ~/Chat-gpt/results.md — auto-updated by pipeline after each push.
+- Contains LATEST-RESULT markers for programmatic reading.
+- Siri integration: archived (docs/archive/), not active. Scripts remain in tools/siri/ for future use.
 ---
 ## OPML PIPELINE
 Single source of truth: ~/GrapplingMap/exports/grappling.opml
@@ -245,8 +224,7 @@ Guard OT status: 16/18 positions have zero OT lines. Only HGP + RDLR have edges.
 | Boot sequence | loadState->initDataFromSections->buildSections->markBuiltOut->updateStats->initGraph3D |
 | Live footage shuffle | youtubePlaylistUrl() adds shuffle=1&playnext=1 (commit 6630276) |
 | Results feed | results.md written after every Code task. Schema: prompt_id, timestamp, summary, edges, commit, flags. |
-| Siri integration | 4 shortcuts: Status, Send Prompt, Run Pipeline, What's Next |
-| Voice Claude template | docs/voice-claude-template.md — paste at voice chat start |
+| Siri integration | Archived — not needed yet. results.md feed active. Scripts in tools/siri/ for future. |
 ---
 ## PROMPT-ID LOG
 | ID | Task | Status |
