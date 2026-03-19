@@ -79,10 +79,10 @@ Every paste-back must include a PLAIN ENGLISH SUMMARY section:
 - Perspectives: Passer / Guard player
 - Headings (6): Setups/Entries, Control, Offence, Defence/Escapes, Submissions, Offensive transitions
 - Half guard is canonical and must remain canonical.
-- Canonical (18): Shin pin, Supine Guard, J point, Closed Guard, Headquarters,
+- Canonical (19): Shin pin, Supine Guard, J point, Closed Guard, Headquarters,
   Quarter guard, Half Guard Passing, Butterfly guard, Half butterfly,
   Knee shield half guard, K guard, De la riva, Reverse de la riva,
-  Butterfly ashi, Outside ashi, X guard, Single leg X, Seated Guard
+  Butterfly ashi, Outside ashi, X guard, Single leg X, Seated Guard, Half guard
 ### C) Scrambles
 - Perspectives: Initiative / Defensive
 - Headings (6): Setups/Entries, Control, Offence, Defence/Escapes, Submissions, Offensive transitions
@@ -200,20 +200,20 @@ CLAUDE.md: live, commit 50d9d9e
 ---
 ## PENDING TASKS
 # Update this section every session.
-Code: PIPE-LIVE-01B (verify live button wiring), SITE-BATCH-07 (this batch)
+Code: PIPE-LIVE-01B (verify live button wiring), SITE-BATCH-07 (done)
 Cowork: GUARD-03 done (HGP→Mount + RDLR→Crab ride landed, edges=36)
 Aaron decisions: Saddle canonical name TBD
-Half guard flag: listed as 19th Guard canonical in CLAUDE.md but NOT found in OPML (only 18 positions).
-  Pending Aaron: is "Half guard" a standalone position or covered by "Half Guard Passing"?
-Guard OT status: 16/18 positions have zero OT lines. Only HGP + RDLR have edges. Content needed from Aaron.
+Half guard: RESOLVED — created 2026-03-19 by Cowork. Now 19 Guard canonical positions.
+Guard OT status: 16/19 positions have zero OT lines. Only HGP + RDLR have edges. Content needed from Aaron.
+OPML audit: OPML is complete source of truth. 0 non-standard attrs. Safe to drop Mindomo as editor.
 ---
 ## LOCKED DECISIONS
 | Decision | Resolution |
 |----------|-----------|
 | Technique content | Aaron only. Claude NEVER invents. |
 | No-Gi | Confirmed permanent. |
-| Half guard | Not in Mindomo — 18 Guard positions confirmed. Pending Aaron: create, remove from spec, or rename. |
-| Guard canonical count | 18 (not 19 as previously stated) |
+| Half guard | Created 2026-03-19 by Cowork. Now canonical (19 Guard positions). |
+| Guard canonical count | 19 (Half guard added 2026-03-19) |
 | Knee on belly | PERMANENT HOLD. Never redirect/delete. |
 | Saddle canonical | Not defined. Hold. |
 | Wrestling heading | "Defence" (not "Defence / Escapes") |
