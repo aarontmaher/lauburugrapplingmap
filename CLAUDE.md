@@ -161,7 +161,7 @@ git -C ~/Chat-gpt log -1 --format="%h %s %ci"
 # Do NOT hardcode counts here - they drift.
 Last updated: 2026-03-19
 Pipeline: stable, NO_DEST=0, HELD=1 (Knee on belly bare arrow)
-Transition edges: 34 (Python). in_network: 32.
+Transition edges: 36 (Python). in_network: 36.
 Schema verified: all Guard (12/12), Wrestling sub-positions, Scrambles
 OT restructure: Half Guard Passing, Reverse de la riva, K guard, Grounded 50/50 all cleaned
 Built-out set (11): J point, K guard, Quarter guard, Supine Guard, Mount, Turtle,
