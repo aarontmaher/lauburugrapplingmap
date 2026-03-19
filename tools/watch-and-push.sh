@@ -107,6 +107,16 @@ handle_new_opml() {
     fi
 
     log "OPML_MTIME=$(stat -f '%Sm' -t '%Y-%m-%dT%H:%M:%S' "${CANONICAL_OPML}" 2>/dev/null || date -r "${CANONICAL_OPML}" '+%Y-%m-%dT%H:%M:%S' 2>/dev/null || echo 'unknown')"
+    log "OPML_FINGERPRINT=$(md5 -q "${CANONICAL_OPML}" 2>/dev/null || md5sum "${CANONICAL_OPML}" 2>/dev/null | cut -d' ' -f1 || echo 'unknown')"
+
+    # One-prompt-at-a-time lock
+    local LOCK_FILE="${HOME}/GrapplingMap/exports/.pipeline_lock"
+    if [[ -f "$LOCK_FILE" ]]; then
+        warn "Pipeline lock exists ($(cat "$LOCK_FILE")). Skipping run."
+        return 0
+    fi
+    echo "watcher $$" > "$LOCK_FILE"
+    trap "rm -f '$LOCK_FILE'" RETURN
 
     # Archive timestamped copy
     local archive_name="grappling_${ts}.opml"

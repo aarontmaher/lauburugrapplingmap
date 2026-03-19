@@ -304,6 +304,17 @@ Aaron: -- FROM: AARON
 ChatGPT: -- FROM: CHATGPT
 
 ---
+## OPML-ONLY HARDENING (OPML-WORKFLOW-HARDEN-01)
+- Canonical path: ~/GrapplingMap/exports/grappling.opml (only source)
+- Fingerprint: md5 logged as OPML_FINGERPRINT on every pipeline run
+- Watcher: OPML_SOURCE + OPML_MTIME + OPML_FINGERPRINT logged; lock file prevents overlap
+- Patch system: ~/GrapplingMap/tools/apply_patches.py
+  --dry-run (default), --apply, archive before every apply,
+  stale-guard (abort if OPML older than last patch), deletion threshold (>5 = abort)
+- Lock file: ~/GrapplingMap/exports/.pipeline_lock (watcher + patches share)
+- Mindomo exports: optional "challenge" inputs. Never silently overwrite canonical.
+  Downloads copy only if newer AND change event from Downloads.
+---
 ## SESSION LOG — 2026-03-19
 ### New learnings:
 COWORK RULE ADDITION: Schema verification = visual expand + scroll only.
