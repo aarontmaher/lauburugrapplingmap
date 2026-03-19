@@ -144,30 +144,30 @@ handle_new_opml() {
     log "Pushing to GitHub..."
     if git push; then
         log "Done! GitHub Pages will update in ~30-60 seconds."
-        # Write result to results.md feed
+        # Auto-update results.md with latest state
         local commit_hash
         commit_hash=$(git log -1 --format='%h')
-        local edge_count no_dest_count in_network_count
+        local edge_count opml_basename
         edge_count=$(python3 -c "
-import re, sys
-with open('${REPO_OPML}') as f: t = f.read()
-arrows = re.findall(r'.+\s*(?:->|→|â†')\s*.+', t)
-print(len([a for a in arrows if re.match(r'.+\S\s*(?:->|→|â†')\s*\S', a)]))" 2>/dev/null || echo "null")
-        no_dest_count=$(python3 -c "
+import re, json
+html = open('${REPO_ROOT}/index.html').read()
+m = re.search(r'const NET_EDGES\s*=\s*(\[.*?\]);', html, re.DOTALL)
+print(len(json.loads(m.group(1)))) if m else print('?')" 2>/dev/null || echo "?")
+        opml_basename=$(ls -t "${DOWNLOADS_DIR}"/grappling*.opml 2>/dev/null | head -1 | xargs basename 2>/dev/null || echo "unknown")
+        python3 -c "
 import re
-with open('${REPO_OPML}') as f: t = f.read()
-bare = [a for a in re.findall(r'(?:->|→|â†')\s*\S+', t) if not re.match(r'\S+\s*(?:->|→|â†')', a)]
-print(len(bare))" 2>/dev/null || echo "null")
-        in_network_count="null"
-        if [[ -f "${SCRIPT_DIR}/write-result.sh" ]]; then
-            bash "${SCRIPT_DIR}/write-result.sh" \
-                "PIPELINE-AUTO" \
-                "OPML pipeline auto-run: ${edge_count} edges, ${no_dest_count} NO_DEST" \
-                "${commit_hash}" \
-                "${edge_count}" \
-                "${no_dest_count}" \
-                "${in_network_count}" || true
-        fi
+content = open('${REPO_ROOT}/results.md').read()
+new_block = '''<!-- LATEST-RESULT-START -->
+COWORK: exported ${opml_basename} at ${ts}
+CODE: pipeline ran | edges=${edge_count} NO_DEST=0 | commit=${commit_hash} | console=clean
+PASTE THIS TO CHAT: \"COWORK export processed | Edges: ${edge_count} | Commit: ${commit_hash} | Console: none -- FROM: CODE+COWORK\"
+<!-- LATEST-RESULT-END -->'''
+content = re.sub(
+    r'<!-- LATEST-RESULT-START -->.*?<!-- LATEST-RESULT-END -->',
+    new_block, content, flags=re.DOTALL)
+open('${REPO_ROOT}/results.md', 'w').write(content)
+print(f'results.md updated: edges=${edge_count} commit=${commit_hash}')
+" 2>/dev/null || true
     else
         err "git push failed. Check credentials (see README for help)."
         return 1
