@@ -262,7 +262,7 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
       <button class="tab" data-filter="drilling">Drilling</button>
       <button class="tab" data-filter="learned">Learned</button>
       <button class="tab" data-filter="video">Video</button>
-      <button class="tab" data-filter="builtout">Built-out</button>
+      <button class="tab" data-filter="builtout" title="11 positions with content across \u22653 headings">Built-out</button>
     </div>
     <button class="toolbar-btn" id="refCollapseAll">Collapse All</button>
     <button class="toolbar-btn" id="refExpandAll">Expand All</button>
@@ -1178,7 +1178,16 @@ function markBuiltOut() {
   // Apply to DOM
   document.querySelectorAll('.tree-item[data-key]').forEach(function(li) {
     var built = builtMap.get(li.dataset.key);
-    if (built !== undefined) li.dataset.builtout = built ? '1' : '0';
+    if (built !== undefined) {
+      li.dataset.builtout = built ? '1' : '0';
+      // Add ★ to built-out position labels
+      if (built) {
+        var lbl = li.querySelector(':scope > .node .node-label');
+        if (lbl && lbl.textContent.indexOf('\u2605') === -1) {
+          lbl.textContent = lbl.textContent + ' \u2605';
+        }
+      }
+    }
   });
 
   // Expose for DOM lookups (full path keys: section|section|node)
@@ -2565,7 +2574,9 @@ window.initGraph3D = (function() {
         if(autoRotate3d)tRY+=0.005;
         // Animate selection pulse ring
         if(selRing3d&&selRing3d.visible){const t=Date.now()*0.003;selRing3d.material.opacity=0.35+0.25*Math.sin(t);selRing3d.quaternion.copy(camera3d.quaternion);const snd=nodeMap3d[selectedId3d];if(snd)selRing3d.position.set(snd.x,snd.y,snd.z);}
-        Object.values(ringMap3d).forEach(r=>{if(r.visible)r.quaternion.copy(camera3d.quaternion);});
+        // Built-out ring pulse
+        var boNetMap=window._builtOutNetMap;
+        Object.entries(ringMap3d).forEach(function([nid,r]){if(!r.visible)return;r.quaternion.copy(camera3d.quaternion);var nd=nodeMap3d[nid];if(nd&&boNetMap&&boNetMap.get(nd.key)===true){var pt=Date.now()*0.002;r.material.opacity=0.12+0.12*Math.sin(pt);}});
         renderer3d.render(scene3d,camera3d);
         drawLabels3d();
       })();
