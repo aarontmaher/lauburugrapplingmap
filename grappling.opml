@@ -4212,194 +4212,71 @@
         <outline text="Mount">
           <outline text="Attacker">
             <outline text="Setups / Entries">
-              <outline text="Notes">
-                <outline text="Example: Enter mount after pass" />
-              </outline>
-              <outline text="Nearside underhook side control to mount → Mount" />
-              <outline text="Crossface side control → Mount" />
-              <outline text="Body lock pass to mount → Mount" />
-              <outline text="Tripod pass to mount → Mount" />
-              <outline text="Half guard to mount → Mount" />
+              <outline text="Nearside underhook side control to mount" />
+              <outline text="Crossface side control to mount" />
+              <outline text="Body lock pass to mount" />
+              <outline text="Tripod pass to mount" />
+              <outline text="Half guard to mount" />
             </outline>
             <outline text="Control">
-              <outline text="Defence">
-                <outline text="Kipping escape">
-                  <outline text="Instructional video" />
-                  <outline text="Live video" />
-                </outline>
-                <outline text="Foot trap">
-                  <outline text="Instructional video" />
-                  <outline text="Live video" />
-                </outline>
-              </outline>
-              <outline text="Offence">
-                <outline text="Squeezing legs">
-                  <outline text="Instructional video" />
-                  <outline text="Live video" />
-                </outline>
-                <outline text="Postured up">
-                  <outline text="Instructional video" />
-                  <outline text="Live video" />
-                </outline>
-                <outline text="Feet position">
-                  <outline text="Instructional video" />
-                  <outline text="Live video" />
-                </outline>
-                <outline text="Isolating arm">
-                  <outline text="Instructional video" />
-                  <outline text="Live video" />
-                </outline>
-              </outline>
-              <outline text="Notes">
-                <outline text="Example: Chest over hips + knees tight" />
-                <outline text="Example: Prevent elbow-knee recovery" />
-              </outline>
               <outline text="Vertical posture mount">
                 <outline text="Notes">
                   <outline text="Sitting upright mount with knees tight and opponent's arms free." />
+                  <outline text="Squeezing legs" />
+                  <outline text="Postured up" />
+                  <outline text="Feet position" />
+                  <outline text="Isolating arm" />
                 </outline>
               </outline>
-              <outline text="Single arm chest wrap mount">
-                <outline text="Control points">
-                  <outline text="Opponent arm isolated above shoulder line" />
-                  <outline text="Knees squeezing tight" />
-                  <outline text="Chest pressure forward" />
-                </outline>
-              </outline>
-              <outline text="Double arm chest wrap mount">
-                <outline text="Control points">
-                  <outline text="Both opponent arms isolated" />
-                  <outline text="Chest pressure heavy" />
-                  <outline text="Hips centered over opponent" />
-                </outline>
-              </outline>
-              <outline text="S-mount">
-                <outline text="Control points">
-                  <outline text="Butterfly grip under neck" />
-                  <outline text="Step one leg up, knee pointing to roof" />
-                  <outline text="Sit same side hip on chest" />
-                  <outline text="Slide opposite knee behind head" />
-                </outline>
-              </outline>
+              <outline text="Single arm chest wrap" />
+              <outline text="S mount" />
             </outline>
             <outline text="Offence">
-              <outline text="Head arm">
-                <outline text="turtles">
-                  <outline text="Reverse darce">
+              <outline text="Single arm chest wrap">
+                <outline text="Notes">
+                  <outline text="Switch arms to free attacking arm, then weave arm up toward S mount" />
+                </outline>
+                <outline text="Knee through to mounted triangle (opponent blocks arm walk-up)">
+                  <outline text="Instructional video" />
+                  <outline text="Live video" />
+                </outline>
+                <outline text="S mount to arm bar (opponent defends triangle by raising arm)">
+                  <outline text="Instructional video" />
+                  <outline text="Live video" />
+                </outline>
+                <outline text="Opponent turtles">
+                  <outline text="Reverse D'Arce">
                     <outline text="Instructional video" />
                     <outline text="Live video" />
                   </outline>
                 </outline>
-                <outline text="arm to mat">
-                  <outline text="switch armsweave armknee through">
-                    <outline text="Mounted triangle">
-                      <outline text="Instructional video" />
-                      <outline text="Live video" />
-                    </outline>
-                    <outline text="S mount">
-                      <outline text="Arm bar">
-                        <outline text="Instructional video" />
-                        <outline text="Live video" />
-                      </outline>
-                    </outline>
-                  </outline>
-                </outline>
-              </outline>
-              <outline text="Notes">
-                <outline text="Example: Isolate far arm" />
-                <outline text="Example: Climb to high mount" />
               </outline>
             </outline>
-            <outline text="Defence / Escapes">
-              <outline text="Hip frame" />
-              <outline text="Arm retraction" />
-              <outline text="Bridge attempt" />
+            <outline text="Defence">
+              <outline text="Kipping escape">
+                <outline text="Instructional video" />
+                <outline text="Live video" />
+              </outline>
+              <outline text="Foot trap">
+                <outline text="Instructional video" />
+                <outline text="Live video" />
+              </outline>
             </outline>
             <outline text="Submissions">
-              <outline text="Notes">
-                <outline text="Example: Arm triangle" />
-              </outline>
+              <outline text="Head arm" />
               <outline text="Mounted triangle" />
-              <outline text="Spiderweb armbar" />
-              <outline text="Belly-down armbar" />
+              <outline text="Arm bar" />
+              <outline text="Reverse D'Arce" />
             </outline>
             <outline text="Offensive transitions" />
           </outline>
           <outline text="Defender">
-            <outline text="Setups / Entries">
-              <outline text="Setups / Entries" />
-            </outline>
-            <outline text="Control">
-              <outline text="Notes">
-                <outline text="Example: Recover half guard (optional)" />
-              </outline>
-              <outline text="Control">
-                <outline text="Offence">
-                  <outline text="Squeezing legs">
-                    <outline text="Instructional video" />
-                    <outline text="Live video" />
-                  </outline>
-                  <outline text="Postured up">
-                    <outline text="Instructional video" />
-                    <outline text="Live video" />
-                  </outline>
-                  <outline text="Feet position">
-                    <outline text="Instructional video" />
-                    <outline text="Live video" />
-                  </outline>
-                  <outline text="Isolating arm">
-                    <outline text="Instructional video" />
-                    <outline text="Live video" />
-                  </outline>
-                </outline>
-                <outline text="Defence">
-                  <outline text="Kipping escape">
-                    <outline text="Instructional video" />
-                    <outline text="Live video" />
-                  </outline>
-                  <outline text="Foot trap">
-                    <outline text="Instructional video" />
-                    <outline text="Live video" />
-                  </outline>
-                </outline>
-              </outline>
-            </outline>
-            <outline text="Offence">
-              <outline text="Head arm">
-                <outline text="turtles">
-                  <outline text="Reverse darce">
-                    <outline text="Instructional video" />
-                    <outline text="Live video" />
-                  </outline>
-                </outline>
-                <outline text="arm to mat">
-                  <outline text="switch armsweave armknee through">
-                    <outline text="Mounted triangle">
-                      <outline text="Instructional video" />
-                      <outline text="Live video" />
-                    </outline>
-                    <outline text="S mount">
-                      <outline text="Arm bar">
-                        <outline text="Instructional video" />
-                        <outline text="Live video" />
-                      </outline>
-                    </outline>
-                  </outline>
-                </outline>
-              </outline>
-              <outline text="Offence" />
-            </outline>
-            <outline text="Defence / Escapes">
-              <outline text="Defence" />
-              <outline text="Example: Elbow-knee escape" />
-              <outline text="Example: Bridge + shrimp timing" />
-            </outline>
-            <outline text="Submissions">
-              <outline text="Submissions" />
-            </outline>
-            <outline text="Offensive transitions">
-              <outline text="Offensive transitions" />
-            </outline>
+            <outline text="Setups / Entries" />
+            <outline text="Control" />
+            <outline text="Offence" />
+            <outline text="Defence" />
+            <outline text="Submissions" />
+            <outline text="Offensive transitions" />
           </outline>
         </outline>
         <outline text="Side Control">
