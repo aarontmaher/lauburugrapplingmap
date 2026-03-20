@@ -1966,20 +1966,44 @@ window.initGraph3D = (function() {
       }
       headingsSecEl.style.display = 'block';
       var hasAny = false;
+      var SKIP_CHILDREN = new Set(['Instructional video', 'Live video', 'Notes']);
       parentNode.c.forEach(function(h) {
         var t = (h.t || '').trim();
-        if (!t || PERSP_SET.has(t)) return; // skip perspectives nested inside
+        if (!t || PERSP_SET.has(t)) return;
         hasAny = true;
         var tc = countTechniques(h);
+        // Heading row (clickable to expand/collapse)
+        var wrap = document.createElement('div');
         var item = document.createElement('div');
         item.style.cssText = 'display:flex;align-items:center;gap:8px;padding:4px 0;cursor:pointer;font-family:Barlow Condensed,monospace;font-size:13px;';
-        item.innerHTML = '<span style="width:4px;height:4px;border-radius:50%;background:'+col+';flex-shrink:0;display:inline-block;"></span>'
+        var chevron = tc > 0 ? '\u25B8' : '\u00B7';
+        item.innerHTML = '<span class="g3d-heading-chev" style="width:10px;color:#4a5568;font-size:9px;flex-shrink:0;transition:transform 0.15s;">'+chevron+'</span>'
           + '<span style="flex:1;color:#8899aa;">'+t+'</span>'
           + '<span style="color:#4a5568;font-size:11px;">('+tc+')</span>';
+        wrap.appendChild(item);
+        // Child list (hidden by default)
+        var childList = document.createElement('div');
+        childList.style.cssText = 'display:none;padding-left:18px;';
+        if (h.c && h.c.length > 0) {
+          h.c.forEach(function(child) {
+            var ct = (child.t || '').trim();
+            if (!ct || SKIP_CHILDREN.has(ct) || PERSP_SET.has(ct) || SCHEMA_NAMES.has(ct)) return;
+            var cItem = document.createElement('div');
+            cItem.style.cssText = 'padding:2px 0;font-family:Barlow Condensed,monospace;font-size:12px;color:#667;cursor:default;';
+            cItem.textContent = ct;
+            childList.appendChild(cItem);
+          });
+        }
+        wrap.appendChild(childList);
+        // Toggle expand/collapse
+        var expanded = false;
         item.addEventListener('click', function() {
-          if (typeof referenceReveal === 'function') referenceReveal(nd.label, nd.section);
+          expanded = !expanded;
+          childList.style.display = expanded ? 'block' : 'none';
+          var chev = item.querySelector('.g3d-heading-chev');
+          if (chev) chev.style.transform = expanded ? 'rotate(90deg)' : 'rotate(0deg)';
         });
-        headingListEl.appendChild(item);
+        headingListEl.appendChild(wrap);
       });
       if (!hasAny) headingsSecEl.style.display = 'none';
     }
@@ -2065,13 +2089,11 @@ window.initGraph3D = (function() {
           item.innerHTML = '<span style="color:'+color+';font-size:9px;width:12px;">'+arrow+'</span>'
             + '<span style="flex:1;">'+arrow+' '+labelText+weightStr+'</span>';
           var clickLabel = isIncoming ? v.src : v.dest;
+          var clickLabel = isIncoming ? v.src : v.dest;
           (function(lbl) {
             item.addEventListener('click', function() {
               var match = NET_NODES.find(function(n) { return n.depth === 1 && n.label === lbl; });
-              if (match) {
-                var secTitle = SECTIONS[match.section_idx] ? SECTIONS[match.section_idx].title : '';
-                switchToReferenceNode(lbl, secTitle);
-              }
+              if (match) { selectNode3d(match.id); }
             });
           })(clickLabel);
           cl.appendChild(item);
@@ -2093,7 +2115,7 @@ window.initGraph3D = (function() {
               (function(lbl) {
                 item.addEventListener('click', function() {
                   var match = NET_NODES.find(function(n) { return n.depth === 1 && n.label === lbl; });
-                  if (match) { switchToReferenceNode(lbl, SECTIONS[match.section_idx] ? SECTIONS[match.section_idx].title : ''); }
+                  if (match) { selectNode3d(match.id); }
                 });
               })(clickLabel);
               cl.appendChild(item);
