@@ -1950,30 +1950,71 @@ window.initGraph3D = (function() {
         }
       });
 
+      // Header counts
+      var connHeader = document.createElement('div');
+      connHeader.style.cssText = 'font-size:10px;color:#4a5568;font-family:Barlow Condensed,monospace;margin-bottom:6px;';
+      connHeader.innerHTML = '<span style="color:#47c8ff;">IN: '+inMap.size+'</span> \u00b7 <span style="color:#ff9966;">OUT: '+outMap.size+'</span>';
+      cl.appendChild(connHeader);
+
+      // Helper: render connection list with truncation
+      function renderConnGroup(items, color, arrow, isIncoming) {
+        if (items.length === 0) return;
+        var sorted = items.sort(function(a,b) { return b.weight - a.weight; });
+        var MAX_SHOW = 8;
+        var showing = sorted.slice(0, MAX_SHOW);
+        showing.forEach(function(v) {
+          var item = document.createElement('div');
+          item.style.cssText = 'display:flex;align-items:center;gap:6px;padding:3px 0;font-family:Barlow Condensed,monospace;font-size:12px;color:#8899aa;cursor:pointer;';
+          var labelText = isIncoming ? v.src : v.dest;
+          var weightStr = v.weight > 1 ? ' (\u00d7'+v.weight+')' : '';
+          item.innerHTML = '<span style="color:'+color+';font-size:9px;width:12px;">'+arrow+'</span>'
+            + '<span style="flex:1;">'+arrow+' '+labelText+weightStr+'</span>';
+          var clickLabel = isIncoming ? v.src : v.dest;
+          (function(lbl) {
+            item.addEventListener('click', function() {
+              var match = NET_NODES.find(function(n) { return n.depth === 1 && n.label === lbl; });
+              if (match) {
+                var secTitle = SECTIONS[match.section_idx] ? SECTIONS[match.section_idx].title : '';
+                switchToReferenceNode(lbl, secTitle);
+              }
+            });
+          })(clickLabel);
+          cl.appendChild(item);
+        });
+        if (sorted.length > MAX_SHOW) {
+          var expandBtn = document.createElement('div');
+          expandBtn.style.cssText = 'font-size:10px;color:'+color+';cursor:pointer;padding:4px 0;font-family:Barlow Condensed,monospace;';
+          expandBtn.textContent = 'Show all ('+sorted.length+')';
+          expandBtn.addEventListener('click', function() {
+            expandBtn.style.display = 'none';
+            sorted.slice(MAX_SHOW).forEach(function(v) {
+              var item = document.createElement('div');
+              item.style.cssText = 'display:flex;align-items:center;gap:6px;padding:3px 0;font-family:Barlow Condensed,monospace;font-size:12px;color:#8899aa;cursor:pointer;';
+              var labelText = isIncoming ? v.src : v.dest;
+              var weightStr = v.weight > 1 ? ' (\u00d7'+v.weight+')' : '';
+              item.innerHTML = '<span style="color:'+color+';font-size:9px;width:12px;">'+arrow+'</span>'
+                + '<span style="flex:1;">'+arrow+' '+labelText+weightStr+'</span>';
+              var clickLabel = isIncoming ? v.src : v.dest;
+              (function(lbl) {
+                item.addEventListener('click', function() {
+                  var match = NET_NODES.find(function(n) { return n.depth === 1 && n.label === lbl; });
+                  if (match) { switchToReferenceNode(lbl, SECTIONS[match.section_idx] ? SECTIONS[match.section_idx].title : ''); }
+                });
+              })(clickLabel);
+              cl.appendChild(item);
+            });
+          });
+          cl.appendChild(expandBtn);
+        }
+      }
+
       // Render incoming
       if (inMap.size > 0) {
         var inLabel = document.createElement('div');
         inLabel.style.cssText = 'font-size:9px;color:#47c8ff;letter-spacing:1px;text-transform:uppercase;font-family:Barlow Condensed,monospace;margin-bottom:4px;margin-top:2px;';
         inLabel.textContent = 'INCOMING';
         cl.appendChild(inLabel);
-        inMap.forEach(function(v) {
-          var item = document.createElement('div');
-          item.style.cssText = 'display:flex;align-items:center;gap:6px;padding:3px 0;font-family:Barlow Condensed,monospace;font-size:12px;color:#8899aa;';
-          item.innerHTML = '<span style="color:#47c8ff;font-size:9px;width:12px;">←</span>'
-            + '<span style="flex:1;">'+v.src+': '+v.context+'</span>'
-            + '<span style="color:#4a5568;font-size:10px;">('+v.weight+')</span>';
-          item.style.cursor = 'pointer';
-          (function(srcLabel) {
-            item.addEventListener('click', function() {
-              var match = NET_NODES.find(function(n) { return n.depth === 1 && n.label === srcLabel; });
-              if (match) {
-                var secTitle = SECTIONS[match.section_idx] ? SECTIONS[match.section_idx].title : '';
-                switchToReferenceNode(srcLabel, secTitle);
-              }
-            });
-          })(v.src);
-          cl.appendChild(item);
-        });
+        renderConnGroup(Array.from(inMap.values()), '#47c8ff', '\u2190', true);
       }
 
       // Render outgoing
@@ -1982,28 +2023,16 @@ window.initGraph3D = (function() {
         outLabel.style.cssText = 'font-size:9px;color:#ff9966;letter-spacing:1px;text-transform:uppercase;font-family:Barlow Condensed,monospace;margin-bottom:4px;'+(inMap.size>0?'margin-top:10px;':'margin-top:2px;');
         outLabel.textContent = 'OUTGOING';
         cl.appendChild(outLabel);
-        outMap.forEach(function(v) {
-          var item = document.createElement('div');
-          item.style.cssText = 'display:flex;align-items:center;gap:6px;padding:3px 0;font-family:Barlow Condensed,monospace;font-size:12px;color:#8899aa;';
-          item.innerHTML = '<span style="color:#ff9966;font-size:9px;width:12px;">→</span>'
-            + '<span style="flex:1;">'+v.context+' → '+v.dest+'</span>'
-            + '<span style="color:#4a5568;font-size:10px;">('+v.weight+')</span>';
-          item.style.cursor = 'pointer';
-          (function(destLabel) {
-            item.addEventListener('click', function() {
-              var match = NET_NODES.find(function(n) { return n.depth === 1 && n.label === destLabel; });
-              if (match) {
-                var secTitle = SECTIONS[match.section_idx] ? SECTIONS[match.section_idx].title : '';
-                switchToReferenceNode(destLabel, secTitle);
-              }
-            });
-          })(v.dest);
-          cl.appendChild(item);
-        });
+        renderConnGroup(Array.from(outMap.values()), '#ff9966', '\u2192', false);
       }
 
       if (inMap.size === 0 && outMap.size === 0) {
-        cl.innerHTML = '<div style="color:#4a5568;font-size:12px;font-family:Barlow Condensed,monospace;font-style:italic;padding:4px 0;">No transitions for this position</div>';
+        cl.innerHTML = '';
+        cl.appendChild(connHeader);
+        var noConn = document.createElement('div');
+        noConn.style.cssText = 'color:#4a5568;font-size:12px;font-family:Barlow Condensed,monospace;font-style:italic;padding:4px 0;';
+        noConn.textContent = 'No transitions for this position';
+        cl.appendChild(noConn);
       }
     }
 
