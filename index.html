@@ -893,6 +893,21 @@ function buildNode(node, sectionTitle, depth, parentUl, parentKey, disambig, pos
     actions.appendChild(lBtn);
   }
 
+  // Live footage playlist (from live-playlists.json)
+  if (window._livePlaylists) {
+    var liveEntry = window._livePlaylists[key];
+    if (liveEntry && liveEntry.youtubePlaylistId) {
+      var lfBtn = document.createElement('button');
+      lfBtn.className = 'btn-video btn-live';
+      lfBtn.textContent = '\u25b6 Live footage';
+      lfBtn.addEventListener('click', function(ev) {
+        ev.stopPropagation();
+        window.open(youtubePlaylistUrl(liveEntry.youtubePlaylistId), '_blank');
+      });
+      actions.appendChild(lfBtn);
+    }
+  }
+
   // Progress pill
   const prog = document.createElement('div');
   prog.className = 'progress-pill';
@@ -1652,7 +1667,7 @@ window.initGraph3D = (function() {
     selectedId3d=null;
     if(selRing3d)selRing3d.visible=false;
     Object.values(meshMap3d).forEach(m=>{if(!m.visible)return;const nd=nodeMap3d[m.userData.id];if(!nd)return;if(!nd.in_network){m.material.opacity=ORPHAN_OPACITY;m.material.emissiveIntensity=0.05;return;}m.material.opacity=nd.status==='none'?0.72:0.9;m.material.emissiveIntensity=nd.status==='none'?0.12:0.35;});
-    edgeMeshes3d.forEach(e=>{if(e.line.visible)e._mat.opacity=e._base;});
+    edgeMeshes3d.forEach(e=>{if(e.line.visible){e._mat.opacity=e._base;e.line.material.linewidth=1.5;}});
     Object.values(ringMap3d).forEach(r=>{if(r.visible)r.material.opacity=0.18;});
   }
 
@@ -1740,12 +1755,12 @@ window.initGraph3D = (function() {
       if(!m.visible)return;
       var nidN=Number(nid);var nnd=nodeMap3d[nid];
       if(nidN===id){m.material.opacity=1.0;m.material.emissiveIntensity=0.8;}
-      else if(connected.has(nidN)){m.material.opacity=0.75;m.material.emissiveIntensity=0.4;}
+      else if(connected.has(nidN)){m.material.opacity=1.0;m.material.emissiveIntensity=0.5;}
       else if(nnd&&!nnd.in_network){m.material.opacity=ORPHAN_OPACITY;m.material.emissiveIntensity=0.05;}
-      else{m.material.opacity=0.04;m.material.emissiveIntensity=0;}
+      else{m.material.opacity=0.1;m.material.emissiveIntensity=0;}
     });
     Object.entries(ringMap3d).forEach(function([nid,r]){if(!r.visible)return;var nidN=Number(nid);r.material.opacity=nidN===id?0.6:connected.has(nidN)?0.3:0.04;});
-    edgeMeshes3d.forEach(function(e){if(!e.line.visible)return;e._mat.opacity=(e.source===id||e.target===id)?0.8:0.01;});
+    edgeMeshes3d.forEach(function(e){if(!e.line.visible)return;if(e.source===id||e.target===id){e._mat.opacity=1.0;e.line.material.linewidth=2.0;}else{e._mat.opacity=0.03;e.line.material.linewidth=1.0;}});
     openDetail3d(nd3,inE,outE);
   }
 
@@ -2182,6 +2197,10 @@ window.initGraph3D = (function() {
     });
   };
 
+  // Expose reset/close for global keybindings
+  window._g3dResetHL = function() { resetHL3d(); };
+  window._g3dCloseDetail = function() { closeDetail3d(); };
+
   // Soft highlight only — pulse the node without opening the detail panel
   window._g3dHighlightByLabel = function(label) {
     const netNds = NET_NODES.filter(n => n.in_network);
@@ -2503,6 +2522,11 @@ document.addEventListener('keydown', e => {
   if (e.key === 'Escape' && document.getElementById('referenceView').style.display !== 'none') {
     clearTechniqueSelection();
   }
+  // Esc resets 3D graph selection
+  if (e.key === 'Escape' && document.getElementById('graph3dView').style.display !== 'none') {
+    if (window._g3dResetHL) window._g3dResetHL();
+    if (window._g3dCloseDetail) window._g3dCloseDetail();
+  }
 });
 // Click on empty Reference background clears technique selection
 document.getElementById('referenceView').addEventListener('click', function(e) {
@@ -2515,7 +2539,31 @@ checkKeyVersion();
 loadState();
 initDataFromSections();
 // Live playlists — fail-soft fetch (no console errors if missing)
-fetch('./live-playlists.json').then(function(r){if(!r.ok)throw r;return r.json();}).then(function(d){window._livePlaylists=d.techniques||{};}).catch(function(){window._livePlaylists={};});
+fetch('./live-playlists.json').then(function(r){if(!r.ok)throw r;return r.json();}).then(function(d){
+  window._livePlaylists=d.techniques||{};
+  // Retroactively add Live footage buttons to Reference tree items
+  if (Object.keys(window._livePlaylists).length) {
+    document.querySelectorAll('.tree-item').forEach(function(li) {
+      var k = li.dataset.key;
+      var entry = window._livePlaylists[k];
+      if (entry && entry.youtubePlaylistId) {
+        var acts = li.querySelector('.node-actions');
+        if (!acts) return;
+        var btn = document.createElement('button');
+        btn.className = 'btn-video btn-live';
+        btn.textContent = '\u25b6 Live footage';
+        btn.addEventListener('click', function(ev) {
+          ev.stopPropagation();
+          window.open(youtubePlaylistUrl(entry.youtubePlaylistId), '_blank');
+        });
+        // Insert before progress pill
+        var pill = acts.querySelector('.progress-pill');
+        if (pill) acts.insertBefore(btn, pill);
+        else acts.appendChild(btn);
+      }
+    });
+  }
+}).catch(function(){window._livePlaylists={};});
 // Results feed — fail-soft fetch (no console errors if missing)
 fetch('./results.md').then(function(r){if(!r.ok)throw r;return r.text();}).then(function(t){
   var m=t.match(/<!-- LATEST-RESULT-START -->([\s\S]*?)<!-- LATEST-RESULT-END -->/);
