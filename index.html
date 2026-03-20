@@ -352,19 +352,8 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
       </div>
       <div id="g3dDetailName" style="font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:600;letter-spacing:1px;color:#c4cdd8;margin-bottom:8px;line-height:1.2;"></div>
       <div id="g3dDetailBadges" style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px;"></div>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;">
-        <div style="background:#181c26;border:1px solid rgba(255,255,255,0.04);border-radius:4px;padding:7px;text-align:center;">
-          <div id="g3dStatW" style="font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:600;color:var(--accent);line-height:1;">—</div>
-          <div style="font-size:8px;color:#4a5568;letter-spacing:1px;text-transform:uppercase;">Weight</div>
-        </div>
-        <div style="background:#181c26;border:1px solid rgba(255,255,255,0.04);border-radius:4px;padding:7px;text-align:center;">
-          <div id="g3dStatIn" style="font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:600;color:#47c8ff;line-height:1;">—</div>
-          <div style="font-size:8px;color:#4a5568;letter-spacing:1px;text-transform:uppercase;">In</div>
-        </div>
-        <div style="background:#181c26;border:1px solid rgba(255,255,255,0.04);border-radius:4px;padding:7px;text-align:center;">
-          <div id="g3dStatOut" style="font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:600;color:#ff9966;line-height:1;">—</div>
-          <div style="font-size:8px;color:#4a5568;letter-spacing:1px;text-transform:uppercase;">Out</div>
-        </div>
+      <div id="g3dStatLine" style="font-family:'Barlow Condensed',sans-serif;font-size:11px;color:#4a5568;letter-spacing:0.5px;display:none;">
+        <span id="g3dStatIn" style="color:#47c8ff;">—</span> entries · <span id="g3dStatOut" style="color:#ff9966;">—</span> transitions
       </div>
     </div>
     <div id="g3dDetailBody" style="flex:1;overflow-y:auto;padding:14px 18px;">
@@ -1929,7 +1918,8 @@ window.initGraph3D = (function() {
     // ── 1. HEADER ─────────────────────────────────────────────────────
     document.getElementById('g3dDetailDot').style.background=col;
     document.getElementById('g3dDetailSect').textContent=nd.section;
-    document.getElementById('g3dDetailName').textContent=nd.label;
+    var displayLabel = nd.label.replace(/\s*\((You|Opponent|Attacker|Defender|Passer|Guard player|Initiative|Defensive)\)\s*$/,'');
+    document.getElementById('g3dDetailName').textContent=displayLabel;
     document.getElementById('g3dDetailName').style.color=col;
 
     // ── Badges: keep → REF only ───────────────────────────────────────
@@ -2126,7 +2116,7 @@ window.initGraph3D = (function() {
       // Header counts
       var connHeader = document.createElement('div');
       connHeader.style.cssText = 'font-size:10px;color:#4a5568;font-family:Barlow Condensed,monospace;margin-bottom:6px;';
-      connHeader.innerHTML = '<span style="color:#47c8ff;">IN: '+inMap.size+'</span> \u00b7 <span style="color:#ff9966;">OUT: '+outMap.size+'</span>';
+      connHeader.innerHTML = '<span style="color:#47c8ff;">'+inMap.size+' entries</span> \u00b7 <span style="color:#ff9966;">'+outMap.size+' transitions</span>';
       cl.appendChild(connHeader);
 
       // Helper: render connection list with truncation
@@ -2138,18 +2128,17 @@ window.initGraph3D = (function() {
         showing.forEach(function(v) {
           var item = document.createElement('div');
           item.style.cssText = 'display:flex;align-items:center;gap:6px;padding:3px 0;font-family:Barlow Condensed,monospace;font-size:12px;color:#8899aa;cursor:pointer;';
-          var labelText = isIncoming ? v.src : v.dest;
+          var rawLabel = isIncoming ? v.src : v.dest;
+          var labelText = rawLabel.replace(/\s*\((You|Opponent|Attacker|Defender|Passer|Guard player|Initiative|Defensive)\)\s*$/,'');
           var weightStr = v.weight > 1 ? ' (\u00d7'+v.weight+')' : '';
           item.innerHTML = '<span style="color:'+color+';font-size:9px;width:12px;">'+arrow+'</span>'
-            + '<span style="flex:1;">'+arrow+' '+labelText+weightStr+'</span>';
-          var clickLabel = isIncoming ? v.src : v.dest;
-          var clickLabel = isIncoming ? v.src : v.dest;
+            + '<span style="flex:1;">'+labelText+weightStr+'</span>';
           (function(lbl) {
             item.addEventListener('click', function() {
               var match = NET_NODES.find(function(n) { return n.depth === 1 && n.label === lbl; });
               if (match) { selectNode3d(match.id); }
             });
-          })(clickLabel);
+          })(rawLabel);
           cl.appendChild(item);
         });
         if (sorted.length > MAX_SHOW) {
@@ -2161,17 +2150,17 @@ window.initGraph3D = (function() {
             sorted.slice(MAX_SHOW).forEach(function(v) {
               var item = document.createElement('div');
               item.style.cssText = 'display:flex;align-items:center;gap:6px;padding:3px 0;font-family:Barlow Condensed,monospace;font-size:12px;color:#8899aa;cursor:pointer;';
-              var labelText = isIncoming ? v.src : v.dest;
-              var weightStr = v.weight > 1 ? ' (\u00d7'+v.weight+')' : '';
+              var rawLabel2 = isIncoming ? v.src : v.dest;
+              var labelText2 = rawLabel2.replace(/\s*\((You|Opponent|Attacker|Defender|Passer|Guard player|Initiative|Defensive)\)\s*$/,'');
+              var weightStr2 = v.weight > 1 ? ' (\u00d7'+v.weight+')' : '';
               item.innerHTML = '<span style="color:'+color+';font-size:9px;width:12px;">'+arrow+'</span>'
-                + '<span style="flex:1;">'+arrow+' '+labelText+weightStr+'</span>';
-              var clickLabel = isIncoming ? v.src : v.dest;
+                + '<span style="flex:1;">'+labelText2+weightStr2+'</span>';
               (function(lbl) {
                 item.addEventListener('click', function() {
                   var match = NET_NODES.find(function(n) { return n.depth === 1 && n.label === lbl; });
                   if (match) { selectNode3d(match.id); }
                 });
-              })(clickLabel);
+              })(rawLabel2);
               cl.appendChild(item);
             });
           });
@@ -2183,7 +2172,7 @@ window.initGraph3D = (function() {
       if (inMap.size > 0) {
         var inLabel = document.createElement('div');
         inLabel.style.cssText = 'font-size:9px;color:#47c8ff;letter-spacing:1px;text-transform:uppercase;font-family:Barlow Condensed,monospace;margin-bottom:4px;margin-top:2px;';
-        inLabel.textContent = 'INCOMING';
+        inLabel.textContent = 'ENTRIES FROM';
         cl.appendChild(inLabel);
         renderConnGroup(Array.from(inMap.values()), '#47c8ff', '\u2190', true);
       }
@@ -2192,7 +2181,7 @@ window.initGraph3D = (function() {
       if (outMap.size > 0) {
         var outLabel = document.createElement('div');
         outLabel.style.cssText = 'font-size:9px;color:#ff9966;letter-spacing:1px;text-transform:uppercase;font-family:Barlow Condensed,monospace;margin-bottom:4px;'+(inMap.size>0?'margin-top:10px;':'margin-top:2px;');
-        outLabel.textContent = 'OUTGOING';
+        outLabel.textContent = 'TRANSITIONS TO';
         cl.appendChild(outLabel);
         renderConnGroup(Array.from(outMap.values()), '#ff9966', '\u2192', false);
       }
@@ -2207,15 +2196,14 @@ window.initGraph3D = (function() {
       }
     }
 
-    // ── 5. STATS ──────────────────────────────────────────────────────
+    // ── 5. STATS (clean user-facing line) ──────────────────────────────
+    var statLine = document.getElementById('g3dStatLine');
     if (to) {
-      document.getElementById('g3dStatW').textContent = Math.round(nd._w || 0);
       document.getElementById('g3dStatIn').textContent = inE.length;
       document.getElementById('g3dStatOut').textContent = outE.length;
+      statLine.style.display = (inE.length > 0 || outE.length > 0) ? 'block' : 'none';
     } else {
-      document.getElementById('g3dStatW').textContent = 'n/a';
-      document.getElementById('g3dStatIn').textContent = 'n/a';
-      document.getElementById('g3dStatOut').textContent = 'n/a';
+      statLine.style.display = 'none';
     }
 
     // Auto-scroll Reference to this position (background — don't switch tab)
