@@ -4281,201 +4281,118 @@
         </outline>
         <outline text="Side Control">
           <outline text="Attacker">
-            <outline text="Setups / Entries">
-              <outline text="Setups / Entries" />
-            </outline>
+            <outline text="Setups / Entries" />
             <outline text="Control">
-              <outline text="Control" />
+              <outline text="Tight waist">
+                <outline text="Instructional video" />
+                <outline text="Live video" />
+              </outline>
+              <outline text="Near side underhook">
+                <outline text="Instructional video" />
+                <outline text="Live video" />
+              </outline>
+              <outline text="Crossface">
+                <outline text="Instructional video" />
+                <outline text="Live video" />
+              </outline>
+              <outline text="Knee on belly" />
             </outline>
             <outline text="Offence">
-              <outline text="Offence">
-                <outline text="North South Choke">
-                  <outline text="Instructional video" />
-                  <outline text="Live video" />
+              <outline text="Far side underhook to Kimura">
+                <outline text="Notes">
+                  <outline text="Turn them on side, step over head for Kimura" />
+                  <outline text="If they defend Kimura by keeping hands tight → Tarikoplata" />
                 </outline>
-                <outline text="Darce Choke">
-                  <outline text="Instructional video" />
-                  <outline text="Live video" />
-                </outline>
-                <outline text="Far side arm bar">
-                  <outline text="Instructional video" />
-                  <outline text="Live video" />
-                </outline>
-                <outline text="Von flue">
-                  <outline text="Instructional video" />
-                  <outline text="Live video" />
-                </outline>
-                <outline text="Near side Kimura">
-                  <outline text="Kimura">
-                    <outline text="Instructional video" />
-                    <outline text="Live video" />
-                  </outline>
-                  <outline text="Tarikoplata">
-                    <outline text="Instructional video" />
-                    <outline text="Live video" />
-                  </outline>
-                  <outline text="Arm bar">
-                    <outline text="Instructional video" />
-                    <outline text="Live video" />
-                  </outline>
-                  <outline text="Back take">
-                    <outline text="Instructional video" />
-                    <outline text="Live video" />
-                  </outline>
-                </outline>
-                <outline text="Triangle">
-                  <outline text="Instructional video" />
-                  <outline text="Live video" />
-                </outline>
-              </outline>
-              <outline text="High step to mount">
                 <outline text="Instructional video" />
                 <outline text="Live video" />
               </outline>
-              <outline text="Gift wrap to back">
+              <outline text="Far side underhook to Far side arm bar">
+                <outline text="Notes">
+                  <outline text="Bring them on their side" />
+                </outline>
                 <outline text="Instructional video" />
                 <outline text="Live video" />
               </outline>
-              <outline text="Seat belt to back">
-                <outline text="Instructional video" />
-                <outline text="Live video" />
+              <outline text="Opponent turns away">
+                <outline text="Gift wrap to back take">
+                  <outline text="Instructional video" />
+                  <outline text="Live video" />
+                </outline>
+                <outline text="Seatbelt to back">
+                  <outline text="Instructional video" />
+                  <outline text="Live video" />
+                </outline>
               </outline>
-              <outline text="Control points">
-                <outline text="Tight waist">
-                  <outline text="Instructional video" />
-                  <outline text="Live video" />
-                </outline>
-                <outline text="Near side underhook">
-                  <outline text="Instructional video" />
-                  <outline text="Live video" />
-                </outline>
-                <outline text="Crossface">
-                  <outline text="Instructional video" />
-                  <outline text="Live video" />
+              <outline text="Knee on belly to mount">
+                <outline text="Notes">
+                  <outline text="Transition pathway from Side Control through Knee on belly to Mount" />
+                  <outline text="Knee on belly can also be used to score points under BJJ rules" />
                 </outline>
               </outline>
             </outline>
-            <outline text="Defence / Escapes">
-              <outline text="Defence">
-                <outline text="Shoulder frame">
-                  <outline text="Dig Underhook">
-                    <outline text="Wrestle up single leg">
-                      <outline text="Instructional video" />
-                      <outline text="Live video" />
-                    </outline>
-                    <outline text="wrestle up dog fight">
-                      <outline text="Instructional video" />
-                      <outline text="Live video" />
-                    </outline>
-                  </outline>
-                  <outline text="Bring knee shield back in">
-                    <outline text="Instructional video" />
-                    <outline text="Live video" />
-                  </outline>
-                </outline>
-                <outline text="Knee frame">
-                  <outline text="Instructional video" />
-                  <outline text="Live video" />
-                </outline>
-              </outline>
-            </outline>
+            <outline text="Defence" />
             <outline text="Submissions">
-              <outline text="Submissions" />
+              <outline text="North South Choke">
+                <outline text="Instructional video" />
+                <outline text="Live video" />
+              </outline>
+              <outline text="D'Arce">
+                <outline text="Instructional video" />
+                <outline text="Live video" />
+              </outline>
+              <outline text="Far side arm bar">
+                <outline text="Instructional video" />
+                <outline text="Live video" />
+              </outline>
+              <outline text="Von Flue">
+                <outline text="Instructional video" />
+                <outline text="Live video" />
+              </outline>
+              <outline text="Kimura">
+                <outline text="Instructional video" />
+                <outline text="Live video" />
+              </outline>
+              <outline text="Tarikoplata">
+                <outline text="Instructional video" />
+                <outline text="Live video" />
+              </outline>
             </outline>
             <outline text="Offensive transitions">
-              <outline text="Offensive transitions">
-                <outline text="→ Knee on belly">
-                  <outline text="Instructional video" />
-                  <outline text="Live video" />
-                  <outline text="Side control to mount via knee on belly → Mount" />
-                </outline>
-              </outline>
+              <outline text="Kimura back take → Back control" />
+              <outline text="Far side arm bar back take → Back control" />
+              <outline text="Gift wrap to back take → Back control" />
+              <outline text="Seatbelt to back → Back control" />
+              <outline text="Knee on belly to mount → Mount" />
             </outline>
           </outline>
           <outline text="Defender">
-            <outline text="Setups / Entries">
-              <outline text="Setups / Entries" />
-            </outline>
-            <outline text="Control">
-              <outline text="Control" />
-            </outline>
-            <outline text="Offence">
-              <outline text="Offence">
-                <outline text="North South Choke">
-                  <outline text="Instructional video" />
-                  <outline text="Live video" />
-                </outline>
-                <outline text="Darce Choke">
-                  <outline text="Instructional video" />
-                  <outline text="Live video" />
-                </outline>
-                <outline text="Far side arm bar">
-                  <outline text="Instructional video" />
-                  <outline text="Live video" />
-                </outline>
-                <outline text="Von flue">
-                  <outline text="Instructional video" />
-                  <outline text="Live video" />
-                </outline>
-                <outline text="Near side Kimura">
-                  <outline text="Kimura">
+            <outline text="Setups / Entries" />
+            <outline text="Control" />
+            <outline text="Offence" />
+            <outline text="Defence">
+              <outline text="Shoulder frame">
+                <outline text="Dig Underhook">
+                  <outline text="Wrestle up single leg">
                     <outline text="Instructional video" />
                     <outline text="Live video" />
                   </outline>
-                  <outline text="Tarikoplata">
-                    <outline text="Instructional video" />
-                    <outline text="Live video" />
-                  </outline>
-                  <outline text="Arm bar">
-                    <outline text="Instructional video" />
-                    <outline text="Live video" />
-                  </outline>
-                  <outline text="Back take">
+                  <outline text="Wrestle up dog fight">
                     <outline text="Instructional video" />
                     <outline text="Live video" />
                   </outline>
                 </outline>
-                <outline text="Triangle">
+                <outline text="Bring knee shield back in">
                   <outline text="Instructional video" />
                   <outline text="Live video" />
                 </outline>
               </outline>
-            </outline>
-            <outline text="Defence / Escapes">
-              <outline text="Defence">
-                <outline text="Shoulder frame">
-                  <outline text="Dig Underhook">
-                    <outline text="Wrestle up single leg">
-                      <outline text="Instructional video" />
-                      <outline text="Live video" />
-                    </outline>
-                    <outline text="wrestle up dog fight">
-                      <outline text="Instructional video" />
-                      <outline text="Live video" />
-                    </outline>
-                  </outline>
-                  <outline text="Bring knee shield back in">
-                    <outline text="Instructional video" />
-                    <outline text="Live video" />
-                  </outline>
-                </outline>
-                <outline text="Knee frame">
-                  <outline text="Instructional video" />
-                  <outline text="Live video" />
-                </outline>
+              <outline text="Knee frame">
+                <outline text="Instructional video" />
+                <outline text="Live video" />
               </outline>
             </outline>
-            <outline text="Submissions">
-              <outline text="Submissions" />
-            </outline>
-            <outline text="Offensive transitions">
-              <outline text="Offensive transitions">
-                <outline text="→ Knee on belly">
-                  <outline text="Instructional video" />
-                  <outline text="Live video" />
-                </outline>
-              </outline>
-            </outline>
+            <outline text="Submissions" />
+            <outline text="Offensive transitions" />
           </outline>
         </outline>
         <outline text="North South">
