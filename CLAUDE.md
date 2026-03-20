@@ -208,7 +208,7 @@ git -C ~/Chat-gpt log -1 --format="%h %s %ci"
 ## CURRENT SNAPSHOT
 # Regenerate after major pipeline runs. Run DIAG on localhost after hard refresh.
 # Do NOT hardcode counts here - they drift.
-Last updated: 2026-03-19
+Last updated: 2026-03-20
 Pipeline: stable, NO_DEST=0, HELD=1 (Knee on belly bare arrow)
 Transition edges: 36 (Python). in_network: 36.
 Schema verified: all Guard (12/12), Wrestling sub-positions, Scrambles
@@ -216,11 +216,14 @@ OT restructure: Half Guard Passing, Reverse de la riva, K guard, Grounded 50/50 
 Built-out set (11): J point, K guard, Quarter guard, Supine Guard, Mount, Turtle,
   Berimbolo, Grounded 50/50, Wrestling bodylock, Back Control, Crab ride
 Live footage: 574 folders created, sync script ready, Phase 2 (YouTube) pending
-CLAUDE.md: live, commit 50d9d9e
+Auto-merge: confirmed working (fa70c14), auto-merges claude/** PRs instantly
+SITE-BATCH-09 improvements: edge highlight, tracking dots, connection panel,
+  built-out stars/pulse, search breadcrumbs/highlight, position stats bar,
+  camera zoom, patch system hardened, results.md simplified
 ---
 ## PENDING TASKS
 # Update this section every session.
-Code: PIPE-LIVE-01B (verify live button wiring), SITE-BATCH-07 (done)
+Code: SITE-BATCH-09 (done), PIPE-LIVE-01B (verify live button wiring)
 Cowork: RETIRED — patch system + Chat verification replaces Cowork for structural work.
 Aaron decisions: Saddle canonical name TBD
 Half guard: RESOLVED — created 2026-03-19 by Cowork. Now 19 Guard canonical positions.
@@ -262,7 +265,8 @@ NEXT SESSION PRIORITIES:
 | RDLR GP OT | "Reverse de la riva inversion to crab ride → Crab ride" |
 | Boot sequence | loadState->initDataFromSections->buildSections->markBuiltOut->updateStats->initGraph3D |
 | Live footage shuffle | youtubePlaylistUrl() adds shuffle=1&playnext=1 (commit 6630276) |
-| Results feed | results.md written after every Code task. Schema: prompt_id, timestamp, summary, edges, commit, flags. |
+| Results feed | results.md simplified to PROMPT/SITE/NEXT format (SITE-BATCH-09). |
+| Auto-merge | claude/** PRs auto-merge via GitHub Action (squash). Confirmed working fa70c14. |
 | Siri integration | Archived — not needed yet. results.md feed active. Scripts in tools/siri/ for future. |
 | OPML-only workflow | Active. grappling.opml = source of truth. Mindomo = viewer only. |
 | Cowork retired | 2026-03-19. Patch system replaces all structural Cowork work. |
@@ -304,6 +308,7 @@ Auto-merge is enabled for PRs opened from branches matching `claude/**`.
 | DEBRIEF-FORMAT-01 | Plain English debrief format | done |
 | SITE-OVERNIGHT-05 | Full overnight batch | this |
 | GH-AUTOMERGE-01 | Auto-merge workflow for claude/** PRs | done 4afba62 |
+| SITE-BATCH-09 | Edge highlight + tracking + camera zoom + panel improvements | done |
 ---
 ## SIGN-OFF TAGS
 Claude Chat: -- FROM: CLAUDE CHAT
