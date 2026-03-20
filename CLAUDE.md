@@ -144,6 +144,18 @@ Filters: DRILLING/LEARNED/MY GAME (position-level). MY GAME = union of both.
 Empty state: graph visible at low opacity + overlay message.
 Progress: localStorage, KEY_VERSION=2, clean reset on mismatch.
 ---
+## AUTOMATED TESTING
+npm run ready: full pass/fail gate before deploy (smoke tests + build check)
+npm run check: fast smoke suite only (Playwright --reporter=line)
+npm test: all Playwright smoke tests
+npm run test:snapshots: visual regression tests
+npm run test:update-snapshots: regenerate baseline screenshots
+window.__APP_DEBUG__: test surface exposed on page (getState, selectNodeByLabel, focusSearch, setFilter, openDiag)
+Tests: tests/e2e/smoke.spec.js (12 tests), tests/e2e/snapshots.spec.js (3 tests)
+Snapshots: tests/e2e/snapshots.spec.js-snapshots/ (reference, 3D graph, section expanded)
+scripts/ready.sh: full ready check — build verification + smoke tests + open PRs + OPML fingerprint
+Chat no longer needs to verify "does button exist" or "does feature work" — Playwright handles that.
+---
 ## LIVE FOOTAGE SYSTEM (Phase 1)
 Folder: ~/GrapplingMap/live-footage/<section>/<position>/<perspective>/<heading>/<technique>/
 COMMIT_MIN = 5 clips per folder. Playlists per technique (not per position).
@@ -225,10 +237,11 @@ SITE-OVERNIGHT-07: patch system upgraded to difflib fuzzy matching + multi-patch
 SITE-BATCH-10 improvements: keyboard shortcuts (/ T ? arrows), DIAG pipeline/PR panel,
   empty SECTIONS guard, node size recalibration (pow 0.85 for ~2.1x hub ratio)
 SITE-BATCH-09 features: ALL 7 confirmed working via code audit (13/13 checks pass)
+SITE-BATCH-12: Playwright suite live — 12 smoke tests + 3 snapshots, all passing
 ---
 ## PENDING TASKS
 # Update this section every session.
-Code: SITE-BATCH-10 (done), SITE-OVERNIGHT-07 (done), PIPE-LIVE-01B (verify live button wiring)
+Code: SITE-BATCH-12 (done), PIPE-LIVE-01B (verify live button wiring)
 Cowork: RETIRED — patch system + Chat verification replaces Cowork for structural work.
 Aaron decisions: Saddle canonical name TBD
 Half guard: RESOLVED — created 2026-03-19 by Cowork. Now 19 Guard canonical positions.
@@ -278,6 +291,8 @@ NEXT SESSION PRIORITIES:
 | OPML audit | Passed 2026-03-19. Fingerprint: cb7b55fbfcf6e601f49ec920f652dcf5 |
 | Keyboard shortcuts | / (search), T (track), ? (help), G (toggle view), Esc (clear/zoom out), arrows (nav results) |
 | Node size formula | pow(_w, 0.85) * 1.8 — gives ~2.1x ratio for high-indegree hubs |
+| Automated testing | Playwright smoke suite active. npm run ready = deploy gate. 12 smoke + 3 snapshot tests. |
+| Chat verification | Chat no longer checks feature existence — Playwright handles that. Chat focuses on content + coordination. |
 ---
 ## AUTO-MERGE (claude/** branches)
 Auto-merge is enabled for PRs opened from branches matching `claude/**`.
@@ -318,6 +333,7 @@ Auto-merge is enabled for PRs opened from branches matching `claude/**`.
 | SITE-BATCH-09 | Edge highlight + tracking + camera zoom + panel improvements | done |
 | SITE-OVERNIGHT-07 | Overnight polish: patch difflib upgrade + CLAUDE.md update | done |
 | SITE-BATCH-10 | Keyboard shortcuts, DIAG pipeline/PRs, node sizing, empty state | done |
+| SITE-BATCH-12 | Playwright test suite + debug API + npm run ready | done |
 ---
 ## SIGN-OFF TAGS
 Claude Chat: -- FROM: CLAUDE CHAT
