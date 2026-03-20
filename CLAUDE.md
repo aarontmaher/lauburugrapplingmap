@@ -1,7 +1,7 @@
 # GrapplingMap — CLAUDE.md
 # Single source of truth for all agents (Chat/Cowork/Code/Aaron/ChatGPT).
 # Update after every major decision or state change. Read at start of every session.
-# Last updated: 2026-03-19
+# Last updated: 2026-03-20
 ---
 ## PROJECT
 | Item | Value |
@@ -217,13 +217,15 @@ Built-out set (11): J point, K guard, Quarter guard, Supine Guard, Mount, Turtle
   Berimbolo, Grounded 50/50, Wrestling bodylock, Back Control, Crab ride
 Live footage: 574 folders created, sync script ready, Phase 2 (YouTube) pending
 Auto-merge: confirmed working (fa70c14), auto-merges claude/** PRs instantly
+Claude CLI: confirmed working — claude --dangerously-skip-permissions (v2.1.76)
 SITE-BATCH-09 improvements: edge highlight, tracking dots, connection panel,
   built-out stars/pulse, search breadcrumbs/highlight, position stats bar,
   camera zoom, patch system hardened, results.md simplified
+SITE-OVERNIGHT-07: patch system upgraded to difflib fuzzy matching + multi-patch logging
 ---
 ## PENDING TASKS
 # Update this section every session.
-Code: SITE-BATCH-09 (done), PIPE-LIVE-01B (verify live button wiring)
+Code: SITE-BATCH-09 (done), SITE-OVERNIGHT-07 (done), PIPE-LIVE-01B (verify live button wiring)
 Cowork: RETIRED — patch system + Chat verification replaces Cowork for structural work.
 Aaron decisions: Saddle canonical name TBD
 Half guard: RESOLVED — created 2026-03-19 by Cowork. Now 19 Guard canonical positions.
@@ -309,6 +311,7 @@ Auto-merge is enabled for PRs opened from branches matching `claude/**`.
 | SITE-OVERNIGHT-05 | Full overnight batch | this |
 | GH-AUTOMERGE-01 | Auto-merge workflow for claude/** PRs | done 4afba62 |
 | SITE-BATCH-09 | Edge highlight + tracking + camera zoom + panel improvements | done |
+| SITE-OVERNIGHT-07 | Overnight polish: patch difflib upgrade + CLAUDE.md update | done |
 ---
 ## SIGN-OFF TAGS
 Claude Chat: -- FROM: CLAUDE CHAT
