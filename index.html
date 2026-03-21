@@ -68,7 +68,7 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
 .section.collapsed .section-body { display: none; }
 .tree { list-style: none; padding: 0 0 8px; }
 .tree-item { transition: background 0.15s, box-shadow 0.15s, margin 0.15s; }
-.tree-item.technique-selected { background: rgba(232,255,71,0.06); box-shadow: inset 3px 0 0 var(--accent); border-radius: 0 6px 6px 0; margin: 2px 0; }
+.tree-item.technique-selected { background: rgba(232,255,71,0.06); box-shadow: inset 3px 0 0 var(--accent), 0 0 8px rgba(232,255,71,0.04); border-radius: 0 6px 6px 0; margin: 2px 0; }
 .tree-item.technique-selected > .node { padding-top: 6px; padding-bottom: 6px; }
 .tree-item.technique-selected > .node .node-label { color: var(--text); font-weight: 500; font-size: 13px; }
 .tree-item.technique-selected > .node .btn-video { opacity: 1; }
@@ -122,6 +122,9 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
 /* ── 3D GRAPH VIEW ── */
 #graph3dView { position: relative; background: #0e1015; overflow: hidden; }
 #g3dDetailBody { scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.15) transparent; }
+.persp-tab { background:none;border:none;border-bottom:2px solid transparent;color:var(--text-muted);font-family:'Barlow Condensed',sans-serif;font-size:12px;letter-spacing:1px;padding:6px 10px;cursor:pointer;text-transform:uppercase;transition:all 0.15s; }
+.persp-tab:hover { color:var(--text-dim); }
+.persp-tab.active { color:#c4cdd8;border-bottom-color:currentColor; }
 #g3dDetailBody::-webkit-scrollbar { width: 5px; }
 #g3dDetailBody::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.18); border-radius: 3px; }
 #g3dDetailBody::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.25); }
@@ -1212,7 +1215,7 @@ function buildSections() {
     div.dataset.section = section.title;
     const header = document.createElement('div');
     header.className = 'section-header';
-    header.innerHTML = '<div class="section-dot" style="background:'+section.color+'"></div><div class="section-title">'+section.title+'</div><div class="section-chevron">&#9662;</div>';
+    header.innerHTML = '<div class="section-dot" style="background:'+section.color+';box-shadow:0 0 4px '+section.color+'40;"></div><div class="section-title">'+section.title+'</div><div class="section-chevron">&#9662;</div>';
     header.addEventListener('click', e => {
       div.classList.toggle('collapsed');
       const sectionKey = makeKey(section.title, section.title);
@@ -1632,8 +1635,14 @@ function applyRefFilter(filter) {
   });
   const emptyEl = document.getElementById('refEmpty');
   if (filter !== 'all' && !anyVisible) {
-    const labels = {drilling:'No techniques marked as Drilling yet',mygame:'No techniques in My Game yet — track techniques to see them here',video:'No video content found',builtout:'No positions with content found'};
-    emptyEl.textContent = labels[filter] || 'No matching items';
+    const labels = {
+      drilling:'No techniques marked as Drilling yet.\nSelect techniques and mark them as Drilling to see them here.',
+      mygame:'No techniques in My Game yet.\nTrack techniques you\'re working on to build your game map.',
+      video:'No techniques with video found.',
+      builtout:'No positions with developed content found.'
+    };
+    var icon = {drilling:'⟳', mygame:'★', video:'▶', builtout:'◆'}[filter] || '○';
+    emptyEl.innerHTML = '<div style="font-size:24px;margin-bottom:8px;opacity:0.3;">' + icon + '</div>' + (labels[filter] || 'No matching items').replace(/\n/g,'<br>');
     emptyEl.style.display = 'block';
   } else { emptyEl.style.display = 'none'; }
 }
@@ -2324,16 +2333,16 @@ window.initGraph3D = (function() {
       renderHeadings(sectNode, posBaseKey);
     } else {
       perspTabsEl.style.display = 'flex';
-      var activeTabStyle = 'background:none;border:none;border-bottom:2px solid '+col+';color:#c4cdd8;font-family:Barlow Condensed,sans-serif;font-size:12px;letter-spacing:1px;padding:6px 10px;cursor:pointer;text-transform:uppercase;';
-      var inactiveTabStyle = 'background:none;border:none;border-bottom:2px solid transparent;color:#4a5568;font-family:Barlow Condensed,sans-serif;font-size:12px;letter-spacing:1px;padding:6px 10px;cursor:pointer;text-transform:uppercase;';
 
       perspectives.forEach(function(p, i) {
         var tab = document.createElement('button');
+        tab.className = 'persp-tab' + (i === 0 ? ' active' : '');
         tab.textContent = p.t;
-        tab.style.cssText = (i === 0) ? activeTabStyle : inactiveTabStyle;
+        if (i === 0) tab.style.borderBottomColor = col;
         tab.addEventListener('click', function() {
-          perspTabsEl.querySelectorAll('button').forEach(function(btn) { btn.style.cssText = inactiveTabStyle; });
-          tab.style.cssText = activeTabStyle;
+          perspTabsEl.querySelectorAll('.persp-tab').forEach(function(btn) { btn.classList.remove('active'); btn.style.borderBottomColor = ''; });
+          tab.classList.add('active');
+          tab.style.borderBottomColor = col;
           renderHeadings(p, makePathKey(posBaseKey, p.t));
         });
         perspTabsEl.appendChild(tab);
@@ -2347,7 +2356,7 @@ window.initGraph3D = (function() {
     var to = window._transitionOccurrences;
 
     if (!to) {
-      cl.innerHTML = '<div style="color:#4a5568;font-size:12px;font-family:Barlow Condensed,monospace;font-style:italic;padding:4px 0;">Transitions not available yet</div>';
+      cl.innerHTML = '<div style="color:#556;font-size:12px;font-family:Barlow Condensed,monospace;padding:8px 0;text-align:center;">Loading connections\u2026</div>';
     } else {
       var ndNorm = normalizeSegment(nd.label);
       // Outgoing: entries where srcPositionLabel normalizes to this node
@@ -2447,8 +2456,8 @@ window.initGraph3D = (function() {
         cl.innerHTML = '';
         cl.appendChild(connHeader);
         var noConn = document.createElement('div');
-        noConn.style.cssText = 'color:#4a5568;font-size:12px;font-family:Barlow Condensed,monospace;font-style:italic;padding:4px 0;';
-        noConn.textContent = 'No transitions for this position';
+        noConn.style.cssText = 'color:#556;font-size:12px;font-family:Barlow Condensed,monospace;padding:8px 0;text-align:center;';
+        noConn.textContent = 'No connections yet \u2014 transitions are added as content grows';
         cl.appendChild(noConn);
       }
     }
