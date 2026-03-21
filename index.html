@@ -37,9 +37,9 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
 
 /* ── VIEW TABS ── */
 .view-tabs { display: flex; border-bottom: 1px solid var(--border); background: var(--surface); padding: 0 20px; overflow-x: auto; flex-shrink: 0; }
-.view-tab { font-family: 'DM Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; padding: 12px 16px; border: none; border-bottom: 2px solid transparent; background: transparent; color: var(--text-muted); cursor: pointer; transition: all 0.15s; white-space: nowrap; }
-.view-tab:hover { color: var(--text); }
-.view-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+.view-tab { font-family: 'Barlow Condensed', sans-serif; font-size: 13px; font-weight: 500; text-transform: uppercase; letter-spacing: 1.5px; padding: 10px 20px; border: none; border-bottom: 2px solid transparent; background: transparent; color: var(--text-muted); cursor: pointer; transition: all 0.2s cubic-bezier(0.4,0,0.2,1); white-space: nowrap; }
+.view-tab:hover { color: var(--text); background: rgba(255,255,255,0.02); }
+.view-tab.active { color: var(--accent); border-bottom-color: var(--accent); background: rgba(232,255,71,0.04); border-radius: 4px 4px 0 0; }
 
 /* ── SEARCH + FILTER BAR (shared) ── */
 .toolbar { display: flex; align-items: center; gap: 10px; padding: 10px 16px; background: var(--surface); border-bottom: 1px solid var(--border); flex-wrap: wrap; }
@@ -61,8 +61,9 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
 .section-header:hover { background: var(--surface2); }
 .section-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
 .section-title { font-family: 'Bebas Neue', sans-serif; font-size: 17px; letter-spacing: 2px; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.section-chevron { color: var(--text-muted); font-size: 12px; transition: transform 0.2s; flex-shrink: 0; }
+.section-chevron { color: var(--text-muted); font-size: 12px; transition: transform 0.15s cubic-bezier(0.4,0,0.2,1); flex-shrink: 0; }
 .section.collapsed .section-chevron { transform: rotate(-90deg); }
+.section:not(.collapsed) .section-chevron { transform: rotate(0deg); }
 .section-body { display: block; }
 .section.collapsed .section-body { display: none; }
 .tree { list-style: none; padding: 0 0 8px; }
@@ -99,6 +100,7 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
 .track-dot.drilling { display: inline-block; background: var(--blue); }
 .track-dot.learned { display: inline-block; background: var(--accent); }
 .pos-stats { font-size: 10px; color: var(--text-muted); margin-left: 6px; font-family: 'DM Mono', monospace; }
+.pos-stats-bar { font-size: 10px; color: var(--text-muted); font-family: 'DM Mono', monospace; padding: 4px 12px; background: rgba(255,255,255,0.015); border-left: 2px solid var(--border); margin: 2px 0; white-space: normal; word-break: break-word; }
 .btn-track-all { font-family: 'DM Mono', monospace; font-size: 8px; letter-spacing: 0.5px; text-transform: uppercase; padding: 2px 6px; border: 1px solid var(--border); color: var(--text-muted); background: transparent; cursor: pointer; border-radius: 2px; margin-left: 6px; transition: all 0.15s; }
 .btn-track-all:hover { border-color: var(--blue); color: var(--blue); }
 .children { list-style: none; }
@@ -107,9 +109,10 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
 
 /* ── 3D GRAPH VIEW ── */
 #graph3dView { position: relative; background: #0e1015; overflow: hidden; }
-#g3dDetailBody { scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.1) transparent; }
-#g3dDetailBody::-webkit-scrollbar { width: 4px; }
-#g3dDetailBody::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 2px; }
+#g3dDetailBody { scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.15) transparent; }
+#g3dDetailBody::-webkit-scrollbar { width: 5px; }
+#g3dDetailBody::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.18); border-radius: 3px; }
+#g3dDetailBody::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.25); }
 #g3dCanvas { display: block; }
 .g3d-toolbar { display: flex; align-items: center; gap: 8px; padding: 8px 16px; background: rgba(2,4,8,0.9); border-bottom: 1px solid #0a0f1a; }
 
@@ -217,8 +220,11 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
   #g3dDetail { width: 100% !important; border-left: none !important; border-top: 1px solid rgba(255,255,255,0.06); top: auto !important; max-height: 55vh !important; border-radius: 14px 14px 0 0; }
   #g3dLegend { right: 16px !important; }
 
-  /* 3D bottom toolbar: compact */
-  #g3dToolbar { left: 8px !important; right: 8px !important; transform: none !important; bottom: 10px !important; max-width: 100% !important; gap: 1px !important; padding: 4px !important; }
+  /* Bottom bars: compact and wrap-friendly */
+  #refBottomBar { flex-wrap: wrap; gap: 3px; padding: 4px 6px; }
+  #refBottomBar input { width: 100px; }
+  #g3dToolbar { left: 8px !important; right: 8px !important; transform: none !important; bottom: 10px !important; max-width: 100% !important; gap: 1px !important; padding: 4px !important; flex-wrap: wrap !important; }
+  #g3dToolbar input { width: 90px; }
   .g3d-tb-btn { font-size: 10px; padding: 0 8px; height: 28px; }
 
   /* 3D options panel: full-width */
@@ -229,6 +235,9 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
 
   /* Node popup: wider on mobile */
   .node-popup { width: calc(100vw - 24px); }
+
+  /* Video modal: larger close button on mobile */
+  #videoModalClose { width: 44px !important; height: 44px !important; font-size: 22px !important; top: 8px !important; right: 8px !important; }
 }
 
 /* Diagnostics panel */
@@ -1032,7 +1041,7 @@ function buildNode(node, sectionTitle, depth, parentUl, parentKey, disambig, pos
       // Mini stats bar (visible when expanded)
       var statsBar = document.createElement('div');
       statsBar.className = 'pos-stats-bar';
-      statsBar.style.cssText = 'padding:3px 8px 3px '+(8+8)+'px;font-size:9px;color:var(--text-muted);font-family:DM Mono,monospace;letter-spacing:0.5px;border-bottom:1px solid var(--border);background:rgba(255,255,255,0.015);';
+      statsBar.style.paddingLeft = (8+8)+'px';
       // Count OT edges from _transitionOccurrences
       var otCount = 0;
       if (window._transitionOccurrences) {
