@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Grappling Reference</title>
+<title>Grappling Map — No-Gi Reference &amp; Training</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='80'>🥋</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600&family=Bebas+Neue&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -274,7 +275,7 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
 <body>
 
 <header>
-  <div class="logo">Grappling</div>
+  <div class="logo">Grappling<span style="font-size:12px;letter-spacing:1px;color:var(--text-muted);margin-left:6px;font-family:'Barlow Condensed',sans-serif;font-weight:400;vertical-align:baseline;">MAP</span></div>
   <div id="headerStats" class="stats" style="display:none;">
     <div class="stat"><div class="stat-num" id="learnedCount">0</div><div class="stat-label">Learned</div></div>
     <div class="stat"><div class="stat-num" id="totalCount">0</div><div class="stat-label">Total</div></div>
@@ -3653,7 +3654,8 @@ console.log('[GrapplingMap] Debug API ready: window.__APP_DEBUG__');
   window.openVideoModal = function(url, title) {
     var vidId = url.split('/').pop().split('?')[0];
     titleEl.textContent = title || '';
-    player.innerHTML = '<iframe src="https://www.youtube.com/embed/'+vidId+'?autoplay=1" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;border-radius:6px;" allowfullscreen allow="autoplay; encrypted-media"></iframe>';
+    // Show spinner while iframe loads
+    player.innerHTML = '<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#4a5568;font-family:Barlow Condensed,sans-serif;font-size:13px;letter-spacing:1px;">Loading\u2026</div><iframe src="https://www.youtube.com/embed/'+vidId+'?autoplay=1" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;border-radius:6px;" allowfullscreen allow="autoplay; encrypted-media" onload="this.previousElementSibling.style.display=\'none\'"></iframe>';
     modal.style.display = 'flex';
   };
 
