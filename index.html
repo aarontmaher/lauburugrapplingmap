@@ -111,6 +111,9 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
 .tree-item.collapsed > .children { display: none; }
 .inline-player { margin: 6px 0 4px; max-width: 480px; }
 .inline-player > div { border-radius: 6px !important; box-shadow: 0 4px 16px rgba(0,0,0,0.4); }
+/* Position-level rows (depth 0) */
+.tree-item[data-depth="0"] > .node .node-label { font-family: 'Barlow Condensed', sans-serif; font-size: 14px; font-weight: 600; letter-spacing: 0.5px; color: var(--text); }
+.tree-item[data-depth="0"] > .node { min-height: 36px; }
 /* Schema heading rows */
 .tree-item[data-schema="1"] > .node .node-label { font-family: 'Barlow Condensed', sans-serif; font-size: 13px; font-weight: 500; letter-spacing: 0.5px; text-transform: uppercase; color: var(--text-muted); }
 /* OT transition rows (contain arrow) */
@@ -930,6 +933,7 @@ function buildNode(node, sectionTitle, depth, parentUl, parentKey, disambig, pos
   li.dataset.schema = SCHEMA_NAMES.has(node.t.trim()) ? '1' : '0';
   li.dataset.ot = (node.t && node.t.includes('\u2192')) ? '1' : '0';
   li.dataset.notes = (node.t && node.t.trim() === 'Notes') ? '1' : '0';
+  li.dataset.depth = String(depth);
 
   const nodeDiv = document.createElement('div');
   nodeDiv.className = 'node';
@@ -1111,7 +1115,7 @@ function buildNode(node, sectionTitle, depth, parentUl, parentKey, disambig, pos
           if (normalizeSegment(occ.srcPositionLabel) === posNorm || normalizeSegment(occ.destLabel) === posNorm) otCount++;
         });
       }
-      statsBar.textContent = 'Techniques: '+techCount+' \u00b7 Tracked: '+trackedCount+' \u00b7 Developed: pending \u00b7 Transitions: '+otCount;
+      statsBar.textContent = 'Techniques: '+techCount+' \u00b7 Tracked: '+trackedCount+(otCount > 0 ? ' \u00b7 Transitions: '+otCount : '');
       statsBar.dataset.posKey = key;
       li.insertBefore(statsBar, childUl);
     }
@@ -1229,7 +1233,11 @@ function buildSections() {
       div.classList.toggle('collapsed');
       const sectionKey = makeKey(section.title, section.title);
       if (div.classList.contains('collapsed')) { EXPANDED.delete(sectionKey); }
-      else EXPANDED.add(sectionKey);
+      else {
+        EXPANDED.add(sectionKey);
+        // Scroll section header into view when expanding
+        setTimeout(function() { header.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 50);
+      }
       if(window.cmSyncExpanded) window.cmSyncExpanded();
       if(window.g3dSyncExpanded) window.g3dSyncExpanded();
       // Don't call refSyncExpanded here - we ARE the ref tree, would cause loop
