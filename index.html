@@ -67,13 +67,13 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
 .section-body { display: block; }
 .section.collapsed .section-body { display: none; }
 .tree { list-style: none; padding: 0 0 8px; }
-.tree-item { }
+.tree-item { transition: background 0.15s, box-shadow 0.15s, margin 0.15s; }
 .tree-item.technique-selected { background: rgba(232,255,71,0.06); box-shadow: inset 3px 0 0 var(--accent); border-radius: 0 6px 6px 0; margin: 2px 0; }
 .tree-item.technique-selected > .node { padding-top: 6px; padding-bottom: 6px; }
 .tree-item.technique-selected > .node .node-label { color: var(--text); font-weight: 500; font-size: 13px; }
 .tree-item.technique-selected > .node .btn-video { opacity: 1; }
 .tree-item.technique-selected > .node .node-actions { gap: 6px; }
-.technique-breadcrumb { font-family: 'Barlow Condensed', sans-serif; font-size: 10px; color: var(--text-muted); letter-spacing: 0.5px; padding: 2px 0 0 28px; display: none; }
+.technique-breadcrumb { font-family: 'Barlow Condensed', sans-serif; font-size: 10px; color: #667; letter-spacing: 0.3px; padding: 2px 0 4px 28px; display: none; }
 .tree-item.technique-selected > .technique-breadcrumb { display: block; }
 .node .btn-video { opacity: 0.7; transition: all 0.15s; }
 .node { display: flex; align-items: flex-start; gap: 6px; padding: 4px 16px 4px 8px; transition: background 0.1s; min-height: 32px; }
@@ -92,9 +92,9 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
 .btn-video:hover { background: var(--accent2); color: #000; }
 .btn-live { border-color: var(--green) !important; color: var(--green) !important; background: rgba(52,211,153,0.06) !important; }
 .btn-live:hover { background: var(--green) !important; color: #000 !important; }
-.btn-note { font-family: 'DM Mono', monospace; font-size: 12px; padding: 2px 6px; border: 1px solid var(--border); color: var(--text-muted); background: transparent; cursor: pointer; border-radius: 2px; transition: all 0.15s; }
+.btn-note { font-family: 'DM Mono', monospace; font-size: 11px; padding: 2px 8px; border: 1px solid var(--border); color: var(--text-muted); background: transparent; cursor: pointer; border-radius: 12px; transition: all 0.15s; }
 .btn-note:hover { border-color: var(--accent3); color: var(--accent3); }
-.btn-note.has-note { border-color: var(--accent3); color: var(--accent3); }
+.btn-note.has-note { border-color: var(--accent3); color: var(--accent3); background: rgba(167,139,250,0.06); }
 .progress-pill { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.5px; padding: 3px 8px; border: 1px solid var(--border); color: var(--text-muted); background: transparent; cursor: pointer; border-radius: 12px; transition: all 0.15s; text-transform: uppercase; white-space: nowrap; }
 .progress-pill:hover { border-color: var(--text-muted); color: var(--text); }
 .progress-pill.drilling { border-color: var(--blue); color: var(--blue); }
@@ -103,12 +103,13 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
 .track-dot.drilling { display: inline-block; background: var(--blue); }
 .track-dot.learned { display: inline-block; background: var(--accent); }
 .pos-stats { font-size: 10px; color: var(--text-muted); margin-left: 6px; font-family: 'DM Mono', monospace; }
-.pos-stats-bar { font-size: 10px; color: var(--text-muted); font-family: 'DM Mono', monospace; padding: 4px 12px; background: rgba(255,255,255,0.015); border-left: 2px solid var(--border); margin: 2px 0; white-space: normal; word-break: break-word; }
-.btn-track-all { font-family: 'DM Mono', monospace; font-size: 8px; letter-spacing: 0.5px; text-transform: uppercase; padding: 2px 6px; border: 1px solid var(--border); color: var(--text-muted); background: transparent; cursor: pointer; border-radius: 2px; margin-left: 6px; transition: all 0.15s; }
-.btn-track-all:hover { border-color: var(--blue); color: var(--blue); }
+.pos-stats-bar { font-size: 10px; color: var(--text-muted); font-family: 'DM Mono', monospace; padding: 4px 12px; background: rgba(255,255,255,0.02); border-left: 2px solid var(--border); margin: 2px 0; white-space: normal; word-break: break-word; border-radius: 0 3px 3px 0; }
+.btn-track-all { font-family: 'DM Mono', monospace; font-size: 8px; letter-spacing: 0.5px; text-transform: uppercase; padding: 2px 8px; border: 1px solid var(--border); color: var(--text-muted); background: transparent; cursor: pointer; border-radius: 12px; margin-left: 6px; transition: all 0.15s; }
+.btn-track-all:hover { border-color: var(--blue); color: var(--blue); background: rgba(71,200,255,0.06); }
 .children { list-style: none; }
 .tree-item.collapsed > .children { display: none; }
-.inline-player { }
+.inline-player { margin: 6px 0 4px; max-width: 480px; }
+.inline-player > div { border-radius: 6px !important; box-shadow: 0 4px 16px rgba(0,0,0,0.4); }
 /* Schema heading rows */
 .tree-item[data-schema="1"] > .node .node-label { font-family: 'Barlow Condensed', sans-serif; font-size: 13px; font-weight: 500; letter-spacing: 0.5px; text-transform: uppercase; color: var(--text-muted); }
 /* OT transition rows (contain arrow) */
@@ -1134,13 +1135,19 @@ function buildNode(node, sectionTitle, depth, parentUl, parentKey, disambig, pos
         setTimeout(() => { label.style.background = ''; label.style.padding = ''; }, 2500);
       });
     } else {
-      // Technique: label click selects, chevron click toggles expand
+      // Technique: label click selects + auto-expands
       label.style.cursor = 'pointer';
       label.addEventListener('click', (e) => {
         e.stopPropagation();
         selectTreeItem(li);
         setSelectedNode(key, node.t, sectionTitle, node.v, node.l);
         if (window._g3dHighlightByLabel) window._g3dHighlightByLabel(node.t);
+        // Auto-expand children when selecting (if collapsed)
+        if (hasChildren && li.classList.contains('collapsed')) {
+          li.classList.remove('collapsed');
+          toggle.textContent = '−';
+          EXPANDED.add(key);
+        }
       });
       if (hasChildren) {
         toggle.addEventListener('click', (e) => {
