@@ -2187,7 +2187,7 @@ window.initGraph3D = (function() {
             if (!techVidUrl && child.c) { child.c.forEach(function(gc2){ if (gc2.t==='Instructional video' && gc2.v) techVidUrl = gc2.v; }); }
             if (techVidUrl) {
               var rowVBtn = document.createElement('button');
-              rowVBtn.style.cssText = 'background:none;border:1px solid rgba(255,255,255,0.1);color:'+col+';font-family:Barlow Condensed,monospace;font-size:9px;padding:2px 7px;border-radius:3px;cursor:pointer;flex-shrink:0;opacity:0.6;transition:opacity 0.15s;';
+              rowVBtn.style.cssText = 'background:rgba(255,107,53,0.06);border:1px solid rgba(255,255,255,0.1);color:'+col+';font-family:Barlow Condensed,monospace;font-size:9px;padding:2px 8px;border-radius:12px;cursor:pointer;flex-shrink:0;opacity:0.7;transition:opacity 0.15s;';
               rowVBtn.textContent = '\u25B6';
               rowVBtn.title = 'Watch video';
               rowVBtn.addEventListener('mouseenter', function(){rowVBtn.style.opacity='1';});
