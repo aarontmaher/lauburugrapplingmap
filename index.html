@@ -241,6 +241,7 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
 
   /* 3D detail panel: bottom-sheet on mobile */
   #g3dDetail { width: 100% !important; border-left: none !important; border-top: 1px solid rgba(255,255,255,0.06); top: auto !important; max-height: 55vh !important; border-radius: 14px 14px 0 0; }
+  #g3dDetail::before { content: ''; display: block; width: 32px; height: 4px; background: rgba(255,255,255,0.15); border-radius: 2px; margin: 8px auto 4px; }
   #g3dLegend { right: 16px !important; }
 
   /* Bottom bars: compact and wrap-friendly */
@@ -259,8 +260,25 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
   /* Node popup: wider on mobile */
   .node-popup { width: calc(100vw - 24px); }
 
+  /* View tabs: full width on mobile */
+  .view-tab { flex: 1; text-align: center; padding: 8px 10px; font-size: 12px; }
+
+  /* Video modal: responsive sizing + larger close button on mobile */
+  #videoModalInner { width: calc(100vw - 16px) !important; }
+  #videoModalTitle { font-size: 14px !important; }
+
   /* Video modal: larger close button on mobile */
   #videoModalClose { width: 44px !important; height: 44px !important; font-size: 22px !important; top: 8px !important; right: 8px !important; }
+
+  /* Breadcrumb: tighter on mobile */
+  .technique-breadcrumb { padding-left: 12px; font-size: 9px; }
+
+  /* Detail panel close: larger touch target on mobile */
+  #g3dDetailClose { width: 36px !important; height: 36px !important; font-size: 18px !important; }
+
+  /* Logo: smaller on narrow screens */
+  .logo { font-size: 20px !important; letter-spacing: 2px !important; }
+  .logo span { font-size: 10px !important; }
 }
 
 /* Diagnostics panel */
