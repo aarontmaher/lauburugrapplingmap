@@ -1622,7 +1622,7 @@ function refreshAllViews() {
 window.initGraph3D = (function() {
   let ready = false;
   let renderer3d, camera3d, scene3d, pivot3d;
-  let rotX=0,rotY=0,tRX=0,tRY=0,zoom3d=800,tZ3d=800;
+  let rotX=0,rotY=0,tRX=0,tRY=0,zoom3d=1100,tZ3d=1100;
   const meshMap3d={}, ringMap3d={}, edgeMeshes3d=[];
   let simNodes3d=[], simByID3d={};
   let selectedId3d=null, hoveredId3d=null, selRing3d=null;
@@ -1744,12 +1744,18 @@ window.initGraph3D = (function() {
   var maxIn3d=1; // max indegree for hub centering bias (updated by computeW3d)
   function runForce3d(nodes,edges,steps){
     const byId={};nodes.forEach(n=>byId[n.id]=n);
-    const rep=4000,k=90,att=0.004,damp=0.78;
+    const rep=6000,k=140,att=0.003,damp=0.76;
     for(let s=0;s<steps;s++){
       for(let i=0;i<nodes.length;i++)for(let j=i+1;j<nodes.length;j++){
         const a=nodes[i],b=nodes[j],dx=b.x-a.x,dy=b.y-a.y,dz=b.z-a.z;
-        const d2=dx*dx+dy*dy+dz*dz||0.01,d=Math.sqrt(d2),f=rep/d2,ux=dx/d,uy=dy/d,uz=dz/d;
+        const d2=dx*dx+dy*dy+dz*dz||0.01,d=Math.sqrt(d2);
+        // Size-aware repulsion: larger nodes push harder
+        const sizeBoost=1+((a._r||10)+(b._r||10))*0.04;
+        const f=rep*sizeBoost/d2,ux=dx/d,uy=dy/d,uz=dz/d;
         a.vx-=f*ux;a.vy-=f*uy;a.vz-=f*uz;b.vx+=f*ux;b.vy+=f*uy;b.vz+=f*uz;
+        // Collision: if nodes overlap, add strong push
+        var minDist=(a._r||10)+(b._r||10)+8;
+        if(d<minDist){var push=0.3*(minDist-d)/d;a.vx-=push*dx;a.vy-=push*dy;a.vz-=push*dz;b.vx+=push*dx;b.vy+=push*dy;b.vz+=push*dz;}
       }
       edges.forEach(e=>{
         const a=byId[e.source],b=byId[e.target];if(!a||!b)return;
@@ -1759,12 +1765,12 @@ window.initGraph3D = (function() {
       });
       nodes.forEach(n=>{
         // Centering force: base pull toward origin
-        n.vx-=n.x*0.001;n.vy-=n.y*0.001;n.vz-=n.z*0.001;
+        n.vx-=n.x*0.0008;n.vy-=n.y*0.0008;n.vz-=n.z*0.0008;
         // Hub centering bias: high indegree nodes pulled toward centre more
         var normIn=(n._in||0)/maxIn3d;
-        var targetR=350*(1-normIn*0.8); // high indegree → small target radius
+        var targetR=500*(1-normIn*0.7); // high indegree → small target radius
         var dist=Math.sqrt(n.x*n.x+n.y*n.y+n.z*n.z)||1;
-        if(dist>targetR){var pull=0.0008*(dist-targetR)/dist;n.vx-=n.x*pull;n.vy-=n.y*pull;n.vz-=n.z*pull;}
+        if(dist>targetR){var pull=0.0006*(dist-targetR)/dist;n.vx-=n.x*pull;n.vy-=n.y*pull;n.vz-=n.z*pull;}
         n.vx*=damp;n.vy*=damp;n.vz*=damp;
         n.x+=n.vx;n.y+=n.vy;n.z+=n.vz;
         const nd=nodeMap3d[n.id];if(nd){nd.x=n.x;nd.y=n.y;nd.z=n.z;}
@@ -1989,10 +1995,67 @@ window.initGraph3D = (function() {
                 });
                 if (subKids.length > 0) {
                   subKids.forEach(function(gc) {
+                    var gcWrap = document.createElement('div');
+                    gcWrap.style.cssText = 'padding:2px 0;';
                     var gcEl = document.createElement('div');
-                    gcEl.style.cssText = 'padding:1px 0;font-size:11px;color:#667;font-family:Barlow Condensed,monospace;';
+                    gcEl.style.cssText = 'font-size:11px;color:#778;font-family:Barlow Condensed,monospace;cursor:pointer;';
                     gcEl.textContent = gc.t;
-                    detailEl.appendChild(gcEl);
+                    gcEl.addEventListener('mouseenter', function(){gcEl.style.color=col;});
+                    gcEl.addEventListener('mouseleave', function(){gcEl.style.color='#778';});
+                    gcWrap.appendChild(gcEl);
+                    // Detect video on sub-child (hoist from Instructional/Live video grandchildren)
+                    var gcVid = gc.v;
+                    var gcLive = gc.l;
+                    if (!gcVid && gc.c) { gc.c.forEach(function(ggc){ if (ggc.t==='Instructional video' && ggc.v) gcVid = ggc.v; if (ggc.t==='Live video' && ggc.l) gcLive = ggc.l; }); }
+                    var gcDetailEl = document.createElement('div');
+                    gcDetailEl.style.cssText = 'display:none;padding:2px 0 4px 10px;';
+                    var gcDetailOpen = false;
+                    // Sub-sub-children
+                    var gcSubKids = (gc.c||[]).filter(function(ggc){var gt=(ggc.t||'').trim();return gt&&!SKIP_CHILDREN.has(gt);});
+                    if (gcVid || gcLive || gcSubKids.length > 0) {
+                      gcEl.addEventListener('click', function(ev) {
+                        ev.stopPropagation();
+                        gcDetailOpen = !gcDetailOpen;
+                        if (gcDetailOpen) {
+                          gcDetailEl.innerHTML = '';
+                          gcSubKids.forEach(function(ggc) {
+                            var ggEl = document.createElement('div');
+                            ggEl.style.cssText = 'padding:1px 0;font-size:10px;color:#556;font-family:Barlow Condensed,monospace;';
+                            ggEl.textContent = ggc.t;
+                            // Check for video on sub-sub-child too
+                            var ggVid = ggc.v;
+                            if (!ggVid && ggc.c) { ggc.c.forEach(function(gggc){ if (gggc.t==='Instructional video' && gggc.v) ggVid = gggc.v; }); }
+                            if (ggVid) {
+                              var ggBtn = document.createElement('button');
+                              ggBtn.style.cssText = 'background:none;border:1px solid rgba(255,255,255,0.1);color:'+col+';font-family:Barlow Condensed,monospace;font-size:9px;padding:2px 6px;border-radius:3px;cursor:pointer;margin:1px 4px;';
+                              ggBtn.textContent = '\uD83D\uDCD6';
+                              (function(url,name){ggBtn.addEventListener('click',function(e2){e2.stopPropagation();window.openVideoModal(url,name+' \u2014 Instructional');});})(ggVid,ggc.t);
+                              ggEl.appendChild(ggBtn);
+                            }
+                            gcDetailEl.appendChild(ggEl);
+                          });
+                          if (gcVid) {
+                            var gcVBtn = document.createElement('button');
+                            gcVBtn.style.cssText = 'background:none;border:1px solid rgba(255,255,255,0.1);color:'+col+';font-family:Barlow Condensed,monospace;font-size:10px;padding:3px 8px;border-radius:3px;cursor:pointer;margin:2px 4px 2px 0;';
+                            gcVBtn.textContent = '\uD83D\uDCD6 Instructional';
+                            (function(url,name){gcVBtn.addEventListener('click',function(e2){e2.stopPropagation();window.openVideoModal(url,name+' \u2014 Instructional');});})(gcVid,gc.t);
+                            gcDetailEl.appendChild(gcVBtn);
+                          }
+                          if (gcLive) {
+                            var gcLBtn = document.createElement('button');
+                            gcLBtn.style.cssText = 'background:none;border:1px solid rgba(255,255,255,0.1);color:#47c8ff;font-family:Barlow Condensed,monospace;font-size:10px;padding:3px 8px;border-radius:3px;cursor:pointer;margin:2px 4px 2px 0;';
+                            gcLBtn.textContent = '\uD83C\uDFA5 Live';
+                            (function(url,name){gcLBtn.addEventListener('click',function(e2){e2.stopPropagation();window.openVideoModal(url,name+' \u2014 Live');});})(gcLive,gc.t);
+                            gcDetailEl.appendChild(gcLBtn);
+                          }
+                          gcDetailEl.style.display = 'block';
+                        } else {
+                          gcDetailEl.style.display = 'none';
+                        }
+                      });
+                    }
+                    gcWrap.appendChild(gcDetailEl);
+                    detailEl.appendChild(gcWrap);
                   });
                 }
                 // Show Notes content if present
@@ -2013,39 +2076,15 @@ window.initGraph3D = (function() {
                   var vBtn = document.createElement('button');
                   vBtn.style.cssText = 'background:none;border:1px solid rgba(255,255,255,0.1);color:'+col+';font-family:Barlow Condensed,monospace;font-size:10px;padding:3px 8px;border-radius:3px;cursor:pointer;margin:2px 4px 2px 0;';
                   vBtn.textContent = '\uD83D\uDCD6 Instructional';
-                  var vPlayerWrap = document.createElement('div');
-                  vPlayerWrap.style.cssText = 'display:none;margin:6px 0;';
-                  (function(url, btn, pw){
-                    btn.addEventListener('click', function(ev){
-                      ev.stopPropagation();
-                      if (pw.style.display !== 'none') { pw.style.display = 'none'; pw.innerHTML = ''; btn.textContent = '\uD83D\uDCD6 Instructional'; return; }
-                      var vidId = url.split('/').pop().split('?')[0];
-                      pw.innerHTML = '<div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:4px;border:1px solid rgba(255,255,255,0.08);"><iframe src="https://www.youtube.com/embed/'+vidId+'?autoplay=1" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;" allowfullscreen allow="autoplay; encrypted-media"></iframe></div>';
-                      pw.style.display = 'block';
-                      btn.textContent = '\u2715 Close';
-                    });
-                  })(vidUrl, vBtn, vPlayerWrap);
+                  (function(url, name){ vBtn.addEventListener('click', function(ev){ ev.stopPropagation(); window.openVideoModal(url, name + ' \u2014 Instructional'); }); })(vidUrl, ct);
                   detailEl.appendChild(vBtn);
-                  detailEl.appendChild(vPlayerWrap);
                 }
                 if (liveUrl) {
                   var lBtn = document.createElement('button');
                   lBtn.style.cssText = 'background:none;border:1px solid rgba(255,255,255,0.1);color:#47c8ff;font-family:Barlow Condensed,monospace;font-size:10px;padding:3px 8px;border-radius:3px;cursor:pointer;margin:2px 4px 2px 0;';
                   lBtn.textContent = '\uD83C\uDFA5 Live';
-                  var lPlayerWrap = document.createElement('div');
-                  lPlayerWrap.style.cssText = 'display:none;margin:6px 0;';
-                  (function(url, btn, pw){
-                    btn.addEventListener('click', function(ev){
-                      ev.stopPropagation();
-                      if (pw.style.display !== 'none') { pw.style.display = 'none'; pw.innerHTML = ''; btn.textContent = '\uD83C\uDFA5 Live'; return; }
-                      var vidId = url.split('/').pop().split('?')[0];
-                      pw.innerHTML = '<div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:4px;border:1px solid rgba(255,255,255,0.08);"><iframe src="https://www.youtube.com/embed/'+vidId+'?autoplay=1" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;" allowfullscreen allow="autoplay; encrypted-media"></iframe></div>';
-                      pw.style.display = 'block';
-                      btn.textContent = '\u2715 Close';
-                    });
-                  })(liveUrl, lBtn, lPlayerWrap);
+                  (function(url, name){ lBtn.addEventListener('click', function(ev){ ev.stopPropagation(); window.openVideoModal(url, name + ' \u2014 Live'); }); })(liveUrl, ct);
                   detailEl.appendChild(lBtn);
-                  detailEl.appendChild(lPlayerWrap);
                 }
                 if (detailEl.children.length === 0) {
                   var emptyEl = document.createElement('div');
@@ -2370,7 +2409,7 @@ window.initGraph3D = (function() {
     });
     if(sf!=='all'&&aIds.size>0){
       const asn=simNodes3d.filter(n=>aIds.has(n.id));
-      asn.forEach(n=>{const p=randSph3d(280);n.x=p[0];n.y=p[1];n.z=p[2];n.vx=0;n.vy=0;n.vz=0;const nd=nodeMap3d[n.id];if(nd){nd.x=n.x;nd.y=n.y;nd.z=n.z;}const m=meshMap3d[n.id];if(m)m.position.set(n.x,n.y,n.z);});
+      asn.forEach(n=>{const p=randSph3d(400);n.x=p[0];n.y=p[1];n.z=p[2];n.vx=0;n.vy=0;n.vz=0;const nd=nodeMap3d[n.id];if(nd){nd.x=n.x;nd.y=n.y;nd.z=n.z;}const m=meshMap3d[n.id];if(m)m.position.set(n.x,n.y,n.z);});
       syncEdges3d(aIds);
       if(window._g3dfsim)clearInterval(window._g3dfsim);
       let st=0;
@@ -2532,7 +2571,7 @@ window.initGraph3D = (function() {
       if (allOrphan) console.warn('ORPHAN-FAILSAFE: all nodes are orphans — showing all at full opacity');
 
       allGraphable.forEach(n=>{
-        const p=randSph3d(n.in_network?340:500);n.x=p[0];n.y=p[1];n.z=p[2];
+        const p=randSph3d(n.in_network?450:650);n.x=p[0];n.y=p[1];n.z=p[2];
         const col=nodeCol3d(n,THREE);
         var opac = allOrphan ? 0.9 : (n.in_network ? 0.9 : ORPHAN_OPACITY);
         var emI = allOrphan ? 0.12 : (n.in_network ? (n.status==='none'?0.12:0.35) : 0.05);
@@ -2678,7 +2717,7 @@ window.initGraph3D = (function() {
       });
       document.getElementById('g3dCollapseAll').addEventListener('click',()=>{EXPANDED.clear();if(window.cmSyncExpanded)window.cmSyncExpanded();if(window.refSyncExpanded)window.refSyncExpanded();if(window.g3dSyncExpanded)window.g3dSyncExpanded();});
       document.getElementById('g3dExpandAll').addEventListener('click',()=>{SECTIONS.forEach(s=>{const sk=makeKey(s.title,s.title);EXPANDED.add(sk);walkWithKeys(s.nodes,sk,(nd,k)=>{if(nd.c&&nd.c.length)EXPANDED.add(k);});});if(window.cmSyncExpanded)window.cmSyncExpanded();if(window.refSyncExpanded)window.refSyncExpanded();if(window.g3dSyncExpanded)window.g3dSyncExpanded();});
-      document.getElementById('g3dReset').addEventListener('click',()=>{tRX=0;tRY=0;tZ3d=800;resetHL3d();closeDetail3d();});
+      document.getElementById('g3dReset').addEventListener('click',()=>{tRX=0;tRY=0;tZ3d=1100;resetHL3d();closeDetail3d();});
       document.getElementById('g3dDetailClose').addEventListener('click',()=>{resetHL3d();closeDetail3d();});
 
       // Options
@@ -3341,6 +3380,43 @@ console.log('[GrapplingMap] Debug API ready: window.__APP_DEBUG__');
     if (panel.style.display === 'none') { panel.style.display = 'block'; diagRefresh(); } else { panel.style.display = 'none'; }
   });
   if (close) close.addEventListener('click', function() { panel.style.display = 'none'; });
+})();
+</script>
+<!-- ══ VIDEO MODAL ═══════════════════════════════════════════════════════ -->
+<div id="videoModal" style="display:none;position:fixed;inset:0;z-index:2000;align-items:center;justify-content:center;background:rgba(0,0,0,0.82);backdrop-filter:blur(8px);">
+  <div id="videoModalInner" style="position:relative;width:min(88vw,960px);max-height:90vh;">
+    <div id="videoModalTitle" style="font-family:'Barlow Condensed',sans-serif;font-size:14px;color:#c4cdd8;letter-spacing:0.5px;margin-bottom:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"></div>
+    <div id="videoModalPlayer" style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:6px;border:1px solid rgba(255,255,255,0.08);box-shadow:0 12px 48px rgba(0,0,0,0.6);"></div>
+    <button id="videoModalClose" style="position:absolute;top:-8px;right:-8px;background:rgba(14,16,21,0.9);border:1px solid rgba(255,255,255,0.12);color:#c4cdd8;font-size:18px;width:32px;height:32px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:1;">&#215;</button>
+  </div>
+</div>
+<script>
+(function(){
+  var modal = document.getElementById('videoModal');
+  var player = document.getElementById('videoModalPlayer');
+  var titleEl = document.getElementById('videoModalTitle');
+  var closeBtn = document.getElementById('videoModalClose');
+
+  window.openVideoModal = function(url, title) {
+    var vidId = url.split('/').pop().split('?')[0];
+    titleEl.textContent = title || '';
+    player.innerHTML = '<iframe src="https://www.youtube.com/embed/'+vidId+'?autoplay=1" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;border-radius:6px;" allowfullscreen allow="autoplay; encrypted-media"></iframe>';
+    modal.style.display = 'flex';
+  };
+
+  function closeModal() {
+    modal.style.display = 'none';
+    player.innerHTML = '';
+    titleEl.textContent = '';
+  }
+
+  closeBtn.addEventListener('click', closeModal);
+  modal.addEventListener('click', function(ev) {
+    if (ev.target === modal) closeModal();
+  });
+  document.addEventListener('keydown', function(ev) {
+    if (ev.key === 'Escape' && modal.style.display === 'flex') { closeModal(); ev.stopPropagation(); }
+  });
 })();
 </script>
 </body>
