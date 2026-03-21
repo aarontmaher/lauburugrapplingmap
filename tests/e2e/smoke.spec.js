@@ -125,7 +125,8 @@ test.describe('GrapplingMap smoke suite', () => {
     const real = errors.filter(e =>
       !e.includes('favicon') &&
       !e.includes('404') &&
-      !e.includes('net::ERR')
+      !e.includes('net::ERR') &&
+      !e.includes('WebGL') // headless Chromium may lack WebGL support
     );
     expect(real).toHaveLength(0);
   });

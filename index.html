@@ -56,8 +56,8 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
 /* ── REFERENCE VIEW ── */
 #referenceView { }
 .sections { padding: 12px 16px; }
-.section { border: 1px solid var(--border); border-radius: 6px; margin-bottom: 12px; background: var(--surface); overflow: hidden; }
-.section-header { display: flex; align-items: center; gap: 12px; padding: 14px 18px; cursor: pointer; user-select: none; transition: background 0.15s; min-height: 52px; }
+.section { border: 1px solid var(--border); border-radius: 8px; margin-bottom: 10px; background: var(--surface); overflow: hidden; }
+.section-header { display: flex; align-items: center; gap: 12px; padding: 14px 18px; cursor: pointer; user-select: none; transition: background 0.15s; min-height: 48px; }
 .section-header:hover { background: var(--surface2); }
 .section-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
 .section-title { font-family: 'Bebas Neue', sans-serif; font-size: 17px; letter-spacing: 2px; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -67,28 +67,31 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
 .section.collapsed .section-body { display: none; }
 .tree { list-style: none; padding: 0 0 8px; }
 .tree-item { }
-.tree-item.technique-selected { background: rgba(232,255,71,0.08); box-shadow: inset 3px 0 0 var(--accent); border-radius: 0 4px 4px 0; }
-.tree-item.technique-selected > .node .node-label { color: var(--text); font-weight: 500; }
-.tree-item.technique-selected > .node .btn-video { opacity: 1; transform: scale(1); }
+.tree-item.technique-selected { background: rgba(232,255,71,0.06); box-shadow: inset 3px 0 0 var(--accent); border-radius: 0 6px 6px 0; margin: 2px 0; }
+.tree-item.technique-selected > .node { padding-top: 6px; padding-bottom: 6px; }
+.tree-item.technique-selected > .node .node-label { color: var(--text); font-weight: 500; font-size: 13px; }
+.tree-item.technique-selected > .node .btn-video { opacity: 1; }
+.tree-item.technique-selected > .node .node-actions { gap: 6px; }
 .node .btn-video { opacity: 0.7; transition: all 0.15s; }
 .node { display: flex; align-items: flex-start; gap: 6px; padding: 4px 16px 4px 8px; transition: background 0.1s; min-height: 32px; }
-.node:hover { background: rgba(255,255,255,0.03); }
+.node:hover { background: rgba(255,255,255,0.04); }
 .node-toggle { width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; font-size: 11px; color: var(--text-muted); cursor: pointer; flex-shrink: 0; margin-top: 2px; border-radius: 2px; transition: all 0.15s; font-family: 'DM Mono', monospace; }
 .node-toggle:hover { background: var(--border); color: var(--text); }
 .node-toggle.leaf { cursor: default; color: var(--border); }
 .node-toggle.leaf:hover { background: transparent; color: var(--border); }
 .node-content { display: flex; align-items: center; gap: 8px; flex: 1; flex-wrap: wrap; }
-.node-label { font-size: 12px; color: var(--text-dim); cursor: default; line-height: 1.4; }
+.node-label { font-size: 12px; color: var(--text-dim); cursor: default; line-height: 1.4; transition: color 0.15s; }
 .node-label.has-video { color: var(--text); }
+.node-label.has-video::before { content: ''; display: inline-block; width: 4px; height: 4px; background: var(--accent2); border-radius: 50%; margin-right: 6px; vertical-align: middle; }
 .node-actions { display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
-.btn-video { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.5px; padding: 4px 10px; border: 1px solid var(--accent2); color: var(--accent2); background: rgba(255,107,53,0.06); cursor: pointer; border-radius: 3px; transition: all 0.15s; }
+.btn-video { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.5px; padding: 4px 12px; border: 1px solid var(--accent2); color: var(--accent2); background: rgba(255,107,53,0.08); cursor: pointer; border-radius: 12px; transition: all 0.15s; }
 .btn-video:hover { background: var(--accent2); color: #000; }
-.btn-live { border-color: var(--green) !important; color: var(--green) !important; }
+.btn-live { border-color: var(--green) !important; color: var(--green) !important; background: rgba(52,211,153,0.06) !important; }
 .btn-live:hover { background: var(--green) !important; color: #000 !important; }
 .btn-note { font-family: 'DM Mono', monospace; font-size: 12px; padding: 2px 6px; border: 1px solid var(--border); color: var(--text-muted); background: transparent; cursor: pointer; border-radius: 2px; transition: all 0.15s; }
 .btn-note:hover { border-color: var(--accent3); color: var(--accent3); }
 .btn-note.has-note { border-color: var(--accent3); color: var(--accent3); }
-.progress-pill { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.5px; padding: 3px 7px; border: 1px solid var(--border); color: var(--text-muted); background: transparent; cursor: pointer; border-radius: 2px; transition: all 0.15s; text-transform: uppercase; white-space: nowrap; }
+.progress-pill { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.5px; padding: 3px 8px; border: 1px solid var(--border); color: var(--text-muted); background: transparent; cursor: pointer; border-radius: 12px; transition: all 0.15s; text-transform: uppercase; white-space: nowrap; }
 .progress-pill:hover { border-color: var(--text-muted); color: var(--text); }
 .progress-pill.drilling { border-color: var(--blue); color: var(--blue); }
 .progress-pill.learned { border-color: var(--accent); color: var(--accent); background: rgba(232,255,71,0.05); }
@@ -104,6 +107,9 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
 
 /* ── 3D GRAPH VIEW ── */
 #graph3dView { position: relative; background: #0e1015; overflow: hidden; }
+#g3dDetailBody { scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.1) transparent; }
+#g3dDetailBody::-webkit-scrollbar { width: 4px; }
+#g3dDetailBody::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 2px; }
 #g3dCanvas { display: block; }
 .g3d-toolbar { display: flex; align-items: center; gap: 8px; padding: 8px 16px; background: rgba(2,4,8,0.9); border-bottom: 1px solid #0a0f1a; }
 
@@ -266,7 +272,7 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
     <kbd style="background:#1a1e28;border:1px solid #2a3040;border-radius:3px;padding:2px 6px;font-size:10px;color:var(--text-dim);">Enter</kbd><span>Jump to first search result</span>
     <kbd style="background:#1a1e28;border:1px solid #2a3040;border-radius:3px;padding:2px 6px;font-size:10px;color:var(--text-dim);">↓ / ↑</kbd><span>Navigate search results</span>
     <kbd style="background:#1a1e28;border:1px solid #2a3040;border-radius:3px;padding:2px 6px;font-size:10px;color:var(--text-dim);">T</kbd><span>Track selected technique → Drilling</span>
-    <kbd style="background:#1a1e28;border:1px solid #2a3040;border-radius:3px;padding:2px 6px;font-size:10px;color:var(--text-dim);">G</kbd><span>Toggle Reference ↔ 3D Graph</span>
+    <kbd style="background:#1a1e28;border:1px solid #2a3040;border-radius:3px;padding:2px 6px;font-size:10px;color:var(--text-dim);">G</kbd><span>Toggle Reference ↔ Network</span>
     <kbd style="background:#1a1e28;border:1px solid #2a3040;border-radius:3px;padding:2px 6px;font-size:10px;color:var(--text-dim);">?</kbd><span>Toggle this help panel</span>
   </div>
 </div>
@@ -314,7 +320,7 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
   <div id="g3dToolbar" style="position:absolute;bottom:20px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:2px;background:rgba(18,21,28,0.92);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:5px 6px;backdrop-filter:blur(16px);z-index:10;box-shadow:0 8px 32px rgba(0,0,0,0.5);max-width:calc(100vw - 24px);overflow-x:auto;">
     <div style="display:flex;align-items:center;gap:6px;background:#181c26;border:1px solid rgba(255,255,255,0.08);border-radius:5px;padding:0 10px;height:30px;">
       <span style="color:#4a5568;font-size:11px;">⌕</span>
-      <input type="text" id="g3dSearch" placeholder="search..." style="background:none;border:none;outline:none;color:#c4cdd8;font-family:'DM Mono',monospace;font-size:11px;width:130px;">
+      <input type="text" id="g3dSearch" placeholder="Search positions..." style="background:none;border:none;outline:none;color:#c4cdd8;font-family:'DM Mono',monospace;font-size:11px;width:130px;">
     </div>
     <div style="width:1px;height:22px;background:rgba(255,255,255,0.08);margin:0 4px;"></div>
     <button class="g3d-tb-btn active" data-status="all">All</button>
@@ -349,11 +355,11 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
   <div id="g3dDetail" style="position:absolute;right:0;top:0;bottom:0;width:270px;background:rgba(14,16,21,0.97);border-left:1px solid rgba(255,255,255,0.06);transform:translateX(100%);transition:transform 0.25s cubic-bezier(0.4,0,0.2,1);z-index:10;display:flex;flex-direction:column;backdrop-filter:blur(20px);">
     <div style="padding:18px 18px 14px;border-bottom:1px solid rgba(255,255,255,0.04);flex-shrink:0;">
       <button id="g3dDetailClose" style="position:absolute;top:14px;right:14px;background:none;border:none;color:#4a5568;cursor:pointer;font-size:17px;line-height:1;">×</button>
-      <div style="display:flex;align-items:center;gap:5px;margin-bottom:6px;">
-        <span id="g3dDetailDot" style="width:6px;height:6px;border-radius:50%;background:#666;flex-shrink:0;"></span>
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;">
+        <span id="g3dDetailDot" style="width:7px;height:7px;border-radius:50%;background:#666;flex-shrink:0;"></span>
         <span id="g3dDetailSect" style="font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:2px;color:#4a5568;text-transform:uppercase;"></span>
       </div>
-      <div id="g3dDetailName" style="font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:600;letter-spacing:1px;color:#c4cdd8;margin-bottom:8px;line-height:1.2;"></div>
+      <div id="g3dDetailName" style="font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:600;letter-spacing:1px;color:#c4cdd8;margin-bottom:10px;line-height:1.2;"></div>
       <div id="g3dDetailBadges" style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px;"></div>
       <div id="g3dStatLine" style="font-family:'Barlow Condensed',sans-serif;font-size:11px;color:#4a5568;letter-spacing:0.5px;display:none;">
         <span id="g3dStatIn" style="color:#47c8ff;">—</span> entries · <span id="g3dStatOut" style="color:#ff9966;">—</span> transitions
@@ -373,7 +379,7 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
   </div>
 
   <!-- Legend — static fallback; overwritten by initGraph3D from SECTIONS -->
-  <div id="g3dLegend" style="position:absolute;top:52px;right:280px;font-family:'DM Mono',monospace;font-size:9px;color:#4a5568;pointer-events:none;z-index:5;line-height:1.9;transition:right 0.25s;">
+  <div id="g3dLegend" style="position:absolute;top:16px;right:280px;font-family:'Barlow Condensed',sans-serif;font-size:11px;color:#667;pointer-events:none;z-index:5;line-height:2;transition:right 0.25s;background:rgba(14,16,21,0.7);border:1px solid rgba(255,255,255,0.05);border-radius:6px;padding:8px 12px;backdrop-filter:blur(8px);">
     <div style="display:flex;align-items:center;gap:5px;"><span style="width:6px;height:6px;border-radius:50%;background:#f0c040;display:inline-block;"></span>Wrestling</div>
     <div style="display:flex;align-items:center;gap:5px;"><span style="width:6px;height:6px;border-radius:50%;background:#e05a30;display:inline-block;"></span>Guard</div>
     <div style="display:flex;align-items:center;gap:5px;"><span style="width:6px;height:6px;border-radius:50%;background:#9b72f5;display:inline-block;"></span>Dominant Positions</div>
@@ -384,7 +390,7 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
   <div id="g3dTooltip" style="position:absolute;display:none;background:rgba(18,21,28,0.95);border:1px solid rgba(255,255,255,0.08);border-radius:5px;padding:5px 10px;font-family:'Barlow Condensed',sans-serif;font-size:13px;color:#c4cdd8;pointer-events:none;z-index:20;backdrop-filter:blur(8px);max-width:200px;"></div>
 
   <!-- Empty state overlay for DRILLING / LEARNED / MY GAME filters -->
-  <div id="g3dEmptyState" style="display:none;position:absolute;inset:0;z-index:5;pointer-events:none;display:none;align-items:center;justify-content:center;">
+  <div id="g3dEmptyState" style="display:none;position:absolute;inset:0;z-index:5;pointer-events:none;align-items:center;justify-content:center;">
     <div style="text-align:center;max-width:320px;">
       <div id="g3dEmptyIcon" style="font-size:32px;margin-bottom:12px;opacity:0.4;">⟳</div>
       <div id="g3dEmptyText" style="font-family:'Barlow Condensed',sans-serif;font-size:16px;color:#8899aa;line-height:1.5;letter-spacing:0.5px;"></div>
@@ -1583,6 +1589,9 @@ function switchToTab(view) {
   document.getElementById('graph3dView').style.display = view === 'graph3d' ? 'flex' : 'none';
   document.getElementById('graph3dView').style.flexDirection = 'column';
   if (view === 'graph3d') { requestAnimationFrame(() => requestAnimationFrame(initGraph3D)); }
+  // Blur any focused search input on tab switch
+  var activeEl = document.activeElement;
+  if (activeEl && (activeEl.id === 'refSearch' || activeEl.id === 'g3dSearch')) activeEl.blur();
   // Sync selected node into the new tab
   syncSelectedToTab(view);
   window.scrollTo(0, 0);
@@ -1965,7 +1974,7 @@ window.initGraph3D = (function() {
 
     // ── Badges: keep → REF only ───────────────────────────────────────
     var b=document.getElementById('g3dDetailBadges');b.innerHTML='';
-    b.innerHTML='<span style="background:#ffffff10;color:#8899aa;border:1px solid rgba(255,255,255,0.08);font-family:\'Barlow Condensed\',monospace;font-size:10px;letter-spacing:1px;padding:2px 7px;border-radius:3px;cursor:pointer;margin-left:auto;" onclick="closeDetail3d();switchToReferenceNode(\''+nd.label.replace(/'/g,"\\'")+'\',\''+nd.section.replace(/'/g,"\\'")+'\')">→ REF</span>';
+    b.innerHTML='<span style="background:rgba(255,255,255,0.04);color:#8899aa;border:1px solid rgba(255,255,255,0.08);font-family:\'Barlow Condensed\',monospace;font-size:10px;letter-spacing:1px;padding:3px 10px;border-radius:12px;cursor:pointer;" onclick="closeDetail3d();switchToReferenceNode(\''+nd.label.replace(/'/g,"\\'")+'\',\''+nd.section.replace(/'/g,"\\'")+'\')">View in Reference</span>';
 
     // ── Look up position in SECTIONS ──────────────────────────────────
     var sectNode = null;
@@ -1989,7 +1998,10 @@ window.initGraph3D = (function() {
     // ── Helper: render headings list for a parent node ────────────────
     var headingListEl = document.getElementById('g3dHeadingList');
     var headingsSecEl = document.getElementById('g3dHeadingsSec');
-    function renderHeadings(parentNode) {
+    // Build base key for this position
+    var posBaseKey = makeKey(nd.section, nd.label);
+    function renderHeadings(parentNode, parentKeyOverride) {
+      var parentKey = parentKeyOverride || posBaseKey;
       headingListEl.innerHTML = '';
       if (!parentNode || !parentNode.c || parentNode.c.length === 0) {
         headingsSecEl.style.display = 'none';
@@ -2006,31 +2018,78 @@ window.initGraph3D = (function() {
         // Heading row (clickable to expand/collapse)
         var wrap = document.createElement('div');
         var item = document.createElement('div');
-        item.style.cssText = 'display:flex;align-items:center;gap:8px;padding:4px 0;cursor:pointer;font-family:Barlow Condensed,monospace;font-size:13px;';
+        item.style.cssText = 'display:flex;align-items:center;gap:8px;padding:5px 0;cursor:pointer;font-family:Barlow Condensed,monospace;font-size:13px;';
         var chevron = tc > 0 ? '\u25B8' : '\u00B7';
         item.innerHTML = '<span class="g3d-heading-chev" style="width:10px;color:#4a5568;font-size:9px;flex-shrink:0;transition:transform 0.15s;">'+chevron+'</span>'
           + '<span style="flex:1;color:#8899aa;">'+t+'</span>'
-          + '<span style="color:#4a5568;font-size:11px;">('+tc+')</span>';
+          + (tc > 0 ? '<span style="color:#4a5568;font-size:10px;background:rgba(255,255,255,0.04);padding:1px 6px;border-radius:8px;">'+tc+'</span>' : '');
         wrap.appendChild(item);
         // Child list (hidden by default)
         var childList = document.createElement('div');
         childList.style.cssText = 'display:none;padding-left:18px;';
+        var headingKey = makePathKey(parentKey, t);
         if (h.c && h.c.length > 0) {
           h.c.forEach(function(child) {
             var ct = (child.t || '').trim();
             if (!ct || SKIP_CHILDREN.has(ct) || PERSP_SET.has(ct) || SCHEMA_NAMES.has(ct)) return;
+            var techKey = makePathKey(headingKey, ct);
             var cItem = document.createElement('div');
+            cItem.style.cssText = 'display:flex;align-items:center;gap:6px;padding:3px 0;';
             var hasKids = child.c && child.c.filter(function(gc){return !SKIP_CHILDREN.has((gc.t||'').trim());}).length > 0;
             var hasMedia = child.v || child.l || (child.c && child.c.some(function(gc){return gc.t==='Instructional video'||gc.t==='Live video';}));
-            cItem.style.cssText = 'padding:3px 0;font-family:Barlow Condensed,monospace;font-size:12px;color:'+(hasKids||hasMedia?'#8899aa':'#556')+';cursor:pointer;transition:color 0.1s;';
-            cItem.addEventListener('mouseenter', function(){cItem.style.color=col;});
-            cItem.addEventListener('mouseleave', function(){cItem.style.color=hasKids||hasMedia?'#8899aa':'#556';});
-            cItem.textContent = ct;
-            // Detail expansion container
+            var cLabel = document.createElement('span');
+            cLabel.style.cssText = 'flex:1;font-family:Barlow Condensed,monospace;font-size:12px;color:'+(hasKids||hasMedia?'#c4cdd8':'#556')+';cursor:pointer;transition:color 0.1s;';
+            cLabel.addEventListener('mouseenter', function(){cLabel.style.color=col;});
+            cLabel.addEventListener('mouseleave', function(){cLabel.style.color=hasKids||hasMedia?'#c4cdd8':'#556';});
+            // Video dot indicator for media-bearing techniques
+            if (hasMedia) {
+              var dot = document.createElement('span');
+              dot.style.cssText = 'display:inline-block;width:4px;height:4px;background:'+col+';border-radius:50%;margin-right:5px;vertical-align:middle;flex-shrink:0;';
+              cLabel.insertBefore(dot, cLabel.firstChild);
+            }
+            var labelSpan = document.createTextNode(ct);
+            cLabel.appendChild(labelSpan);
+            cItem.appendChild(cLabel);
+            // Inline media button on the technique row (not buried in expansion)
+            var techVidUrl = child.v;
+            if (!techVidUrl && child.c) { child.c.forEach(function(gc2){ if (gc2.t==='Instructional video' && gc2.v) techVidUrl = gc2.v; }); }
+            if (techVidUrl) {
+              var rowVBtn = document.createElement('button');
+              rowVBtn.style.cssText = 'background:none;border:1px solid rgba(255,255,255,0.1);color:'+col+';font-family:Barlow Condensed,monospace;font-size:9px;padding:2px 7px;border-radius:3px;cursor:pointer;flex-shrink:0;opacity:0.6;transition:opacity 0.15s;';
+              rowVBtn.textContent = '\u25B6';
+              rowVBtn.title = 'Watch video';
+              rowVBtn.addEventListener('mouseenter', function(){rowVBtn.style.opacity='1';});
+              rowVBtn.addEventListener('mouseleave', function(){rowVBtn.style.opacity='0.6';});
+              (function(url,name){rowVBtn.addEventListener('click',function(ev){ev.stopPropagation();window.openVideoModal(url,name+' \u2014 Instructional');});})(techVidUrl, ct);
+              cItem.appendChild(rowVBtn);
+            }
+            // Progress pill (Drilling/Learned toggle)
+            var curProg = STATE.progress[techKey] || 'none';
+            var pill = document.createElement('span');
+            pill.style.cssText = 'font-family:Barlow Condensed,monospace;font-size:9px;letter-spacing:0.5px;padding:2px 8px;border-radius:12px;cursor:pointer;text-transform:uppercase;flex-shrink:0;transition:all 0.15s;';
+            function updatePillStyle(p, el) {
+              if (p === 'drilling') { el.style.border = '1px solid var(--blue)'; el.style.color = 'var(--blue)'; el.textContent = 'Drilling'; }
+              else if (p === 'learned') { el.style.border = '1px solid var(--accent)'; el.style.color = 'var(--accent)'; el.textContent = 'Learned'; }
+              else { el.style.border = '1px solid rgba(255,255,255,0.1)'; el.style.color = '#667'; el.style.background = 'rgba(255,255,255,0.02)'; el.textContent = 'Track'; }
+            }
+            updatePillStyle(curProg, pill);
+            (function(k, pillEl) {
+              pillEl.addEventListener('click', function(ev) {
+                ev.stopPropagation();
+                var cur = STATE.progress[k] || 'none';
+                var next = {none:'drilling',drilling:'learned',learned:'none'}[cur];
+                if (next === 'none') delete STATE.progress[k];
+                else STATE.progress[k] = next;
+                updatePillStyle(next, pillEl);
+                saveState(); updateStats(); refreshAllViews();
+              });
+            })(techKey, pill);
+            cItem.appendChild(pill);
+            // Detail expansion container — styled as mini lesson card
             var detailEl = document.createElement('div');
-            detailEl.style.cssText = 'display:none;padding:4px 0 6px 12px;border-left:1px solid rgba(255,255,255,0.06);margin-left:4px;';
+            detailEl.style.cssText = 'display:none;padding:6px 10px 8px;margin:4px 0 4px 4px;background:rgba(255,255,255,0.02);border-radius:4px;border-left:2px solid '+col+';';
             var detailOpen = false;
-            cItem.addEventListener('click', function() {
+            cLabel.addEventListener('click', function() {
               detailOpen = !detailOpen;
               if (detailOpen) {
                 detailEl.innerHTML = '';
@@ -2054,7 +2113,7 @@ window.initGraph3D = (function() {
                     var gcLive = gc.l;
                     if (!gcVid && gc.c) { gc.c.forEach(function(ggc){ if (ggc.t==='Instructional video' && ggc.v) gcVid = ggc.v; if (ggc.t==='Live video' && ggc.l) gcLive = ggc.l; }); }
                     var gcDetailEl = document.createElement('div');
-                    gcDetailEl.style.cssText = 'display:none;padding:2px 0 4px 10px;';
+                    gcDetailEl.style.cssText = 'display:none;padding:4px 8px 6px;margin:2px 0 2px 4px;background:rgba(255,255,255,0.015);border-radius:3px;border-left:1px solid rgba(255,255,255,0.06);';
                     var gcDetailOpen = false;
                     // Sub-sub-children
                     var gcSubKids = (gc.c||[]).filter(function(ggc){var gt=(ggc.t||'').trim();return gt&&!SKIP_CHILDREN.has(gt);});
@@ -2104,33 +2163,46 @@ window.initGraph3D = (function() {
                     detailEl.appendChild(gcWrap);
                   });
                 }
-                // Show Notes content if present
+                // Show Notes content if present — styled card
                 var notesNode = (child.c||[]).find(function(gc){return (gc.t||'').trim()==='Notes';});
                 if (notesNode && notesNode.c) {
+                  var notesWrap = document.createElement('div');
+                  notesWrap.style.cssText = 'margin-top:4px;padding:4px 8px;background:rgba(167,139,250,0.04);border-radius:3px;border-left:1px solid rgba(167,139,250,0.15);';
                   notesNode.c.forEach(function(nc) {
                     var nEl = document.createElement('div');
-                    nEl.style.cssText = 'padding:1px 0;font-size:10px;color:#4a5568;font-style:italic;font-family:Barlow Condensed,monospace;';
-                    nEl.textContent = '\u2014 ' + (nc.t||'');
-                    detailEl.appendChild(nEl);
+                    nEl.style.cssText = 'padding:1px 0;font-size:10px;color:#8892a4;font-family:Barlow Condensed,monospace;';
+                    nEl.textContent = '\u2022 ' + (nc.t||'');
+                    notesWrap.appendChild(nEl);
                   });
+                  detailEl.appendChild(notesWrap);
                 }
                 // Show video buttons (hoist URL from Instructional/Live video children)
                 var vidUrl = child.v;
                 var liveUrl = child.l;
                 if (!vidUrl && child.c) { child.c.forEach(function(gc){ if (gc.t==='Instructional video' && gc.v) vidUrl = gc.v; if (gc.t==='Live video' && gc.l) liveUrl = gc.l; }); }
-                if (vidUrl) {
-                  var vBtn = document.createElement('button');
-                  vBtn.style.cssText = 'background:none;border:1px solid rgba(255,255,255,0.1);color:'+col+';font-family:Barlow Condensed,monospace;font-size:10px;padding:3px 8px;border-radius:3px;cursor:pointer;margin:2px 4px 2px 0;';
-                  vBtn.textContent = '\uD83D\uDCD6 Instructional';
-                  (function(url, name){ vBtn.addEventListener('click', function(ev){ ev.stopPropagation(); window.openVideoModal(url, name + ' \u2014 Instructional'); }); })(vidUrl, ct);
-                  detailEl.appendChild(vBtn);
-                }
-                if (liveUrl) {
-                  var lBtn = document.createElement('button');
-                  lBtn.style.cssText = 'background:none;border:1px solid rgba(255,255,255,0.1);color:#47c8ff;font-family:Barlow Condensed,monospace;font-size:10px;padding:3px 8px;border-radius:3px;cursor:pointer;margin:2px 4px 2px 0;';
-                  lBtn.textContent = '\uD83C\uDFA5 Live';
-                  (function(url, name){ lBtn.addEventListener('click', function(ev){ ev.stopPropagation(); window.openVideoModal(url, name + ' \u2014 Live'); }); })(liveUrl, ct);
-                  detailEl.appendChild(lBtn);
+                // Media action buttons — pill style
+                if (vidUrl || liveUrl) {
+                  var mediaBtnRow = document.createElement('div');
+                  mediaBtnRow.style.cssText = 'display:flex;gap:6px;margin-top:6px;flex-wrap:wrap;';
+                  if (vidUrl) {
+                    var vBtn = document.createElement('button');
+                    vBtn.style.cssText = 'background:rgba(255,107,53,0.08);border:1px solid rgba(255,107,53,0.3);color:'+col+';font-family:Barlow Condensed,monospace;font-size:10px;padding:4px 12px;border-radius:12px;cursor:pointer;transition:all 0.15s;';
+                    vBtn.textContent = '\u25B6 Instructional';
+                    vBtn.addEventListener('mouseenter', function(){vBtn.style.background='rgba(255,107,53,0.2)';});
+                    vBtn.addEventListener('mouseleave', function(){vBtn.style.background='rgba(255,107,53,0.08)';});
+                    (function(url, name){ vBtn.addEventListener('click', function(ev){ ev.stopPropagation(); window.openVideoModal(url, name + ' \u2014 Instructional'); }); })(vidUrl, ct);
+                    mediaBtnRow.appendChild(vBtn);
+                  }
+                  if (liveUrl) {
+                    var lBtn = document.createElement('button');
+                    lBtn.style.cssText = 'background:rgba(52,211,153,0.06);border:1px solid rgba(52,211,153,0.3);color:#47c8ff;font-family:Barlow Condensed,monospace;font-size:10px;padding:4px 12px;border-radius:12px;cursor:pointer;transition:all 0.15s;';
+                    lBtn.textContent = '\u25B6 Live';
+                    lBtn.addEventListener('mouseenter', function(){lBtn.style.background='rgba(52,211,153,0.15)';});
+                    lBtn.addEventListener('mouseleave', function(){lBtn.style.background='rgba(52,211,153,0.06)';});
+                    (function(url, name){ lBtn.addEventListener('click', function(ev){ ev.stopPropagation(); window.openVideoModal(url, name + ' \u2014 Live'); }); })(liveUrl, ct);
+                    mediaBtnRow.appendChild(lBtn);
+                  }
+                  detailEl.appendChild(mediaBtnRow);
                 }
                 if (detailEl.children.length === 0) {
                   var emptyEl = document.createElement('div');
@@ -2168,7 +2240,7 @@ window.initGraph3D = (function() {
     if (perspectives.length === 0) {
       perspTabsEl.style.display = 'none';
       // No perspectives — render headings from sectNode directly (e.g. Wrestling bodylock)
-      renderHeadings(sectNode);
+      renderHeadings(sectNode, posBaseKey);
     } else {
       perspTabsEl.style.display = 'flex';
       var activeTabStyle = 'background:none;border:none;border-bottom:2px solid '+col+';color:#c4cdd8;font-family:Barlow Condensed,sans-serif;font-size:12px;letter-spacing:1px;padding:6px 10px;cursor:pointer;text-transform:uppercase;';
@@ -2181,12 +2253,12 @@ window.initGraph3D = (function() {
         tab.addEventListener('click', function() {
           perspTabsEl.querySelectorAll('button').forEach(function(btn) { btn.style.cssText = inactiveTabStyle; });
           tab.style.cssText = activeTabStyle;
-          renderHeadings(p);
+          renderHeadings(p, makePathKey(posBaseKey, p.t));
         });
         perspTabsEl.appendChild(tab);
       });
       // Default: render headings for first perspective
-      renderHeadings(perspectives[0]);
+      renderHeadings(perspectives[0], makePathKey(posBaseKey, perspectives[0].t));
     }
 
     // ── 3. CONNECTIONS from _transitionOccurrences ────────────────────
@@ -2222,10 +2294,10 @@ window.initGraph3D = (function() {
         }
       });
 
-      // Header counts
+      // Header counts — styled summary
       var connHeader = document.createElement('div');
-      connHeader.style.cssText = 'font-size:10px;color:#4a5568;font-family:Barlow Condensed,monospace;margin-bottom:6px;';
-      connHeader.innerHTML = '<span style="color:#47c8ff;">'+inMap.size+' entries</span> \u00b7 <span style="color:#ff9966;">'+outMap.size+' transitions</span>';
+      connHeader.style.cssText = 'font-size:10px;color:#4a5568;font-family:Barlow Condensed,monospace;margin-bottom:8px;padding:4px 8px;background:rgba(255,255,255,0.02);border-radius:4px;';
+      connHeader.innerHTML = '<span style="color:#47c8ff;">'+inMap.size+' entries</span> <span style="margin:0 4px;color:#333;">\u00b7</span> <span style="color:#ff9966;">'+outMap.size+' transitions</span>';
       cl.appendChild(connHeader);
 
       // Helper: render connection list grouped by destination/source
@@ -2245,7 +2317,9 @@ window.initGraph3D = (function() {
           var contexts = grouped[rawLabel];
           var labelText = stripPersp(rawLabel);
           var destRow = document.createElement('div');
-          destRow.style.cssText = 'padding:3px 0;cursor:pointer;';
+          destRow.style.cssText = 'padding:4px 6px;cursor:pointer;border-radius:3px;transition:background 0.12s;';
+          destRow.addEventListener('mouseenter', function(){destRow.style.background='rgba(255,255,255,0.04)';});
+          destRow.addEventListener('mouseleave', function(){destRow.style.background='transparent';});
           // Main label with count
           var mainLine = document.createElement('div');
           mainLine.style.cssText = 'display:flex;align-items:center;gap:6px;font-family:Barlow Condensed,monospace;font-size:12px;color:#8899aa;';
@@ -2253,10 +2327,10 @@ window.initGraph3D = (function() {
           mainLine.innerHTML = '<span style="color:'+color+';font-size:9px;width:12px;">'+arrow+'</span>'
             + '<span style="flex:1;">'+labelText+countStr+'</span>';
           destRow.appendChild(mainLine);
-          // Context labels underneath (smaller, dimmer)
+          // Context labels underneath
           if (contexts.length > 1) {
             var ctxList = document.createElement('div');
-            ctxList.style.cssText = 'padding:1px 0 2px 18px;font-family:Barlow Condensed,monospace;font-size:10px;color:#556;line-height:1.5;';
+            ctxList.style.cssText = 'padding:1px 0 2px 18px;font-family:Barlow Condensed,monospace;font-size:10px;color:#778;line-height:1.5;';
             ctxList.textContent = contexts.join(', ');
             destRow.appendChild(ctxList);
           }
@@ -2444,10 +2518,11 @@ window.initGraph3D = (function() {
       else{m.material.opacity=sf==='all'?0.06:0;m.visible=sf==='all';}
       const ring=ringMap3d[n.id];if(ring)ring.visible=aIds.has(n.id)&&showRings3d&&n._w>20;
     });
-    // Orphan nodes always at ORPHAN_OPACITY
+    // Orphan nodes: hide when filter is active, show at reduced opacity for 'all'
     NET_NODES.filter(function(n){return isGraphableNode(n)&&!n.in_network;}).forEach(function(n){
       var m=meshMap3d[n.id];if(!m)return;
-      m.material.opacity=ORPHAN_OPACITY;m.material.emissiveIntensity=0.05;m.visible=true;
+      if (sf !== 'all') { m.material.opacity=0; m.visible=false; }
+      else { m.material.opacity=ORPHAN_OPACITY;m.material.emissiveIntensity=0.05;m.visible=showOrphans3d; }
     });
     edgeMeshes3d.forEach(e=>{
       if(isEmpty){e.line.visible=true;e._base=0.04;e._mat.opacity=0.04;return;}
@@ -2588,7 +2663,7 @@ window.initGraph3D = (function() {
       canvas.addEventListener('webglcontextlost',e=>{e.preventDefault();ready=false;},false);
 
       const g3dLeg=document.getElementById('g3dLegend');
-      if(g3dLeg) g3dLeg.innerHTML=SECTIONS.map((s,i)=>`<div style="display:flex;align-items:center;gap:5px;"><span style="width:6px;height:6px;border-radius:50%;background:${SECT_CSS3[i]||s.color};display:inline-block;"></span><span>${s.title.split(' ').slice(0,3).join(' ')}</span></div>`).join('');
+      if(g3dLeg) g3dLeg.innerHTML=SECTIONS.map((s,i)=>`<div style="display:flex;align-items:center;gap:6px;"><span style="width:7px;height:7px;border-radius:50%;background:${SECT_CSS3[i]||s.color};display:inline-block;box-shadow:0 0 4px ${SECT_CSS3[i]||s.color}40;"></span><span style="color:#8899aa;">${s.title.split(' ').slice(0,3).join(' ')}</span></div>`).join('');
       const lc=document.getElementById('g3dLabelCanvas');
       lc.width=W;lc.height=H;
 
@@ -2787,7 +2862,11 @@ window.initGraph3D = (function() {
           var sampleNode=NET_NODES.find(function(n){return n.in_network;});
           console.log('builtOutNetMap size:',netMap.size,'| sample map key:',[...netMap.keys()][0],'| sample node key:',sampleNode?sampleNode.key:'N/A');
         }
-        NET_NODES.filter(isGraphableNode).forEach(function(n){var m=meshMap3d[n.id];if(!m||!m.visible)return;if(!n.in_network){m.material.opacity=ORPHAN_OPACITY;return;}var isBuilt=netMap.get(n.key)===true;m.material.opacity=builtOut3d&&!isBuilt?0.08:(n.status==='none'?0.72:0.9);});
+        NET_NODES.filter(isGraphableNode).forEach(function(n){var m=meshMap3d[n.id];if(!m)return;if(!n.in_network){if(builtOut3d){m.visible=false;}return;}var isBuilt=netMap.get(n.key)===true;if(builtOut3d&&!isBuilt){m.visible=false;m.material.opacity=0;}else{m.visible=true;m.material.opacity=n.status==='none'?0.72:0.9;}});
+        // Also hide edges to hidden nodes when Developed filter active
+        if(builtOut3d){edgeMeshes3d.forEach(function(e){var sm=meshMap3d[e.source],tm=meshMap3d[e.target];e.line.visible=!!(sm&&sm.visible&&tm&&tm.visible);});}
+        // Hide rings for hidden nodes
+        Object.entries(ringMap3d).forEach(function(kv){var m=meshMap3d[kv[0]];if(m&&!m.visible)kv[1].visible=false;});
       };
       const boCheckbox=document.getElementById('g3dOptBuiltOut');
       const boBtn=document.getElementById('g3dBuiltOutBtn');
@@ -2914,8 +2993,10 @@ document.addEventListener('keydown', e => {
     // Also close help panel
     document.getElementById('kbdHelpPanel').style.display = 'none';
   }
-  // Esc resets 3D graph selection + zoom
+  // Esc resets 3D graph selection + zoom + blurs search
   if (e.key === 'Escape' && document.getElementById('graph3dView').style.display !== 'none') {
+    var g3dSearchEl = document.getElementById('g3dSearch');
+    if (g3dSearchEl && document.activeElement === g3dSearchEl) { g3dSearchEl.blur(); g3dSearchEl.value = ''; }
     if (window._g3dZoomOut) window._g3dZoomOut();
     if (window._g3dResetHL) window._g3dResetHL();
     if (window._g3dCloseDetail) window._g3dCloseDetail();
@@ -2997,7 +3078,7 @@ fetch('./results.md').then(function(r){if(!r.ok)throw r;return r.text();}).then(
   if(m){try{window._lastResult=JSON.parse(m[1].trim());}catch(e){window._lastResult=null;}}
 }).catch(function(){window._lastResult=null;});
 if (typeof SECTIONS === 'undefined' || !SECTIONS.length) {
-  document.getElementById('sections').innerHTML = '<div style="text-align:center;padding:80px 20px;color:var(--text-muted);font-family:Barlow Condensed,sans-serif;font-size:16px;letter-spacing:1px;">No data loaded — check pipeline output</div>';
+  document.getElementById('sections').innerHTML = '<div style="text-align:center;padding:80px 20px;color:var(--text-muted);font-family:\'Barlow Condensed\',sans-serif;font-size:16px;letter-spacing:1px;">Content is loading — please refresh if this persists</div>';
   console.warn('SECTIONS empty or undefined — cannot build Reference tree');
 } else {
   buildSections();
@@ -3446,9 +3527,9 @@ console.log('[GrapplingMap] Debug API ready: window.__APP_DEBUG__');
 <!-- ══ VIDEO MODAL ═══════════════════════════════════════════════════════ -->
 <div id="videoModal" style="display:none;position:fixed;inset:0;z-index:2000;align-items:center;justify-content:center;background:rgba(0,0,0,0.82);backdrop-filter:blur(8px);">
   <div id="videoModalInner" style="position:relative;width:min(88vw,960px);max-height:90vh;">
-    <div id="videoModalTitle" style="font-family:'Barlow Condensed',sans-serif;font-size:14px;color:#c4cdd8;letter-spacing:0.5px;margin-bottom:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"></div>
+    <div id="videoModalTitle" style="font-family:'Barlow Condensed',sans-serif;font-size:17px;color:#e8edf5;letter-spacing:0.5px;margin-bottom:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:500;"></div>
     <div id="videoModalPlayer" style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:6px;border:1px solid rgba(255,255,255,0.08);box-shadow:0 12px 48px rgba(0,0,0,0.6);"></div>
-    <button id="videoModalClose" style="position:absolute;top:-8px;right:-8px;background:rgba(14,16,21,0.9);border:1px solid rgba(255,255,255,0.12);color:#c4cdd8;font-size:18px;width:32px;height:32px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:1;">&#215;</button>
+    <button id="videoModalClose" style="position:absolute;top:4px;right:4px;background:rgba(14,16,21,0.9);border:1px solid rgba(255,255,255,0.12);color:#c4cdd8;font-size:18px;width:36px;height:36px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:1;">&#215;</button>
   </div>
 </div>
 <script>
