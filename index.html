@@ -94,7 +94,7 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
 .tree-item.technique-selected > .node { padding-top: 6px; padding-bottom: 6px; }
 .tree-item.technique-selected > .node .node-label { color: var(--text); font-weight: 500; font-size: 13px; }
 .tree-item.technique-selected > .node .btn-video { opacity: 1; }
-.tree-item.technique-selected > .node .node-actions { gap: 6px; }
+.tree-item.technique-selected > .node .node-actions { gap: 6px; background: rgba(255,255,255,0.02); padding: 3px 6px; border-radius: 8px; }
 .technique-breadcrumb { font-family: 'Barlow Condensed', sans-serif; font-size: 10px; color: #778; letter-spacing: 0.3px; padding: 2px 0 4px 28px; display: none; transition: color 0.15s; }
 .tree-item.technique-selected > .technique-breadcrumb { display: block; }
 .technique-breadcrumb:hover { color: #889; }
@@ -146,7 +146,8 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
 /* OT transition rows (contain arrow) */
 .tree-item[data-ot="1"] > .node .node-label { font-size: 11px; color: #778; font-style: italic; opacity: 0.8; }
 .tree-item[data-ot="1"] > .node .node-label::before { content: '\2192 '; color: #ff9966; font-style: normal; font-size: 10px; }
-.tree-item[data-ot="1"] > .node { background: rgba(255,153,102,0.015); border-radius: 3px; }
+.tree-item[data-ot="1"] > .node { background: rgba(255,153,102,0.015); border-radius: 3px; cursor: default; }
+.tree-item[data-ot="1"] > .node:hover .node-label { text-decoration: underline; text-decoration-color: rgba(255,153,102,0.3); text-underline-offset: 2px; }
 /* Notes rows */
 .tree-item[data-notes="1"] > .node .node-label { font-size: 11px; color: var(--accent3); font-style: italic; opacity: 0.8; }
 .tree-item[data-notes="1"] > .node .node-label::before { content: '\270E '; color: var(--accent3); font-style: normal; font-size: 10px; }
@@ -2594,9 +2595,11 @@ window.initGraph3D = (function() {
     if (to) {
       document.getElementById('g3dStatIn').textContent = inE.length;
       document.getElementById('g3dStatOut').textContent = outE.length;
-      statLine.style.display = (inE.length > 0 || outE.length > 0) ? 'block' : 'none';
+      statLine.style.display = 'block';
     } else {
-      statLine.style.display = 'none';
+      statLine.style.display = 'block';
+      document.getElementById('g3dStatIn').textContent = '0';
+      document.getElementById('g3dStatOut').textContent = '0';
     }
 
     // Auto-scroll Reference to this position (background — don't switch tab)
