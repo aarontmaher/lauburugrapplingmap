@@ -352,7 +352,7 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
     <button id="headerMenuToggle" style="background:none;border:1px solid rgba(255,255,255,0.1);color:#4a5568;font-family:'DM Mono',monospace;font-size:14px;padding:4px 10px;border-radius:4px;cursor:pointer;" title="Menu" aria-label="Open menu" aria-haspopup="true">&#8942;</button>
     <div id="headerMenu" style="display:none;position:absolute;right:0;top:calc(100% + 6px);background:rgba(14,16,21,0.97);border:1px solid rgba(255,255,255,0.08);border-radius:6px;padding:4px 0;z-index:50;-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);box-shadow:0 8px 32px rgba(0,0,0,0.5);min-width:160px;">
       <button id="menuRecentBtn" style="display:block;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Recent techniques</button>
-      <button id="menuDrillingBtn" style="display:block;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">My Drilling list</button>
+      <button id="menuDrillingBtn" style="display:block;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">My Drills <span id="drillCountBadge" style="background:var(--blue);color:#000;font-size:9px;padding:1px 5px;border-radius:8px;margin-left:4px;display:none;"></span></button>
       <div style="height:1px;background:rgba(255,255,255,0.06);margin:4px 0;"></div>
       <button id="menuExportBtn" style="display:block;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Export progress</button>
       <button id="menuImportBtn" style="display:block;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Import progress</button>
@@ -375,6 +375,8 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
     <kbd style="background:#1a1e28;border:1px solid #2a3040;border-radius:3px;padding:2px 6px;font-size:10px;color:var(--text-dim);">Enter</kbd><span>Jump to first search result</span>
     <kbd style="background:#1a1e28;border:1px solid #2a3040;border-radius:3px;padding:2px 6px;font-size:10px;color:var(--text-dim);">↓ / ↑</kbd><span>Navigate search results</span>
     <kbd style="background:#1a1e28;border:1px solid #2a3040;border-radius:3px;padding:2px 6px;font-size:10px;color:var(--text-dim);">T</kbd><span>Cycle status: Track → Drilling → Learned</span>
+    <kbd style="background:#1a1e28;border:1px solid #2a3040;border-radius:3px;padding:2px 6px;font-size:10px;color:var(--text-dim);">D</kbd><span>Open My Drills</span>
+    <kbd style="background:#1a1e28;border:1px solid #2a3040;border-radius:3px;padding:2px 6px;font-size:10px;color:var(--text-dim);">R</kbd><span>Open Recent techniques</span>
     <kbd style="background:#1a1e28;border:1px solid #2a3040;border-radius:3px;padding:2px 6px;font-size:10px;color:var(--text-dim);">G</kbd><span>Toggle Reference ↔ Network</span>
     <kbd style="background:#1a1e28;border:1px solid #2a3040;border-radius:3px;padding:2px 6px;font-size:10px;color:var(--text-dim);">?</kbd><span>Toggle this help panel</span>
   </div>
@@ -854,6 +856,11 @@ function updateStats() {
   var hasProgress = Object.keys(STATE.progress).length > 0;
   document.getElementById('headerStats').style.display = hasProgress ? 'flex' : 'none';
   progBar.parentElement.style.opacity = hasProgress ? '1' : '0';
+  // Update drill count badge
+  var drillCount = 0;
+  for (var v2 of Object.values(STATE.progress)) { if (v2 === 'drilling') drillCount++; }
+  var badge = document.getElementById('drillCountBadge');
+  if (badge) { badge.textContent = drillCount; badge.style.display = drillCount > 0 ? 'inline' : 'none'; }
 }
 
 // ─── POPUP BUILDER (shared between 2D and 3D) ─────────────────────────────
@@ -1860,6 +1867,8 @@ function switchToTab(view) {
     var ro = document.getElementById('refOnboarding');
     if (ro && !SELECTED_NODE) ro.style.display = 'block';
   }
+  // Save tab state for resume
+  saveState();
 }
 document.querySelectorAll('.view-tab').forEach(tab => {
   tab.addEventListener('click', function() { switchToTab(this.dataset.view); });
@@ -3259,6 +3268,10 @@ document.addEventListener('keydown', e => {
       saveState(); updateStats(); refreshAllViews();
     }
   }
+  // D: open drilling list
+  if (e.key === 'd' && !inInput) { document.getElementById('menuDrillingBtn').click(); }
+  // R: open recent techniques
+  if (e.key === 'r' && !inInput) { document.getElementById('menuRecentBtn').click(); }
   // ?: toggle help panel
   if (e.key === '?' && !inInput) {
     var hp = document.getElementById('kbdHelpPanel');
@@ -3387,6 +3400,7 @@ function showToast(msg) {
 }
 document.getElementById('listPanelClose').addEventListener('click', closeListPanel);
 document.getElementById('listPanel').addEventListener('click', function(e) { if (e.target === this) closeListPanel(); });
+document.addEventListener('keydown', function(e) { if (e.key === 'Escape' && document.getElementById('listPanel').style.display === 'block') { closeListPanel(); e.stopPropagation(); } });
 // Recent techniques
 document.getElementById('menuRecentBtn').addEventListener('click', function() {
   var recent = STATE.recentViewed || [];
@@ -3409,11 +3423,18 @@ document.getElementById('menuDrillingBtn').addEventListener('click', function() 
       drills.push({ key: kv[0], label: label, meta: section });
     }
   });
+  // Sort by last-practiced (most recent first), then alphabetical
+  drills.sort(function(a, b) {
+    var lpA = STATE.lastPracticed && STATE.lastPracticed[a.key] || 0;
+    var lpB = STATE.lastPracticed && STATE.lastPracticed[b.key] || 0;
+    if (lpB !== lpA) return lpB - lpA;
+    return a.label.localeCompare(b.label);
+  });
   openListPanel('My Drills (' + drills.length + ')', drills.map(function(d) {
     var lp = STATE.lastPracticed && STATE.lastPracticed[d.key];
     return {
       label: d.label,
-      meta: d.meta + (lp ? ' · ' + timeAgo(lp) : ''),
+      meta: d.meta + (lp ? ' · ' + timeAgo(lp) : ' · not yet practiced'),
       onClick: function() { closeListPanel(); switchToReferenceNode(d.label, d.meta); }
     };
   }));
