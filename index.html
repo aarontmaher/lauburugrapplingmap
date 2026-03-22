@@ -3847,6 +3847,21 @@ updateStats();
       requestAnimationFrame(function() { requestAnimationFrame(initGraph3D); });
     }
   }
+  // Safety: if deep link handled the view but graph wasn't inited, ensure it inits when user switches
+  // Also verify sections rendered — defensive fallback
+  // Safety fallbacks
+  setTimeout(function() {
+    // If sections didn't render, rebuild
+    var sectionsEl = document.getElementById('sections');
+    if (sectionsEl && sectionsEl.children.length === 0 && typeof SECTIONS !== 'undefined' && SECTIONS.length) {
+      _warn('SAFETY: sections empty after boot — rebuilding');
+      buildSections(); markBuiltOut(); updateStats();
+    }
+    // If graph view is active but hasn't initialized, trigger it
+    if (document.getElementById('graph3dView').style.display !== 'none') {
+      requestAnimationFrame(function() { requestAnimationFrame(initGraph3D); });
+    }
+  }, 1000);
 })();
 // Update hash on tab switch and selection
 function updateHash() {
