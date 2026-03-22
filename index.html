@@ -3857,19 +3857,14 @@ updateStats();
   }
   // Safety: if deep link handled the view but graph wasn't inited, ensure it inits when user switches
   // Also verify sections rendered — defensive fallback
-  // Safety fallbacks
+  // Safety fallback: catch any remaining silent boot failures
   setTimeout(function() {
-    // If sections didn't render, rebuild
     var sectionsEl = document.getElementById('sections');
     if (sectionsEl && sectionsEl.children.length === 0 && typeof SECTIONS !== 'undefined' && SECTIONS.length) {
-      _warn('SAFETY: sections empty after boot — rebuilding');
+      _warn('SAFETY: sections empty — rebuilding');
       buildSections(); markBuiltOut(); updateStats();
     }
-    // If graph view is active but hasn't initialized, trigger it
-    if (document.getElementById('graph3dView').style.display !== 'none') {
-      requestAnimationFrame(function() { requestAnimationFrame(initGraph3D); });
-    }
-  }, 1000);
+  }, 2000);
 })();
 // Update hash on tab switch and selection
 function updateHash() {
@@ -3911,6 +3906,9 @@ window.__APP_DEBUG__ = {
       builtOut: boCount,
       guard: typeof SECTIONS !== 'undefined' ? (SECTIONS.find(function(s){return s.title==='Guard';})||{nodes:[]}).nodes.length : 0,
       sections: typeof SECTIONS !== 'undefined' ? SECTIONS.length : 0,
+      domSections: document.querySelectorAll('.section').length,
+      domTreeItems: document.querySelectorAll('.tree-item').length,
+      bootHealthy: document.querySelectorAll('.section').length > 0 && document.querySelectorAll('.tree-item').length > 0,
       selectedNode: typeof SELECTED_NODE !== 'undefined' ? SELECTED_NODE : null,
       activeFilter: (document.querySelector('#refBottomBar .g3d-tb-btn.active[data-filter]') || {}).textContent || 'All',
       totalNodes: STATE.totalNodes || 0,
