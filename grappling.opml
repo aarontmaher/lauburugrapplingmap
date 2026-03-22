@@ -9,7 +9,7 @@
   <body>
     <outline text="Grappling Mind Map">
       <outline text="Wrestling">
-        <outline text="Hand fighting (NEW)">
+        <outline text="Hand fighting">
           <outline text="Outside tie (You)">
             <outline text="You">
               <outline text="Setups / Entries">
@@ -1570,15 +1570,15 @@
             </outline>
             <outline text="Submissions" />
             <outline text="Offensive transitions">
-              <outline text="Toreando → Side control" />
-              <outline text="Leg drag → Side control" />
+              <outline text="Toreando → Side Control" />
+              <outline text="Leg drag → Side Control" />
               <outline text="North South pass → North South" />
-              <outline text="Sprawl → Side control" />
+              <outline text="Sprawl → Side Control" />
               <outline text="Back swim → North South" />
               <outline text="Stripping lasso → J point" />
               <outline text="Deep Lasso → North South" />
               <outline text="Reverse de la riva → J point" />
-              <outline text="K Guard → Side control" />
+              <outline text="K Guard → Side Control" />
             </outline>
           </outline>
           <outline text="Guard player">
@@ -3698,11 +3698,11 @@
             </outline>
             <outline text="Offensive transitions">
               <outline text="Head in the hole go-behind → Wrestling rear bodylock" />
-              <outline text="Head in the hole go-behind → Back control" />
+              <outline text="Head in the hole go-behind → Back Control" />
               <outline text="Single leg rear bodylock → Wrestling rear bodylock" />
-              <outline text="Single leg rear bodylock → Back control" />
+              <outline text="Single leg rear bodylock → Back Control" />
               <outline text="Whip by → Wrestling rear bodylock" />
-              <outline text="Whip by → Back control" />
+              <outline text="Whip by → Back Control" />
               <outline text="Pinch front headlock → Anaconda" />
               <outline text="Anaconda defence roll-through → Crucifix" />
               <outline text="Seatbelt roll-through → Seatbelt choking side up" />
@@ -3774,7 +3774,7 @@
             </outline>
             <outline text="Submissions" />
             <outline text="Offensive transitions">
-              <outline text="Peek-out → Back control" />
+              <outline text="Peek-out → Back Control" />
               <outline text="Re-attack on single → Grounded head inside single leg" />
             </outline>
           </outline>
@@ -3928,10 +3928,10 @@
               </outline>
             </outline>
             <outline text="Offensive transitions">
-              <outline text="Kimura back take → Back control" />
-              <outline text="Far side arm bar back take → Back control" />
-              <outline text="Gift wrap to back take → Back control" />
-              <outline text="Seatbelt to back → Back control" />
+              <outline text="Kimura back take → Back Control" />
+              <outline text="Far side arm bar back take → Back Control" />
+              <outline text="Gift wrap to back take → Back Control" />
+              <outline text="Seatbelt to back → Back Control" />
               <outline text="Knee on belly to mount → Mount" />
             </outline>
           </outline>
