@@ -1003,11 +1003,9 @@
         <outline text="Shin pin">
           <outline text="Passer">
             <outline text="Setups / Entries">
-              <outline text="Setups / Entries" />
-            </outline>
+              </outline>
             <outline text="Control">
-              <outline text="Control" />
-            </outline>
+              </outline>
             <outline text="Offence">
               <outline text="J point">
                 <outline text="Instructional video" />
@@ -1031,25 +1029,20 @@
                   </outline>
                 </outline>
               </outline>
-              <outline text="Offence" />
             </outline>
             <outline text="Defence / Escapes">
               <outline text="Defence" />
             </outline>
             <outline text="Submissions">
-              <outline text="Submissions" />
-            </outline>
+              </outline>
             <outline text="Offensive transitions">
-              <outline text="Offensive transitions" />
-            </outline>
+              </outline>
           </outline>
           <outline text="Guard player">
             <outline text="Setups / Entries">
-              <outline text="Setups / Entries" />
-            </outline>
+              </outline>
             <outline text="Control">
-              <outline text="Control" />
-            </outline>
+              </outline>
             <outline text="Offence">
               <outline text="J point">
                 <outline text="Instructional video" />
@@ -1073,17 +1066,14 @@
                   </outline>
                 </outline>
               </outline>
-              <outline text="Offence" />
             </outline>
             <outline text="Defence / Escapes">
               <outline text="Defence" />
             </outline>
             <outline text="Submissions">
-              <outline text="Submissions" />
-            </outline>
+              </outline>
             <outline text="Offensive transitions">
-              <outline text="Offensive transitions" />
-            </outline>
+              </outline>
           </outline>
         </outline>
         <outline text="Supine Guard">
@@ -1116,7 +1106,6 @@
                   <outline text="Live video" />
                 </outline>
               </outline>
-              <outline text="Offence" />
               <outline text="Passes">
                 <outline text="Toreando">
                   <outline text="Instructional video">
@@ -1226,8 +1215,7 @@
               </outline>
             </outline>
             <outline text="Submissions">
-              <outline text="Submissions" />
-            </outline>
+              </outline>
             <outline text="Offensive transitions">
               <outline text="Offensive transitions">
                 <outline text="Instructional video" />
@@ -1264,7 +1252,6 @@
                   <outline text="Live video" />
                 </outline>
               </outline>
-              <outline text="Offence" />
               <outline text="Passes">
                 <outline text="Toreando">
                   <outline text="Instructional video">
@@ -1374,8 +1361,7 @@
               </outline>
             </outline>
             <outline text="Submissions">
-              <outline text="Submissions" />
-            </outline>
+              </outline>
             <outline text="Offensive transitions">
               <outline text="Offensive transitions">
                 <outline text="Instructional video" />
@@ -1607,11 +1593,9 @@
         <outline text="Closed Guard">
           <outline text="Passer">
             <outline text="Setups / Entries">
-              <outline text="Setups / Entries" />
-            </outline>
+              </outline>
             <outline text="Control">
-              <outline text="Control" />
-            </outline>
+              </outline>
             <outline text="Offence">
               <outline text="Closed Guard">
                 <outline text="Knee through centre">
@@ -1645,25 +1629,20 @@
                   <outline text="Live video" />
                 </outline>
               </outline>
-              <outline text="Offence" />
             </outline>
             <outline text="Defence / Escapes">
               <outline text="Defence" />
             </outline>
             <outline text="Submissions">
-              <outline text="Submissions" />
-            </outline>
+              </outline>
             <outline text="Offensive transitions">
-              <outline text="Offensive transitions" />
-            </outline>
+              </outline>
           </outline>
           <outline text="Guard player">
             <outline text="Setups / Entries">
-              <outline text="Setups / Entries" />
-            </outline>
+              </outline>
             <outline text="Control">
-              <outline text="Control" />
-            </outline>
+              </outline>
             <outline text="Offence">
               <outline text="Closed Guard">
                 <outline text="Knee through centre">
@@ -1697,27 +1676,22 @@
                   <outline text="Live video" />
                 </outline>
               </outline>
-              <outline text="Offence" />
             </outline>
             <outline text="Defence / Escapes">
               <outline text="Defence" />
             </outline>
             <outline text="Submissions">
-              <outline text="Submissions" />
-            </outline>
+              </outline>
             <outline text="Offensive transitions">
-              <outline text="Offensive transitions" />
-            </outline>
+              </outline>
           </outline>
         </outline>
         <outline text="Headquarters">
           <outline text="Passer">
             <outline text="Setups / Entries">
-              <outline text="Setups / Entries" />
-            </outline>
+              </outline>
             <outline text="Control">
-              <outline text="Control" />
-            </outline>
+              </outline>
             <outline text="Offence">
               <outline text="Leg drag">
                 <outline text="Side control">
@@ -1759,25 +1733,20 @@
                 <outline text="Instructional video" />
                 <outline text="Live video" />
               </outline>
-              <outline text="Offence" />
             </outline>
             <outline text="Defence / Escapes">
               <outline text="Defence" />
             </outline>
             <outline text="Submissions">
-              <outline text="Submissions" />
-            </outline>
+              </outline>
             <outline text="Offensive transitions">
-              <outline text="Offensive transitions" />
-            </outline>
+              </outline>
           </outline>
           <outline text="Guard player">
             <outline text="Setups / Entries">
-              <outline text="Setups / Entries" />
-            </outline>
+              </outline>
             <outline text="Control">
-              <outline text="Control" />
-            </outline>
+              </outline>
             <outline text="Offence">
               <outline text="Leg drag">
                 <outline text="Side control">
@@ -1819,30 +1788,25 @@
                 <outline text="Instructional video" />
                 <outline text="Live video" />
               </outline>
-              <outline text="Offence" />
             </outline>
             <outline text="Defence / Escapes">
               <outline text="Defence" />
             </outline>
             <outline text="Submissions">
-              <outline text="Submissions" />
-            </outline>
+              </outline>
             <outline text="Offensive transitions">
-              <outline text="Offensive transitions" />
-            </outline>
+              </outline>
           </outline>
         </outline>
         <outline text="Quarter guard">
           <outline text="Passer">
             <outline text="Setups / Entries">
-              <outline text="Setups / Entries" />
-            </outline>
+              </outline>
             <outline text="Control">
               <outline text="Side control">
                 <outline text="Instructional video" />
                 <outline text="Live video" />
               </outline>
-              <outline text="Control" />
             </outline>
             <outline text="Offence">
               <outline text="Knee shield">
@@ -1931,7 +1895,6 @@
                   </outline>
                 </outline>
               </outline>
-              <outline text="Offence" />
             </outline>
             <outline text="Defence / Escapes">
               <outline text="Dealing with defences">
@@ -1965,22 +1928,18 @@
               <outline text="Defence" />
             </outline>
             <outline text="Submissions">
-              <outline text="Submissions" />
-            </outline>
+              </outline>
             <outline text="Offensive transitions">
-              <outline text="Offensive transitions" />
-            </outline>
+              </outline>
           </outline>
           <outline text="Guard player">
             <outline text="Setups / Entries">
-              <outline text="Setups / Entries" />
-            </outline>
+              </outline>
             <outline text="Control">
               <outline text="Side control">
                 <outline text="Instructional video" />
                 <outline text="Live video" />
               </outline>
-              <outline text="Control" />
             </outline>
             <outline text="Offence">
               <outline text="Knee shield">
@@ -2069,7 +2028,6 @@
                   </outline>
                 </outline>
               </outline>
-              <outline text="Offence" />
             </outline>
             <outline text="Defence / Escapes">
               <outline text="Dealing with defences">
@@ -2103,20 +2061,16 @@
               <outline text="Defence" />
             </outline>
             <outline text="Submissions">
-              <outline text="Submissions" />
-            </outline>
+              </outline>
             <outline text="Offensive transitions">
-              <outline text="Offensive transitions" />
-            </outline>
+              </outline>
           </outline>
         </outline>
         <outline text="Half Guard Passing">
           <outline text="Passer">
             <outline text="Setups / Entries">
-              <outline text="Setups / Entries" />
-            </outline>
+              </outline>
             <outline text="Control">
-              <outline text="Control" />
               <outline text="Chest to chest">
                 <outline text="Upper body controls">
                   <outline text="Crossface">
@@ -2187,25 +2141,20 @@
               </outline>
             </outline>
             <outline text="Offence">
-              <outline text="Offence" />
-            </outline>
+              </outline>
             <outline text="Defence / Escapes">
               <outline text="Defence" />
             </outline>
             <outline text="Submissions">
-              <outline text="Submissions" />
-            </outline>
+              </outline>
             <outline text="Offensive transitions">
               <outline text="Half guard passing to mount (knee slide) → Mount" />
-              <outline text="Offensive transitions" />
             </outline>
           </outline>
           <outline text="Guard player">
             <outline text="Setups / Entries">
-              <outline text="Setups / Entries" />
-            </outline>
+              </outline>
             <outline text="Control">
-              <outline text="Control" />
               <outline text="Chest to chest">
                 <outline text="Upper body controls">
                   <outline text="Crossface">
@@ -2242,17 +2191,14 @@
               </outline>
             </outline>
             <outline text="Offence">
-              <outline text="Offence" />
-            </outline>
+              </outline>
             <outline text="Defence / Escapes">
               <outline text="Defence" />
             </outline>
             <outline text="Submissions">
-              <outline text="Submissions" />
-            </outline>
+              </outline>
             <outline text="Offensive transitions">
-              <outline text="Offensive transitions" />
-            </outline>
+              </outline>
           </outline>
         </outline>
         <outline text="Half guard">
@@ -2276,11 +2222,9 @@
         <outline text="Butterfly guard">
           <outline text="Passer">
             <outline text="Setups / Entries">
-              <outline text="Setups / Entries" />
-            </outline>
+              </outline>
             <outline text="Control">
-              <outline text="Control" />
-            </outline>
+              </outline>
             <outline text="Offence">
               <outline text="Bodylock">
                 <outline text="Instructional video" />
@@ -2330,25 +2274,20 @@
                   <outline text="Live video" />
                 </outline>
               </outline>
-              <outline text="Offence" />
             </outline>
             <outline text="Defence / Escapes">
               <outline text="Defence" />
             </outline>
             <outline text="Submissions">
-              <outline text="Submissions" />
-            </outline>
+              </outline>
             <outline text="Offensive transitions">
-              <outline text="Offensive transitions" />
-            </outline>
+              </outline>
           </outline>
           <outline text="Guard player">
             <outline text="Setups / Entries">
-              <outline text="Setups / Entries" />
-            </outline>
+              </outline>
             <outline text="Control">
-              <outline text="Control" />
-            </outline>
+              </outline>
             <outline text="Offence">
               <outline text="Bodylock">
                 <outline text="Instructional video" />
@@ -2398,27 +2337,22 @@
                   <outline text="Live video" />
                 </outline>
               </outline>
-              <outline text="Offence" />
             </outline>
             <outline text="Defence / Escapes">
               <outline text="Defence" />
             </outline>
             <outline text="Submissions">
-              <outline text="Submissions" />
-            </outline>
+              </outline>
             <outline text="Offensive transitions">
-              <outline text="Offensive transitions" />
-            </outline>
+              </outline>
           </outline>
         </outline>
         <outline text="Half butterfly">
           <outline text="Passer">
             <outline text="Setups / Entries">
-              <outline text="Setups / Entries" />
-            </outline>
+              </outline>
             <outline text="Control">
-              <outline text="Control" />
-            </outline>
+              </outline>
             <outline text="Offence">
               <outline text="High tripod">
                 <outline text="Instructional video" />
@@ -2428,25 +2362,20 @@
                 <outline text="Instructional video" />
                 <outline text="Live video" />
               </outline>
-              <outline text="Offence" />
             </outline>
             <outline text="Defence / Escapes">
               <outline text="Defence" />
             </outline>
             <outline text="Submissions">
-              <outline text="Submissions" />
-            </outline>
+              </outline>
             <outline text="Offensive transitions">
-              <outline text="Offensive transitions" />
-            </outline>
+              </outline>
           </outline>
           <outline text="Guard player">
             <outline text="Setups / Entries">
-              <outline text="Setups / Entries" />
-            </outline>
+              </outline>
             <outline text="Control">
-              <outline text="Control" />
-            </outline>
+              </outline>
             <outline text="Offence">
               <outline text="High tripod">
                 <outline text="Instructional video" />
@@ -2456,27 +2385,22 @@
                 <outline text="Instructional video" />
                 <outline text="Live video" />
               </outline>
-              <outline text="Offence" />
             </outline>
             <outline text="Defence / Escapes">
               <outline text="Defence" />
             </outline>
             <outline text="Submissions">
-              <outline text="Submissions" />
-            </outline>
+              </outline>
             <outline text="Offensive transitions">
-              <outline text="Offensive transitions" />
-            </outline>
+              </outline>
           </outline>
         </outline>
         <outline text="Knee shield half guard">
           <outline text="Passer">
             <outline text="Setups / Entries">
-              <outline text="Setups / Entries" />
-            </outline>
+              </outline>
             <outline text="Control">
-              <outline text="Control" />
-            </outline>
+              </outline>
             <outline text="Offence">
               <outline text="Standard">
                 <outline text="Sprawling split squat">
@@ -2490,25 +2414,20 @@
                   <outline text="Live video" />
                 </outline>
               </outline>
-              <outline text="Offence" />
             </outline>
             <outline text="Defence / Escapes">
               <outline text="Defence" />
             </outline>
             <outline text="Submissions">
-              <outline text="Submissions" />
-            </outline>
+              </outline>
             <outline text="Offensive transitions">
-              <outline text="Offensive transitions" />
-            </outline>
+              </outline>
           </outline>
           <outline text="Guard player">
             <outline text="Setups / Entries">
-              <outline text="Setups / Entries" />
-            </outline>
+              </outline>
             <outline text="Control">
-              <outline text="Control" />
-            </outline>
+              </outline>
             <outline text="Offence">
               <outline text="Standard">
                 <outline text="Sprawling split squat">
@@ -2522,27 +2441,22 @@
                   <outline text="Live video" />
                 </outline>
               </outline>
-              <outline text="Offence" />
             </outline>
             <outline text="Defence / Escapes">
               <outline text="Defence" />
             </outline>
             <outline text="Submissions">
-              <outline text="Submissions" />
-            </outline>
+              </outline>
             <outline text="Offensive transitions">
-              <outline text="Offensive transitions" />
-            </outline>
+              </outline>
           </outline>
         </outline>
         <outline text="K guard">
           <outline text="Passer">
             <outline text="Setups / Entries">
-              <outline text="Setups / Entries" />
-            </outline>
+              </outline>
             <outline text="Control">
-              <outline text="Control" />
-            </outline>
+              </outline>
             <outline text="Offence">
               <outline text="Hips low on foot fight feet">
                 <outline text="North south passing">
@@ -2560,26 +2474,21 @@
                   <outline text="Live video" />
                 </outline>
               </outline>
-              <outline text="Offence" />
             </outline>
             <outline text="Defence / Escapes">
               <outline text="Defence" />
             </outline>
             <outline text="Submissions">
-              <outline text="Submissions" />
-            </outline>
+              </outline>
             <outline text="Offensive transitions">
-              <outline text="Offensive transitions" />
-            </outline>
+              </outline>
           </outline>
           <outline text="Guard player">
             <outline text="Setups / Entries">
-              <outline text="Setups / Entries" />
               <outline text="Enter K Guard from De La Riva" />
               <outline text="Enter K Guard from Knee Shield Half Guard" />
             </outline>
             <outline text="Control">
-              <outline text="Control" />
               <outline text="Hands controlling behind the opponent's knee" />
               <outline text="Foot tight to the opponent's hip" />
               <outline text="Pull the body underneath the opponent to increase connection" />
@@ -2605,29 +2514,24 @@
                   <outline text="Live video" />
                 </outline>
               </outline>
-              <outline text="Offence" />
               <outline text="Invert to Backside 50/50" />
             </outline>
             <outline text="Defence / Escapes">
               <outline text="Defence" />
             </outline>
             <outline text="Submissions">
-              <outline text="Submissions" />
               <outline text="Inside heel hook" />
             </outline>
             <outline text="Offensive transitions">
-              <outline text="Offensive transitions" />
-            </outline>
+              </outline>
           </outline>
         </outline>
         <outline text="De la riva">
           <outline text="Passer">
             <outline text="Setups / Entries">
-              <outline text="Setups / Entries" />
-            </outline>
+              </outline>
             <outline text="Control">
-              <outline text="Control" />
-            </outline>
+              </outline>
             <outline text="Offence">
               <outline text="Turn knee outward">
                 <outline text="Push ankle force headquartes">
@@ -2657,25 +2561,20 @@
                   <outline text="Live video" />
                 </outline>
               </outline>
-              <outline text="Offence" />
             </outline>
             <outline text="Defence / Escapes">
               <outline text="Defence" />
             </outline>
             <outline text="Submissions">
-              <outline text="Submissions" />
-            </outline>
+              </outline>
             <outline text="Offensive transitions">
-              <outline text="Offensive transitions" />
-            </outline>
+              </outline>
           </outline>
           <outline text="Guard player">
             <outline text="Setups / Entries">
-              <outline text="Setups / Entries" />
-            </outline>
+              </outline>
             <outline text="Control">
-              <outline text="Control" />
-            </outline>
+              </outline>
             <outline text="Offence">
               <outline text="Turn knee outward">
                 <outline text="Push ankle force headquartes">
@@ -2705,26 +2604,21 @@
                   <outline text="Live video" />
                 </outline>
               </outline>
-              <outline text="Offence" />
             </outline>
             <outline text="Defence / Escapes">
               <outline text="Defence" />
             </outline>
             <outline text="Submissions">
-              <outline text="Submissions" />
-            </outline>
+              </outline>
             <outline text="Offensive transitions">
-              <outline text="Offensive transitions" />
-            </outline>
+              </outline>
           </outline>
         </outline>
         <outline text="Reverse de la riva">
           <outline text="Passer">
             <outline text="Setups / Entries">
-              <outline text="Setups / Entries" />
-            </outline>
+              </outline>
             <outline text="Control">
-              <outline text="Control" />
               <outline text="Diving to crab x">
                 <outline text="Crab ride">
                   <outline text="Instructional video" />
@@ -2739,24 +2633,19 @@
                   <outline text="Live video" />
                 </outline>
               </outline>
-              <outline text="Offence" />
             </outline>
             <outline text="Defence / Escapes">
               <outline text="Defence" />
             </outline>
             <outline text="Submissions">
-              <outline text="Submissions" />
-            </outline>
+              </outline>
             <outline text="Offensive transitions">
-              <outline text="Offensive transitions" />
-            </outline>
+              </outline>
           </outline>
           <outline text="Guard player">
             <outline text="Setups / Entries">
-              <outline text="Setups / Entries" />
-            </outline>
+              </outline>
             <outline text="Control">
-              <outline text="Control" />
               <outline text="Diving to crab x">
                 <outline text="Crab ride">
                   <outline text="Instructional video" />
@@ -2771,28 +2660,23 @@
                   <outline text="Live video" />
                 </outline>
               </outline>
-              <outline text="Offence" />
             </outline>
             <outline text="Defence / Escapes">
               <outline text="Defence" />
             </outline>
             <outline text="Submissions">
-              <outline text="Submissions" />
-            </outline>
+              </outline>
             <outline text="Offensive transitions">
               <outline text="Reverse de la riva inversion to crab ride → Crab ride" />
-              <outline text="Offensive transitions" />
             </outline>
           </outline>
         </outline>
         <outline text="Butterfly ashi">
           <outline text="Passer">
             <outline text="Setups / Entries">
-              <outline text="Setups / Entries" />
-            </outline>
+              </outline>
             <outline text="Control">
-              <outline text="Control" />
-            </outline>
+              </outline>
             <outline text="Offence">
               <outline text="Clear foot back step">
                 <outline text="Instructional video" />
@@ -2808,25 +2692,20 @@
                   <outline text="Live video" />
                 </outline>
               </outline>
-              <outline text="Offence" />
             </outline>
             <outline text="Defence / Escapes">
               <outline text="Defence" />
             </outline>
             <outline text="Submissions">
-              <outline text="Submissions" />
-            </outline>
+              </outline>
             <outline text="Offensive transitions">
-              <outline text="Offensive transitions" />
-            </outline>
+              </outline>
           </outline>
           <outline text="Guard player">
             <outline text="Setups / Entries">
-              <outline text="Setups / Entries" />
-            </outline>
+              </outline>
             <outline text="Control">
-              <outline text="Control" />
-            </outline>
+              </outline>
             <outline text="Offence">
               <outline text="Clear foot back step">
                 <outline text="Instructional video" />
@@ -2842,24 +2721,20 @@
                   <outline text="Live video" />
                 </outline>
               </outline>
-              <outline text="Offence" />
             </outline>
             <outline text="Defence / Escapes">
               <outline text="Defence" />
             </outline>
             <outline text="Submissions">
-              <outline text="Submissions" />
-            </outline>
+              </outline>
             <outline text="Offensive transitions">
-              <outline text="Offensive transitions" />
-            </outline>
+              </outline>
           </outline>
         </outline>
         <outline text="Outside ashi">
           <outline text="Passer">
             <outline text="Setups / Entries">
-              <outline text="Setups / Entries" />
-            </outline>
+              </outline>
             <outline text="Control">
               <outline text="Control knee line , feet off hips, knee facing inwards, shoe laces to mat">
                 <outline text="Smash pass">
@@ -2867,7 +2742,6 @@
                   <outline text="Live video" />
                 </outline>
               </outline>
-              <outline text="Control" />
             </outline>
             <outline text="Offence">
               <outline text="Knee wedge berimbolo">
@@ -2888,22 +2762,18 @@
                   </outline>
                 </outline>
               </outline>
-              <outline text="Offence" />
             </outline>
             <outline text="Defence / Escapes">
               <outline text="Defence" />
             </outline>
             <outline text="Submissions">
-              <outline text="Submissions" />
-            </outline>
+              </outline>
             <outline text="Offensive transitions">
-              <outline text="Offensive transitions" />
-            </outline>
+              </outline>
           </outline>
           <outline text="Guard player">
             <outline text="Setups / Entries">
-              <outline text="Setups / Entries" />
-            </outline>
+              </outline>
             <outline text="Control">
               <outline text="Control knee line , feet off hips, knee facing inwards, shoe laces to mat">
                 <outline text="Smash pass">
@@ -2911,7 +2781,6 @@
                   <outline text="Live video" />
                 </outline>
               </outline>
-              <outline text="Control" />
             </outline>
             <outline text="Offence">
               <outline text="Knee wedge berimbolo">
@@ -2932,85 +2801,70 @@
                   </outline>
                 </outline>
               </outline>
-              <outline text="Offence" />
             </outline>
             <outline text="Defence / Escapes">
               <outline text="Defence" />
             </outline>
             <outline text="Submissions">
-              <outline text="Submissions" />
-            </outline>
+              </outline>
             <outline text="Offensive transitions">
-              <outline text="Offensive transitions" />
-            </outline>
+              </outline>
           </outline>
         </outline>
         <outline text="X guard">
           <outline text="Passer">
             <outline text="Setups / Entries">
-              <outline text="Setups / Entries" />
-            </outline>
+              </outline>
             <outline text="Control">
               <outline text="Control foot clear other back step to pass">
                 <outline text="Instructional video" />
                 <outline text="Live video" />
               </outline>
-              <outline text="Control" />
             </outline>
             <outline text="Offence">
               <outline text="If wrestle up inside switch tripod">
                 <outline text="Instructional video" />
                 <outline text="Live video" />
               </outline>
-              <outline text="Offence" />
             </outline>
             <outline text="Defence / Escapes">
               <outline text="Defence" />
             </outline>
             <outline text="Submissions">
-              <outline text="Submissions" />
-            </outline>
+              </outline>
             <outline text="Offensive transitions">
-              <outline text="Offensive transitions" />
-            </outline>
+              </outline>
           </outline>
           <outline text="Guard player">
             <outline text="Setups / Entries">
-              <outline text="Setups / Entries" />
-            </outline>
+              </outline>
             <outline text="Control">
               <outline text="Control foot clear other back step to pass">
                 <outline text="Instructional video" />
                 <outline text="Live video" />
               </outline>
-              <outline text="Control" />
             </outline>
             <outline text="Offence">
               <outline text="If wrestle up inside switch tripod">
                 <outline text="Instructional video" />
                 <outline text="Live video" />
               </outline>
-              <outline text="Offence" />
             </outline>
             <outline text="Defence / Escapes">
               <outline text="Defence" />
             </outline>
             <outline text="Submissions">
-              <outline text="Submissions" />
-            </outline>
+              </outline>
             <outline text="Offensive transitions">
-              <outline text="Offensive transitions" />
-            </outline>
+              </outline>
           </outline>
         </outline>
         <outline text="Single leg X">
           <outline text="Passer">
             <outline text="Setups / Entries">
-              <outline text="Setups / Entries" />
-            </outline>
+              </outline>
             <outline text="Control">
-              <outline text="Control" />
-            </outline>
+              </outline>
             <outline text="Offence">
               <outline text="Standing">
                 <outline text="Strip foot push knee through step leg passed to pass">
@@ -3028,25 +2882,20 @@
                   <outline text="Live video" />
                 </outline>
               </outline>
-              <outline text="Offence" />
             </outline>
             <outline text="Defence / Escapes">
               <outline text="Defence" />
             </outline>
             <outline text="Submissions">
-              <outline text="Submissions" />
-            </outline>
+              </outline>
             <outline text="Offensive transitions">
-              <outline text="Offensive transitions" />
-            </outline>
+              </outline>
           </outline>
           <outline text="Guard player">
             <outline text="Setups / Entries">
-              <outline text="Setups / Entries" />
-            </outline>
+              </outline>
             <outline text="Control">
-              <outline text="Control" />
-            </outline>
+              </outline>
             <outline text="Offence">
               <outline text="Standing">
                 <outline text="Strip foot push knee through step leg passed to pass">
@@ -3064,27 +2913,22 @@
                   <outline text="Live video" />
                 </outline>
               </outline>
-              <outline text="Offence" />
             </outline>
             <outline text="Defence / Escapes">
               <outline text="Defence" />
             </outline>
             <outline text="Submissions">
-              <outline text="Submissions" />
-            </outline>
+              </outline>
             <outline text="Offensive transitions">
-              <outline text="Offensive transitions" />
-            </outline>
+              </outline>
           </outline>
         </outline>
         <outline text="Seated Guard">
           <outline text="Passer">
             <outline text="Setups / Entries">
-              <outline text="Setups / Entries" />
-            </outline>
+              </outline>
             <outline text="Control">
-              <outline text="Control" />
-            </outline>
+              </outline>
             <outline text="Offence">
               <outline text="Cross Grip">
                 <outline text="Collar tie">
@@ -3258,25 +3102,20 @@
                   </outline>
                 </outline>
               </outline>
-              <outline text="Offence" />
             </outline>
             <outline text="Defence / Escapes">
               <outline text="Defence" />
             </outline>
             <outline text="Submissions">
-              <outline text="Submissions" />
-            </outline>
+              </outline>
             <outline text="Offensive transitions">
-              <outline text="Offensive transitions" />
-            </outline>
+              </outline>
           </outline>
           <outline text="Guard player">
             <outline text="Setups / Entries">
-              <outline text="Setups / Entries" />
-            </outline>
+              </outline>
             <outline text="Control">
-              <outline text="Control" />
-            </outline>
+              </outline>
             <outline text="Offence">
               <outline text="Cross Grip">
                 <outline text="Collar tie">
@@ -3450,17 +3289,14 @@
                   </outline>
                 </outline>
               </outline>
-              <outline text="Offence" />
             </outline>
             <outline text="Defence / Escapes">
               <outline text="Defence" />
             </outline>
             <outline text="Submissions">
-              <outline text="Submissions" />
-            </outline>
+              </outline>
             <outline text="Offensive transitions">
-              <outline text="Offensive transitions" />
-            </outline>
+              </outline>
           </outline>
         </outline>
       </outline>
@@ -3468,8 +3304,7 @@
         <outline text="Turtle">
           <outline text="Attacker">
             <outline text="Setups / Entries">
-              <outline text="Setups / Entries" />
-            </outline>
+              </outline>
             <outline text="Control">
               <outline text="Turtle bodylock" />
             </outline>
@@ -3596,10 +3431,8 @@
               </outline>
             </outline>
             <outline text="Submissions">
-              <outline text="Submissions" />
-            </outline>
+              </outline>
             <outline text="Offensive transitions">
-              <outline text="Offensive transitions" />
               <outline text="Seat belt back take → Back Control" />
               <outline text="Spiral ride near side tip over → Side Control" />
               <outline text="Spiral ride far side tip over → Mount" />
@@ -3609,11 +3442,9 @@
           </outline>
           <outline text="Defender">
             <outline text="Setups / Entries">
-              <outline text="Setups / Entries" />
-            </outline>
+              </outline>
             <outline text="Control">
-              <outline text="Control" />
-            </outline>
+              </outline>
             <outline text="Offence">
               <outline text="Offence">
                 <outline text="Seat belt">
@@ -3737,11 +3568,9 @@
               </outline>
             </outline>
             <outline text="Submissions">
-              <outline text="Submissions" />
-            </outline>
+              </outline>
             <outline text="Offensive transitions">
-              <outline text="Offensive transitions" />
-            </outline>
+              </outline>
           </outline>
         </outline>
         <outline text="Front Headlock">
@@ -4139,8 +3968,7 @@
         <outline text="North South">
           <outline text="Attacker">
             <outline text="Setups / Entries">
-              <outline text="Setups / Entries" />
-            </outline>
+              </outline>
             <outline text="Control">
               <outline text="Control">
                 <outline text="Arms inside">
@@ -4220,8 +4048,7 @@
               </outline>
             </outline>
             <outline text="Submissions">
-              <outline text="Submissions" />
-            </outline>
+              </outline>
             <outline text="Offensive transitions">
               <outline text="Offensive transitions">
                 <outline text="North south hip-switch recovery → Side Control">
@@ -4251,8 +4078,7 @@
           </outline>
           <outline text="Defender">
             <outline text="Setups / Entries">
-              <outline text="Setups / Entries" />
-            </outline>
+              </outline>
             <outline text="Control">
               <outline text="Control">
                 <outline text="Arms inside">
@@ -4332,8 +4158,7 @@
               </outline>
             </outline>
             <outline text="Submissions">
-              <outline text="Submissions" />
-            </outline>
+              </outline>
             <outline text="Offensive transitions">
               <outline text="Force turtle from north south → Turtle">
                 <outline text="Instructional video" />
@@ -4365,47 +4190,38 @@
             <outline text="Setups / Entries">
               <outline text="Seat belt" />
               <outline text="Body triangle" />
-              <outline text="Setups / Entries" />
             </outline>
             <outline text="Control">
               <outline text="Chin strap" />
               <outline text="Chest to back pressure" />
               <outline text="Body triangle" />
               <outline text="Seat belt grip" />
-              <outline text="Control" />
             </outline>
             <outline text="Offence">
               <outline text="Arm bar from back" />
               <outline text="Rear naked choke" />
-              <outline text="Offence" />
             </outline>
             <outline text="Defence / Escapes">
               <outline text="Defence" />
             </outline>
             <outline text="Submissions">
-              <outline text="Submissions" />
-            </outline>
+              </outline>
             <outline text="Offensive transitions" />
           </outline>
           <outline text="Defender">
             <outline text="Setups / Entries">
-              <outline text="Setups / Entries" />
-            </outline>
+              </outline>
             <outline text="Control">
-              <outline text="Control" />
-            </outline>
+              </outline>
             <outline text="Offence">
-              <outline text="Offence" />
-            </outline>
+              </outline>
             <outline text="Defence / Escapes">
               <outline text="Defence" />
             </outline>
             <outline text="Submissions">
-              <outline text="Submissions" />
-            </outline>
+              </outline>
             <outline text="Offensive transitions">
-              <outline text="Offensive transitions" />
-            </outline>
+              </outline>
           </outline>
         </outline>
       </outline>
@@ -4467,14 +4283,6 @@
           </outline>
         </outline>
         <outline text="Crab ride">
-          <outline text="Defensive">
-            <outline text="Setups / Entries" />
-            <outline text="Control" />
-            <outline text="Offence" />
-            <outline text="Defence / Escapes" />
-            <outline text="Submissions" />
-            <outline text="Offensive transitions" />
-          </outline>
           <outline text="Initiative">
             <outline text="Setups / Entries">
               <outline text="Inverted North south" />
@@ -4550,6 +4358,14 @@
             <outline text="Offensive transitions">
               <outline text="Crab ride to back control → Back Control" />
             </outline>
+          </outline>
+          <outline text="Defensive">
+            <outline text="Setups / Entries" />
+            <outline text="Control" />
+            <outline text="Offence" />
+            <outline text="Defence / Escapes" />
+            <outline text="Submissions" />
+            <outline text="Offensive transitions" />
           </outline>
         </outline>
         <outline text="Grounded 50/50">
