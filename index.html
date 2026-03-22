@@ -345,7 +345,7 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
     <kbd style="background:#1a1e28;border:1px solid #2a3040;border-radius:3px;padding:2px 6px;font-size:10px;color:var(--text-dim);">Esc</kbd><span>Clear search / deselect / zoom out</span>
     <kbd style="background:#1a1e28;border:1px solid #2a3040;border-radius:3px;padding:2px 6px;font-size:10px;color:var(--text-dim);">Enter</kbd><span>Jump to first search result</span>
     <kbd style="background:#1a1e28;border:1px solid #2a3040;border-radius:3px;padding:2px 6px;font-size:10px;color:var(--text-dim);">↓ / ↑</kbd><span>Navigate search results</span>
-    <kbd style="background:#1a1e28;border:1px solid #2a3040;border-radius:3px;padding:2px 6px;font-size:10px;color:var(--text-dim);">T</kbd><span>Track selected technique → Drilling</span>
+    <kbd style="background:#1a1e28;border:1px solid #2a3040;border-radius:3px;padding:2px 6px;font-size:10px;color:var(--text-dim);">T</kbd><span>Cycle status: Track → Drilling → Learned</span>
     <kbd style="background:#1a1e28;border:1px solid #2a3040;border-radius:3px;padding:2px 6px;font-size:10px;color:var(--text-dim);">G</kbd><span>Toggle Reference ↔ Network</span>
     <kbd style="background:#1a1e28;border:1px solid #2a3040;border-radius:3px;padding:2px 6px;font-size:10px;color:var(--text-dim);">?</kbd><span>Toggle this help panel</span>
   </div>
@@ -454,8 +454,8 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
 
   <!-- Onboarding hint (shown until first node click) -->
   <div id="g3dOnboarding" style="position:absolute;bottom:70px;left:50%;transform:translateX(-50%);z-index:8;pointer-events:none;text-align:center;">
-    <div style="background:rgba(14,16,21,0.85);border:1px solid rgba(255,255,255,0.06);border-radius:8px;padding:8px 16px;backdrop-filter:blur(8px);font-family:'Barlow Condensed',sans-serif;font-size:13px;color:#667;letter-spacing:0.5px;">
-      Click a position to explore techniques
+    <div id="g3dOnboardingText" style="background:rgba(14,16,21,0.85);border:1px solid rgba(255,255,255,0.06);border-radius:8px;padding:8px 16px;backdrop-filter:blur(8px);font-family:'Barlow Condensed',sans-serif;font-size:13px;color:#667;letter-spacing:0.5px;">
+      Loading positions...
     </div>
   </div>
 
@@ -2753,6 +2753,9 @@ window.initGraph3D = (function() {
     if (match && meshMap3d[match.id]) {
       selectedId3d = null;
       selectNode3d(match.id);
+      // Also zoom to the selected node
+      var nd = nodeMap3d[match.id];
+      if (nd && window._g3dZoomToNode) window._g3dZoomToNode(nd);
     }
   };
 
@@ -2914,7 +2917,7 @@ window.initGraph3D = (function() {
 
       // Initial force sim — auto-fit camera after simulation settles
       let initSt=0;
-      const initSim=setInterval(()=>{runForce3d(simNodes3d,ACTIVE_EDGES,4);syncEdges3d(null);initSt+=4;if(initSt>=160){clearInterval(initSim);autoFitCamera3d();}},16);
+      const initSim=setInterval(()=>{runForce3d(simNodes3d,ACTIVE_EDGES,4);syncEdges3d(null);initSt+=4;if(initSt>=160){clearInterval(initSim);autoFitCamera3d();var obt=document.getElementById('g3dOnboardingText');if(obt)obt.textContent='Click a position to explore techniques';}},16);
 
       // Camera controls
       let downX=0,downY=0,isDrag=false;
@@ -2981,6 +2984,7 @@ window.initGraph3D = (function() {
         _zoomedNodeId = null; _savedPivot = null; _savedZoom = null;
       }
       window._g3dZoomOut = zoomOut3d;
+      window._g3dZoomToNode = zoomToNode3d;
       canvas.addEventListener('dblclick', function(e) {
         var rect = wrap.getBoundingClientRect();
         var mx = ((e.clientX-rect.left)/rect.width)*2-1;
