@@ -583,7 +583,9 @@ function saveState() {
       videosWatched: STATE.videosWatched || {}
     };
     localStorage.setItem('grapplingAppState', JSON.stringify(appState));
-  } catch(e) {}
+  } catch(e) {
+    if (!window._storageFailed) { window._storageFailed = true; showToast('Could not save progress — storage may be full'); }
+  }
 }
 // Track recently viewed techniques
 function addRecentView(key, label, section) {
@@ -688,6 +690,7 @@ function setSelectedNode(key, label, section, vidUrl, liveUrl) {
   SELECTED_NODE = key ? { key, label, section, v: vidUrl || null, l: liveUrl || null } : null;
   if (key && label) { addRecentView(key, label, section); saveState(); }
   updateBottomBarMedia();
+  if (typeof updateHash === 'function') updateHash();
   // Hide Reference onboarding on first selection
   var ro = document.getElementById('refOnboarding'); if (ro) ro.style.display = 'none';
 }
@@ -1879,6 +1882,7 @@ function switchToTab(view) {
   }
   // Save tab state for resume
   saveState();
+  if (typeof updateHash === 'function') updateHash();
 }
 document.querySelectorAll('.view-tab').forEach(tab => {
   tab.addEventListener('click', function() { switchToTab(this.dataset.view); });
@@ -2949,7 +2953,7 @@ window.initGraph3D = (function() {
       if(!testRenderer||!testRenderer.getContext()){
         if(testRenderer) testRenderer.dispose();
         const view=document.getElementById('graph3dView');
-        if(view) view.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#4a5568;font-family:\'DM Mono\',monospace;font-size:13px;letter-spacing:1px;">3D GRAPH REQUIRES WEBGL — NOT AVAILABLE IN THIS ENVIRONMENT</div>';
+        if(view) view.innerHTML='<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:#667;font-family:Barlow Condensed,sans-serif;text-align:center;padding:20px;"><div style="font-size:24px;opacity:0.3;margin-bottom:8px;">⬡</div><div style="font-size:15px;letter-spacing:0.5px;margin-bottom:6px;">Network view is not available</div><div style="font-size:12px;color:#556;">Your browser or device does not support 3D graphics.<br>Use the Reference tab to browse techniques.</div></div>';
         return;
       }
 
@@ -3814,15 +3818,45 @@ if (typeof SECTIONS === 'undefined' || !SECTIONS.length) {
 _log('TechPositionMap built:', window._techPositionMap.size);
 markBuiltOut();
 updateStats();
-// Resume: restore last tab if available, otherwise default to Network
-if (STATE._resumeTab === 'reference') {
-  switchToTab('reference');
-  // Restore selection if available
-  if (STATE._resumeSelected && STATE._resumeSelected.label) {
-    setTimeout(function() { switchToReferenceNode(STATE._resumeSelected.label, STATE._resumeSelected.section); }, 200);
+// Deep linking + resume
+(function() {
+  var hash = location.hash.slice(1);
+  var deepLinked = false;
+  if (hash) {
+    var parts = hash.split('/').map(decodeURIComponent);
+    if (parts[0] === 'ref' && parts[1]) {
+      switchToTab('reference');
+      setTimeout(function() { switchToReferenceNode(parts[1], parts[2] || ''); }, 200);
+      deepLinked = true;
+    } else if (parts[0] === 'net' && parts[1]) {
+      requestAnimationFrame(function() { requestAnimationFrame(initGraph3D); });
+      setTimeout(function() { if (window._g3dSelectByLabel) window._g3dSelectByLabel(parts[1]); }, 500);
+      deepLinked = true;
+    } else if (parts[0] === 'net') {
+      requestAnimationFrame(function() { requestAnimationFrame(initGraph3D); });
+      deepLinked = true;
+    }
   }
-} else {
-  requestAnimationFrame(() => requestAnimationFrame(initGraph3D));
+  if (!deepLinked) {
+    if (STATE._resumeTab === 'reference') {
+      switchToTab('reference');
+      if (STATE._resumeSelected && STATE._resumeSelected.label) {
+        setTimeout(function() { switchToReferenceNode(STATE._resumeSelected.label, STATE._resumeSelected.section); }, 200);
+      }
+    } else {
+      requestAnimationFrame(function() { requestAnimationFrame(initGraph3D); });
+    }
+  }
+})();
+// Update hash on tab switch and selection
+function updateHash() {
+  var view = document.getElementById('graph3dView').style.display !== 'none' ? 'net' : 'ref';
+  var label = SELECTED_NODE ? SELECTED_NODE.label : '';
+  var section = SELECTED_NODE ? SELECTED_NODE.section : '';
+  var h = view;
+  if (label) h += '/' + encodeURIComponent(label);
+  if (section) h += '/' + encodeURIComponent(section);
+  if (location.hash.slice(1) !== h) history.replaceState(null, '', '#' + h);
 }
 // DIAG: verify NET_NODES key format for position-matching branch selection
 (function(){ var sn = typeof NET_NODES !== 'undefined' ? NET_NODES.find(function(n){return n.in_network;}) : null; if(sn) _log('DIAG sample node:', sn.label, sn.key); })();
@@ -4286,6 +4320,15 @@ _log('[GrapplingMap] Debug API ready: window.__APP_DEBUG__');
   var titleEl = document.getElementById('videoModalTitle');
   var closeBtn = document.getElementById('videoModalClose');
 
+  // Extract YouTube video ID from various URL formats
+  window.extractYouTubeId = function(url) {
+    if (!url) return '';
+    // youtube.com/watch?v=ID
+    var match = url.match(/[?&]v=([^&]+)/);
+    if (match) return match[1];
+    // youtu.be/ID or youtube.com/embed/ID
+    return url.split('/').pop().split('?')[0];
+  };
   // Track video as watched
   function markVideoWatched(url) {
     if (!STATE.videosWatched) STATE.videosWatched = {};
@@ -4294,7 +4337,7 @@ _log('[GrapplingMap] Debug API ready: window.__APP_DEBUG__');
   }
   window.openVideoModal = function(url, title) {
     markVideoWatched(url);
-    var vidId = url.split('/').pop().split('?')[0];
+    var vidId = window.extractYouTubeId(url);
     titleEl.textContent = title || '';
     // Show spinner while iframe loads
     player.innerHTML = '<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#4a5568;font-family:Barlow Condensed,sans-serif;font-size:13px;letter-spacing:1px;">Loading\u2026</div><iframe src="https://www.youtube.com/embed/'+vidId+'?autoplay=1" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;border-radius:6px;" allowfullscreen allow="autoplay; encrypted-media" onload="this.previousElementSibling.style.display=\'none\'"></iframe>';
