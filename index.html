@@ -34,7 +34,7 @@
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 3px; }
 button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; } }
-body { background: var(--bg); color: var(--text); font-family: 'DM Mono', monospace; margin: 0; height: 100vh; height: 100dvh; display: flex; flex-direction: column; overflow: hidden; padding: env(safe-area-inset-top) env(safe-area-inset-right) 0 env(safe-area-inset-left); -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; }
+body { background: var(--bg); color: var(--text); font-family: 'DM Mono', monospace; margin: 0; height: 100vh; height: 100dvh; display: flex; flex-direction: column; overflow: hidden; padding: env(safe-area-inset-top) env(safe-area-inset-right) 0 env(safe-area-inset-left); -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; overscroll-behavior: none; }
 .node-label, .node-content, #g3dDetailBody, .technique-breadcrumb { -webkit-user-select: text; user-select: text; }
 
 /* ── HEADER ── */
@@ -244,13 +244,13 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
 
   /* Reference: tighter section padding */
   .sections { padding: 8px 8px; }
-  .section-header { padding: 10px 12px; gap: 8px; }
+  .section-header { padding: 12px 14px; gap: 10px; min-height: 48px; }
   .section-title { font-size: 14px; }
-  .node { padding: 4px 8px 4px 4px; }
+  .node { padding: 6px 10px 6px 6px; min-height: 40px; }
 
   /* 3D detail panel: bottom-sheet on mobile */
-  #g3dDetail { width: 100% !important; border-left: none !important; border-top: 1px solid rgba(255,255,255,0.06); top: auto !important; max-height: 55vh !important; border-radius: 14px 14px 0 0; }
-  #g3dDetail::before { content: ''; display: block; width: 32px; height: 4px; background: rgba(255,255,255,0.15); border-radius: 2px; margin: 8px auto 4px; }
+  #g3dDetail { width: 100% !important; border-left: none !important; border-top: none !important; top: auto !important; max-height: 60vh !important; border-radius: 16px 16px 0 0; box-shadow: 0 -4px 24px rgba(0,0,0,0.5); padding-bottom: env(safe-area-inset-bottom); }
+  #g3dDetail::before { content: ''; display: block; width: 36px; height: 4px; background: rgba(255,255,255,0.2); border-radius: 2px; margin: 10px auto 6px; }
   #g3dLegend { right: 16px !important; }
 
   /* Bottom bars: compact, safe-area-aware, wrap-friendly */
@@ -269,8 +269,8 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
   /* 3D options panel: full-width */
   #g3dOptions { left: 8px !important; right: 8px !important; transform: none !important; min-width: 0 !important; }
 
-  /* Note panel: more padding on mobile */
-  .note-panel { padding: 14px; }
+  /* Note panel: safe-area-aware on mobile */
+  .note-panel { padding: 14px; padding-bottom: calc(14px + env(safe-area-inset-bottom)); }
 
   /* Node popup: wider on mobile */
   .node-popup { width: calc(100vw - 24px); }
@@ -278,9 +278,10 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
   /* View tabs: full width on mobile */
   .view-tab { flex: 1; text-align: center; padding: 8px 10px; font-size: 12px; }
 
-  /* Video modal: responsive sizing + larger close button on mobile */
-  #videoModalInner { width: calc(100vw - 16px) !important; }
-  #videoModalTitle { font-size: 14px !important; }
+  /* Video modal: near-full-screen on mobile */
+  #videoModal { align-items: flex-start !important; padding-top: calc(40px + env(safe-area-inset-top)); }
+  #videoModalInner { width: calc(100vw - 12px) !important; }
+  #videoModalTitle { font-size: 13px !important; padding: 0 44px 0 0; }
 
   /* Video modal: larger close button on mobile */
   #videoModalClose { width: 44px !important; height: 44px !important; font-size: 22px !important; top: 8px !important; right: 8px !important; }
@@ -294,6 +295,12 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
   /* Logo: smaller on narrow screens */
   .logo { font-size: 20px !important; letter-spacing: 2px !important; }
   .logo span { font-size: 10px !important; }
+
+  /* Inline player: full width on mobile */
+  .inline-player { max-width: 100% !important; }
+
+  /* Onboarding hint: positioned higher on mobile */
+  #g3dOnboarding { bottom: calc(60px + env(safe-area-inset-bottom)) !important; }
 }
 
 /* Diagnostics panel */
