@@ -364,6 +364,7 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
       <button id="menuImportBtn" style="display:block;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Import progress</button>
       <button id="menuResetBtn" style="display:block;width:100%;text-align:left;background:none;border:none;color:#f85149;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Reset all progress</button>
       <div style="height:1px;background:rgba(255,255,255,0.06);margin:4px 0;"></div>
+      <button id="menuReadinessBtn" style="display:block;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Content Readiness</button>
       <button id="kbdHelpToggle" style="display:block;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Keyboard shortcuts</button>
       <button id="diagToggle" style="display:block;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Diagnostics</button>
     </div>
@@ -3760,6 +3761,69 @@ document.getElementById('menuCircuitBtn').addEventListener('click', function() {
   startWrap.appendChild(shuffleBtn);
   body.appendChild(startWrap);
   panel.style.display = 'block';
+});
+// Content Readiness Dashboard
+document.getElementById('menuReadinessBtn').addEventListener('click', function() {
+  var SKIP_NAMES = SCHEMA_NAMES;
+  var ARROW_CHAR = '\u2192';
+  // Walk SECTIONS to gather comprehensive content stats
+  function walkContent(nodes) {
+    var stats = { techniques: 0, withVideo: 0, withNotes: 0, empty: 0, otLines: 0 };
+    (nodes || []).forEach(function(n) {
+      var t = (n.t || '').trim();
+      if (!t || SKIP_NAMES.has(t)) { if (n.c) { var sub = walkContent(n.c); for (var k in sub) stats[k] += sub[k]; } return; }
+      if (ARROW_CHAR in t) { stats.otLines++; return; }
+      if (t === 'Notes') return;
+      stats.techniques++;
+      // Check for video (on node or in Instructional video child)
+      var hasVid = !!n.v;
+      if (!hasVid && n.c) n.c.forEach(function(ch) { if (ch.t === 'Instructional video' && ch.v) hasVid = true; });
+      if (hasVid) stats.withVideo++;
+      // Check for children (real content depth)
+      var realKids = (n.c || []).filter(function(ch) { return ch.t && !SKIP_NAMES.has(ch.t.trim()) && ch.t.trim() !== 'Notes' && !ch.t.includes(ARROW_CHAR); });
+      if (realKids.length === 0 && !hasVid) stats.empty++;
+    });
+    return stats;
+  }
+  var items = [];
+  var totalStats = { techniques: 0, withVideo: 0, empty: 0, otLines: 0, positions: 0 };
+  items.push({ label: 'Content Readiness Report', meta: '', isHeader: true });
+  SECTIONS.forEach(function(s) {
+    var sStats = walkContent(s.nodes);
+    sStats.positions = s.nodes.length;
+    totalStats.techniques += sStats.techniques;
+    totalStats.withVideo += sStats.withVideo;
+    totalStats.empty += sStats.empty;
+    totalStats.otLines += sStats.otLines;
+    totalStats.positions += sStats.positions;
+    var vidPct = sStats.techniques > 0 ? Math.round(sStats.withVideo / sStats.techniques * 100) : 0;
+    items.push({ label: s.title, meta: sStats.positions + ' pos · ' + sStats.techniques + ' tech · ' + sStats.withVideo + ' vid (' + vidPct + '%) · ' + sStats.otLines + ' transitions', bar: vidPct });
+  });
+  var totalVidPct = totalStats.techniques > 0 ? Math.round(totalStats.withVideo / totalStats.techniques * 100) : 0;
+  items.push({ label: 'Totals', meta: '', isHeader: true });
+  items.push({ label: 'Positions: ' + totalStats.positions, meta: '' });
+  items.push({ label: 'Techniques: ' + totalStats.techniques, meta: totalStats.empty + ' with no video or sub-content' });
+  items.push({ label: 'Videos: ' + totalStats.withVideo + ' (' + totalVidPct + '%)', meta: (totalStats.techniques - totalStats.withVideo) + ' techniques missing video', bar: totalVidPct });
+  items.push({ label: 'Transitions: ' + totalStats.otLines, meta: '' });
+  // Missing video list
+  items.push({ label: 'Techniques Missing Video', meta: '', isHeader: true });
+  var missing = [];
+  SECTIONS.forEach(function(s) {
+    function findMissing(nodes, path) {
+      (nodes || []).forEach(function(n) {
+        var t = (n.t || '').trim();
+        if (!t || SKIP_NAMES.has(t) || ARROW_CHAR in t || t === 'Notes') { if (n.c) findMissing(n.c, path); return; }
+        var hasVid = !!n.v;
+        if (!hasVid && n.c) n.c.forEach(function(ch) { if (ch.t === 'Instructional video' && ch.v) hasVid = true; });
+        if (!hasVid) missing.push({ label: t, meta: s.title + (path ? ' · ' + path : '') });
+        if (n.c) findMissing(n.c, path ? path + ' › ' + t : t);
+      });
+    }
+    findMissing(s.nodes, '');
+  });
+  missing.slice(0, 30).forEach(function(m) { items.push(m); });
+  if (missing.length > 30) items.push({ label: '... and ' + (missing.length - 30) + ' more', meta: '' });
+  openListPanel('Content Readiness (' + totalStats.techniques + ' techniques, ' + totalVidPct + '% video coverage)', items);
 });
 document.getElementById('kbdHelpToggle').addEventListener('click', function() {
   document.getElementById('headerMenu').style.display = 'none';
