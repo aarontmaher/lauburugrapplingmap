@@ -357,6 +357,7 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
       <button id="menuProgressBtn" style="display:block;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Progress</button>
       <button id="menuGapsBtn" style="display:block;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Explore More</button>
       <button id="menuRandomBtn" style="display:block;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Random Drill</button>
+      <button id="menuTimerBtn" style="display:block;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Drill Timer</button>
       <div style="height:1px;background:rgba(255,255,255,0.06);margin:4px 0;"></div>
       <button id="menuExportBtn" style="display:block;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Export progress</button>
       <button id="menuImportBtn" style="display:block;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Import progress</button>
@@ -3376,8 +3377,29 @@ function openListPanel(title, items) {
   var body = document.getElementById('listPanelBody');
   document.getElementById('listPanelTitle').textContent = title;
   body.innerHTML = '';
+  // Add search bar if >5 items
+  var searchable = items.filter(function(i) { return !i.isHeader; }).length > 5;
+  if (searchable) {
+    var searchWrap = document.createElement('div');
+    searchWrap.style.cssText = 'padding:0 0 8px;';
+    var searchInput = document.createElement('input');
+    searchInput.type = 'text';
+    searchInput.placeholder = 'Filter...';
+    searchInput.style.cssText = 'width:100%;background:#181c26;border:1px solid rgba(255,255,255,0.08);border-radius:6px;padding:6px 10px;color:#c4cdd8;font-family:DM Mono,monospace;font-size:12px;outline:none;';
+    searchInput.setAttribute('aria-label', 'Filter list');
+    searchInput.addEventListener('input', function() {
+      var q = searchInput.value.toLowerCase().trim();
+      body.querySelectorAll('[data-panel-item]').forEach(function(el) {
+        el.style.display = !q || el.dataset.panelItem.toLowerCase().includes(q) ? '' : 'none';
+      });
+      body.querySelectorAll('[data-panel-header]').forEach(function(el) { el.style.display = q ? 'none' : ''; });
+    });
+    body.appendChild(searchWrap);
+    searchWrap.appendChild(searchInput);
+    setTimeout(function() { searchInput.focus(); }, 100);
+  }
   if (items.length === 0) {
-    body.innerHTML = '<div style="text-align:center;padding:20px 0;color:#556;font-family:Barlow Condensed,sans-serif;font-size:13px;">No items yet</div>';
+    body.innerHTML += '<div style="text-align:center;padding:20px 0;color:#556;font-family:Barlow Condensed,sans-serif;font-size:13px;">No items yet</div>';
   } else {
     items.forEach(function(item) {
       // Section header rows
@@ -3385,10 +3407,12 @@ function openListPanel(title, items) {
         var hdr = document.createElement('div');
         hdr.style.cssText = 'padding:8px 0 4px;font-family:Barlow Condensed,sans-serif;font-size:11px;color:var(--text-muted);letter-spacing:0.5px;text-transform:uppercase;';
         hdr.textContent = item.label;
+        hdr.dataset.panelHeader = '1';
         body.appendChild(hdr);
         return;
       }
       var row = document.createElement('div');
+      row.dataset.panelItem = item.label + ' ' + (item.meta || '');
       row.style.cssText = 'display:flex;align-items:center;gap:8px;padding:10px 4px;border-bottom:1px solid rgba(255,255,255,0.03);cursor:pointer;transition:background 0.1s;border-radius:4px;';
       row.addEventListener('mouseenter', function() { row.style.background = 'rgba(255,255,255,0.04)'; });
       row.addEventListener('mouseleave', function() { row.style.background = ''; });
@@ -3492,9 +3516,27 @@ document.getElementById('menuProgressBtn').addEventListener('click', function() 
   Object.values(STATE.progress).forEach(function(v) { if (v === 'drilling') drilling++; if (v === 'learned') learned++; });
   var bySection = {};
   Object.keys(STATE.progress).forEach(function(k) { var s = k.split('|')[0].replace(/_/g, ' '); bySection[s] = (bySection[s] || 0) + 1; });
+  // Weekly activity from lastPracticed timestamps
+  var weekBuckets = [0,0,0,0]; // last 4 weeks
+  var now = Date.now();
+  var weekMs = 7 * 24 * 60 * 60 * 1000;
+  if (STATE.lastPracticed) {
+    Object.values(STATE.lastPracticed).forEach(function(ts) {
+      var weeksAgo = Math.floor((now - ts) / weekMs);
+      if (weeksAgo >= 0 && weeksAgo < 4) weekBuckets[weeksAgo]++;
+    });
+  }
+  var maxWeek = Math.max.apply(null, weekBuckets) || 1;
+  var sparkline = weekBuckets.slice().reverse().map(function(v) {
+    var h = Math.max(2, Math.round(v / maxWeek * 20));
+    return '<div style="width:12px;height:'+h+'px;background:var(--blue);border-radius:1px;"></div>';
+  }).join('');
   var items = [
-    { label: 'Total tracked: ' + total, meta: drilling + ' drilling · ' + learned + ' learned' }
+    { label: 'Total tracked: ' + total, meta: drilling + ' drilling · ' + learned + ' learned' },
+    { label: 'Activity (last 4 weeks)', meta: '', isHeader: true }
   ];
+  // Add sparkline as a custom item
+  items.push({ label: weekBuckets.slice().reverse().map(function(v,i) { return ['4w ago','3w ago','2w ago','This week'][i] + ': ' + v; }).join(' · '), meta: '' });
   var maxBySection = 0;
   Object.values(bySection).forEach(function(v) { if (v > maxBySection) maxBySection = v; });
   Object.entries(bySection).sort(function(a,b) { return b[1] - a[1]; }).forEach(function(kv) {
@@ -3546,6 +3588,87 @@ document.getElementById('menuRandomBtn').addEventListener('click', function() {
   if (!STATE.lastPracticed) STATE.lastPracticed = {};
   STATE.lastPracticed[randomKey] = Date.now();
   saveState();
+});
+// Drill Timer
+document.getElementById('menuTimerBtn').addEventListener('click', function() {
+  var panel = document.getElementById('listPanel');
+  var body = document.getElementById('listPanelBody');
+  document.getElementById('listPanelTitle').textContent = 'Drill Timer';
+  body.innerHTML = '';
+  var timerState = { running: false, elapsed: 0, interval: null };
+  // Timer display
+  var display = document.createElement('div');
+  display.style.cssText = 'text-align:center;padding:20px 0;';
+  var timeText = document.createElement('div');
+  timeText.style.cssText = 'font-family:Bebas Neue,sans-serif;font-size:48px;color:var(--accent);letter-spacing:2px;';
+  timeText.textContent = '0:00';
+  display.appendChild(timeText);
+  // Preset buttons
+  var presets = document.createElement('div');
+  presets.style.cssText = 'display:flex;gap:6px;justify-content:center;margin:10px 0;';
+  [180,300,600].forEach(function(secs) {
+    var pb = document.createElement('button');
+    pb.className = 'g3d-tb-btn';
+    pb.style.cssText = 'border-radius:12px;font-size:11px;';
+    pb.textContent = (secs/60) + ' min';
+    pb.addEventListener('click', function() {
+      timerState.elapsed = secs;
+      timerState.running = false;
+      clearInterval(timerState.interval);
+      updateTimerDisplay();
+      startBtn.textContent = 'Start';
+    });
+    presets.appendChild(pb);
+  });
+  display.appendChild(presets);
+  // Controls
+  var controls = document.createElement('div');
+  controls.style.cssText = 'display:flex;gap:8px;justify-content:center;margin-top:8px;';
+  var startBtn = document.createElement('button');
+  startBtn.className = 'g3d-tb-btn';
+  startBtn.style.cssText = 'border-radius:12px;background:var(--accent);color:#000;border:none;padding:0 20px;height:36px;font-size:12px;';
+  startBtn.textContent = 'Start';
+  var resetBtn = document.createElement('button');
+  resetBtn.className = 'g3d-tb-btn';
+  resetBtn.style.cssText = 'border-radius:12px;font-size:12px;';
+  resetBtn.textContent = 'Reset';
+  function updateTimerDisplay() {
+    var m = Math.floor(Math.abs(timerState.elapsed) / 60);
+    var s = Math.abs(timerState.elapsed) % 60;
+    timeText.textContent = m + ':' + (s < 10 ? '0' : '') + s;
+    timeText.style.color = timerState.elapsed <= 0 && timerState.running ? '#f85149' : 'var(--accent)';
+  }
+  startBtn.addEventListener('click', function() {
+    if (timerState.running) {
+      timerState.running = false;
+      clearInterval(timerState.interval);
+      startBtn.textContent = 'Resume';
+    } else {
+      timerState.running = true;
+      startBtn.textContent = 'Pause';
+      timerState.interval = setInterval(function() {
+        timerState.elapsed--;
+        updateTimerDisplay();
+      }, 1000);
+    }
+  });
+  resetBtn.addEventListener('click', function() {
+    timerState.running = false;
+    timerState.elapsed = 0;
+    clearInterval(timerState.interval);
+    updateTimerDisplay();
+    startBtn.textContent = 'Start';
+  });
+  controls.appendChild(startBtn);
+  controls.appendChild(resetBtn);
+  display.appendChild(controls);
+  // Tip
+  var tip = document.createElement('div');
+  tip.style.cssText = 'text-align:center;margin-top:12px;font-size:10px;color:#556;font-family:Barlow Condensed,monospace;';
+  tip.textContent = 'Set a round length, then start drilling';
+  display.appendChild(tip);
+  body.appendChild(display);
+  panel.style.display = 'block';
 });
 document.getElementById('kbdHelpToggle').addEventListener('click', function() {
   document.getElementById('headerMenu').style.display = 'none';
