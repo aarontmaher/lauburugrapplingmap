@@ -11,6 +11,12 @@
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-180.png">
 <title>Grappling Map — No-Gi Reference &amp; Training</title>
+<meta name="description" content="Interactive no-gi grappling reference map. Browse positions, techniques, and transitions. Track your progress and watch instructional videos.">
+<meta property="og:title" content="Grappling Map">
+<meta property="og:description" content="Interactive no-gi grappling reference and training map with 3D network visualization.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://aarontmaher.github.io/Chat-gpt/">
+<meta property="og:image" content="https://aarontmaher.github.io/Chat-gpt/icon-512.png">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='80'>🥋</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600&family=Bebas+Neue&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -133,7 +139,7 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
 /* Position-level rows (depth 0) */
 .tree-item[data-depth="0"] > .node .node-label { font-family: 'Barlow Condensed', sans-serif; font-size: 14px; font-weight: 600; letter-spacing: 0.5px; color: var(--text); }
 .tree-item[data-depth="0"] > .node { min-height: 38px; padding-top: 6px; padding-bottom: 6px; }
-.tree-item[data-depth="0"] { border-top: 1px solid rgba(255,255,255,0.03); margin-top: 2px; }
+.tree-item[data-depth="0"] { border-top: 1px solid rgba(255,255,255,0.03); margin-top: 2px; border-left: 2px solid var(--section-color, var(--text-muted)); border-radius: 2px 0 0 2px; }
 /* Schema heading rows */
 .tree-item[data-schema="1"] > .node .node-label { font-family: 'Barlow Condensed', sans-serif; font-size: 13px; font-weight: 500; letter-spacing: 0.5px; text-transform: uppercase; color: var(--text-muted); }
 .tree-item[data-schema="1"] > .node { background: rgba(255,255,255,0.015); border-radius: 3px; margin: 1px 0; }
@@ -268,10 +274,14 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
   #refBottomBar input { width: 100px; }
   #g3dToolbar { left: 8px !important; right: 8px !important; transform: none !important; bottom: calc(10px + env(safe-area-inset-bottom)) !important; max-width: 100% !important; gap: 1px !important; padding: 4px !important; flex-wrap: wrap !important; }
   #g3dToolbar input { width: 90px; }
-  .g3d-tb-btn { font-size: 10px; padding: 0 8px; height: 32px; min-width: 36px; }
+  .g3d-tb-btn { font-size: 11px; padding: 0 10px; height: 34px; min-width: 38px; }
+  .node-label { font-size: 13px; }
+  .section-title { font-size: 15px; }
   /* Touch feedback */
   .g3d-tb-btn:active { transform: scale(0.95); }
+  .btn-video { min-height: 32px; padding: 6px 14px; font-size: 10px; }
   .btn-video:active { transform: scale(0.95); }
+  .progress-pill { min-height: 30px; padding: 5px 10px; font-size: 10px; }
   .progress-pill:active { transform: scale(0.95); }
   .section-header:active { background: var(--surface2); }
   .node:active { background: rgba(255,255,255,0.06); }
@@ -328,7 +338,10 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
 <body>
 
 <header>
-  <div class="logo">Grappling<span style="font-size:12px;letter-spacing:1px;color:var(--text-muted);margin-left:6px;font-family:'Barlow Condensed',sans-serif;font-weight:400;vertical-align:baseline;">MAP</span></div>
+  <div style="display:flex;flex-direction:column;">
+    <div class="logo">Grappling<span style="font-size:12px;letter-spacing:1px;color:var(--text-muted);margin-left:6px;font-family:'Barlow Condensed',sans-serif;font-weight:400;vertical-align:baseline;">MAP</span></div>
+    <div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;color:#556;letter-spacing:0.5px;margin-top:-2px;">No-Gi Reference &amp; Training</div>
+  </div>
   <div id="headerStats" class="stats" style="display:none;">
     <div class="stat"><div class="stat-num" id="learnedCount">0</div><div class="stat-label">Learned</div></div>
     <div class="stat"><div class="stat-num" id="totalCount">0</div><div class="stat-label">Total</div></div>
@@ -1293,6 +1306,7 @@ function buildSections() {
     const div = document.createElement('div');
     div.className = 'section collapsed';
     div.dataset.section = section.title;
+    div.style.setProperty('--section-color', section.color);
     const header = document.createElement('div');
     header.className = 'section-header';
     var posCount = section.nodes ? section.nodes.length : 0;
@@ -3282,6 +3296,13 @@ if (typeof SECTIONS === 'undefined' || !SECTIONS.length) {
   _warn('SECTIONS empty or undefined — cannot build Reference tree');
 } else {
   buildSections();
+  // Auto-expand first section for better landing state
+  var firstSection = document.querySelector('.section.collapsed');
+  if (firstSection) {
+    firstSection.classList.remove('collapsed');
+    var sk = makeKey(SECTIONS[0].title, SECTIONS[0].title);
+    EXPANDED.add(sk);
+  }
 }
 _log('TechPositionMap built:', window._techPositionMap.size);
 markBuiltOut();
