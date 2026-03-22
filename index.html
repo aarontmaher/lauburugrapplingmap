@@ -353,6 +353,10 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
     <div id="headerMenu" style="display:none;position:absolute;right:0;top:calc(100% + 6px);background:rgba(14,16,21,0.97);border:1px solid rgba(255,255,255,0.08);border-radius:6px;padding:4px 0;z-index:50;-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);box-shadow:0 8px 32px rgba(0,0,0,0.5);min-width:160px;">
       <button id="menuRecentBtn" style="display:block;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Recent techniques</button>
       <button id="menuDrillingBtn" style="display:block;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">My Drills <span id="drillCountBadge" style="background:var(--blue);color:#000;font-size:9px;padding:1px 5px;border-radius:8px;margin-left:4px;display:none;"></span></button>
+      <button id="menuVideosBtn" style="display:block;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">All Videos</button>
+      <button id="menuProgressBtn" style="display:block;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Progress</button>
+      <button id="menuGapsBtn" style="display:block;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Explore More</button>
+      <button id="menuRandomBtn" style="display:block;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Random Drill</button>
       <div style="height:1px;background:rgba(255,255,255,0.06);margin:4px 0;"></div>
       <button id="menuExportBtn" style="display:block;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Export progress</button>
       <button id="menuImportBtn" style="display:block;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Import progress</button>
@@ -377,6 +381,8 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
     <kbd style="background:#1a1e28;border:1px solid #2a3040;border-radius:3px;padding:2px 6px;font-size:10px;color:var(--text-dim);">T</kbd><span>Cycle status: Track → Drilling → Learned</span>
     <kbd style="background:#1a1e28;border:1px solid #2a3040;border-radius:3px;padding:2px 6px;font-size:10px;color:var(--text-dim);">D</kbd><span>Open My Drills</span>
     <kbd style="background:#1a1e28;border:1px solid #2a3040;border-radius:3px;padding:2px 6px;font-size:10px;color:var(--text-dim);">R</kbd><span>Open Recent techniques</span>
+    <kbd style="background:#1a1e28;border:1px solid #2a3040;border-radius:3px;padding:2px 6px;font-size:10px;color:var(--text-dim);">S</kbd><span>Random drill (shuffle)</span>
+    <kbd style="background:#1a1e28;border:1px solid #2a3040;border-radius:3px;padding:2px 6px;font-size:10px;color:var(--text-dim);">V</kbd><span>All Videos</span>
     <kbd style="background:#1a1e28;border:1px solid #2a3040;border-radius:3px;padding:2px 6px;font-size:10px;color:var(--text-dim);">G</kbd><span>Toggle Reference ↔ Network</span>
     <kbd style="background:#1a1e28;border:1px solid #2a3040;border-radius:3px;padding:2px 6px;font-size:10px;color:var(--text-dim);">?</kbd><span>Toggle this help panel</span>
   </div>
@@ -3272,6 +3278,10 @@ document.addEventListener('keydown', e => {
   if (e.key === 'd' && !inInput) { document.getElementById('menuDrillingBtn').click(); }
   // R: open recent techniques
   if (e.key === 'r' && !inInput) { document.getElementById('menuRecentBtn').click(); }
+  // S: random drill (shuffle)
+  if (e.key === 's' && !inInput) { document.getElementById('menuRandomBtn').click(); }
+  // V: all videos
+  if (e.key === 'v' && !inInput) { document.getElementById('menuVideosBtn').click(); }
   // ?: toggle help panel
   if (e.key === '?' && !inInput) {
     var hp = document.getElementById('kbdHelpPanel');
@@ -3438,6 +3448,74 @@ document.getElementById('menuDrillingBtn').addEventListener('click', function() 
       onClick: function() { closeListPanel(); switchToReferenceNode(d.label, d.meta); }
     };
   }));
+});
+// All Videos panel
+document.getElementById('menuVideosBtn').addEventListener('click', function() {
+  var videos = [];
+  function walkVideos(nodes, section, path) {
+    (nodes || []).forEach(function(n) {
+      var t = (n.t || '').trim();
+      if (n.v && t && t !== 'Instructional video' && t !== 'Live video') {
+        videos.push({ label: t, meta: section + (path ? ' · ' + path : ''), url: n.v });
+      }
+      if (n.c) walkVideos(n.c, section, path ? path + ' › ' + t : t);
+    });
+  }
+  SECTIONS.forEach(function(s) { walkVideos(s.nodes, s.title, ''); });
+  openListPanel('All Videos (' + videos.length + ')', videos.map(function(v) {
+    return { label: v.label, meta: v.meta, onClick: function() { closeListPanel(); window.openVideoModal(v.url, v.label + ' — Instructional'); } };
+  }));
+});
+// Progress dashboard
+document.getElementById('menuProgressBtn').addEventListener('click', function() {
+  var drilling = 0, learned = 0, total = Object.keys(STATE.progress).length;
+  Object.values(STATE.progress).forEach(function(v) { if (v === 'drilling') drilling++; if (v === 'learned') learned++; });
+  var bySection = {};
+  Object.keys(STATE.progress).forEach(function(k) { var s = k.split('|')[0].replace(/_/g, ' '); bySection[s] = (bySection[s] || 0) + 1; });
+  var items = [
+    { label: 'Total tracked: ' + total, meta: drilling + ' drilling · ' + learned + ' learned' }
+  ];
+  Object.entries(bySection).sort(function(a,b) { return b[1] - a[1]; }).forEach(function(kv) {
+    items.push({ label: kv[0], meta: kv[1] + ' techniques tracked' });
+  });
+  // Untouched sections
+  SECTIONS.forEach(function(s) {
+    var norm = s.title.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_\-]/g, '').replace(/_+/g, '_');
+    if (!bySection[s.title] && !bySection[norm]) items.push({ label: s.title, meta: 'not started yet' });
+  });
+  openListPanel('Progress', items);
+});
+// Explore More (gap finder)
+document.getElementById('menuGapsBtn').addEventListener('click', function() {
+  var trackedPositions = new Set();
+  Object.keys(STATE.progress).forEach(function(k) {
+    var segs = k.split('|');
+    if (segs.length >= 2) trackedPositions.add(segs[0] + '|' + segs[1]);
+  });
+  var gaps = [];
+  SECTIONS.forEach(function(s) {
+    (s.nodes || []).forEach(function(n) {
+      var posKey = normalizeSegment(s.title) + '|' + normalizeSegment(n.t);
+      if (!trackedPositions.has(posKey)) {
+        gaps.push({ label: n.t, meta: s.title, onClick: function() { closeListPanel(); switchToReferenceNode(n.t, s.title); } });
+      }
+    });
+  });
+  openListPanel('Explore More (' + gaps.length + ' untouched)', gaps);
+});
+// Random Drill
+document.getElementById('menuRandomBtn').addEventListener('click', function() {
+  var drillKeys = Object.entries(STATE.progress).filter(function(kv) { return kv[1] === 'drilling'; }).map(function(kv) { return kv[0]; });
+  if (drillKeys.length === 0) {
+    showToast('No drills yet — mark techniques as Drilling first');
+    return;
+  }
+  var randomKey = drillKeys[Math.floor(Math.random() * drillKeys.length)];
+  var segments = randomKey.split('|');
+  var label = segments[segments.length - 1].replace(/_/g, ' ');
+  var section = segments[0].replace(/_/g, ' ');
+  showToast('Random drill: ' + label);
+  switchToReferenceNode(label, section);
 });
 document.getElementById('kbdHelpToggle').addEventListener('click', function() {
   document.getElementById('headerMenu').style.display = 'none';
