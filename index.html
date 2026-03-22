@@ -77,9 +77,10 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
 .tree-item.technique-selected > .node .node-label { color: var(--text); font-weight: 500; font-size: 13px; }
 .tree-item.technique-selected > .node .btn-video { opacity: 1; }
 .tree-item.technique-selected > .node .node-actions { gap: 6px; }
-.technique-breadcrumb { font-family: 'Barlow Condensed', sans-serif; font-size: 10px; color: #556; letter-spacing: 0.3px; padding: 2px 0 4px 28px; display: none; transition: color 0.15s; }
+.technique-breadcrumb { font-family: 'Barlow Condensed', sans-serif; font-size: 10px; color: #778; letter-spacing: 0.3px; padding: 2px 0 4px 28px; display: none; transition: color 0.15s; }
 .tree-item.technique-selected > .technique-breadcrumb { display: block; }
 .technique-breadcrumb:hover { color: #889; }
+.tree-item.search-first-result > .node { background: rgba(232,255,71,0.06); border-radius: 3px; }
 .node .btn-video { opacity: 0.7; transition: all 0.15s; }
 .node { display: flex; align-items: flex-start; gap: 6px; padding: 4px 16px 4px 8px; transition: background 0.1s; min-height: 32px; }
 .node:hover { background: rgba(255,255,255,0.05); }
@@ -121,7 +122,7 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
 /* Schema heading rows */
 .tree-item[data-schema="1"] > .node .node-label { font-family: 'Barlow Condensed', sans-serif; font-size: 13px; font-weight: 500; letter-spacing: 0.5px; text-transform: uppercase; color: var(--text-muted); }
 /* OT transition rows (contain arrow) */
-.tree-item[data-ot="1"] > .node .node-label { font-size: 11px; color: #556; font-style: italic; }
+.tree-item[data-ot="1"] > .node .node-label { font-size: 11px; color: #778; font-style: italic; }
 .tree-item[data-ot="1"] > .node .node-label::before { content: '↗ '; color: #ff9966; font-style: normal; }
 /* Notes rows */
 .tree-item[data-notes="1"] > .node .node-label { font-size: 11px; color: var(--accent3); font-style: italic; }
@@ -1623,8 +1624,14 @@ function _refDoSearch() {
     if (q && visible) sec.classList.remove('collapsed');
   });
   var emptyEl = document.getElementById('refEmpty');
-  if (q && !anyVisible) { emptyEl.textContent = 'No results for "' + q + '"'; emptyEl.style.display = 'block'; }
+  if (q && !anyVisible) { emptyEl.innerHTML = '<div style="font-size:20px;opacity:0.25;margin-bottom:6px;">\u2315</div>No results for "' + _escHtml(q) + '"'; emptyEl.style.display = 'block'; }
   else { emptyEl.style.display = 'none'; }
+  // Auto-highlight first visible technique result
+  document.querySelectorAll('.tree-item.search-first-result').forEach(function(el) { el.classList.remove('search-first-result'); });
+  if (q && anyVisible) {
+    var firstResult = document.querySelector('.tree-item:not([style*="display: none"]):not([data-schema="1"]):not([data-ot="1"]):not([data-notes="1"])');
+    if (firstResult) { firstResult.classList.add('search-first-result'); }
+  }
 }
 function _escHtml(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 document.getElementById('refSearch').addEventListener('input', function() {
@@ -3094,7 +3101,7 @@ window.initGraph3D = (function() {
 
 document.addEventListener('keydown', e => {
   var inInput = e.target.matches('input, textarea, [contenteditable]');
-  // G: toggle Reference ↔ 3D Graph
+  // G: toggle Reference ↔ Network
   if (e.key === 'g' && !inInput) {
     const cur = document.querySelector('.view-tab.active')?.dataset.view;
     switchToTab(cur === 'graph3d' ? 'reference' : 'graph3d');
@@ -3488,7 +3495,7 @@ _log('[GrapplingMap] Debug API ready: window.__APP_DEBUG__');
         var maxW = 0, maxIn = 0;
         if (net.edges) net.edges.forEach(function(e) { if (e.weight > maxW) maxW = e.weight; });
         if (net.nodes) net.nodes.filter(function(n){return n.in_network && n.depth===1;}).forEach(function(n) { if ((n._in||0) > maxIn) maxIn = n._in; });
-        el.innerHTML = '<div class="diag-label">3D Graph</div>' +
+        el.innerHTML = '<div class="diag-label">Network</div>' +
           '<div class="diag-val">Nodes: ' + net.nodeCount + '</div>' +
           '<div class="diag-val">Transition edges: ' + net.edgeCount + '</div>' +
           '<div class="diag-val">In-network: ' + (net.nodes ? net.nodes.filter(function(n){return n.in_network;}).length : '?') + '</div>' +
@@ -3501,7 +3508,7 @@ _log('[GrapplingMap] Debug API ready: window.__APP_DEBUG__');
           if (lbl) boNames.push(lbl.textContent.trim());
         });
         if (boNames.length) {
-          el.innerHTML += '<div class="diag-val" style="margin-top:4px;">Built-out (' + boNames.length + '): ' + boNames.join(', ') + '</div>';
+          el.innerHTML += '<div class="diag-val" style="margin-top:4px;">Has Content (' + boNames.length + '): ' + boNames.join(', ') + '</div>';
         }
         // Section edge breakdown
         var secEdges = {};
@@ -3516,7 +3523,7 @@ _log('[GrapplingMap] Debug API ready: window.__APP_DEBUG__');
           el.innerHTML += '<div class="diag-val">Edge breakdown: ' + secParts.join(' | ') + '</div>';
         }
       } else {
-        el.innerHTML = '<div class="diag-label">3D Graph</div><div class="diag-val" style="color:#4a5568;">Not initialized</div>';
+        el.innerHTML = '<div class="diag-label">Network</div><div class="diag-val" style="color:#4a5568;">Not initialized</div>';
       }
     }
     // Selected
