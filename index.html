@@ -10,7 +10,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-180.png">
-<title>Grappling Map — No-Gi Reference &amp; Training</title>
+<title>GrapplingMAP — No-Gi Reference &amp; Training</title>
 <meta name="description" content="Interactive no-gi grappling reference map. Browse positions, techniques, and transitions. Track your progress and watch instructional videos.">
 <meta property="og:title" content="Grappling Map">
 <meta property="og:description" content="Interactive no-gi grappling reference and training map with 3D network visualization.">
@@ -382,7 +382,7 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
   </div>
   <div id="headerStats" class="stats" style="display:none;">
     <div class="stat"><div class="stat-num" id="learnedCount">0</div><div class="stat-label">Learned</div></div>
-    <div class="stat"><div class="stat-num" id="totalCount">0</div><div class="stat-label">Total</div></div>
+    <div class="stat"><div class="stat-num" id="totalCount">0</div><div class="stat-label">Techniques</div></div>
   </div>
   <div class="progress-bar-wrap"><div class="progress-bar" id="progressBar"></div></div>
   <div style="position:relative;">
@@ -392,7 +392,7 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
       <button id="menuRecentBtn" style="display:block;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Recent techniques</button>
       <button id="menuWatchedBtn" style="display:block;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Recently Watched</button>
       <button id="menuVideosBtn" style="display:block;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">All Videos</button>
-      <button id="menuGapsBtn" style="display:block;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Explore More</button>
+      <button id="menuGapsBtn" style="display:block;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Find Gaps</button>
       <div style="height:1px;background:rgba(255,255,255,0.06);margin:4px 0;"></div>
       <div style="font-size:9px;color:#556;letter-spacing:1px;text-transform:uppercase;padding:6px 14px 2px;">Training</div>
       <button id="menuDrillingBtn" style="display:block;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">My Drills <span id="drillCountBadge" style="background:var(--blue);color:#000;font-size:9px;padding:1px 5px;border-radius:8px;margin-left:4px;display:none;"></span></button>
@@ -441,6 +441,10 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
 
 <!-- ══ REFERENCE VIEW ══════════════════════════════════════════════════════ -->
 <div id="referenceView" style="display:none;flex-direction:column;flex:1;min-height:0;">
+  <div id="refQuickAccess" style="display:none;padding:8px 12px;background:var(--surface);border-bottom:1px solid var(--border);flex-shrink:0;">
+    <div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;color:#556;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">Recent</div>
+    <div id="refQuickAccessList" style="display:flex;gap:6px;flex-wrap:wrap;"></div>
+  </div>
   <div class="sections" id="sections" style="flex:1;overflow-y:auto;"></div>
   <div id="refOnboarding" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:5;pointer-events:none;text-align:center;display:none;transition:opacity 0.5s;">
     <div style="background:rgba(14,16,21,0.85);border:1px solid rgba(255,255,255,0.06);border-radius:8px;padding:12px 20px;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);font-family:'Barlow Condensed',sans-serif;color:#667;">
@@ -462,7 +466,7 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
     <button class="g3d-tb-btn" data-filter="drilling">Drilling</button>
     <button class="g3d-tb-btn" data-filter="unexplored" title="Techniques you haven't started tracking">Unexplored</button>
     <button class="g3d-tb-btn" data-filter="video">Has Video</button>
-    <button class="g3d-tb-btn" data-filter="builtout" title="Positions with content across 3+ headings">Has Content</button>
+    <button class="g3d-tb-btn" data-filter="builtout" title="Positions with detailed technique breakdowns">Detailed</button>
     <div style="width:1px;height:22px;background:rgba(255,255,255,0.08);margin:0 4px;"></div>
     <button class="g3d-tb-btn" id="refCollapseAll">Collapse</button>
     <button class="g3d-tb-btn" id="refExpandAll">Expand</button>
@@ -495,7 +499,7 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
     <button class="g3d-tb-btn" data-status="mygame">My Game</button>
     <button class="g3d-tb-btn" data-status="drilling">Drilling</button>
     <div style="width:1px;height:22px;background:rgba(255,255,255,0.08);margin:0 4px;"></div>
-    <button class="g3d-tb-btn" id="g3dBuiltOutBtn">Has Content</button>
+    <button class="g3d-tb-btn" id="g3dBuiltOutBtn">Detailed</button>
     <div style="width:1px;height:22px;background:rgba(255,255,255,0.08);margin:0 4px;"></div>
     <button class="g3d-tb-btn" id="g3dOptionsBtn">Settings</button>
     <div id="g3dMediaBtns" style="display:contents;"></div>
@@ -512,7 +516,7 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
     <div class="g3d-opt-row"><label>Rings on key positions</label><label class="g3d-toggle"><input type="checkbox" id="g3dOptRings" checked><span class="g3d-toggle-track"></span></label></div>
     <div class="g3d-opt-row"><label>Label key positions</label><label class="g3d-toggle"><input type="checkbox" id="g3dOptLabels" checked><span class="g3d-toggle-track"></span></label></div>
     <div class="g3d-opt-row"><label>Key positions only</label><label class="g3d-toggle"><input type="checkbox" id="g3dOptHubOnly"><span class="g3d-toggle-track"></span></label></div>
-    <div class="g3d-opt-row"><label>Has Content only</label><label class="g3d-toggle"><input type="checkbox" id="g3dOptBuiltOut"><span class="g3d-toggle-track"></span></label></div>
+    <div class="g3d-opt-row"><label>Detailed positions only</label><label class="g3d-toggle"><input type="checkbox" id="g3dOptBuiltOut"><span class="g3d-toggle-track"></span></label></div>
     <div class="g3d-opt-row"><label>Edge opacity</label><div style="display:flex;align-items:center;gap:8px;"><input type="range" id="g3dOptEdge" min="0" max="100" value="30" style="width:80px;accent-color:var(--accent);"><span id="g3dOptEdgeVal" style="font-size:9px;color:#4a5568;width:28px;">30%</span></div></div>
     <div class="g3d-opt-row"><label>Auto-rotate</label><label class="g3d-toggle"><input type="checkbox" id="g3dOptRotate" checked><span class="g3d-toggle-track"></span></label></div>
     <div style="height:1px;background:rgba(255,255,255,0.04);margin:6px 0;"></div>
@@ -2254,6 +2258,27 @@ function refreshAllViews() {
   if (STATE.currentFilter && STATE.currentFilter !== 'all') applyRefFilter(STATE.currentFilter);
   // Update 3D node colours if initialized
   if (window.g3dRefreshNodes) window.g3dRefreshNodes();
+  // Update quick access bar
+  updateQuickAccess();
+}
+function updateQuickAccess() {
+  var qa = document.getElementById('refQuickAccess');
+  var list = document.getElementById('refQuickAccessList');
+  if (!qa || !list) return;
+  var recent = (STATE.recentViewed || []).slice(0, 5);
+  if (recent.length === 0) { qa.style.display = 'none'; return; }
+  qa.style.display = '';
+  list.innerHTML = '';
+  recent.forEach(function(r) {
+    var chip = document.createElement('button');
+    chip.style.cssText = 'background:var(--surface2);border:1px solid var(--border);color:var(--text-dim);font-family:Barlow Condensed,sans-serif;font-size:12px;padding:4px 10px;border-radius:12px;cursor:pointer;white-space:nowrap;transition:all 0.15s;';
+    chip.textContent = r.label;
+    chip.title = r.section;
+    chip.addEventListener('mouseenter', function() { chip.style.borderColor = 'var(--accent)'; chip.style.color = 'var(--text)'; });
+    chip.addEventListener('mouseleave', function() { chip.style.borderColor = 'var(--border)'; chip.style.color = 'var(--text-dim)'; });
+    chip.addEventListener('click', function() { switchToReferenceNode(r.label, r.section); });
+    list.appendChild(chip);
+  });
 }
 
 // ─── 3D WEIGHTED NETWORK GRAPH ───────────────────────────────────────────────
@@ -4432,6 +4457,7 @@ if (typeof SECTIONS === 'undefined' || !SECTIONS.length) {
 _log('TechPositionMap built:', window._techPositionMap.size);
 markBuiltOut();
 updateStats();
+if (typeof updateQuickAccess === 'function') updateQuickAccess();
 // Deep linking + resume
 (function() {
   var hash = location.hash.slice(1);
