@@ -1,21 +1,25 @@
 # AUTOMATION NEXT
 
-## Ready: Batch D — Section header counts + Hover polish
-| Item | Description | Effort | Impact |
+## Ready: Batch F — Quick wins from latest audit
+| Item | Description | Source | Effort |
 |------|-------------|--------|--------|
-| D1 | Section headers show technique + video counts (H21) | easy | high |
-| D2 | Rename "Network" tab to "Position Map" (H37/P1) | easy | medium |
-| D3 | Graph settings: rename "Hub rings" → "Rings on key positions", "Top hub labels" → "Label key positions" | easy | medium |
+| F1 | Share button toast "Link copied" | Audit F1 | easy |
+| F2 | Untrack confirmation (LEARNED → None) | Audit D1 | easy |
+| F3 | TRACK ALL tooltip: "Track all as Drilling (N)" | Audit D3 | easy |
+| F4 | Notes unsaved warning on close | Audit C8 | easy |
+| F5 | Random Drill toast feedback | Audit G6 | easy |
+| F6 | "0 transitions" in graph: neutral color instead of red | Audit E4 | easy |
 
-## After That: Batch E — Mobile polish
-| Item | Description | Effort | Impact |
+## After That: Batch G — Rename "Offensive transitions" + Add "Unexplored" filter
+| Item | Description | Source | Effort |
 |------|-------------|--------|--------|
-| E1 | Mobile technique font 12px → 14px | easy | high |
-| E2 | Mobile filter buttons larger touch targets | easy | high |
-| E3 | Deep nesting indent cap on mobile (max 80px) | easy | medium |
+| G1 | Rename "Offensive transitions" display label | B5/Q1 | easy |
+| G2 | Add "Unexplored" filter (inverse of My Game) | I1/M4 | easy |
+| G3 | Add "Want to learn" bookmark state | X6/Q2 | easy |
 
 ## Pending Aaron Review
-- P2: Recently viewed chips on home screen
-- P3: "Start Training" button
-- P7: Interactive legend clicks
-- P8: Track state direct selection vs cycling
+- M1: "Start Here" beginner card (needs position list from Aaron)
+- M2: Difficulty tags (needs classification from Aaron)
+- M3: Simpler perspective labels (Aaron's wording choice)
+- F1-F12: Feature requests from persona analysis
+- F9: Body font change (visual identity decision)

@@ -130,9 +130,11 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
 .btn-note.has-note { border-color: var(--accent3); color: var(--accent3); background: rgba(167,139,250,0.06); }
 .progress-pill { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.5px; padding: 3px 8px; border: 1px solid var(--border); color: var(--text-muted); background: transparent; cursor: pointer; border-radius: 12px; transition: all 0.15s; text-transform: uppercase; white-space: nowrap; }
 .progress-pill:hover { border-color: var(--text-muted); color: var(--text); }
+.progress-pill.want { border-color: var(--accent3); color: var(--accent3); }
 .progress-pill.drilling { border-color: var(--blue); color: var(--blue); }
 .progress-pill.learned { border-color: var(--accent); color: var(--accent); background: rgba(232,255,71,0.05); }
 .track-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; display: none; margin-right: 2px; }
+.track-dot.want { display: inline-block; background: var(--accent3); }
 .track-dot.drilling { display: inline-block; background: var(--blue); }
 .track-dot.learned { display: inline-block; background: var(--accent); }
 .pos-stats { font-size: 10px; color: var(--text-muted); margin-left: 6px; font-family: 'DM Mono', monospace; }
@@ -458,6 +460,7 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
     <button class="g3d-tb-btn active" data-filter="all">All</button>
     <button class="g3d-tb-btn" data-filter="mygame">My Game</button>
     <button class="g3d-tb-btn" data-filter="drilling">Drilling</button>
+    <button class="g3d-tb-btn" data-filter="unexplored" title="Techniques you haven't started tracking">Unexplored</button>
     <button class="g3d-tb-btn" data-filter="video">Has Video</button>
     <button class="g3d-tb-btn" data-filter="builtout" title="Positions with content across 3+ headings">Has Content</button>
     <div style="width:1px;height:22px;background:rgba(255,255,255,0.08);margin:0 4px;"></div>
@@ -771,6 +774,7 @@ function updateBottomBarMedia() {
       navigator.clipboard.writeText(url).then(function() {
         shareBtn.textContent = '\u2713 Copied';
         setTimeout(function() { shareBtn.textContent = '\u{1F517} Share'; }, 1500);
+        showToast('Link copied to clipboard');
       }).catch(function() {
         // Fallback for older browsers
         prompt('Copy this link:', url);
@@ -1181,7 +1185,8 @@ function buildNode(node, sectionTitle, depth, parentUl, parentKey, disambig, pos
 
   const label = document.createElement('span');
   label.className = (node.v || node.l) ? 'node-label has-video' : 'node-label';
-  label.textContent = node.t;
+  var _displayNames = {'Offensive transitions':'Transitions','Setups / Entries':'Setups & Entries'};
+  label.textContent = _displayNames[node.t] || node.t;
   content.appendChild(label);
 
   const actions = document.createElement('div');
@@ -1264,14 +1269,16 @@ function buildNode(node, sectionTitle, depth, parentUl, parentKey, disambig, pos
   prog.setAttribute('tabindex', '0');
   prog.addEventListener('keydown', function(e2) { if (e2.key === 'Enter' || e2.key === ' ') { e2.preventDefault(); prog.click(); } });
   const curProg = STATE.progress[key] || 'none';
-  if (curProg === 'drilling') { prog.classList.add('drilling'); prog.textContent = 'Drilling'; }
+  if (curProg === 'want') { prog.classList.add('want'); prog.textContent = 'Want'; }
+  else if (curProg === 'drilling') { prog.classList.add('drilling'); prog.textContent = 'Drilling'; }
   else if (curProg === 'learned') { prog.classList.add('learned'); prog.textContent = 'Learned'; }
   else prog.textContent = 'Track';
   prog.addEventListener('click', e => {
     e.stopPropagation();
     const cur = STATE.progress[key] || 'none';
-    const next = {none:'drilling',drilling:'learned',learned:'none'}[cur];
-    if (next === 'none') { delete STATE.progress[key]; prog.className = 'progress-pill'; prog.textContent = 'Track'; }
+    const next = {none:'want',want:'drilling',drilling:'learned',learned:'none'}[cur];
+    if (next === 'none') { if (!confirm('Remove from tracked techniques?')) return; delete STATE.progress[key]; prog.className = 'progress-pill'; prog.textContent = 'Track'; }
+    else if (next === 'want') { STATE.progress[key] = 'want'; prog.className = 'progress-pill want'; prog.textContent = 'Want'; }
     else if (next === 'drilling') { STATE.progress[key] = 'drilling'; prog.className = 'progress-pill drilling'; prog.textContent = 'Drilling'; }
     else { STATE.progress[key] = 'learned'; prog.className = 'progress-pill learned'; prog.textContent = 'Learned'; }
     trackDot.className = 'track-dot' + (next !== 'none' ? ' ' + next : '');
@@ -1425,8 +1432,10 @@ function buildNode(node, sectionTitle, depth, parentUl, parentKey, disambig, pos
       // "Track all" button for headings
       var trackAllBtn = document.createElement('button');
       trackAllBtn.className = 'btn-track-all';
-      trackAllBtn.textContent = 'Track all';
-      trackAllBtn.setAttribute('aria-label', 'Mark all techniques as Drilling');
+      var _trackCount = childUl.querySelectorAll('.tree-item[data-schema="0"]').length;
+      trackAllBtn.textContent = 'Track all' + (_trackCount > 0 ? ' (' + _trackCount + ')' : '');
+      trackAllBtn.setAttribute('aria-label', 'Mark all ' + _trackCount + ' techniques as Drilling');
+      trackAllBtn.title = 'Track all as Drilling';
       trackAllBtn.addEventListener('click', function(ev) {
         ev.stopPropagation();
         var tracked = 0;
@@ -1877,6 +1886,14 @@ function openNotePanel(key, title) {
   setTimeout(() => document.getElementById('noteTextarea').focus(), 300);
 }
 function closeNotePanel() {
+  var ta = document.getElementById('noteTextarea');
+  var key = STATE.currentNoteKey;
+  if (ta && key) {
+    var saved = STATE.notes[key] || '';
+    if (ta.value.trim() !== saved && ta.value.trim() !== '') {
+      if (!confirm('You have unsaved notes. Close without saving?')) return;
+    }
+  }
   document.getElementById('notePanel').classList.remove('open');
   document.getElementById('overlay').classList.remove('active');
   STATE.currentNoteKey = null;
@@ -2034,7 +2051,8 @@ function applyRefFilter(filter) {
   document.querySelectorAll('.tree-item').forEach(li => {
     let show = true;
     if (filter === 'drilling') show = li.dataset.progress === 'drilling';
-    else if (filter === 'mygame') show = li.dataset.progress === 'drilling' || li.dataset.progress === 'learned';
+    else if (filter === 'mygame') show = li.dataset.progress === 'want' || li.dataset.progress === 'drilling' || li.dataset.progress === 'learned';
+    else if (filter === 'unexplored') show = !li.dataset.progress || li.dataset.progress === 'none';
     else if (filter === 'video') show = li.dataset.hasVideo === '1';
     else if (filter === 'builtout') show = li.dataset.builtout === '1';
     li.style.display = show ? '' : 'none';
@@ -2065,6 +2083,7 @@ function applyRefFilter(filter) {
     const labels = {
       drilling:'No techniques marked as Drilling yet.\nSelect techniques and mark them as Drilling to see them here.',
       mygame:'No techniques in My Game yet.\nTrack techniques you\'re working on to build your game map.',
+      unexplored:'All techniques are being tracked!\nYou\'ve covered everything in this view.',
       video:'No techniques with video found.',
       builtout:'No positions with developed content found.'
     };
@@ -2618,7 +2637,7 @@ window.initGraph3D = (function() {
               pillEl.addEventListener('click', function(ev) {
                 ev.stopPropagation();
                 var cur = STATE.progress[k] || 'none';
-                var next = {none:'drilling',drilling:'learned',learned:'none'}[cur];
+                var next = {none:'want',want:'drilling',drilling:'learned',learned:'none'}[cur];
                 if (next === 'none') delete STATE.progress[k];
                 else STATE.progress[k] = next;
                 updatePillStyle(next, pillEl);
@@ -2917,12 +2936,16 @@ window.initGraph3D = (function() {
     var statLine = document.getElementById('g3dStatLine');
     if (to) {
       document.getElementById('g3dStatIn').textContent = inE.length;
-      document.getElementById('g3dStatOut').textContent = outE.length;
+      var outEl = document.getElementById('g3dStatOut');
+      outEl.textContent = outE.length;
+      outEl.style.color = outE.length > 0 ? '#ff9966' : '#556';
       statLine.style.display = 'block';
     } else {
       statLine.style.display = 'block';
       document.getElementById('g3dStatIn').textContent = '0';
-      document.getElementById('g3dStatOut').textContent = '0';
+      var outEl2 = document.getElementById('g3dStatOut');
+      outEl2.textContent = '—';
+      outEl2.style.color = '#556';
     }
 
     // Auto-scroll Reference to this position (background — don't switch tab)
@@ -3620,7 +3643,7 @@ document.addEventListener('keydown', e => {
     if (sel && sel.dataset.key) {
       var k = sel.dataset.key;
       var cur = STATE.progress[k] || 'none';
-      var next = {none:'drilling',drilling:'learned',learned:'none'}[cur];
+      var next = {none:'want',want:'drilling',drilling:'learned',learned:'none'}[cur];
       if (next === 'none') delete STATE.progress[k];
       else STATE.progress[k] = next;
       saveState(); updateStats(); refreshAllViews();

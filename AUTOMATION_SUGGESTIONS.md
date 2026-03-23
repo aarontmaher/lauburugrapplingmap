@@ -1,57 +1,76 @@
 # AUTOMATION SUGGESTIONS
-Sources: Claude Chat human experience review + live site UX audit (2026-03-23)
+Sources: Claude Chat UX audits + persona analysis (2026-03-23)
 Code gates technically, Aaron approves.
 
-## Already Done (no action needed)
-| Suggestion | Notes |
-|------------|-------|
-| Fix "0 Total" bug | headerStats hidden for new users |
-| Hide empty headings | display:none when realChildren=0 |
-| Confirm before Reset | Uses confirm() dialog |
-| Video indicators inline | 4px orange dot exists (could be larger) |
-| Empty state for MY GAME filter | Already shows guidance text in both views |
-| Auto-rotate stops on interaction | Already stops permanently on user touch/mouse |
+## Quick Wins — Code Recommends (safe, easy, in-scope)
 
-## Accepted — Ready for Next Automation Batch
-
-### Batch A: Search + Breadcrumb + Settings (easy, safe, high impact)
 | # | Suggestion | Source | Effort | Assessment |
 |---|-----------|--------|--------|------------|
-| A1 | Search auto-expands sections with results | Audit #1 | easy | Sections uncollapse on search (line 1920) but inner tree-items stay collapsed. Fix: also uncollapse ancestor tree-items of matches. |
-| A2 | Breadcrumb dedup — remove repeated section name | Audit #5 | easy | `segments` includes section twice (key starts with section). Skip first segment if it matches the second. |
-| A3 | Settings panel dismiss on click outside | Audit #6 | easy | Standard popover pattern. Add document click listener. |
-| A4 | ✎ note button tooltip ("Add notes") | Audit #9 | easy | Already has `title="Add note"` but may not show on mobile. Verify. |
+| Q1 | Rename "Offensive transitions" display to "Transitions" or "Where this leads" | B5 | easy | Just a label change in SCHEMA_NAMES display. Doesn't change data. |
+| Q2 | Add "Want to learn" bookmark state (None → Want → Drilling → Learned) | X6 | easy | Add one more state to the cycle. Stored in localStorage. |
+| Q3 | "My Game" filter: add explanation tooltip | I3 | easy | Add title="Techniques marked Drilling or Learned" to the filter button. |
+| Q4 | "Explore More" rename to "Find Gaps" or just show items directly | I1/H9 | easy | Already listed in menu. Rename label. |
+| Q5 | Graph detail panel: show actual technique names under headings, not just counts | I9 | medium | Expand the heading rows in the detail panel to list techniques. |
 
-### Batch B: Headings + Labels (easy-medium, safe, medium-high impact)
+## Medium Effort — Worth Doing If Aaron Approves
+
 | # | Suggestion | Source | Effort | Assessment |
 |---|-----------|--------|--------|------------|
-| B1 | Schema headings: show technique count badge | Chat #2, Audit #7 | easy | Add "(N)" count after heading name. Dim if 0. |
-| B2 | Larger video indicator (6px dot or ▶ text) | Chat | easy | Increase .has-video::before from 4px to 6px. |
-| B3 | Keyboard shortcut hint in bottom bar ("Press ? for shortcuts") | Audit #12 | easy | Show once, dismiss on first ? press. |
+| M1 | Beginner "Start Here" card on first visit | B1 | medium | Welcome card with 5 fundamental positions. Needs Aaron to pick which 5. |
+| M2 | Difficulty tags (beginner/intermediate/advanced) on positions | B2/B6 | medium | Needs Aaron to classify positions. Code can build the filter once classified. |
+| M3 | Simpler perspective labels ("When you have mount" / "When they have mount") | B3 | medium | Visual change to how perspectives render. Aaron's call on wording. |
+| M4 | "Unexplored" filter (show untracked techniques) | I1 | easy | Inverse of My Game filter. Show techniques with no progress status. |
+| M5 | Technique chain builder / flowchart from OT data | I4 | large | Needs design. OT data exists but no chain UI. |
+| M6 | "Game map" — personalised subgraph overlay | A8 | medium | Filter graph to show only tracked positions/edges. Data exists. |
+| M7 | Daily suggestion on home screen | X5 | medium | Pick a random undrilled technique, show as card. |
 
-### Batch C: Menu + Dev hiding (medium, safe)
-| # | Suggestion | Source | Effort | Assessment |
-|---|-----------|--------|--------|------------|
-| C1 | Group hamburger menu into sections with dividers/labels | Chat #3 | medium | Add Training/Browse/Progress/System labels. |
-| C2 | Hide Content Readiness + Diagnostics behind ?dev=1 | Chat #4 | easy | Check URL param, only show if present. |
+## Needs Aaron's Direction (feature/product decisions)
 
-## Pending Aaron Review (not auto-approved)
-| # | Suggestion | Source | Effort | Notes |
-|---|-----------|--------|--------|-------|
-| P1 | Rename "Network" → "Position Map" | Chat #7 | easy | Changes visible tab name. Aaron's call. |
-| P2 | Show recently viewed chips on home screen | Chat #5 | medium | UX direction decision. |
-| P3 | "Start Training" button on home screen | Chat #13 | medium | Changes app personality. Needs Aaron. |
-| P4 | Simplify graph Settings (hide advanced) | Chat #8 | easy | Aaron may want all visible. |
-| P5 | Replace emoji video buttons with text/SVG | Chat #9 | easy | Visual change. Aaron's preference. |
-| P6 | Position-level progress % in Reference tree | Chat #10 | easy | Partially exists in stats bar. |
-| P7 | Interactive legend in Network view | Audit #13 | medium | Clicks legend to filter by section. |
-| P8 | Track state: direct selection vs cycling | Chat #16 | medium | Changes core interaction. |
+| # | Suggestion | Source | Notes |
+|---|-----------|--------|-------|
+| F1 | Onboarding "What's your level?" flow | X1 | Changes app personality. Aaron decides. |
+| F2 | Learning curriculum / "White belt fundamentals" | B7 | Needs content curation from Aaron. |
+| F3 | Opponent preparation feature | A2 | New feature category. |
+| F4 | Sparring log / match tracking | I6 | New feature, changes scope. |
+| F5 | Statistical tracking (technique success rates) | A3 | New data model. |
+| F6 | Live footage browsing from app | A9 | Infrastructure exists (574 folders). Needs YouTube integration. |
+| F7 | Alternative views (by situation, by system) | X3 | Fundamental UX change. |
+| F8 | Multi-hop path finder in graph | A1 | Algorithmic feature. Medium-large effort. |
+| F9 | Body font change (DM Mono → sans-serif) | X7 | Visual identity decision. Aaron's call. |
+| F10 | Granular skill states (drilling/unreliable/reliable/A-game) | I7 | Changes core tracking model. |
+| F11 | Edge annotations (notes on transitions) | A5 | New data model. |
+| F12 | Instructor attribution on videos | X4 | Needs data from Aaron. |
+
+## Aaron-Approved Feature Request
+
+### Success-Based Next-Move Recommendations
+**Source:** Aaron
+**Safety:** safe | **Effort:** medium/large | **Scope:** in-scope | **Status:** pending
+
+**Intent:** Move beyond static reference/tracking. Use real success data to recommend highest-connected next moves.
+
+**Feature shape:**
+1. One-tap "Log success" / "Hit this" on technique detail
+2. Optional context: training / comp
+3. Success counts stored in localStorage
+4. Dashboard section: "Your successful game" (top positions, top techniques, themes)
+5. Recommendation: "Next best move to add" based on graph edges + success frequency
+6. Example: "You often hit Toreando from J point. Next best addition: North South pass"
+
+**Implementation order:**
+1. Add success logging
+2. Add success counts in local data
+3. Add "common successful themes" section
+4. Add "next highest connected move" suggestions
+5. Later: training vs competition split
 
 ## Rejected by Code
+
 | Suggestion | Reason |
 |------------|--------|
-| Default perspective expanded/merged | Changes locked schema structure |
-| Video thumbnails | Requires YouTube API, large effort, performance risk |
-| Training history timeline | New feature, needs design from Aaron |
-| Fix "0 Total" | Not a real bug |
-| "Transitions: 0" distinction | Data completeness issue, not UX fix |
+| Social proof / community stats | Out of scope — no backend |
+| Cross-device sync | Requires server infrastructure |
+| Push notifications | PWA notifications need HTTPS + service worker upgrade |
+| Comparison view (side-by-side techniques) | Too complex for single-file app, marginal value |
+| Random Drill respects difficulty | Needs difficulty data (F2) first |
+| Graph onboarding overlay | Graph already has hint text + "Position Map" rename helps |
