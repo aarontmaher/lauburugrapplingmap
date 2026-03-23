@@ -109,7 +109,7 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
 .tree-item.search-first-result > .node { background: rgba(232,255,71,0.06); border-radius: 3px; }
 .node .btn-video { opacity: 0.7; transition: all 0.15s; }
 .node { display: flex; align-items: flex-start; gap: 6px; padding: 4px 16px 4px 8px; transition: background 0.1s; min-height: 32px; }
-.node:hover { background: rgba(255,255,255,0.06); }
+.node:hover { background: rgba(255,255,255,0.06); box-shadow: inset 2px 0 0 rgba(232,255,71,0.15); }
 .tree-item[data-schema="0"]:not([data-ot="1"]):not([data-notes="1"]) > .node:hover { background: rgba(255,255,255,0.07); cursor: pointer; box-shadow: inset 2px 0 0 rgba(232,255,71,0.2); }
 .tree-item[data-schema="0"] > .node:hover .node-label { color: var(--text); }
 .node-toggle { width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; font-size: 9px; color: var(--text-muted); cursor: pointer; flex-shrink: 0; margin-top: 3px; border-radius: 3px; transition: all 0.15s; }
@@ -119,7 +119,7 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
 .node-content { display: flex; align-items: center; gap: 8px; flex: 1; flex-wrap: wrap; min-width: 0; }
 .node-label { font-size: 12px; color: var(--text-dim); cursor: default; line-height: 1.4; transition: color 0.15s; min-width: 0; word-break: break-word; }
 .node-label.has-video { color: var(--text); }
-.node-label.has-video::before { content: ''; display: inline-block; width: 4px; height: 4px; background: var(--accent2); border-radius: 50%; margin-right: 6px; vertical-align: middle; }
+.node-label.has-video::before { content: '▶'; display: inline-block; font-size: 8px; color: var(--accent2); margin-right: 5px; vertical-align: middle; }
 .node-actions { display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
 .btn-video { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.5px; padding: 4px 12px; border: 1px solid var(--accent2); color: var(--accent2); background: rgba(255,107,53,0.08); cursor: pointer; border-radius: 12px; transition: all 0.15s; }
 .btn-video:hover { background: var(--accent2); color: #000; }
@@ -264,14 +264,17 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
   .toolbar { gap: 6px; padding: 8px 10px; }
   .search-wrap { min-width: 140px; }
   .filter-tabs { gap: 3px; }
-  .tab { font-size: 9px; padding: 4px 7px; }
-  .toolbar-btn { font-size: 9px; padding: 4px 7px; }
+  .tab { font-size: 10px; padding: 6px 10px; min-height: 36px; }
+  .toolbar-btn { font-size: 10px; padding: 6px 10px; min-height: 36px; }
 
   /* Reference: tighter section padding */
   .sections { padding: 8px 8px; }
   .section-header { padding: 12px 14px; gap: 10px; min-height: 48px; }
   .section-title { font-size: 14px; }
-  .node { padding: 6px 10px 6px 6px; min-height: 40px; }
+  .node { padding: 6px 10px 6px 6px; min-height: 40px; max-width: 100%; }
+  .node[style*="padding-left"] { max-width: 100%; }
+  /* Cap deep nesting indentation on mobile */
+  .tree-item[data-depth="4"] > .node, .tree-item[data-depth="5"] > .node, .tree-item[data-depth="6"] > .node { padding-left: 80px !important; }
 
   /* 3D detail panel: bottom-sheet on mobile */
   #g3dDetail { width: 100% !important; border-left: none !important; border-top: none !important; top: auto !important; max-height: 60vh !important; border-radius: 16px 16px 0 0; box-shadow: 0 -4px 24px rgba(0,0,0,0.5); padding-bottom: env(safe-area-inset-bottom); }
@@ -284,7 +287,7 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
   #g3dToolbar { left: 8px !important; right: 8px !important; transform: none !important; bottom: calc(10px + env(safe-area-inset-bottom)) !important; max-width: 100% !important; gap: 1px !important; padding: 4px !important; flex-wrap: wrap !important; }
   #g3dToolbar input { width: 90px; font-size: 16px; }
   .g3d-tb-btn { font-size: 11px; padding: 0 10px; height: 34px; min-width: 38px; }
-  .node-label { font-size: 13px; }
+  .node-label { font-size: 14px; }
   .section-title { font-size: 15px; }
   /* Touch feedback */
   .g3d-tb-btn:active { transform: scale(0.95); }
@@ -383,23 +386,27 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
   <div style="position:relative;">
     <button id="headerMenuToggle" style="background:none;border:1px solid rgba(255,255,255,0.1);color:#4a5568;font-family:'DM Mono',monospace;font-size:14px;padding:4px 10px;border-radius:4px;cursor:pointer;" title="Menu" aria-label="Open menu" aria-haspopup="true">&#8942;</button>
     <div id="headerMenu" style="display:none;position:absolute;right:0;top:calc(100% + 6px);background:rgba(14,16,21,0.97);border:1px solid rgba(255,255,255,0.08);border-radius:6px;padding:4px 0;z-index:50;-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);box-shadow:0 8px 32px rgba(0,0,0,0.5);min-width:160px;">
+      <div style="font-size:9px;color:#556;letter-spacing:1px;text-transform:uppercase;padding:6px 14px 2px;">Browse</div>
       <button id="menuRecentBtn" style="display:block;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Recent techniques</button>
-      <button id="menuDrillingBtn" style="display:block;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">My Drills <span id="drillCountBadge" style="background:var(--blue);color:#000;font-size:9px;padding:1px 5px;border-radius:8px;margin-left:4px;display:none;"></span></button>
       <button id="menuWatchedBtn" style="display:block;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Recently Watched</button>
       <button id="menuVideosBtn" style="display:block;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">All Videos</button>
-      <button id="menuProgressBtn" style="display:block;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Progress</button>
       <button id="menuGapsBtn" style="display:block;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Explore More</button>
+      <div style="height:1px;background:rgba(255,255,255,0.06);margin:4px 0;"></div>
+      <div style="font-size:9px;color:#556;letter-spacing:1px;text-transform:uppercase;padding:6px 14px 2px;">Training</div>
+      <button id="menuDrillingBtn" style="display:block;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">My Drills <span id="drillCountBadge" style="background:var(--blue);color:#000;font-size:9px;padding:1px 5px;border-radius:8px;margin-left:4px;display:none;"></span></button>
       <button id="menuRandomBtn" style="display:block;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Random Drill</button>
       <button id="menuTimerBtn" style="display:block;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Drill Timer</button>
       <button id="menuCircuitBtn" style="display:block;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Drill Circuit</button>
       <div style="height:1px;background:rgba(255,255,255,0.06);margin:4px 0;"></div>
-      <button id="menuExportBtn" style="display:block;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Export progress</button>
-      <button id="menuImportBtn" style="display:block;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Import progress</button>
-      <button id="menuResetBtn" style="display:block;width:100%;text-align:left;background:none;border:none;color:#f85149;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Reset all progress</button>
+      <div style="font-size:9px;color:#556;letter-spacing:1px;text-transform:uppercase;padding:6px 14px 2px;">Progress</div>
+      <button id="menuProgressBtn" style="display:block;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Dashboard</button>
+      <button id="menuExportBtn" style="display:block;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Export</button>
+      <button id="menuImportBtn" style="display:block;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Import</button>
+      <button id="menuResetBtn" style="display:block;width:100%;text-align:left;background:none;border:none;color:#f85149;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Reset all</button>
       <div style="height:1px;background:rgba(255,255,255,0.06);margin:4px 0;"></div>
-      <button id="menuReadinessBtn" style="display:block;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Content Readiness</button>
       <button id="kbdHelpToggle" style="display:block;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Keyboard shortcuts</button>
-      <button id="diagToggle" style="display:block;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Diagnostics</button>
+      <button id="menuReadinessBtn" class="dev-only" style="display:none;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Content Readiness</button>
+      <button id="diagToggle" class="dev-only" style="display:none;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Diagnostics</button>
     </div>
   </div>
 </header>
@@ -427,7 +434,7 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
 
 <div class="view-tabs" role="tablist">
   <button class="view-tab" data-view="reference" aria-label="Reference view" role="tab">Reference</button>
-  <button class="view-tab active" data-view="graph3d" aria-label="Network view" role="tab">Network</button>
+  <button class="view-tab active" data-view="graph3d" aria-label="Position Map view" role="tab">Position Map</button>
 </div>
 
 <!-- ══ REFERENCE VIEW ══════════════════════════════════════════════════════ -->
@@ -457,6 +464,7 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
     <button class="g3d-tb-btn" id="refCollapseAll">Collapse</button>
     <button class="g3d-tb-btn" id="refExpandAll">Expand</button>
     <div id="refMediaBtns" style="display:contents;"></div>
+    <button class="g3d-tb-btn" id="refKbdHint" style="color:#556;font-size:9px;" title="Keyboard shortcuts">? keys</button>
   </div>
 </div>
 
@@ -498,14 +506,14 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
       <button class="g3d-tb-btn" id="g3dExpandAll" style="flex:1;">Expand</button>
       <button class="g3d-tb-btn" id="g3dReset" style="flex:1;">Reset</button>
     </div>
-    <div class="g3d-opt-row"><label>Hub rings</label><label class="g3d-toggle"><input type="checkbox" id="g3dOptRings" checked><span class="g3d-toggle-track"></span></label></div>
-    <div class="g3d-opt-row"><label>Top hub labels</label><label class="g3d-toggle"><input type="checkbox" id="g3dOptLabels" checked><span class="g3d-toggle-track"></span></label></div>
-    <div class="g3d-opt-row"><label>Top hubs only</label><label class="g3d-toggle"><input type="checkbox" id="g3dOptHubOnly"><span class="g3d-toggle-track"></span></label></div>
+    <div class="g3d-opt-row"><label>Rings on key positions</label><label class="g3d-toggle"><input type="checkbox" id="g3dOptRings" checked><span class="g3d-toggle-track"></span></label></div>
+    <div class="g3d-opt-row"><label>Label key positions</label><label class="g3d-toggle"><input type="checkbox" id="g3dOptLabels" checked><span class="g3d-toggle-track"></span></label></div>
+    <div class="g3d-opt-row"><label>Key positions only</label><label class="g3d-toggle"><input type="checkbox" id="g3dOptHubOnly"><span class="g3d-toggle-track"></span></label></div>
     <div class="g3d-opt-row"><label>Has Content only</label><label class="g3d-toggle"><input type="checkbox" id="g3dOptBuiltOut"><span class="g3d-toggle-track"></span></label></div>
     <div class="g3d-opt-row"><label>Edge opacity</label><div style="display:flex;align-items:center;gap:8px;"><input type="range" id="g3dOptEdge" min="0" max="100" value="30" style="width:80px;accent-color:var(--accent);"><span id="g3dOptEdgeVal" style="font-size:9px;color:#4a5568;width:28px;">30%</span></div></div>
     <div class="g3d-opt-row"><label>Auto-rotate</label><label class="g3d-toggle"><input type="checkbox" id="g3dOptRotate" checked><span class="g3d-toggle-track"></span></label></div>
     <div style="height:1px;background:rgba(255,255,255,0.04);margin:6px 0;"></div>
-    <div class="g3d-opt-row"><label>Show all positions</label><label class="g3d-toggle"><input type="checkbox" id="g3dOptOrphans"><span class="g3d-toggle-track"></span></label></div>
+    <div class="g3d-opt-row"><label>Include unconnected positions</label><label class="g3d-toggle"><input type="checkbox" id="g3dOptOrphans"><span class="g3d-toggle-track"></span></label></div>
   </div>
 
   <!-- Detail panel -->
@@ -925,10 +933,12 @@ function updateStats() {
     ? 'linear-gradient(to right, var(--accent) ' + Math.round(pctLearned / (pctLearned + pctDrilling) * 100) + '%, var(--blue) ' + Math.round(pctLearned / (pctLearned + pctDrilling) * 100) + '%)'
     : 'var(--accent)';
   progBar.parentElement.title = learned + ' learned + ' + drilling + ' drilling of ' + STATE.totalNodes + ' (' + Math.round(pctLearned + pctDrilling) + '%)';
-  // Show stats + progress bar only when user has tracked at least one technique
+  // Always show total count. Show progress bar only when tracking.
   var hasProgress = Object.keys(STATE.progress).length > 0;
-  document.getElementById('headerStats').style.display = hasProgress ? 'flex' : 'none';
+  document.getElementById('headerStats').style.display = 'flex';
   progBar.parentElement.style.opacity = hasProgress ? '1' : '0';
+  // Hide learned count if zero to avoid "0 Learned" demotivation
+  document.getElementById('learnedCount').parentElement.style.display = (learned > 0 || drilling > 0) ? '' : 'none';
   // Update drill count badge
   var drillCount = 0;
   for (var v2 of Object.values(STATE.progress)) { if (v2 === 'drilling') drillCount++; }
@@ -1177,6 +1187,16 @@ function buildNode(node, sectionTitle, depth, parentUl, parentKey, disambig, pos
   const actions = document.createElement('div');
   actions.className = 'node-actions';
 
+  // Close all other inline video players (only one should play at a time)
+  function closeOtherPlayers(keepLi) {
+    document.querySelectorAll('.inline-player').forEach(function(p) {
+      if (p.closest('.tree-item') !== keepLi) {
+        var btn = p.closest('.tree-item').querySelector('.btn-video');
+        if (btn && btn.textContent.includes('Close')) btn.textContent = btn.dataset.origLabel || '📖 Instructional';
+        p.remove();
+      }
+    });
+  }
   // Video buttons
   if (node.v) {
     const vWatched = STATE.videosWatched && STATE.videosWatched[node.v];
@@ -1188,7 +1208,8 @@ function buildNode(node, sectionTitle, depth, parentUl, parentKey, disambig, pos
       e.stopPropagation();
       const vidId = node.v.split('/').pop().split('?')[0];
       const existing = li.querySelector('.inline-player-i');
-      if (existing) { existing.remove(); vBtn.textContent = '📖 Instructional'; return; }
+      if (existing) { existing.remove(); vBtn.textContent = (vWatched ? '\u2713 ' : '') + '📖 Instructional'; return; }
+      closeOtherPlayers(li);
       const pw = document.createElement('div');
       pw.className = 'inline-player inline-player-i';
       pw.style.cssText = 'padding:8px 0 4px ' + (indent+28) + 'px;';
@@ -1283,6 +1304,8 @@ function buildNode(node, sectionTitle, depth, parentUl, parentKey, disambig, pos
     var bc = document.createElement('div');
     bc.className = 'technique-breadcrumb';
     var segments = key.split('|').slice(0, -1); // all except current node
+    // Dedup: skip first segment if it equals the second (section name repeated as position container)
+    if (segments.length >= 2 && segments[0] === segments[1]) segments = segments.slice(1);
     bc.textContent = segments.map(function(s) { return s.replace(/_/g, ' '); }).join(' › ');
     li.appendChild(bc);
     // Inline note preview (shown when selected, if note exists)
@@ -1309,11 +1332,15 @@ function buildNode(node, sectionTitle, depth, parentUl, parentKey, disambig, pos
       buildNode(child, sectionTitle, depth + 1, childUl, key, childDisambig, posEntry);
     });
     li.appendChild(childUl);
-    // Hide empty schema headings (headings with no real technique children)
+    // Schema headings: show technique count, dim if empty
     if (SCHEMA_NAMES.has(node.t.trim()) && depth > 0) {
       var realChildren = childUl.querySelectorAll('.tree-item[data-schema="0"]');
+      var countBadge = document.createElement('span');
+      countBadge.style.cssText = 'font-size:9px;color:#556;margin-left:6px;font-family:DM Mono,monospace;';
+      countBadge.textContent = '(' + realChildren.length + ')';
+      label.appendChild(countBadge);
       if (realChildren.length === 0) {
-        li.style.display = 'none';
+        li.style.opacity = '0.4';
         li.dataset.emptyHeading = '1';
       }
     }
@@ -1535,6 +1562,13 @@ function buildSections() {
       return c;
     }
     var techTotal = countSectionTechniques(section.nodes);
+    // Count videos in section
+    function countSectionVideos(nodes) {
+      var v = 0;
+      (nodes || []).forEach(function(n) { if (n.v || n.l) v++; if (n.c) v += countSectionVideos(n.c); });
+      return v;
+    }
+    var vidTotal = countSectionVideos(section.nodes);
     // Count tracked techniques in this section
     var sectionNorm = normalizeSegment(section.title);
     var sectionTracked = 0;
@@ -1546,7 +1580,7 @@ function buildSections() {
       var secPct = Math.round(sectionTracked / techTotal * 100);
       secPctHtml = ' <span style="display:inline-block;width:30px;height:3px;background:var(--border);border-radius:2px;vertical-align:middle;margin-left:4px;"><span style="display:block;height:3px;background:'+section.color+';border-radius:2px;width:'+secPct+'%;"></span></span> <span style="font-size:9px;color:#556;">'+secPct+'%</span>';
     }
-    header.innerHTML = '<div class="section-dot" style="background:'+section.color+';box-shadow:0 0 4px '+section.color+'40;"></div><div class="section-title">'+section.title+'</div><span class="section-meta" style="font-family:Barlow Condensed,sans-serif;font-size:11px;color:var(--text-muted);letter-spacing:0.5px;">'+posCount+' positions \u00b7 '+techTotal+' techniques'+secPctHtml+'</span><div class="section-chevron">&#9662;</div>';
+    header.innerHTML = '<div class="section-dot" style="background:'+section.color+';box-shadow:0 0 4px '+section.color+'40;"></div><div class="section-title">'+section.title+'</div><span class="section-meta" style="font-family:Barlow Condensed,sans-serif;font-size:11px;color:var(--text-muted);letter-spacing:0.5px;">'+posCount+' positions \u00b7 '+techTotal+' techniques'+(vidTotal > 0 ? ' \u00b7 '+vidTotal+' videos' : '')+secPctHtml+'</span><div class="section-chevron">&#9662;</div>';
     header.addEventListener('click', e => {
       div.classList.toggle('collapsed');
       const sectionKey = makeKey(section.title, section.title);
@@ -1911,7 +1945,23 @@ function _refDoSearch() {
       if (bc2) bc2.remove();
     }
   });
-  if (q) revealAncestorItems();
+  if (q) {
+    revealAncestorItems();
+    // Auto-expand all ancestor tree-items of visible matches so results are immediately readable
+    document.querySelectorAll('.tree-item').forEach(function(li) {
+      if (li.style.display !== 'none' && li.dataset.schema !== '1') {
+        var ancestor = li.parentElement ? li.parentElement.closest('.tree-item') : null;
+        while (ancestor) {
+          if (ancestor.classList.contains('collapsed')) {
+            ancestor.classList.remove('collapsed');
+            var tog = ancestor.querySelector(':scope > .node > .node-toggle');
+            if (tog && !tog.classList.contains('leaf')) tog.textContent = '\u25BE';
+          }
+          ancestor = ancestor.parentElement ? ancestor.parentElement.closest('.tree-item') : null;
+        }
+      }
+    });
+  }
   var anyVisible = false;
   document.querySelectorAll('.section').forEach(function(sec) {
     var visible = Array.from(sec.querySelectorAll('.tree-item')).some(function(li) { return li.style.display !== 'none'; });
@@ -3422,7 +3472,9 @@ window.initGraph3D = (function() {
 
       // Options
       const optPanel=document.getElementById('g3dOptions');
-      document.getElementById('g3dOptionsBtn').addEventListener('click',()=>{optPanel.style.display=optPanel.style.display==='block'?'none':'block';});
+      document.getElementById('g3dOptionsBtn').addEventListener('click',function(ev){ev.stopPropagation();optPanel.style.display=optPanel.style.display==='block'?'none':'block';});
+      optPanel.addEventListener('click',function(ev){ev.stopPropagation();});
+      document.addEventListener('click',function(){if(optPanel.style.display==='block')optPanel.style.display='none';});
       document.getElementById('g3dOptRings').addEventListener('change',function(){showRings3d=this.checked;Object.values(ringMap3d).forEach(r=>{r.visible=showRings3d;});});
       document.getElementById('g3dOptLabels').addEventListener('change',function(){showTopLabels3d=this.checked;});
       document.getElementById('g3dOptRotate').addEventListener('change',function(){autoRotate3d=this.checked;});
@@ -4262,6 +4314,12 @@ document.getElementById('kbdHelpToggle').addEventListener('click', function() {
 document.getElementById('kbdHelpClose').addEventListener('click', function() {
   document.getElementById('kbdHelpPanel').style.display = 'none';
 });
+// Bottom bar keyboard hint button
+var _refKbdHint = document.getElementById('refKbdHint');
+if (_refKbdHint) _refKbdHint.addEventListener('click', function() {
+  var hp = document.getElementById('kbdHelpPanel');
+  hp.style.display = hp.style.display === 'none' ? 'block' : 'none';
+});
 // Click on empty Reference background clears technique selection
 document.getElementById('referenceView').addEventListener('click', function(e) {
   // Only clear if clicking the container itself or a section background — not a .node row
@@ -4272,6 +4330,10 @@ document.getElementById('referenceView').addEventListener('click', function(e) {
 checkKeyVersion();
 loadState();
 initDataFromSections();
+// Dev mode: show Content Readiness + Diagnostics if ?dev=1 in URL
+if (location.search.includes('dev=1')) {
+  document.querySelectorAll('.dev-only').forEach(function(el) { el.style.display = 'block'; });
+}
 // Live playlists — fail-soft fetch (no console errors if missing)
 fetch('./live-playlists.json').then(function(r){if(!r.ok)throw r;return r.json();}).then(function(d){
   window._livePlaylists=d.techniques||{};

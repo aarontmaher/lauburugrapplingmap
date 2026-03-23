@@ -119,6 +119,36 @@ Active system: old Keyboard Maestro bridge. No other automation flow.
 - Prompts stay plain text, KM-friendly
 - Do not reintroduce watcher-based handoff
 
+## Suggestion Decision Model
+
+Code = technical gatekeeper. Aaron = final owner. ChatGPT/Claude Chat = optional product review.
+
+**Code should decide:**
+- Is this technically safe?
+- Is this in scope?
+- Is this blocked by current code state?
+- Is this low-risk / high-value?
+- Is this already done or duplicated?
+- Does it conflict with locked rules?
+
+**Code should NOT alone decide:**
+- Whether a suggestion is actually good product-wise
+- Whether it fits Aaron's long-term direction
+- Whether it should outrank more important UX/system work
+
+**Code may reject:** unsafe, duplicate, out of scope, clearly low value, conflicting with locked rules.
+
+**Code may NOT auto-approve:** all remaining suggestions as ready to implement.
+
+**Flow:**
+1. Suggestions go into AUTOMATION_SUGGESTIONS.md (raw pool)
+2. Code screens and ranks into AUTOMATION_ACCEPTED.md (approved items)
+3. Current batch moves to AUTOMATION_NOW.md (active work)
+4. Next batch stays organized in AUTOMATION_NEXT.md (prepared queue)
+5. While implementing NOW, Code also keeps NEXT organized
+6. At batch end: report NOW results + confirm NEXT is ready
+7. If not obvious → defer for Aaron or ChatGPT/Claude Chat review
+
 ## Manual vs Automated Task Priority
 - **Manual/ad hoc tasks from Aaron** (video moves, folder fixes, verifications, memory corrections, direct filesystem actions) → run immediately, even if an automation loop is active.
 - **Automated tasks** (website iteration prompts, KM batch continuations) → defer to queue when interrupted by a manual task.
