@@ -629,7 +629,8 @@ function saveState() {
       selected: SELECTED_NODE || null,
       recentViewed: STATE.recentViewed || [],
       lastPracticed: STATE.lastPracticed || {},
-      videosWatched: STATE.videosWatched || {}
+      videosWatched: STATE.videosWatched || {},
+      successLog: STATE.successLog || []
     };
     localStorage.setItem('grapplingAppState', JSON.stringify(appState));
   } catch(e) {
@@ -672,6 +673,7 @@ function loadState() {
       STATE.recentViewed = appState.recentViewed || [];
       STATE.lastPracticed = appState.lastPracticed || {};
       STATE.videosWatched = appState.videosWatched || {};
+      STATE.successLog = appState.successLog || [];
     }
   } catch(e) {}
 }
@@ -1300,6 +1302,29 @@ function buildNode(node, sectionTitle, depth, parentUl, parentKey, disambig, pos
   li.dataset.hasNote = STATE.notes[key] ? '1' : '0';
   actions.appendChild(noteBtn);
   } // end !isSchemaHeading for note button
+
+  // Success log button (skip for schema headings, OT lines, Notes)
+  if (!isSchemaHeading && !(node.t && node.t.includes('\u2192')) && node.t.trim() !== 'Notes') {
+    var hitBtn = document.createElement('button');
+    hitBtn.className = 'btn-note';
+    hitBtn.textContent = '\u2714';
+    hitBtn.title = 'Log success — hit this in training';
+    hitBtn.style.cssText = 'font-size:11px;';
+    var _hitCount = (STATE.successLog || []).filter(function(e) { return e.key === key; }).length;
+    if (_hitCount > 0) { hitBtn.style.color = 'var(--green)'; hitBtn.style.borderColor = 'var(--green)'; hitBtn.textContent = '\u2714 ' + _hitCount; }
+    hitBtn.addEventListener('click', function(ev) {
+      ev.stopPropagation();
+      if (!STATE.successLog) STATE.successLog = [];
+      STATE.successLog.push({ key: key, ts: Date.now() });
+      _hitCount++;
+      hitBtn.textContent = '\u2714 ' + _hitCount;
+      hitBtn.style.color = 'var(--green)';
+      hitBtn.style.borderColor = 'var(--green)';
+      saveState();
+      showToast('Success logged: ' + node.t);
+    });
+    actions.appendChild(hitBtn);
+  }
 
   content.appendChild(actions);
   nodeDiv.appendChild(toggle);
@@ -3707,7 +3732,7 @@ document.addEventListener('keydown', e => {
 })();
 // Export progress
 document.getElementById('menuExportBtn').addEventListener('click', function() {
-  var data = { progress: STATE.progress, notes: STATE.notes, recentViewed: STATE.recentViewed || [], exportedAt: new Date().toISOString() };
+  var data = { progress: STATE.progress, notes: STATE.notes, recentViewed: STATE.recentViewed || [], successLog: STATE.successLog || [], exportedAt: new Date().toISOString() };
   var blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
   var a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
@@ -3730,6 +3755,7 @@ document.getElementById('menuImportBtn').addEventListener('click', function() {
         if (data.progress) STATE.progress = data.progress;
         if (data.notes) STATE.notes = data.notes;
         if (data.recentViewed) STATE.recentViewed = data.recentViewed;
+        if (data.successLog) STATE.successLog = data.successLog;
         saveState(); updateStats(); refreshAllViews();
         showToast('Progress imported successfully');
       } catch(e) { showToast('Could not read file — check format'); }
