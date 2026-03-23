@@ -1369,12 +1369,14 @@ function buildNode(node, sectionTitle, depth, parentUl, parentKey, disambig, pos
       var realChildren = childUl.querySelectorAll('.tree-item[data-schema="0"]');
       var countBadge = document.createElement('span');
       countBadge.style.cssText = 'font-size:9px;color:#556;margin-left:6px;font-family:DM Mono,monospace;';
-      countBadge.textContent = '(' + realChildren.length + ')';
-      label.appendChild(countBadge);
-      if (realChildren.length === 0) {
+      if (realChildren.length > 0) {
+        countBadge.textContent = '(' + realChildren.length + ')';
+      } else {
+        countBadge.textContent = '— coming soon';
         li.style.opacity = '0.4';
         li.dataset.emptyHeading = '1';
       }
+      label.appendChild(countBadge);
     }
     // Position-level stats (depth 0): inline + mini stats bar
     if (depth === 0) {
@@ -2094,7 +2096,7 @@ function applyRefFilter(filter) {
   document.querySelectorAll('.section').forEach(sec => {
     var countSpan = sec.querySelector('.section-header span');
     if (countSpan && filter !== 'all') {
-      var visibleItems = Array.from(sec.querySelectorAll('.tree-item[data-schema="0"]:not([style*="display: none"])')).length;
+      var visibleItems = Array.from(sec.querySelectorAll('.tree-item[data-schema="0"][data-ot="0"][data-notes="0"]:not([style*="display: none"])')).length;
       countSpan.textContent = visibleItems + ' matching';
     } else if (countSpan && filter === 'all') {
       // Restore original counts
@@ -3155,7 +3157,7 @@ window.initGraph3D = (function() {
         var centrality=1-(dist/maxDist); // 1=center, 0=edge
         return {id:n.id, score: n._w * (1 + centrality * 0.5)};
       }).sort((a,b)=>b.score-a.score);
-      scored.slice(0,20).forEach(s=>showFor.add(s.id));
+      scored.forEach(s=>showFor.add(s.id));
     }
     if(selectedId3d) showFor.add(selectedId3d);
     if(hoveredId3d)  showFor.add(hoveredId3d);
