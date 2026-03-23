@@ -3044,21 +3044,44 @@ window.initGraph3D = (function() {
     lctx.clearRect(0,0,lc.width,lc.height);
     const netNds=NET_NODES.filter(n=>n.in_network);
     const showFor=new Set();
-    if(showTopLabels3d) [...netNds].sort((a,b)=>b._w-a._w).slice(0,15).forEach(n=>showFor.add(n.id));
+    // Show labels for top nodes by connection weight — prioritize connected center nodes
+    if(showTopLabels3d){
+      // Score: weight + centrality bonus (closer to center of mass = higher score)
+      var cx=0,cy=0,cz=0,cnt=0;
+      netNds.forEach(n=>{cx+=n.x;cy+=n.y;cz+=n.z;cnt++;});
+      if(cnt){cx/=cnt;cy/=cnt;cz/=cnt;}
+      var maxDist=1;
+      netNds.forEach(n=>{var d=Math.sqrt((n.x-cx)**2+(n.y-cy)**2+(n.z-cz)**2);if(d>maxDist)maxDist=d;});
+      var scored=[...netNds].map(n=>{
+        var dist=Math.sqrt((n.x-cx)**2+(n.y-cy)**2+(n.z-cz)**2);
+        var centrality=1-(dist/maxDist); // 1=center, 0=edge
+        return {id:n.id, score: n._w * (1 + centrality * 0.5)};
+      }).sort((a,b)=>b.score-a.score);
+      scored.slice(0,20).forEach(s=>showFor.add(s.id));
+    }
     if(selectedId3d) showFor.add(selectedId3d);
     if(hoveredId3d)  showFor.add(hoveredId3d);
     if(_zoomedNodeId) showFor.add(_zoomedNodeId);
     const proj=new THREE.Vector3();
     const wrap=document.getElementById('g3dCanvas').parentElement;
     const W=wrap.clientWidth,H=wrap.clientHeight;
-    // Pre-compute screen positions for all visible nodes (for label collision check)
+    // Pre-compute screen positions for all visible nodes
     var nodeScreenPos=[];
     netNds.forEach(n=>{
       if(!meshMap3d[n.id]||!meshMap3d[n.id].visible)return;
       var p=new THREE.Vector3(n.x,n.y,n.z);p.applyMatrix4(pivot3d.matrixWorld);p.project(camera3d);
       nodeScreenPos.push({id:n.id,sx:(p.x+1)/2*W,sy:(-p.y+1)/2*H,r:n._r||6});
     });
-    showFor.forEach(id=>{
+    // Track placed label bounding boxes for collision-aware nudging
+    var placedLabels=[];
+    // Sort showFor: selected/hovered first, then by weight (so important labels get best positions)
+    var labelOrder=Array.from(showFor).sort((a,b)=>{
+      if(a===selectedId3d)return -1; if(b===selectedId3d)return 1;
+      if(a===hoveredId3d)return -1; if(b===hoveredId3d)return 1;
+      var na=nodeMap3d[a],nb=nodeMap3d[b];
+      return (nb?nb._w:0)-(na?na._w:0);
+    });
+    labelOrder.forEach(id=>{
       const nd=nodeMap3d[id];if(!nd||!meshMap3d[id]?.visible)return;
       proj.set(nd.x,nd.y,nd.z);proj.applyMatrix4(pivot3d.matrixWorld);proj.project(camera3d);
       const sx=(proj.x+1)/2*W,sy=(-proj.y+1)/2*H;
@@ -3070,15 +3093,27 @@ window.initGraph3D = (function() {
       lctx.font=`${isSel?600:400} ${fs}px 'Barlow Condensed',sans-serif`;
       var displayLabel = nd.label.replace(/\s*\((You|Opponent|Attacker|Defender|Passer|Guard player|Initiative|Defensive)\)\s*$/,'');
       const tw=lctx.measureText(displayLabel).width;
-      const px=sx+nd._r*1.2+4,py=sy+4;
-      // Reduce alpha if label bbox overlaps another node's screen position
+      var px=sx+nd._r*1.2+4, py=sy+4;
+      // Nudge label vertically to avoid overlapping already-placed labels
+      var lh=fs+6;
+      for(var attempt=0;attempt<5;attempt++){
+        var lx1=px-3,lx2=px+tw+5,ly1=py-fs,ly2=py+4;
+        var overlap=false;
+        for(var pi=0;pi<placedLabels.length;pi++){
+          var pl=placedLabels[pi];
+          if(lx1<pl.x2&&lx2>pl.x1&&ly1<pl.y2&&ly2>pl.y1){overlap=true;break;}
+        }
+        if(!overlap)break;
+        py+=lh; // nudge down
+      }
+      // Reduce alpha if label still overlaps a non-own node after nudging
       var alpha=isSel?1.0:isHov?0.9:0.7;
       if(!isSel&&!isHov){
-        var lx1=px-3,lx2=px+tw+5,ly1=py-fs,ly2=py+4;
+        var lx1f=px-3,lx2f=px+tw+5,ly1f=py-fs,ly2f=py+4;
         for(var ni=0;ni<nodeScreenPos.length;ni++){
           var ns=nodeScreenPos[ni];
           if(ns.id===id)continue;
-          if(ns.sx>lx1-8&&ns.sx<lx2+8&&ns.sy>ly1-8&&ns.sy<ly2+8){alpha=0.25;break;}
+          if(ns.sx>lx1f-8&&ns.sx<lx2f+8&&ns.sy>ly1f-8&&ns.sy<ly2f+8){alpha=0.25;break;}
         }
       }
       lctx.globalAlpha=alpha;
@@ -3090,6 +3125,8 @@ window.initGraph3D = (function() {
       lctx.fillStyle=isSel||isHov?col:'rgba(160,170,190,0.85)';
       lctx.fillText(displayLabel,px,py);
       lctx.restore();
+      // Record this label's bbox
+      placedLabels.push({x1:px-3,x2:px+tw+5,y1:py-fs,y2:py+4});
     });
   }
 
