@@ -29,9 +29,15 @@ ITERATION-13: Section header progress percentage bar
 - ffmpeg installed, INBOX scaffolded
 - Folder naming + placement rules established
 
+## Automation Bridge
+- Old KM bridge locked as single system
+- Watcher flow retired and removed
+- Non-stopping: write prompt + mark_done.sh
+- True stop: mark_done.sh only
+
 ## Next Best Action
-- Commit/push this session's changes (14 website iterations + tools + memory files)
-- Then: content filling when Aaron supplies content, or new feature requests
+- Position/chain memory improvement (grappling placement understanding)
+- Or: content filling when Aaron supplies content
 
 ## Input-limited (needs Aaron)
 - Octopus Guard OPML decision

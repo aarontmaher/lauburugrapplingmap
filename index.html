@@ -3051,6 +3051,13 @@ window.initGraph3D = (function() {
     const proj=new THREE.Vector3();
     const wrap=document.getElementById('g3dCanvas').parentElement;
     const W=wrap.clientWidth,H=wrap.clientHeight;
+    // Pre-compute screen positions for all visible nodes (for label collision check)
+    var nodeScreenPos=[];
+    netNds.forEach(n=>{
+      if(!meshMap3d[n.id]||!meshMap3d[n.id].visible)return;
+      var p=new THREE.Vector3(n.x,n.y,n.z);p.applyMatrix4(pivot3d.matrixWorld);p.project(camera3d);
+      nodeScreenPos.push({id:n.id,sx:(p.x+1)/2*W,sy:(-p.y+1)/2*H,r:n._r||6});
+    });
     showFor.forEach(id=>{
       const nd=nodeMap3d[id];if(!nd||!meshMap3d[id]?.visible)return;
       proj.set(nd.x,nd.y,nd.z);proj.applyMatrix4(pivot3d.matrixWorld);proj.project(camera3d);
@@ -3058,13 +3065,23 @@ window.initGraph3D = (function() {
       if(sx<0||sx>W||sy<0||sy>H)return;
       const isSel=id===selectedId3d,isHov=id===hoveredId3d;
       const col=SECT_CSS3[nd.section_idx]||'#888';
-      const fs=isSel?13:isHov?12:10,alpha=isSel?1.0:isHov?0.9:0.7;
+      const fs=isSel?13:isHov?12:10;
       lctx.save();
       lctx.font=`${isSel?600:400} ${fs}px 'Barlow Condensed',sans-serif`;
-      lctx.globalAlpha=alpha;
       var displayLabel = nd.label.replace(/\s*\((You|Opponent|Attacker|Defender|Passer|Guard player|Initiative|Defensive)\)\s*$/,'');
       const tw=lctx.measureText(displayLabel).width;
       const px=sx+nd._r*1.2+4,py=sy+4;
+      // Reduce alpha if label bbox overlaps another node's screen position
+      var alpha=isSel?1.0:isHov?0.9:0.7;
+      if(!isSel&&!isHov){
+        var lx1=px-3,lx2=px+tw+5,ly1=py-fs,ly2=py+4;
+        for(var ni=0;ni<nodeScreenPos.length;ni++){
+          var ns=nodeScreenPos[ni];
+          if(ns.id===id)continue;
+          if(ns.sx>lx1-8&&ns.sx<lx2+8&&ns.sy>ly1-8&&ns.sy<ly2+8){alpha=0.25;break;}
+        }
+      }
+      lctx.globalAlpha=alpha;
       lctx.fillStyle='rgba(14,16,21,0.75)';
       lctx.beginPath();
       if(lctx.roundRect) lctx.roundRect(px-3,py-fs+2,tw+8,fs+4,3);

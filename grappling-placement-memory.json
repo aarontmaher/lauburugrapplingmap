@@ -69,6 +69,28 @@
     "outcome_folders_usually_unnecessary": {
       "examples": ["side-control removed from leg-drag path", "back-control-without-hooks removed from rolling-back-take"],
       "rule": "Final destination positions as leaf folders are usually unnecessary — the technique name is enough"
+    },
+    "defender_defence_vs_offence": {
+      "examples": [
+        "front-headlock/defender/defence/wrist-control-spin-out (defensive escape technique)",
+        "front-headlock/defender/offence/knee-tap-fireman (attacking escape — you attack to escape)",
+        "single-leg/defender/defence/shin-whizzer/limp-arm-counter (defending the shot with your whizzer)"
+      ],
+      "rule": "Defender/defence = surviving or neutralizing the attack. Defender/offence = actively attacking to escape or reverse. 'I defend with a whizzer' = defence. 'I escape with a knee-tap fireman' = offence."
+    },
+    "same_technique_both_perspectives": {
+      "examples": [
+        "shin-whizzer: attacker/offence (countering opponent's whizzer) vs defender/defence (using your own whizzer)",
+        "limp-arm: attacker/offence (countering opponent's whizzer with limp arm) vs defender context"
+      ],
+      "rule": "The same technique name can appear under both perspectives. The perspective determines WHOSE action it is: 'they whizzer, I counter' = attacker/offence. 'I whizzer' = defender/defence."
+    },
+    "shot_perspective_key": {
+      "examples": [
+        "attacker = the person shooting (on the single leg)",
+        "defender = the person being shot on (defending the takedown)"
+      ],
+      "rule": "In shots: attacker = shooter, defender = person being shot on. 'I shoot single leg, they whizzer, I limp arm' = attacker/offence. 'They shoot, I whizzer' = defender/defence."
     }
   },
 
@@ -193,6 +215,45 @@
       "sequence": "Single leg > Shin whizzer defence > Running the pipe",
       "path": "wrestling/shots/head-inside-single-leg/attacker/offence/shin-whizzer/running-the-pipe-counter-to-shin-whizzer",
       "confidence": "high"
+    },
+    {
+      "sequence": "Front Headlock (defender) > Wrist control spin out",
+      "path": "dominant-positions/front-headlock/defender/defence/wrist-control-spin-out",
+      "confidence": "high",
+      "note": "Defence = defensive escape technique"
+    },
+    {
+      "sequence": "Front Headlock (defender) > Knee-tap fireman",
+      "path": "dominant-positions/front-headlock/defender/offence/knee-tap-fireman",
+      "confidence": "high",
+      "note": "Offence = attacking escape (you attack to get out)"
+    },
+    {
+      "sequence": "Single leg (attacker) > Shin whizzer > Limp arm counter",
+      "path": "wrestling/shots/head-inside-single-leg/attacker/offence/shin-whizzer/limp-arm-counter-to-shin-whizzer",
+      "confidence": "high",
+      "note": "Attacker = shooter. They whizzer, I limp arm to counter."
+    },
+    {
+      "sequence": "Single leg (defender) > Shin whizzer > Limp arm counter",
+      "path": "wrestling/shots/head-inside-single-leg/defender/defence/shin-whizzer/limp-arm-counter",
+      "confidence": "high",
+      "note": "Defender = being shot on. I whizzer, they limp arm, I counter their limp arm."
+    },
+    {
+      "sequence": "Single leg (attacker) > Iranian > Grounded 50/50",
+      "path": "wrestling/shots/head-inside-single-leg/attacker/offence/iranian/grounded-5050",
+      "confidence": "high"
+    },
+    {
+      "sequence": "Overhook > Ankle pick takedown",
+      "path": "wrestling/hand-fighting/overhook-you/you/offence/ankle-pick",
+      "confidence": "high"
+    },
+    {
+      "sequence": "Underhook > Ankle pick > Single leg > Running the pipe",
+      "path": "wrestling/hand-fighting/underhook-you/you/offence/ankle-pick/single-leg/running-the-pipe",
+      "confidence": "high"
     }
   ],
 
@@ -220,6 +281,18 @@
     {
       "lesson": "Final outcome positions (side-control, mount) as leaf folders usually unnecessary",
       "type": "folder_depth"
+    },
+    {
+      "lesson": "Front headlock defender: defence = defensive escape (wrist control spin out). offence = attacking escape (knee-tap fireman).",
+      "type": "heading_assignment"
+    },
+    {
+      "lesson": "Shin whizzer limp arm: 'I shoot, they whizzer, I limp arm' = attacker/offence. 'They shoot, I whizzer, they limp arm, I counter' = defender/defence.",
+      "type": "perspective_assignment"
+    },
+    {
+      "lesson": "Same technique can appear under both perspectives. Perspective = whose action it is.",
+      "type": "perspective_assignment"
     }
   ],
 

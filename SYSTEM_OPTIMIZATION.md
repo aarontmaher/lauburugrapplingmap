@@ -5,7 +5,7 @@ Last updated: 2026-03-23
 - **OPML pipeline**: grappling.opml → opml_to_sections.py → index.html (stable)
 - **Playwright**: 12 smoke + 3 snapshot tests, npm run ready = deploy gate
 - **PWA**: manifest.json, sw.js, installable
-- **Keyboard Maestro**: active automation system
+- **Keyboard Maestro**: active automation system — old bridge only (mark_done.sh + bridge_cycle.sh). Watcher flow retired.
 - **Auto-merge**: claude/** PRs via GitHub Action
 - **Live footage**: INBOX + ffmpeg + classification memory (25 entries) + placement rules
 - **Shared memory**: 6 files + zip bundles + auto-open Finder on upload

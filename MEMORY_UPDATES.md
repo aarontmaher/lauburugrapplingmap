@@ -47,7 +47,14 @@
 ## 2026-03-23 — Website Improvement Loop Complete
 - 14 iterations completed in one session
 - True stopping point reached — remaining candidates are marginal polish
-- All changes in index.html, ready to commit/push
+- All changes committed and pushed
+
+## 2026-03-23 — Automation Bridge Unified + Locked
+- Old KM bridge is the single active system (mark_done.sh + bridge_cycle.sh)
+- Watcher flow (next_automation_prompt.txt + .prompt_ready + launchd) retired and removed
+- Non-stopping batch: write prompt to last_chatgpt_reply.txt + mark_done.sh
+- True stopping point: mark_done.sh only, no continuation prompt
+- Locked as standard rule in WORKFLOW_RULES.md + DECISIONS.md
 
 ## 2026-03-23 — Shared Memory Cleanup + Sync Rule
 - Cleaned stale planning/setup language from all shared memory files

@@ -104,7 +104,35 @@ At a true stopping point (stopping-point: yes):
 1. Validate → update memory → refresh zips → commit → push → prompt upload → open Finder
 2. Do NOT output NEXT_AUTOMATION_PROMPT markers unless explicitly useful.
 
-Keyboard Maestro captures prompts by matching NEXT_AUTOMATION_PROMPT_START through NEXT_AUTOMATION_PROMPT_END.
+## Automation Bridge (LOCKED — old KM bridge only)
+
+Active system: old Keyboard Maestro bridge. No other automation flow.
+
+**Non-stopping batch (continuation):**
+1. Code runs: `bash ~/.handoff/continue_automation.sh "RESULT" --prompt "next prompt"`
+2. Script writes prompt to `last_chatgpt_reply.txt` FIRST
+3. Script handles stale `run.lock` (waits, force-clears if >60s old)
+4. Script calls `mark_done.sh` ONLY after prompt is confirmed written
+5. If prompt write fails, done is NOT signaled
+6. KM DETECT-CODE-DONE gate: `last_code_result.txt` contains "DONE" AND no `run.lock`
+7. KM runs `bridge_cycle.sh` → pastes prompt into Terminal
+8. No memory upload. No Finder open. Loop continues.
+
+**True stopping point:**
+1. Code calls `mark_done.sh "RESULT LINE"` — no continuation prompt written
+2. Only then: commit/push + shared memory sync/upload if appropriate
+3. Loop stops.
+
+**Retired (do not use):**
+- next_automation_prompt.txt
+- .prompt_ready flag
+- watch-automation.sh launchd watcher
+- NEXT_AUTOMATION_PROMPT_START/END stdout markers as the delivery mechanism
+
+**Rules:**
+- Shared memory does not interrupt the automation mid-cycle
+- Prompts stay plain text, KM-friendly
+- Do not reintroduce watcher-based handoff
 
 ## Manual vs Automated Task Priority
 - **Manual/ad hoc tasks from Aaron** (video moves, folder fixes, verifications, memory corrections, direct filesystem actions) → run immediately, even if an automation loop is active.

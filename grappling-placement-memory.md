@@ -35,6 +35,20 @@ Berimbolo, Crab ride, Grounded 50/50
 - Knee on belly = sub-position under Side Control
 - Head arm choke = submission
 
+## Perspective Distinction Rules
+
+| Scenario | Perspective | Heading | Example |
+|----------|-------------|---------|---------|
+| Defensive escape technique | defender | defence | wrist-control-spin-out |
+| Attacking escape (you attack to get out) | defender | offence | knee-tap-fireman |
+| Counter to opponent's defence | attacker | offence | limp-arm counter to shin whizzer |
+| Your own defensive technique | defender | defence | shin-whizzer as defender |
+| Same technique, who's doing it? | depends | depends | shin whizzer appears both sides |
+
+**In shots:** attacker = shooter, defender = being shot on.
+- "I shoot, they whizzer, I limp arm" = attacker/offence
+- "They shoot, I whizzer" = defender/defence
+
 ## Corrections History
 1. Single under pass → supine guard (not seated)
 2. Dogfight counter → passer/defence (not guard-player/offence)
@@ -42,3 +56,6 @@ Berimbolo, Crab ride, Grounded 50/50
 4. over-under pass (not under-over)
 5. Don't turn every spoken clause into a folder
 6. Final outcome positions as leaf folders usually unnecessary
+7. Front headlock defender: defence = defensive escape, offence = attacking escape
+8. Shin whizzer limp arm perspective depends on who's shooting
+9. Same technique can appear under both perspectives

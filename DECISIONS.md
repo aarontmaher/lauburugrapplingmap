@@ -30,6 +30,7 @@ Last updated: 2026-03-23
 - KEY_VERSION: 2
 - Built-out filter: excludes Hand Fighting
 - COMMIT_MIN: 5 videos per technique folder for playlists
+- Automation: old KM bridge only (mark_done.sh + bridge_cycle.sh). Watcher flow retired.
 
 ## Website
 - Node size formula: pow(_w, 0.85) * 1.8
