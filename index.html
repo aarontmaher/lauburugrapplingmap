@@ -558,7 +558,7 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
   </div>
 
   <!-- Legend — static fallback; overwritten by initGraph3D from SECTIONS -->
-  <div id="g3dLegend" style="position:absolute;top:16px;right:280px;font-family:'Barlow Condensed',sans-serif;font-size:11px;color:#667;pointer-events:none;z-index:5;line-height:2;transition:right 0.25s,opacity 0.25s;background:rgba(14,16,21,0.6);border:1px solid rgba(255,255,255,0.04);border-radius:6px;padding:6px 10px;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);opacity:0.8;">
+  <div id="g3dLegend" style="position:absolute;top:16px;right:280px;font-family:'Barlow Condensed',sans-serif;font-size:11px;color:#667;pointer-events:auto;z-index:5;line-height:2;transition:right 0.25s,opacity 0.25s;background:rgba(14,16,21,0.6);border:1px solid rgba(255,255,255,0.04);border-radius:6px;padding:6px 10px;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);opacity:0.8;">
     <div style="display:flex;align-items:center;gap:5px;"><span style="width:6px;height:6px;border-radius:50%;background:#f0c040;display:inline-block;"></span>Wrestling</div>
     <div style="display:flex;align-items:center;gap:5px;"><span style="width:6px;height:6px;border-radius:50%;background:#e05a30;display:inline-block;"></span>Guard</div>
     <div style="display:flex;align-items:center;gap:5px;"><span style="width:6px;height:6px;border-radius:50%;background:#9b72f5;display:inline-block;"></span>Dominant Positions</div>
@@ -3346,7 +3346,41 @@ window.initGraph3D = (function() {
       canvas.addEventListener('webglcontextlost',e=>{e.preventDefault();ready=false;},false);
 
       const g3dLeg=document.getElementById('g3dLegend');
-      if(g3dLeg) g3dLeg.innerHTML=SECTIONS.map((s,i)=>`<div style="display:flex;align-items:center;gap:6px;"><span style="width:7px;height:7px;border-radius:50%;background:${SECT_CSS3[i]||s.color};display:inline-block;box-shadow:0 0 4px ${SECT_CSS3[i]||s.color}40;"></span><span style="color:#8899aa;">${s.title.split(' ').slice(0,3).join(' ')}</span></div>`).join('');
+      if(g3dLeg){
+        g3dLeg.innerHTML='';
+        var _legendHighlight=null;
+        SECTIONS.forEach(function(s,i){
+          var row=document.createElement('div');
+          row.style.cssText='display:flex;align-items:center;gap:6px;cursor:pointer;padding:1px 0;border-radius:3px;transition:background 0.15s;';
+          var col=SECT_CSS3[i]||s.color;
+          row.innerHTML='<span style="width:7px;height:7px;border-radius:50%;background:'+col+';display:inline-block;box-shadow:0 0 4px '+col+'40;"></span><span style="color:#8899aa;">'+s.title.split(' ').slice(0,3).join(' ')+'</span>';
+          row.addEventListener('mouseenter',function(){row.style.background='rgba(255,255,255,0.06)';});
+          row.addEventListener('mouseleave',function(){row.style.background='';});
+          row.addEventListener('click',function(ev){
+            ev.stopPropagation();
+            if(_legendHighlight===i){
+              // Deselect: restore all
+              _legendHighlight=null;
+              Object.entries(meshMap3d).forEach(function(kv){if(kv[1].visible)kv[1].material.opacity=1.0;});
+              edgeMeshes3d.forEach(function(e){if(e.line.visible)e._mat.opacity=0.15;});
+            } else {
+              // Highlight this section only
+              _legendHighlight=i;
+              Object.entries(meshMap3d).forEach(function(kv){
+                var nd=nodeMap3d[kv[0]];
+                if(!kv[1].visible)return;
+                kv[1].material.opacity=(nd&&nd.section_idx===i)?1.0:0.08;
+              });
+              edgeMeshes3d.forEach(function(e){
+                if(!e.line.visible)return;
+                var sn=nodeMap3d[e.source],tn=nodeMap3d[e.target];
+                e._mat.opacity=(sn&&sn.section_idx===i)||(tn&&tn.section_idx===i)?0.3:0.02;
+              });
+            }
+          });
+          g3dLeg.appendChild(row);
+        });
+      }
       const lc=document.getElementById('g3dLabelCanvas');
       lc.width=W;lc.height=H;
 
