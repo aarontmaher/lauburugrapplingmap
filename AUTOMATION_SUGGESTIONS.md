@@ -13,7 +13,7 @@ Q1 OT rename, Q2 Want state, Q3 My Game tooltip, M4 Unexplored filter, video ind
 |---|-----------|--------|--------|--------|--------|
 | P1 | Actionable home screen (show drills/last viewed/start training instead of blank collapsed sections) | Chat audit | safe | medium | pending — strongest product improvement identified across all audits |
 | P2 | Surface Drill Timer/Circuit as "Start Training" on home screen | Chat audit | safe | medium | pending — needs placement decision |
-| P3 | Beginner "Start Here" card on first visit | Chat audit | safe | medium | pending — needs Aaron to pick 5 positions |
+| P3 | Beginner "Start Here" card on first visit | Chat audit | safe | medium | **APPROVED by Aaron** — content direction below |
 | P4 | Difficulty tags (foundational/intermediate/advanced) | Chat audit | safe | medium | pending — needs Aaron classification |
 | P5 | Simpler perspective labels ("When you have mount" / "When they have mount") | Chat audit | safe | medium | pending — Aaron's wording |
 | P6 | Body font change (DM Mono → sans-serif) | Chat audit | safe | easy | pending — visual identity decision |
