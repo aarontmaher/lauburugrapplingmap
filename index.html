@@ -503,6 +503,7 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
     <div style="width:1px;height:22px;background:rgba(255,255,255,0.08);margin:0 4px;"></div>
     <button class="g3d-tb-btn" id="g3dBuiltOutBtn">Detailed</button>
     <div style="width:1px;height:22px;background:rgba(255,255,255,0.08);margin:0 4px;"></div>
+    <button class="g3d-tb-btn" id="g3dFindPathBtn">Find Path</button>
     <button class="g3d-tb-btn" id="g3dOptionsBtn">Settings</button>
     <div id="g3dMediaBtns" style="display:contents;"></div>
   </div>
@@ -3606,10 +3607,13 @@ window.initGraph3D = (function() {
         var my = -((e.clientY-rect.top)/rect.height)*2+1;
         camera3d.updateMatrixWorld();
         var ray = new THREE.Raycaster(); ray.setFromCamera({x:mx,y:my}, camera3d);
-        var vis = Object.values(meshMap3d).filter(function(m){return m.visible&&m.material.opacity>0.25;});
+        var vis = Object.values(meshMap3d).filter(function(m){return m.visible&&m.material.opacity>0.02;});
         var hits = ray.intersectObjects(vis);
         if (!hits.length) { zoomOut3d(); return; }
-        var nd = nodeMap3d[hits[0].object.userData.id];
+        var id = hits[0].object.userData.id;
+        // Path mode intercept
+        if (window._g3dPathModeClick && window._g3dPathModeClick(id)) return;
+        var nd = nodeMap3d[id];
         if (nd) { selectNode3d(nd.id); zoomToNode3d(nd); }
       });
 
@@ -3652,6 +3656,90 @@ window.initGraph3D = (function() {
       // Options
       const optPanel=document.getElementById('g3dOptions');
       document.getElementById('g3dOptionsBtn').addEventListener('click',function(ev){ev.stopPropagation();optPanel.style.display=optPanel.style.display==='block'?'none':'block';});
+
+      // ── Find Path feature ──────────────────────────────────────────
+      var _pathMode = false, _pathFrom = null;
+      var _pathBtn = document.getElementById('g3dFindPathBtn');
+      _pathBtn.addEventListener('click', function() {
+        if (_pathMode) {
+          // Cancel path mode
+          _pathMode = false; _pathFrom = null;
+          _pathBtn.classList.remove('active');
+          _pathBtn.textContent = 'Find Path';
+          resetHL3d();
+          return;
+        }
+        _pathMode = true;
+        _pathFrom = null;
+        _pathBtn.classList.add('active');
+        _pathBtn.textContent = 'Select start...';
+        showToast('Click a position to start the path');
+      });
+      // Override node click when in path mode
+      window._g3dPathModeClick = function(nodeId) {
+        if (!_pathMode) return false;
+        var nd = nodeMap3d[nodeId];
+        if (!nd || nd.depth !== 1) return false;
+        if (!_pathFrom) {
+          _pathFrom = nodeId;
+          _pathBtn.textContent = 'Select end...';
+          // Highlight start node
+          if (meshMap3d[nodeId]) meshMap3d[nodeId].material.color.set(0x00ff88);
+          showToast('Now click the destination position');
+          return true;
+        }
+        // BFS shortest path
+        var netNds = NET_NODES.filter(function(n) { return n.in_network && n.depth === 1; });
+        var adj = {};
+        netNds.forEach(function(n) { adj[n.id] = []; });
+        ACTIVE_EDGES.forEach(function(e) {
+          if (adj[e.source]) adj[e.source].push(e.target);
+          if (adj[e.target]) adj[e.target].push(e.source);
+        });
+        var queue = [_pathFrom], visited = {}, prev = {};
+        visited[_pathFrom] = true;
+        var found = false;
+        while (queue.length > 0) {
+          var cur = queue.shift();
+          if (cur === nodeId) { found = true; break; }
+          (adj[cur] || []).forEach(function(nb) {
+            if (!visited[nb]) { visited[nb] = true; prev[nb] = cur; queue.push(nb); }
+          });
+        }
+        if (found) {
+          // Reconstruct path
+          var path = [nodeId];
+          var step = nodeId;
+          while (step !== _pathFrom) { step = prev[step]; path.unshift(step); }
+          // Highlight path
+          var pathSet = new Set(path);
+          Object.entries(meshMap3d).forEach(function(kv) {
+            if (!kv[1].visible) return;
+            kv[1].material.opacity = pathSet.has(kv[0]) ? 1.0 : 0.06;
+          });
+          edgeMeshes3d.forEach(function(e) {
+            if (!e.line.visible) return;
+            var onPath = false;
+            for (var pi = 0; pi < path.length - 1; pi++) {
+              if ((e.source === path[pi] && e.target === path[pi+1]) || (e.target === path[pi] && e.source === path[pi+1])) { onPath = true; break; }
+            }
+            e._mat.opacity = onPath ? 0.6 : 0.01;
+            if (onPath) e._mat.color.set(0x00ff88);
+          });
+          // Show path names as toast
+          var pathNames = path.map(function(pid) { return nodeMap3d[pid] ? nodeMap3d[pid].label : '?'; });
+          showToast('Path: ' + pathNames.join(' → '));
+          // Open detail on destination
+          selectNode3d(nodeId);
+        } else {
+          showToast('No path found between these positions');
+        }
+        // Exit path mode
+        _pathMode = false; _pathFrom = null;
+        _pathBtn.classList.remove('active');
+        _pathBtn.textContent = 'Find Path';
+        return true;
+      };
       optPanel.addEventListener('click',function(ev){ev.stopPropagation();});
       document.addEventListener('click',function(){if(optPanel.style.display==='block')optPanel.style.display='none';});
       document.getElementById('g3dOptRings').addEventListener('change',function(){showRings3d=this.checked;Object.values(ringMap3d).forEach(r=>{r.visible=showRings3d;});});
