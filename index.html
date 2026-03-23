@@ -1174,7 +1174,9 @@ function buildNode(node, sectionTitle, depth, parentUl, parentKey, disambig, pos
     }
   }
 
-  // Progress pill
+  // Progress pill (skip for schema headings — they aren't individually trackable)
+  const isSchemaHeading = SCHEMA_NAMES.has(node.t.trim());
+  if (!isSchemaHeading) {
   const prog = document.createElement('div');
   prog.className = 'progress-pill';
   prog.setAttribute('aria-label', 'Track status');
@@ -1198,8 +1200,10 @@ function buildNode(node, sectionTitle, depth, parentUl, parentKey, disambig, pos
   });
   li.dataset.progress = curProg;
   actions.appendChild(prog);
+  } // end !isSchemaHeading
 
-  // Note button
+  // Note button (skip for schema headings)
+  if (!isSchemaHeading) {
   const noteBtn = document.createElement('button');
   noteBtn.className = STATE.notes[key] ? 'btn-note has-note' : 'btn-note';
   noteBtn.textContent = '✎';
@@ -1208,6 +1212,7 @@ function buildNode(node, sectionTitle, depth, parentUl, parentKey, disambig, pos
   noteBtn.addEventListener('click', e => { e.stopPropagation(); openNotePanel(key, node.t); });
   li.dataset.hasNote = STATE.notes[key] ? '1' : '0';
   actions.appendChild(noteBtn);
+  } // end !isSchemaHeading for note button
 
   content.appendChild(actions);
   nodeDiv.appendChild(toggle);
@@ -4327,11 +4332,11 @@ _log('[GrapplingMap] Debug API ready: window.__APP_DEBUG__');
     if (el) {
       var r = testRevealLookup();
       if (r.found) {
-        el.innerHTML = '<div class="diag-label">referenceReveal Lookup</div>' +
+        el.innerHTML = '<div class="diag-label">Reference Reveal Lookup</div>' +
           '<div class="diag-val" style="color:#3abfaa;">Found: ' + h(r.matched) + '</div>' +
           '<div class="diag-val" style="word-break:break-all;">Path: ' + h(r.path) + '</div>';
       } else {
-        el.innerHTML = '<div class="diag-label">referenceReveal Lookup</div>' +
+        el.innerHTML = '<div class="diag-label">Reference Reveal Lookup</div>' +
           '<div class="diag-val" style="color:#4a5568;">' + h(r.reason) + '</div>';
       }
     }
