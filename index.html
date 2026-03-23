@@ -98,6 +98,8 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
 .technique-breadcrumb { font-family: 'Barlow Condensed', sans-serif; font-size: 10px; color: #778; letter-spacing: 0.3px; padding: 2px 0 4px 28px; display: none; transition: color 0.15s; }
 .tree-item.technique-selected > .technique-breadcrumb { display: block; }
 .technique-breadcrumb:hover { color: #889; }
+.technique-note-preview { display: none; font-family: 'DM Mono', monospace; font-size: 11px; color: var(--accent3); padding: 4px 12px 6px 28px; line-height: 1.5; opacity: 0.85; max-height: 60px; overflow: hidden; text-overflow: ellipsis; white-space: pre-line; }
+.tree-item.technique-selected > .technique-note-preview { display: block; }
 .tree-item.search-first-result > .node { background: rgba(232,255,71,0.06); border-radius: 3px; }
 .node .btn-video { opacity: 0.7; transition: all 0.15s; }
 .node { display: flex; align-items: flex-start; gap: 6px; padding: 4px 16px 4px 8px; transition: background 0.1s; min-height: 32px; }
@@ -146,7 +148,7 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
 /* OT transition rows (contain arrow) */
 .tree-item[data-ot="1"] > .node .node-label { font-size: 11px; color: #778; font-style: italic; opacity: 0.8; }
 .tree-item[data-ot="1"] > .node .node-label::before { content: '\2192 '; color: #ff9966; font-style: normal; font-size: 10px; }
-.tree-item[data-ot="1"] > .node { background: rgba(255,153,102,0.015); border-radius: 3px; cursor: default; }
+.tree-item[data-ot="1"] > .node { background: rgba(255,153,102,0.015); border-radius: 3px; cursor: pointer; }
 .tree-item[data-ot="1"] > .node:hover .node-label { text-decoration: underline; text-decoration-color: rgba(255,153,102,0.3); text-underline-offset: 2px; }
 /* Notes rows */
 .tree-item[data-notes="1"] > .node .node-label { font-size: 11px; color: var(--accent3); font-style: italic; opacity: 0.8; }
@@ -298,6 +300,20 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
   /* Node popup: wider on mobile */
   .node-popup { width: calc(100vw - 24px); }
 
+  /* List panel: larger close button for touch */
+  #listPanelClose { width: 36px !important; height: 36px !important; font-size: 18px !important; }
+
+  /* Header menu: larger touch targets */
+  #headerMenu button { min-height: 44px; padding: 12px 16px !important; font-size: 13px !important; }
+  #headerMenu button:active { background: rgba(255,255,255,0.04); }
+
+  /* Keyboard help panel: mobile-friendly */
+  #kbdHelpPanel { width: calc(100vw - 32px) !important; min-width: 0 !important; max-height: 80vh; overflow-y: auto; }
+
+  /* Search: easier to tap + auto-expand on focus */
+  .search-wrap { min-height: 36px; }
+  #refBottomBar input:focus, #g3dToolbar input:focus { width: 180px; transition: width 0.2s; }
+
   /* View tabs: full width on mobile */
   .view-tab { flex: 1; text-align: center; padding: 8px 10px; font-size: 12px; }
 
@@ -305,6 +321,14 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
   #videoModal { align-items: flex-start !important; padding-top: calc(40px + env(safe-area-inset-top)); }
   #videoModalInner { width: calc(100vw - 12px) !important; }
   #videoModalTitle { font-size: 13px !important; padding: 0 44px 0 0; }
+
+  /* Video modal: landscape on mobile — maximize video area */
+  @media (orientation: landscape) {
+    #videoModal { align-items: center !important; padding-top: env(safe-area-inset-top); }
+    #videoModalInner { width: calc(100vw - 24px) !important; max-width: calc(100vh * 1.78) !important; }
+    #videoModalTitle { display: none !important; }
+    #videoModalClose { top: 4px !important; right: 4px !important; }
+  }
 
   /* Video modal: larger close button on mobile */
   #videoModalClose { width: 44px !important; height: 44px !important; font-size: 22px !important; top: 8px !important; right: 8px !important; }
@@ -412,6 +436,8 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
     <div style="display:flex;align-items:center;gap:6px;background:#181c26;border:1px solid rgba(255,255,255,0.08);border-radius:5px;padding:0 10px;height:30px;">
       <span style="color:#4a5568;font-size:11px;">⌕</span>
       <input type="text" id="refSearch" placeholder="Search techniques..." aria-label="Search techniques" style="background:none;border:none;outline:none;color:#c4cdd8;font-family:'DM Mono',monospace;font-size:11px;width:140px;">
+      <span id="refSearchCount" style="display:none;font-family:'DM Mono',monospace;font-size:9px;color:var(--text-muted);white-space:nowrap;"></span>
+      <button id="refSearchClear" aria-label="Clear search" style="display:none;background:none;border:none;color:#4a5568;font-size:14px;cursor:pointer;padding:0 2px;line-height:1;flex-shrink:0;">×</button>
     </div>
     <div style="width:1px;height:22px;background:rgba(255,255,255,0.08);margin:0 4px;"></div>
     <button class="g3d-tb-btn active" data-filter="all">All</button>
@@ -443,6 +469,7 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
     <div style="display:flex;align-items:center;gap:6px;background:#181c26;border:1px solid rgba(255,255,255,0.08);border-radius:5px;padding:0 10px;height:30px;">
       <span style="color:#4a5568;font-size:11px;">⌕</span>
       <input type="text" id="g3dSearch" placeholder="Search positions..." aria-label="Search positions" style="background:none;border:none;outline:none;color:#c4cdd8;font-family:'DM Mono',monospace;font-size:11px;width:130px;">
+      <button id="g3dSearchClear" aria-label="Clear search" style="display:none;background:none;border:none;color:#4a5568;font-size:14px;cursor:pointer;padding:0 2px;line-height:1;flex-shrink:0;">×</button>
     </div>
     <div style="width:1px;height:22px;background:rgba(255,255,255,0.08);margin:0 4px;"></div>
     <button class="g3d-tb-btn active" data-status="all">All</button>
@@ -864,10 +891,16 @@ function updateStats() {
   STATE.learnedNodes = learned;
   document.getElementById('learnedCount').textContent = learned;
   document.getElementById('totalCount').textContent = STATE.totalNodes;
-  const pct = STATE.totalNodes > 0 ? (learned / STATE.totalNodes * 100) : 0;
+  var drilling = 0;
+  for (const v3 of Object.values(STATE.progress)) { if (v3 === 'drilling') drilling++; }
+  const pctLearned = STATE.totalNodes > 0 ? (learned / STATE.totalNodes * 100) : 0;
+  const pctDrilling = STATE.totalNodes > 0 ? (drilling / STATE.totalNodes * 100) : 0;
   var progBar = document.getElementById('progressBar');
-  progBar.style.width = pct + '%';
-  progBar.parentElement.title = learned + ' of ' + STATE.totalNodes + ' learned (' + Math.round(pct) + '%)';
+  progBar.style.width = (pctLearned + pctDrilling) + '%';
+  progBar.style.background = pctDrilling > 0
+    ? 'linear-gradient(to right, var(--accent) ' + Math.round(pctLearned / (pctLearned + pctDrilling) * 100) + '%, var(--blue) ' + Math.round(pctLearned / (pctLearned + pctDrilling) * 100) + '%)'
+    : 'var(--accent)';
+  progBar.parentElement.title = learned + ' learned + ' + drilling + ' drilling of ' + STATE.totalNodes + ' (' + Math.round(pctLearned + pctDrilling) + '%)';
   // Show stats + progress bar only when user has tracked at least one technique
   var hasProgress = Object.keys(STATE.progress).length > 0;
   document.getElementById('headerStats').style.display = hasProgress ? 'flex' : 'none';
@@ -1226,6 +1259,14 @@ function buildNode(node, sectionTitle, depth, parentUl, parentKey, disambig, pos
     var segments = key.split('|').slice(0, -1); // all except current node
     bc.textContent = segments.map(function(s) { return s.replace(/_/g, ' '); }).join(' › ');
     li.appendChild(bc);
+    // Inline note preview (shown when selected, if note exists)
+    var noteText = STATE.notes[key];
+    if (noteText) {
+      var np = document.createElement('div');
+      np.className = 'technique-note-preview';
+      np.textContent = '✎ ' + noteText;
+      li.appendChild(np);
+    }
   }
 
   if (hasChildren) {
@@ -1345,6 +1386,12 @@ function buildNode(node, sectionTitle, depth, parentUl, parentKey, disambig, pos
       label.style.cursor = 'pointer';
       label.addEventListener('click', (e) => {
         e.stopPropagation();
+        // Tap same technique to deselect
+        if (li.classList.contains('technique-selected')) {
+          selectTreeItem(null);
+          setSelectedNode(null);
+          return;
+        }
         selectTreeItem(li);
         setSelectedNode(key, node.t, sectionTitle, node.v, node.l);
         if (window._g3dHighlightByLabel) window._g3dHighlightByLabel(node.t);
@@ -1368,9 +1415,25 @@ function buildNode(node, sectionTitle, depth, parentUl, parentKey, disambig, pos
       }
     }
   } else {
-    // Leaf node (no children) — only techniques get a click handler
-    if (!SCHEMA_NAMES.has(node.t.trim())) {
+    // Leaf node (no children)
+    if (node.t && node.t.includes(ARROW)) {
+      // OT transition row — click navigates to destination position
+      var destLabel = node.t.split(ARROW)[1].trim();
+      if (destLabel) {
+        nodeDiv.style.cursor = 'pointer';
+        nodeDiv.addEventListener('click', () => {
+          switchToReferenceNode(destLabel);
+        });
+      }
+    } else if (!SCHEMA_NAMES.has(node.t.trim())) {
+      // Technique — click selects
       nodeDiv.addEventListener('click', () => {
+        // Tap same technique to deselect
+        if (li.classList.contains('technique-selected')) {
+          selectTreeItem(null);
+          setSelectedNode(null);
+          return;
+        }
         selectTreeItem(li);
         setSelectedNode(key, node.t, sectionTitle, node.v, node.l);
         if (window._g3dHighlightByLabel) window._g3dHighlightByLabel(node.t);
@@ -1531,7 +1594,7 @@ function markBuiltOut() {
         if (lbl && lbl.textContent.indexOf('\u2605') === -1) {
           var star = document.createElement('span');
           star.textContent = ' \u2605';
-          star.title = 'Has content across 3+ headings';
+          star.title = 'Has video or detailed content';
           star.style.cssText = 'color:var(--accent);cursor:help;';
           lbl.appendChild(star);
         }
@@ -1790,11 +1853,27 @@ function _refDoSearch() {
     var firstResult = document.querySelector('.tree-item:not([style*="display: none"]):not([data-schema="1"]):not([data-ot="1"]):not([data-notes="1"])');
     if (firstResult) { firstResult.classList.add('search-first-result'); }
   }
+  // Update result count + clear button visibility
+  var countEl = document.getElementById('refSearchCount');
+  var clearEl = document.getElementById('refSearchClear');
+  if (q) {
+    var resultCount = document.querySelectorAll('.tree-item:not([style*="display: none"]):not([data-schema="1"]):not([data-ot="1"]):not([data-notes="1"])').length;
+    countEl.textContent = resultCount + (resultCount === 1 ? ' result' : ' results');
+    countEl.style.display = '';
+    clearEl.style.display = '';
+  } else {
+    countEl.style.display = 'none';
+    clearEl.style.display = 'none';
+  }
 }
 function _escHtml(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 document.getElementById('refSearch').addEventListener('input', function() {
   clearTimeout(_refSearchTimer);
   _refSearchTimer = setTimeout(_refDoSearch, 200);
+});
+document.getElementById('refSearchClear').addEventListener('click', function() {
+  document.getElementById('refSearch').value = '';
+  _refDoSearch();
 });
 // Enter: jump to first visible result
 document.getElementById('refSearch').addEventListener('keydown', function(e) {
@@ -1896,12 +1975,16 @@ function switchToTab(view) {
   document.getElementById('referenceView').style.display = view === 'reference' ? 'flex' : 'none';
   document.getElementById('graph3dView').style.display = view === 'graph3d' ? 'flex' : 'none';
   document.getElementById('graph3dView').style.flexDirection = 'column';
-  if (view === 'graph3d') { requestAnimationFrame(() => requestAnimationFrame(initGraph3D)); }
+  if (view === 'graph3d') { requestAnimationFrame(() => requestAnimationFrame(initGraph3D)); if(window._g3dResume) window._g3dResume(); }
+  else { if(window._g3dPause) window._g3dPause(); }
   // Blur any focused search input on tab switch
   var activeEl = document.activeElement;
   if (activeEl && (activeEl.id === 'refSearch' || activeEl.id === 'g3dSearch')) activeEl.blur();
   // Sync selected node into the new tab
   syncSelectedToTab(view);
+  // Scroll the correct container to top on view switch
+  var sectionsEl = document.getElementById('sections');
+  if (sectionsEl) sectionsEl.scrollTop = 0;
   window.scrollTo(0, 0);
   // Show Reference onboarding if no technique selected yet
   if (view === 'reference') {
@@ -2283,8 +2366,7 @@ window.initGraph3D = (function() {
   function openDetail3d(nd,inE,outE){
     var panel=document.getElementById('g3dDetail');
     panel.style.transform=isMobile3d()?'translateY(0)':'translateX(0)';
-    if(isMobile3d()) { document.getElementById('g3dLegend').style.display='none'; }
-    else { document.getElementById('g3dLegend').style.right='276px'; }
+    document.getElementById('g3dLegend').style.display='none';
     // Hide onboarding hint on first node click
     var ob=document.getElementById('g3dOnboarding');if(ob)ob.style.display='none';
     var col=SECT_CSS3[nd.section_idx]||'#888';
@@ -2715,7 +2797,6 @@ window.initGraph3D = (function() {
 
   function closeDetail3d(){
     document.getElementById('g3dDetail').style.transform=isMobile3d()?'translateY(100%)':'translateX(100%)';
-    document.getElementById('g3dLegend').style.right='16px';
     document.getElementById('g3dLegend').style.display='';
   }
 
@@ -3178,6 +3259,28 @@ window.initGraph3D = (function() {
       document.getElementById('g3dExpandAll').addEventListener('click',()=>{SECTIONS.forEach(s=>{const sk=makeKey(s.title,s.title);EXPANDED.add(sk);walkWithKeys(s.nodes,sk,(nd,k)=>{if(nd.c&&nd.c.length)EXPANDED.add(k);});});if(window.cmSyncExpanded)window.cmSyncExpanded();if(window.refSyncExpanded)window.refSyncExpanded();if(window.g3dSyncExpanded)window.g3dSyncExpanded();});
       document.getElementById('g3dReset').addEventListener('click',()=>{tRX=0;tRY=0;tZ3d=1100;resetHL3d();closeDetail3d();});
       document.getElementById('g3dDetailClose').addEventListener('click',()=>{resetHL3d();closeDetail3d();});
+      // Swipe-down-to-dismiss on mobile for detail panel
+      (function(){
+        var dp=document.getElementById('g3dDetail');
+        var _dpTouchY=0,_dpDragging=false;
+        dp.addEventListener('touchstart',function(e){
+          var body=document.getElementById('g3dDetailBody');
+          if(body&&body.scrollTop<=0){_dpTouchY=e.touches[0].clientY;_dpDragging=true;}
+        },{passive:true});
+        dp.addEventListener('touchmove',function(e){
+          if(!_dpDragging)return;
+          var dy=e.touches[0].clientY-_dpTouchY;
+          if(dy>0){dp.style.transform='translateY('+dy+'px)';dp.style.transition='none';}
+        },{passive:true});
+        dp.addEventListener('touchend',function(){
+          if(!_dpDragging)return;
+          _dpDragging=false;
+          var dy=parseInt(dp.style.transform.replace(/[^0-9-]/g,''))||0;
+          dp.style.transition='transform 0.25s cubic-bezier(0.4,0,0.2,1)';
+          if(dy>80){resetHL3d();closeDetail3d();}
+          else{dp.style.transform=isMobile3d()?'translateY(0)':'translateX(0)';}
+        },{passive:true});
+      })();
 
       // Options
       const optPanel=document.getElementById('g3dOptions');
@@ -3252,6 +3355,8 @@ window.initGraph3D = (function() {
         clearTimeout(_g3dSearchTimer);
         _g3dSearchTimer=setTimeout(function(){
         const q=self.value.toLowerCase().trim();
+        var g3dClear=document.getElementById('g3dSearchClear');
+        g3dClear.style.display=q?'':'none';
         const netNds=NET_NODES.filter(n=>n.in_network);
         if(!q){resetHL3d();return;}
         const matches=netNds.filter(n=>n.label.toLowerCase().includes(q));
@@ -3259,10 +3364,16 @@ window.initGraph3D = (function() {
         else{const mids=new Set(matches.map(n=>n.id));Object.entries(meshMap3d).forEach(([id,m])=>{if(!m.visible)return;m.material.opacity=mids.has(id)?1.0:0.04;});edgeMeshes3d.forEach(e=>{if(e.line.visible)e._mat.opacity=0.005;});}
         },200);
       });
+      document.getElementById('g3dSearchClear').addEventListener('click',function(){
+        var inp=document.getElementById('g3dSearch');inp.value='';inp.dispatchEvent(new Event('input'));
+      });
 
-      // Render loop
-      (function loop(){
-        requestAnimationFrame(loop);
+      // Render loop — pauses when not visible or not in Network view
+      var _g3dRafId = 0;
+      var _g3dPaused = false;
+      function _g3dLoop(){
+        if(_g3dPaused){_g3dRafId=0;return;}
+        _g3dRafId=requestAnimationFrame(_g3dLoop);
         rotX+=(tRX-rotX)*0.08;rotY+=(tRY-rotY)*0.08;zoom3d+=(tZ3d-zoom3d)*0.08;
         pivot3d.rotation.x=rotX;pivot3d.rotation.y=rotY;camera3d.position.z=zoom3d;
         if(autoRotate3d)tRY+=0.005;
@@ -3273,7 +3384,12 @@ window.initGraph3D = (function() {
         Object.entries(ringMap3d).forEach(function([nid,r]){if(!r.visible)return;r.quaternion.copy(camera3d.quaternion);var nd=nodeMap3d[nid];if(nd&&boNetMap&&boNetMap.get(nd.key)===true){var pt=Date.now()*0.002;r.material.opacity=0.12+0.12*Math.sin(pt);}});
         renderer3d.render(scene3d,camera3d);
         drawLabels3d();
-      })();
+      }
+      function _g3dResume(){if(_g3dPaused||!_g3dRafId){_g3dPaused=false;_g3dRafId=requestAnimationFrame(_g3dLoop);}}
+      function _g3dPause(){_g3dPaused=true;if(_g3dRafId){cancelAnimationFrame(_g3dRafId);_g3dRafId=0;}}
+      document.addEventListener('visibilitychange',function(){document.hidden?_g3dPause():_g3dResume();});
+      window._g3dPause=_g3dPause;window._g3dResume=_g3dResume;
+      _g3dLoop();
 
       window.addEventListener('resize',()=>{
         const r=wrap.getBoundingClientRect();
@@ -3499,6 +3615,26 @@ function showToast(msg) {
   cl.addEventListener('click', closeListPanel);
   lp.addEventListener('click', function(e) { if (e.target === lp) closeListPanel(); });
   document.addEventListener('keydown', function(e) { if (e.key === 'Escape' && lp.style.display === 'block') { closeListPanel(); e.stopPropagation(); } });
+  // Swipe-down-to-dismiss on mobile
+  var inner = document.getElementById('listPanelInner');
+  if (inner) {
+    var _lpTouchY = 0, _lpDragging = false;
+    inner.addEventListener('touchstart', function(e) {
+      if (inner.scrollTop <= 0) { _lpTouchY = e.touches[0].clientY; _lpDragging = true; }
+    }, {passive: true});
+    inner.addEventListener('touchmove', function(e) {
+      if (!_lpDragging) return;
+      var dy = e.touches[0].clientY - _lpTouchY;
+      if (dy > 0) { inner.style.transform = 'translateY(' + dy + 'px)'; inner.style.transition = 'none'; }
+    }, {passive: true});
+    inner.addEventListener('touchend', function(e) {
+      if (!_lpDragging) return;
+      _lpDragging = false;
+      var dy = parseInt(inner.style.transform.replace(/[^0-9-]/g, '')) || 0;
+      if (dy > 80) { closeListPanel(); }
+      inner.style.transform = ''; inner.style.transition = '';
+    }, {passive: true});
+  }
 })();
 // Recent techniques
 document.getElementById('menuRecentBtn').addEventListener('click', function() {
