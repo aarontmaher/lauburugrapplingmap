@@ -371,6 +371,29 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
 #diagToggle:hover, #kbdHelpToggle:hover { background:rgba(255,255,255,0.04); }
 #headerMenuToggle:hover { border-color:rgba(255,255,255,0.25);color:#8892a4; }
 
+/* ── BELT UI ── */
+.belt-badge { display:flex; align-items:center; gap:6px; padding:4px 12px; border:1px solid rgba(255,255,255,0.1); border-radius:20px; cursor:pointer; transition:all 0.15s; background:rgba(255,255,255,0.02); position:relative; }
+.belt-badge:hover { border-color:rgba(255,255,255,0.2); background:rgba(255,255,255,0.04); }
+.belt-badge .belt-color { width:10px; height:10px; border-radius:50%; border:1px solid rgba(255,255,255,0.15); flex-shrink:0; }
+.belt-badge .belt-name { font-family:'Barlow Condensed',sans-serif; font-size:12px; font-weight:500; letter-spacing:0.5px; color:var(--text-dim); white-space:nowrap; }
+.belt-badge .belt-chevron { font-size:9px; color:var(--text-muted); transition:transform 0.15s; }
+.belt-badge.open .belt-chevron { transform:rotate(180deg); }
+.belt-dropdown { display:none; position:absolute; right:0; top:calc(100% + 6px); background:rgba(14,16,21,0.97); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:6px 0; z-index:60; -webkit-backdrop-filter:blur(16px); backdrop-filter:blur(16px); box-shadow:0 8px 32px rgba(0,0,0,0.5); min-width:200px; }
+.belt-dropdown.open { display:block; }
+.belt-option { display:flex; align-items:center; gap:10px; padding:8px 16px; cursor:pointer; transition:background 0.1s; font-family:'DM Mono',monospace; font-size:11px; color:var(--text-dim); }
+.belt-option:hover { background:rgba(255,255,255,0.04); }
+.belt-option.current { color:var(--text); font-weight:500; }
+.belt-option.current::after { content:'current'; font-size:9px; color:var(--accent); border:1px solid rgba(232,255,71,0.25); padding:1px 6px; border-radius:8px; margin-left:auto; }
+.belt-option.future { opacity:0.5; }
+.belt-option .belt-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; border:1px solid rgba(255,255,255,0.15); }
+.belt-dropdown-divider { height:1px; background:rgba(255,255,255,0.06); margin:4px 0; }
+.belt-apply-btn { display:block; width:calc(100% - 16px); margin:4px 8px; padding:8px 12px; background:rgba(232,255,71,0.08); border:1px solid rgba(232,255,71,0.2); border-radius:6px; color:var(--accent); font-family:'Barlow Condensed',sans-serif; font-size:12px; font-weight:500; letter-spacing:0.5px; cursor:pointer; text-align:center; transition:all 0.15s; }
+.belt-apply-btn:hover { background:rgba(232,255,71,0.15); border-color:rgba(232,255,71,0.4); }
+@media(max-width:600px) {
+  .belt-badge .belt-name { display:none; }
+  .belt-badge { padding:4px 8px; }
+}
+
 /* ── AUTH UI ── */
 .auth-buttons { display:flex; gap:6px; align-items:center; margin-right:8px; }
 .auth-btn { font-family:'Barlow Condensed',sans-serif; font-size:12px; font-weight:500; letter-spacing:0.5px; padding:6px 14px; border-radius:6px; cursor:pointer; transition:all 0.15s; white-space:nowrap; }
@@ -420,6 +443,22 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
     <div class="stat"><div class="stat-num" id="totalCount">0</div><div class="stat-label">Techniques</div></div>
   </div>
   <div class="progress-bar-wrap"><div class="progress-bar" id="progressBar"></div></div>
+  <div id="beltBadgeWrap" style="position:relative;">
+    <div class="belt-badge" id="beltBadge" onclick="toggleBeltDropdown();">
+      <span class="belt-color" id="beltDot" style="background:#fff;"></span>
+      <span class="belt-name" id="beltLabel">White Belt</span>
+      <span class="belt-chevron">&#9662;</span>
+    </div>
+    <div class="belt-dropdown" id="beltDropdown">
+      <div class="belt-option current" data-belt="white" onclick="selectBelt('white');"><span class="belt-dot" style="background:#fff;"></span> White Belt</div>
+      <div class="belt-option future" data-belt="blue" onclick="selectBelt('blue');"><span class="belt-dot" style="background:#2563eb;"></span> Blue Belt</div>
+      <div class="belt-option future" data-belt="purple" onclick="selectBelt('purple');"><span class="belt-dot" style="background:#7c3aed;"></span> Purple Belt</div>
+      <div class="belt-option future" data-belt="brown" onclick="selectBelt('brown');"><span class="belt-dot" style="background:#92400e;"></span> Brown Belt</div>
+      <div class="belt-option future" data-belt="black" onclick="selectBelt('black');"><span class="belt-dot" style="background:#1a1a1a;border-color:#555;"></span> Black Belt</div>
+      <div class="belt-dropdown-divider"></div>
+      <button class="belt-apply-btn" id="beltApplyBtn" onclick="applyForNextBelt();">Apply for Blue Belt</button>
+    </div>
+  </div>
   <div id="authButtons" class="auth-buttons" style="display:none;">
     <button class="auth-btn auth-btn-login" onclick="showAuthModal('login')">Log in</button>
     <button class="auth-btn auth-btn-signup" onclick="showAuthModal('signup')">Create Account</button>
@@ -800,6 +839,223 @@ function handleAuthSubmit() {
 function showAuthPrompt(context) {
   // Context-aware upgrade prompt — shows modal with relevant messaging
   showAuthModal('signup');
+}
+
+// ─── BELT SYSTEM ────────────────────────────────────────────────────────────
+var BELT_RANKS = [
+  { id: 'white',  name: 'White Belt',  color: '#fff',    nextId: 'blue' },
+  { id: 'blue',   name: 'Blue Belt',   color: '#2563eb', nextId: 'purple' },
+  { id: 'purple', name: 'Purple Belt', color: '#7c3aed', nextId: 'brown' },
+  { id: 'brown',  name: 'Brown Belt',  color: '#92400e', nextId: 'black' },
+  { id: 'black',  name: 'Black Belt',  color: '#1a1a1a', nextId: null }
+];
+
+function getCurrentBelt() {
+  return UserStore.load('grapplingBelt') || 'white';
+}
+function setCurrentBelt(beltId) {
+  UserStore.save('grapplingBelt', beltId);
+  updateBeltUI();
+}
+function getBeltRank(beltId) {
+  return BELT_RANKS.find(function(b) { return b.id === beltId; }) || BELT_RANKS[0];
+}
+function getNextBelt(beltId) {
+  var current = getBeltRank(beltId);
+  return current.nextId ? getBeltRank(current.nextId) : null;
+}
+
+function updateBeltUI() {
+  var currentId = getCurrentBelt();
+  var rank = getBeltRank(currentId);
+  var dot = document.getElementById('beltDot');
+  var label = document.getElementById('beltLabel');
+  var applyBtn = document.getElementById('beltApplyBtn');
+  if (dot) dot.style.background = rank.color;
+  if (label) label.textContent = rank.name;
+  // Update dropdown options
+  var options = document.querySelectorAll('.belt-option');
+  var currentIdx = BELT_RANKS.findIndex(function(b) { return b.id === currentId; });
+  options.forEach(function(opt) {
+    var bId = opt.dataset.belt;
+    var bIdx = BELT_RANKS.findIndex(function(b) { return b.id === bId; });
+    opt.classList.remove('current', 'future');
+    if (bId === currentId) opt.classList.add('current');
+    else if (bIdx > currentIdx) opt.classList.add('future');
+  });
+  // Update apply button
+  var next = getNextBelt(currentId);
+  if (applyBtn) {
+    if (next) {
+      applyBtn.textContent = 'Apply for ' + next.name;
+      applyBtn.style.display = 'block';
+    } else {
+      applyBtn.style.display = 'none'; // Black belt — nothing to apply for
+    }
+  }
+}
+
+function toggleBeltDropdown() {
+  var dd = document.getElementById('beltDropdown');
+  var badge = document.getElementById('beltBadge');
+  if (!dd) return;
+  var isOpen = dd.classList.contains('open');
+  dd.classList.toggle('open');
+  if (badge) badge.classList.toggle('open');
+  if (!isOpen) {
+    // Close on outside click
+    setTimeout(function() {
+      document.addEventListener('click', function closeBelt(e) {
+        if (!e.target.closest('#beltBadgeWrap')) {
+          dd.classList.remove('open');
+          if (badge) badge.classList.remove('open');
+          document.removeEventListener('click', closeBelt);
+        }
+      });
+    }, 0);
+  }
+}
+
+function selectBelt(beltId) {
+  // Open the syllabus view for this belt
+  var rank = getBeltRank(beltId);
+  showBeltSyllabus(beltId);
+  // Close dropdown
+  var dd = document.getElementById('beltDropdown');
+  var badge = document.getElementById('beltBadge');
+  if (dd) dd.classList.remove('open');
+  if (badge) badge.classList.remove('open');
+}
+
+function applyForNextBelt() {
+  var currentId = getCurrentBelt();
+  var next = getNextBelt(currentId);
+  if (!next) { showToast('You are at the highest belt level'); return; }
+  showBeltApplication(currentId, next.id);
+  // Close dropdown
+  var dd = document.getElementById('beltDropdown');
+  var badge = document.getElementById('beltBadge');
+  if (dd) dd.classList.remove('open');
+  if (badge) badge.classList.remove('open');
+}
+
+function showBeltSyllabus(beltId) {
+  var rank = getBeltRank(beltId);
+  var currentId = getCurrentBelt();
+  var currentIdx = BELT_RANKS.findIndex(function(b) { return b.id === currentId; });
+  var beltIdx = BELT_RANKS.findIndex(function(b) { return b.id === beltId; });
+  var modal = document.getElementById('startHereModal');
+  var inner = document.getElementById('startHereContent');
+  if (!modal || !inner) return;
+  var html = '<div style="font-family:Barlow Condensed,sans-serif;font-size:20px;font-weight:600;color:' + rank.color + ';letter-spacing:0.5px;margin-bottom:4px;display:flex;align-items:center;gap:10px;">';
+  html += '<span style="width:14px;height:14px;border-radius:50%;background:' + rank.color + ';border:1px solid rgba(255,255,255,0.2);display:inline-block;"></span>';
+  html += rank.name + ' Syllabus</div>';
+  if (beltId === 'white') {
+    html += '<div style="font-size:12px;color:var(--text-muted);margin-bottom:16px;">Your foundation. Master every technique here before progressing.</div>';
+    html += buildSyllabusHTML('white');
+  } else if (beltId === 'blue') {
+    html += '<div style="font-size:12px;color:var(--text-muted);margin-bottom:16px;">Builds on White belt. Adds counters, second layers, and deeper chains.</div>';
+    html += buildSyllabusHTML('blue');
+  } else {
+    html += '<div style="font-size:12px;color:var(--text-muted);margin-bottom:16px;">Syllabus content coming soon. Aaron will define the requirements.</div>';
+    html += '<div style="padding:40px 0;text-align:center;color:var(--text-muted);font-family:DM Mono,monospace;font-size:11px;opacity:0.5;">Content not yet available</div>';
+  }
+  inner.innerHTML = html;
+  modal.style.display = 'flex';
+}
+
+function buildSyllabusHTML(beltId) {
+  // Structured syllabus display with completion tracking
+  var syllabi = {
+    white: [
+      { section: 'Wrestling / Standing', items: [
+        { group: 'Wrist Control', techniques: ['Arm drag', 'Sweep single', 'Double leg', 'Front headlock'] },
+        { group: 'Collar Tie', techniques: ['Arm drag', 'Sweep single', 'Double leg', 'Front headlock'] },
+        { group: 'Underhook', techniques: ['Arm drag', 'Sweep single', 'Double leg', 'Front headlock'] }
+      ]},
+      { section: 'Passing', items: [
+        { group: 'Core Passes', techniques: ['Supine guard pass', 'Seated guard pass', 'Knee shield half guard pass', 'Closed guard opening'] }
+      ]},
+      { section: 'Dominant Positions', items: [
+        { group: 'Front Headlock', techniques: ['Anaconda', 'Go-behind'] },
+        { group: 'Side Control', techniques: ['Kimura', 'Mount transition'] },
+        { group: 'Mount', techniques: ['Head arm choke', 'Back take'] },
+        { group: 'Back Control', techniques: ['Rear naked choke', 'Armbar from back'] },
+        { group: 'Turtle', techniques: ['Clock choke', 'Back take from turtle'] }
+      ]},
+      { section: 'Guard', items: [
+        { group: 'Closed Guard', techniques: ['Triangle', 'Arm bar'] },
+        { group: 'Knee Shield', techniques: ['Wrestle up'] }
+      ]},
+      { section: 'Defence / Escapes', items: [
+        { group: 'Escapes', techniques: ['Side control escape', 'Mount escape', 'Back escape', 'Front headlock escape', 'Turtle escape'] }
+      ]}
+    ],
+    blue: [
+      { section: 'Wrestling / Standing', items: [
+        { group: 'Counters', techniques: ['Counter arm drag', 'Counter sweep single', 'Counter double leg', 'Counter front headlock'] },
+        { group: 'Shot Defence', techniques: ['Sprawl defence chain', 'Shin whizzer defence chain'] }
+      ]},
+      { section: 'Passing', items: [
+        { group: 'Additional Passes', techniques: ['Supine guard pass #2', 'Seated guard pass #2', 'Knee shield pass #2', 'Half guard pass', 'Butterfly guard pass'] }
+      ]},
+      { section: 'Dominant Positions', items: [
+        { group: 'Side Control', techniques: ['Additional submission', 'Retention technique'] },
+        { group: 'Mount', techniques: ['Additional submission', 'Retention technique'] }
+      ]},
+      { section: 'Guard', items: [
+        { group: 'Half Guard', techniques: ['Sweep', 'Submission'] },
+        { group: 'Butterfly Guard', techniques: ['Sweep', 'Submission'] },
+        { group: 'Guard Retention', techniques: ['Re-guard from half', 'Re-guard from side'] }
+      ]}
+    ]
+  };
+  var data = syllabi[beltId];
+  if (!data) return '<div style="color:var(--text-muted);padding:20px 0;text-align:center;">Content pending</div>';
+  var html = '';
+  data.forEach(function(sec) {
+    html += '<div style="margin-bottom:14px;">';
+    html += '<div style="font-family:Barlow Condensed,sans-serif;font-size:13px;color:var(--text);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;padding-bottom:3px;border-bottom:1px solid var(--border);">' + sec.section + '</div>';
+    sec.items.forEach(function(grp) {
+      html += '<div style="margin-bottom:8px;padding-left:8px;">';
+      html += '<div style="font-family:DM Mono,monospace;font-size:11px;color:var(--text-dim);margin-bottom:3px;">' + grp.group + '</div>';
+      grp.techniques.forEach(function(t) {
+        html += '<div style="font-family:DM Mono,monospace;font-size:11px;color:var(--text-muted);padding:2px 0 2px 12px;display:flex;align-items:center;gap:6px;">';
+        html += '<span style="color:var(--text-muted);font-size:8px;">&#9679;</span> ' + t;
+        html += '</div>';
+      });
+      html += '</div>';
+    });
+    html += '</div>';
+  });
+  return html;
+}
+
+function showBeltApplication(currentBeltId, nextBeltId) {
+  var current = getBeltRank(currentBeltId);
+  var next = getBeltRank(nextBeltId);
+  var modal = document.getElementById('startHereModal');
+  var inner = document.getElementById('startHereContent');
+  if (!modal || !inner) return;
+  var html = '<div style="font-family:Barlow Condensed,sans-serif;font-size:20px;font-weight:600;color:' + next.color + ';letter-spacing:0.5px;margin-bottom:4px;display:flex;align-items:center;gap:10px;">';
+  html += '<span style="width:14px;height:14px;border-radius:50%;background:' + next.color + ';border:1px solid rgba(255,255,255,0.2);display:inline-block;"></span>';
+  html += 'Apply for ' + next.name + '</div>';
+  html += '<div style="font-size:12px;color:var(--text-muted);margin-bottom:16px;">Promotion from ' + current.name + ' to ' + next.name + ' requires meeting the following standard.</div>';
+  html += '<div style="background:rgba(232,255,71,0.04);border:1px solid rgba(232,255,71,0.12);border-radius:8px;padding:14px;margin-bottom:14px;">';
+  html += '<div style="font-family:Barlow Condensed,sans-serif;font-size:13px;color:var(--accent);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">Requirements</div>';
+  html += '<div style="font-family:DM Mono,monospace;font-size:11px;color:var(--text-dim);line-height:1.6;">';
+  html += '<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;"><span style="color:var(--text-muted);">&#9744;</span> Complete all ' + current.name + ' syllabus techniques</div>';
+  html += '<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;"><span style="color:var(--text-muted);">&#9744;</span> Hit every technique in live training</div>';
+  html += '<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;"><span style="color:var(--text-muted);">&#9744;</span> Provide video proof of each technique</div>';
+  html += '<div style="display:flex;align-items:center;gap:6px;"><span style="color:var(--text-muted);">&#9744;</span> No exceptions — every slot must be demonstrated</div>';
+  html += '</div></div>';
+  html += '<div style="text-align:center;padding:8px 0;">';
+  html += '<div style="font-family:DM Mono,monospace;font-size:11px;color:var(--text-muted);margin-bottom:8px;">Full promotion workflow coming soon</div>';
+  html += '<button onclick="showBeltSyllabus(\'' + currentBeltId + '\');" style="background:rgba(255,255,255,0.04);border:1px solid var(--border);color:var(--text-dim);font-family:Barlow Condensed,sans-serif;font-size:12px;padding:8px 16px;border-radius:6px;cursor:pointer;margin-right:8px;">View ' + current.name + ' Syllabus</button>';
+  html += '<button onclick="showBeltSyllabus(\'' + nextBeltId + '\');" style="background:rgba(255,255,255,0.04);border:1px solid var(--border);color:var(--text-dim);font-family:Barlow Condensed,sans-serif;font-size:12px;padding:8px 16px;border-radius:6px;cursor:pointer;">View ' + next.name + ' Syllabus</button>';
+  html += '</div>';
+  inner.innerHTML = html;
+  modal.style.display = 'flex';
 }
 
 // ─── STATE ───────────────────────────────────────────────────────────────────
@@ -4977,6 +5233,7 @@ _log('TechPositionMap built:', window._techPositionMap.size);
 markBuiltOut();
 updateStats();
 updateAuthUI();
+updateBeltUI();
 if (typeof updateQuickAccess === 'function') updateQuickAccess();
 // Deep linking + resume
 (function() {
