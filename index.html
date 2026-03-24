@@ -734,7 +734,8 @@ function saveState() {
     recentViewed: STATE.recentViewed || [],
     lastPracticed: STATE.lastPracticed || {},
     videosWatched: STATE.videosWatched || {},
-    successLog: STATE.successLog || []
+    successLog: STATE.successLog || [],
+    drillingStarted: STATE.drillingStarted || {}
   };
   UserStore.saveAppState(appState);
 }
@@ -772,6 +773,7 @@ function loadState() {
     STATE.lastPracticed = appState.lastPracticed || {};
     STATE.videosWatched = appState.videosWatched || {};
     STATE.successLog = appState.successLog || [];
+    STATE.drillingStarted = appState.drillingStarted || {};
   }
 }
 
@@ -1380,7 +1382,11 @@ function buildNode(node, sectionTitle, depth, parentUl, parentKey, disambig, pos
   prog.addEventListener('keydown', function(e2) { if (e2.key === 'Enter' || e2.key === ' ') { e2.preventDefault(); prog.click(); } });
   const curProg = STATE.progress[key] || 'none';
   if (curProg === 'want') { prog.classList.add('want'); prog.textContent = 'Want'; }
-  else if (curProg === 'drilling') { prog.classList.add('drilling'); prog.textContent = 'Drilling'; }
+  else if (curProg === 'drilling') {
+    prog.classList.add('drilling'); prog.textContent = 'Drilling';
+    var _ds = STATE.drillingStarted && STATE.drillingStarted[key];
+    if (_ds) { var _days = Math.floor((Date.now() - _ds) / 86400000); prog.title = 'Drilling for ' + (_days < 1 ? 'today' : _days + ' day' + (_days !== 1 ? 's' : '')); }
+  }
   else if (curProg === 'learned') { prog.classList.add('learned'); prog.textContent = 'Learned'; }
   else prog.textContent = 'Track';
   prog.addEventListener('click', e => {
@@ -1390,7 +1396,7 @@ function buildNode(node, sectionTitle, depth, parentUl, parentKey, disambig, pos
     const next = {none:'want',want:'drilling',drilling:'learned',learned:'none'}[cur];
     if (next === 'none') { if (!confirm('Remove from tracked techniques?')) return; delete STATE.progress[key]; prog.className = 'progress-pill'; prog.textContent = 'Track'; }
     else if (next === 'want') { STATE.progress[key] = 'want'; prog.className = 'progress-pill want'; prog.textContent = 'Want'; }
-    else if (next === 'drilling') { STATE.progress[key] = 'drilling'; prog.className = 'progress-pill drilling'; prog.textContent = 'Drilling'; }
+    else if (next === 'drilling') { STATE.progress[key] = 'drilling'; if (!STATE.drillingStarted) STATE.drillingStarted = {}; if (!STATE.drillingStarted[key]) STATE.drillingStarted[key] = Date.now(); prog.className = 'progress-pill drilling'; prog.textContent = 'Drilling'; }
     else { STATE.progress[key] = 'learned'; prog.className = 'progress-pill learned'; prog.textContent = 'Learned'; }
     trackDot.className = 'track-dot' + (next !== 'none' ? ' ' + next : '');
     li.dataset.progress = next;
