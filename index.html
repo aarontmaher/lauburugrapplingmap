@@ -21,6 +21,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600&family=Bebas+Neue&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <style>
 :root {
   --bg: #0a0c10;
@@ -620,7 +621,13 @@ const SECTIONS = [{"title": "Wrestling", "color": "#e8ff47", "nodes": [{"t": "Ha
 const COLORS = ['#e8ff47','#ff6b35','#a78bfa','#47c8ff','#34d399'];
 
 // ─── AUTH & ACCESS ──────────────────────────────────────────────────────────
-var AUTH_STATE = 'member'; // 'guest' or 'member' — default 'member' preserves current behavior
+// ─── SUPABASE CLIENT ────────────────────────────────────────────────────────
+var SUPABASE_URL = 'https://rejalrfmievikabgsakf.supabase.co';
+var SUPABASE_ANON_KEY = 'sb_publishable_VvDqA9y0pmsGIApca-wxCw_M80FNpc_';
+var _supabase = null;
+try { _supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY); } catch(e) { console.warn('Supabase init failed:', e); }
+
+var AUTH_STATE = 'guest'; // 'guest' or 'member' — now starts as guest, set to member on auth
 var AUTH_USER = null;      // Will hold { id, email, displayName } when logged in
 
 function isGuest() { return AUTH_STATE === 'guest'; }
@@ -5438,19 +5445,85 @@ _log('[GrapplingMap] Debug API ready: window.__APP_DEBUG__');
   authModalClose.addEventListener('click', hideAuthModal);
   authModal.addEventListener('click', function(e) { if (e.target === authModal) hideAuthModal(); });
 
-  // Signup/login buttons (shell — no backend yet)
-  document.getElementById('authSignupBtn').addEventListener('click', function() {
+  // Auth state setter
+  function setAuthMember(user) {
+    AUTH_STATE = 'member';
+    AUTH_USER = { id: user.id, email: user.email, displayName: user.user_metadata && user.user_metadata.display_name || user.email };
+    updateAuthUI();
+    hideAuthModal();
+    showToast('Welcome, ' + (AUTH_USER.displayName || AUTH_USER.email));
+    // Rebuild sections to remove guest gating
+    if (typeof buildSections === 'function') { buildSections(); markBuiltOut(); updateStats(); }
+    if (typeof updateHomePanel === 'function') updateHomePanel();
+  }
+  function setAuthGuest() {
+    AUTH_STATE = 'guest';
+    AUTH_USER = null;
+    updateAuthUI();
+    if (typeof buildSections === 'function') { buildSections(); markBuiltOut(); updateStats(); }
+    if (typeof updateHomePanel === 'function') updateHomePanel();
+  }
+
+  // Signup button
+  document.getElementById('authSignupBtn').addEventListener('click', async function() {
     var status = document.getElementById('authModalStatus');
-    status.style.display = '';
-    status.textContent = 'Connecting to Supabase... (not yet wired)';
-    status.style.color = '#667';
+    var email = document.getElementById('authEmail').value.trim();
+    var password = document.getElementById('authPassword').value;
+    if (!email || !password) { status.style.display = ''; status.textContent = 'Enter email and password'; status.style.color = '#f85149'; return; }
+    if (password.length < 6) { status.style.display = ''; status.textContent = 'Password must be at least 6 characters'; status.style.color = '#f85149'; return; }
+    status.style.display = ''; status.textContent = 'Creating account...'; status.style.color = '#667';
+    try {
+      var result = await _supabase.auth.signUp({ email: email, password: password });
+      if (result.error) { status.textContent = result.error.message; status.style.color = '#f85149'; return; }
+      if (result.data && result.data.user) {
+        if (result.data.user.identities && result.data.user.identities.length === 0) {
+          status.textContent = 'An account with this email already exists. Try logging in.'; status.style.color = '#f85149'; return;
+        }
+        status.textContent = 'Check your email to confirm, then log in.'; status.style.color = 'var(--green)';
+      }
+    } catch(e) { status.textContent = 'Error: ' + e.message; status.style.color = '#f85149'; }
   });
-  document.getElementById('authLoginBtn').addEventListener('click', function() {
+
+  // Login button
+  document.getElementById('authLoginBtn').addEventListener('click', async function() {
     var status = document.getElementById('authModalStatus');
-    status.style.display = '';
-    status.textContent = 'Login coming soon — Supabase integration pending';
-    status.style.color = '#667';
+    var email = document.getElementById('authEmail').value.trim();
+    var password = document.getElementById('authPassword').value;
+    if (!email || !password) { status.style.display = ''; status.textContent = 'Enter email and password'; status.style.color = '#f85149'; return; }
+    status.style.display = ''; status.textContent = 'Logging in...'; status.style.color = '#667';
+    try {
+      var result = await _supabase.auth.signInWithPassword({ email: email, password: password });
+      if (result.error) { status.textContent = result.error.message; status.style.color = '#f85149'; return; }
+      if (result.data && result.data.user) { setAuthMember(result.data.user); }
+    } catch(e) { status.textContent = 'Error: ' + e.message; status.style.color = '#f85149'; }
   });
+
+  // Logout (add to user button)
+  authUserBtn.addEventListener('click', async function() {
+    if (!confirm('Log out?')) return;
+    await _supabase.auth.signOut();
+    setAuthGuest();
+    showToast('Logged out');
+  });
+
+  // Auto-detect session on page load
+  (async function() {
+    if (!_supabase) return;
+    try {
+      var session = await _supabase.auth.getSession();
+      if (session.data && session.data.session && session.data.session.user) {
+        setAuthMember(session.data.session.user);
+      }
+    } catch(e) { console.warn('Auth session check failed:', e); }
+  })();
+
+  // Listen for auth state changes (e.g. email confirmation in another tab)
+  if (_supabase) {
+    _supabase.auth.onAuthStateChange(function(event, session) {
+      if (event === 'SIGNED_IN' && session && session.user) { setAuthMember(session.user); }
+      else if (event === 'SIGNED_OUT') { setAuthGuest(); }
+    });
+  }
 
   // Gate function — shows auth modal when guest tries premium action
   window.requireAuth = function(featureName) {
