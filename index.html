@@ -359,6 +359,17 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
 
   /* Onboarding hint: positioned higher on mobile */
   #g3dOnboarding { bottom: calc(60px + env(safe-area-inset-bottom)) !important; }
+
+  /* CW24: Start Here card mobile wrapping fix */
+  #startHereModalInner { padding: 18px 16px !important; }
+  #startHereContent { overflow-x: hidden; }
+  #startHereContent div[style*="flex-wrap"] { gap: 4px !important; }
+
+  /* CW19: Collapsed pill on mobile */
+  #startHereCollapsed { bottom: calc(12px + env(safe-area-inset-bottom)) !important; }
+
+  /* CW21: Find Path hint on mobile */
+  #g3dFindPathHint { white-space: normal !important; max-width: 70vw; text-align: center; }
 }
 
 /* Diagnostics panel */
@@ -628,6 +639,10 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
     <button class="g3d-tb-btn" id="g3dBuiltOutBtn">Detailed</button>
     <div style="width:1px;height:22px;background:rgba(255,255,255,0.08);margin:0 4px;"></div>
     <button class="g3d-tb-btn" id="g3dFindPathBtn">Find Path</button>
+    <div id="g3dFindPathHint" style="display:none;position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);background:rgba(14,16,21,0.95);border:1px solid rgba(232,255,71,0.15);border-radius:8px;padding:8px 14px;white-space:nowrap;z-index:25;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);pointer-events:none;">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:12px;color:var(--accent);letter-spacing:0.5px;font-weight:600;margin-bottom:2px;">Find Path Mode</div>
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:11px;color:#667;">Click a start position, then click a destination to trace a path.</div>
+    </div>
     <button class="g3d-tb-btn" id="g3dOptionsBtn">Settings</button>
     <div id="g3dMediaBtns" style="display:contents;"></div>
   </div>
@@ -2816,7 +2831,7 @@ function updateHomePanel() {
         html += '<div style="font-family:Barlow Condensed,sans-serif;font-size:11px;color:' + sec.color + ';letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">' + sec.title + '</div>';
         html += '<div style="display:flex;gap:5px;flex-wrap:wrap;">';
         sec.items.forEach(function(item) {
-          html += '<button onclick="document.getElementById(\'startHereModal\').style.display=\'none\';document.getElementById(\'refSearch\').value=\'' + item.search.replace(/'/g, "\\'") + '\';_refDoSearch();" style="background:rgba(255,255,255,0.03);border:1px solid var(--border);color:var(--text-dim);font-family:Barlow Condensed,sans-serif;font-size:12px;padding:5px 10px;border-radius:10px;cursor:pointer;white-space:nowrap;transition:all 0.15s;">' + item.label + '</button>';
+          html += '<button onclick="document.getElementById(\'startHereModal\').style.display=\'none\';var _cp=document.getElementById(\'startHereCollapsed\');if(_cp)_cp.style.display=\'none\';document.getElementById(\'refSearch\').value=\'' + item.search.replace(/'/g, "\\'") + '\';_refDoSearch();" style="background:rgba(255,255,255,0.03);border:1px solid var(--border);color:var(--text-dim);font-family:Barlow Condensed,sans-serif;font-size:12px;padding:5px 10px;border-radius:10px;cursor:pointer;white-space:normal;word-break:break-word;text-align:left;transition:all 0.15s;">' + item.label + '</button>';
         });
         html += '</div></div>';
       });
@@ -2828,6 +2843,15 @@ function updateHomePanel() {
       document.getElementById('startHereClose').addEventListener('click', function() {
         _shModal.style.display = 'none';
       });
+      // CW19: Collapse button — minimizes to pill at bottom
+      var _shCollapseBtn = document.getElementById('startHereCollapse');
+      if (_shCollapseBtn) {
+        _shCollapseBtn.addEventListener('click', function() {
+          _shModal.style.display = 'none';
+          var pill = document.getElementById('startHereCollapsed');
+          if (pill) pill.style.display = 'block';
+        });
+      }
     }
   }
   // Show "Start Here" link on home panel for reopening
@@ -4114,9 +4138,8 @@ window.initGraph3D = (function() {
 
       // Initial force sim — auto-fit camera after simulation settles
       let initSt=0;
-      const initSim=setInterval(()=>{runForce3d(simNodes3d,ACTIVE_EDGES,4);syncEdges3d(null);initSt+=4;if(initSt>=160){clearInterval(initSim);autoFitCamera3d();var obt=document.getElementById('g3dOnboardingText');if(obt)obt.textContent='Click a position to explore techniques';}},16);
-      // Auto-hide onboarding after 8 seconds regardless
-      setTimeout(function(){ var ob=document.getElementById('g3dOnboarding'); if(ob) ob.style.opacity='0'; setTimeout(function(){ if(ob) ob.style.display='none'; }, 1000); }, 8000);
+      const initSim=setInterval(()=>{runForce3d(simNodes3d,ACTIVE_EDGES,4);syncEdges3d(null);initSt+=4;if(initSt>=160){clearInterval(initSim);autoFitCamera3d();var obt=document.getElementById('g3dOnboardingText');if(obt)obt.textContent='Click a position to explore techniques';/* CW22: fade out "Loading positions..." now that graph is ready */var _obEl=document.getElementById('g3dOnboarding');if(_obEl){_obEl.style.transition='opacity 0.8s';_obEl.style.opacity='0';setTimeout(function(){_obEl.style.display='none';},900);}}},16);
+      // CW22: removed separate 8s auto-hide — onboarding now fades right after sim completes
 
       // Camera controls
       let downX=0,downY=0,isDrag=false;
@@ -4240,12 +4263,14 @@ window.initGraph3D = (function() {
       // ── Find Path feature ──────────────────────────────────────────
       var _pathMode = false, _pathFrom = null;
       var _pathBtn = document.getElementById('g3dFindPathBtn');
+      var _pathHint = document.getElementById('g3dFindPathHint');
       _pathBtn.addEventListener('click', function() {
         if (_pathMode) {
           // Cancel path mode
           _pathMode = false; _pathFrom = null;
           _pathBtn.classList.remove('active');
           _pathBtn.textContent = 'Find Path';
+          if (_pathHint) _pathHint.style.display = 'none';
           resetHL3d();
           return;
         }
@@ -4253,6 +4278,7 @@ window.initGraph3D = (function() {
         _pathFrom = null;
         _pathBtn.classList.add('active');
         _pathBtn.textContent = 'Select start...';
+        if (_pathHint) _pathHint.style.display = 'block';
         showToast('Click a position to start the path');
       });
       // Override node click when in path mode
@@ -4318,6 +4344,7 @@ window.initGraph3D = (function() {
         _pathMode = false; _pathFrom = null;
         _pathBtn.classList.remove('active');
         _pathBtn.textContent = 'Find Path';
+        if (_pathHint) _pathHint.style.display = 'none';
         return true;
       };
       optPanel.addEventListener('click',function(ev){ev.stopPropagation();});
@@ -5829,12 +5856,20 @@ _log('[GrapplingMap] Debug API ready: window.__APP_DEBUG__');
   });
 })();
 </script>
-<!-- Start Here Modal -->
+<!-- Start Here Modal (CW19: collapsible, CW24: mobile wrapping fix) -->
 <div id="startHereModal" style="display:none;position:fixed;inset:0;z-index:2500;align-items:center;justify-content:center;background:rgba(0,0,0,0.7);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);">
   <div id="startHereModalInner" style="position:relative;width:min(90vw,480px);max-height:80vh;overflow-y:auto;background:rgba(14,16,21,0.98);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:24px;box-shadow:0 16px 64px rgba(0,0,0,0.6);-webkit-overflow-scrolling:touch;">
-    <button id="startHereClose" style="position:absolute;top:12px;right:12px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:#667;font-size:16px;width:32px;height:32px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;">×</button>
+    <div style="display:flex;align-items:center;gap:8px;position:absolute;top:12px;right:12px;">
+      <button id="startHereCollapse" title="Minimize" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:#667;font-size:16px;width:32px;height:32px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s;" onmouseenter="this.style.background='rgba(255,255,255,0.08)';this.style.color='#aaa'" onmouseleave="this.style.background='rgba(255,255,255,0.04)';this.style.color='#667'">&#x2013;</button>
+      <button id="startHereClose" title="Dismiss" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:#667;font-size:16px;width:32px;height:32px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s;" onmouseenter="this.style.background='rgba(255,255,255,0.08)';this.style.color='#aaa'" onmouseleave="this.style.background='rgba(255,255,255,0.04)';this.style.color='#667'">&#x00d7;</button>
+    </div>
     <div id="startHereContent"></div>
   </div>
+</div>
+<!-- Start Here collapsed pill (CW19) -->
+<div id="startHereCollapsed" style="display:none;position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:2500;background:rgba(14,16,21,0.97);border:1px solid rgba(232,255,71,0.15);border-radius:24px;padding:8px 18px;cursor:pointer;-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);box-shadow:0 8px 32px rgba(0,0,0,0.5);transition:all 0.2s;" onclick="document.getElementById('startHereCollapsed').style.display='none';document.getElementById('startHereModal').style.display='flex';">
+  <span style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:600;color:var(--accent);letter-spacing:0.5px;">Start Here</span>
+  <span style="font-family:'Barlow Condensed',sans-serif;font-size:11px;color:#667;margin-left:8px;">tap to expand</span>
 </div>
 <script>
 // Register service worker for PWA/offline support
