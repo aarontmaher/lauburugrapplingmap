@@ -1363,10 +1363,50 @@ function updateStats() {
     if (v === 'learned') learned++;
   }
   STATE.learnedNodes = learned;
-  document.getElementById('learnedCount').textContent = learned;
-  document.getElementById('totalCount').textContent = STATE.totalNodes;
   var drilling = 0;
   for (const v3 of Object.values(STATE.progress)) { if (v3 === 'drilling') drilling++; }
+  var want = 0;
+  for (const v4 of Object.values(STATE.progress)) { if (v4 === 'want') want++; }
+  var successKeys = new Set();
+  (STATE.successLog || []).forEach(function(e) { successKeys.add(e.key); });
+
+  // Dynamic stat: determine count + label based on current filter/search
+  var filter = STATE.currentFilter || 'all';
+  var searchInput = document.getElementById('refSearch');
+  var hasSearch = searchInput && searchInput.value && searchInput.value.trim().length > 0;
+  var dynCount = STATE.totalNodes;
+  var dynLabel = 'Techniques';
+
+  if (hasSearch) {
+    // Count visible non-schema items when search is active
+    var visibleSearch = document.querySelectorAll('.tree-item[data-schema="0"][data-ot="0"][data-notes="0"]');
+    var matchCount = 0;
+    visibleSearch.forEach(function(li) { if (li.style.display !== 'none') matchCount++; });
+    dynCount = matchCount;
+    dynLabel = 'Matching';
+  } else if (filter === 'drilling') {
+    dynCount = drilling;
+    dynLabel = 'Drilling';
+  } else if (filter === 'mygame') {
+    dynCount = want + drilling + learned;
+    dynLabel = 'My Game';
+  } else if (filter === 'unexplored') {
+    dynCount = STATE.totalNodes - Object.keys(STATE.progress).length;
+    dynLabel = 'Unexplored';
+  } else if (filter === 'video') {
+    var vidItems = document.querySelectorAll('.tree-item[data-has-video="1"]');
+    var vidCount = 0;
+    vidItems.forEach(function(li) { if (li.style.display !== 'none') vidCount++; });
+    dynCount = vidCount;
+    dynLabel = 'With Video';
+  }
+
+  // Update header display
+  document.getElementById('learnedCount').textContent = learned;
+  document.getElementById('totalCount').textContent = dynCount;
+  var totalLabel = document.getElementById('totalCount').parentElement.querySelector('.stat-label');
+  if (totalLabel) totalLabel.textContent = dynLabel;
+
   const pctLearned = STATE.totalNodes > 0 ? (learned / STATE.totalNodes * 100) : 0;
   const pctDrilling = STATE.totalNodes > 0 ? (drilling / STATE.totalNodes * 100) : 0;
   var progBar = document.getElementById('progressBar');
@@ -1382,10 +1422,8 @@ function updateStats() {
   // Hide learned count if zero to avoid "0 Learned" demotivation
   document.getElementById('learnedCount').parentElement.style.display = (learned > 0 || drilling > 0) ? '' : 'none';
   // Update drill count badge
-  var drillCount = 0;
-  for (var v2 of Object.values(STATE.progress)) { if (v2 === 'drilling') drillCount++; }
   var badge = document.getElementById('drillCountBadge');
-  if (badge) { badge.textContent = drillCount; badge.style.display = drillCount > 0 ? 'inline' : 'none'; }
+  if (badge) { badge.textContent = drilling; badge.style.display = drilling > 0 ? 'inline' : 'none'; }
 }
 
 // ─── POPUP BUILDER (shared between 2D and 3D) ─────────────────────────────
@@ -2495,6 +2533,7 @@ function _refDoSearch() {
     countEl.style.display = 'none';
     clearEl.style.display = 'none';
   }
+  updateStats(); // Refresh dynamic header count for search
 }
 function _escHtml(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 document.getElementById('refSearch').addEventListener('input', function() {
@@ -2566,6 +2605,7 @@ function applyRefFilter(filter) {
       countSpan.textContent = posItems + ' positions \u00b7 ' + totalItems + ' techniques';
     }
   });
+  updateStats(); // Refresh dynamic header count for active filter
   const emptyEl = document.getElementById('refEmpty');
   if (filter !== 'all' && !anyVisible) {
     const labels = {
