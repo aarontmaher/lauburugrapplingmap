@@ -617,9 +617,10 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
 <div class="overlay" id="overlay"></div>
 <div class="note-panel" id="notePanel">
   <div class="note-panel-title" id="notePanelTitle"></div>
-  <textarea id="noteTextarea" placeholder="Add your notes here..."></textarea>
+  <textarea id="noteTextarea" placeholder="Add your notes here... Use [3:42] for video timestamps"></textarea>
   <div class="note-panel-actions">
     <button class="btn-save-note" id="noteSaveBtn">Save Note</button>
+    <button class="btn-clear-note" id="noteTimestampBtn" title="Insert timestamp marker">⏱ Timestamp</button>
     <button class="btn-clear-note" id="noteClearBtn">Clear</button>
     <button class="btn-clear-note" id="noteCloseBtn" style="margin-left:auto;">Close</button>
   </div>
@@ -2092,6 +2093,11 @@ document.getElementById('noteSaveBtn').addEventListener('click', () => {
   refreshAllViews();
 });
 document.getElementById('noteClearBtn').addEventListener('click', () => { document.getElementById('noteTextarea').value = ''; });
+document.getElementById('noteTimestampBtn').addEventListener('click', function() {
+  var ta = document.getElementById('noteTextarea');
+  var ts = prompt('Enter timestamp (e.g. 3:42):');
+  if (ts) { var pos = ta.selectionStart; ta.value = ta.value.slice(0, pos) + '[' + ts + '] ' + ta.value.slice(pos); ta.focus(); }
+});
 document.getElementById('noteCloseBtn').addEventListener('click', closeNotePanel);
 document.getElementById('overlay').addEventListener('click', closeNotePanel);
 
