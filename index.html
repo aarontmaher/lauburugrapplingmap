@@ -5549,6 +5549,8 @@ _log('[GrapplingMap] Debug API ready: window.__APP_DEBUG__');
   });
 })();
 </script>
+<!-- Quick-drill FAB (mobile) -->
+<button id="quickDrillFab" style="display:none;position:fixed;bottom:calc(70px + env(safe-area-inset-bottom));right:16px;width:48px;height:48px;border-radius:50%;background:var(--accent);border:none;color:#000;font-size:20px;cursor:pointer;z-index:1000;box-shadow:0 4px 16px rgba(232,255,71,0.3);transition:all 0.2s;" title="Random Drill">▶</button>
 <!-- Auth / Signup Modal -->
 <div id="authModal" style="display:none;position:fixed;inset:0;z-index:3000;align-items:center;justify-content:center;background:rgba(0,0,0,0.7);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);">
   <div style="position:relative;width:min(90vw,380px);background:rgba(14,16,21,0.98);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:28px;box-shadow:0 16px 64px rgba(0,0,0,0.6);">
@@ -5793,6 +5795,21 @@ _log('[GrapplingMap] Debug API ready: window.__APP_DEBUG__');
   };
 
   updateAuthUI();
+})();
+
+// Quick-drill FAB
+(function() {
+  var fab = document.getElementById('quickDrillFab');
+  if (!fab) return;
+  fab.addEventListener('click', function() { document.getElementById('menuRandomBtn').click(); });
+  // Show on mobile when drills exist
+  function updateFab() {
+    var hasDrills = Object.values(STATE.progress).some(function(v) { return v === 'drilling'; });
+    fab.style.display = (hasDrills && window.innerWidth <= 768) ? '' : 'none';
+  }
+  window.addEventListener('resize', updateFab);
+  setInterval(updateFab, 5000);
+  updateFab();
 })();
 
 // Register service worker for PWA/offline support
