@@ -384,6 +384,7 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
     <div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;color:#556;letter-spacing:0.5px;margin-top:-2px;">No-Gi Reference &amp; Training</div>
   </div>
   <div id="headerStats" class="stats" style="display:none;">
+    <div class="stat" style="display:none;"><div class="stat-num" id="drillingCount" style="color:var(--blue);">0</div><div class="stat-label">Drilling</div></div>
     <div class="stat"><div class="stat-num" id="learnedCount">0</div><div class="stat-label">Learned</div></div>
     <div class="stat"><div class="stat-num" id="totalCount">0</div><div class="stat-label">Techniques</div></div>
   </div>
@@ -998,6 +999,9 @@ function updateStats() {
   STATE.learnedNodes = learned;
   document.getElementById('learnedCount').textContent = learned;
   document.getElementById('totalCount').textContent = STATE.totalNodes;
+  // Show drilling count in header if any
+  var drillingEl = document.getElementById('drillingCount');
+  if (drillingEl) { var dr = 0; for (var vd of Object.values(STATE.progress)) { if (vd === 'drilling') dr++; } drillingEl.textContent = dr; drillingEl.parentElement.style.display = dr > 0 ? '' : 'none'; }
   var drilling = 0;
   for (const v3 of Object.values(STATE.progress)) { if (v3 === 'drilling') drilling++; }
   const pctLearned = STATE.totalNodes > 0 ? (learned / STATE.totalNodes * 100) : 0;
