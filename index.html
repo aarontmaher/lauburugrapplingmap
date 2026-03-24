@@ -386,6 +386,8 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
   </div>
   <div class="progress-bar-wrap"><div class="progress-bar" id="progressBar"></div></div>
   <div style="position:relative;">
+    <button id="authBtn" style="background:var(--accent);border:none;color:#000;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:600;padding:6px 14px;border-radius:6px;cursor:pointer;letter-spacing:0.5px;display:none;">Create Account</button>
+    <button id="authUserBtn" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:var(--text-dim);font-family:'Barlow Condensed',sans-serif;font-size:12px;padding:5px 12px;border-radius:6px;cursor:pointer;display:none;"></button>
     <button id="headerMenuToggle" style="background:none;border:1px solid rgba(255,255,255,0.1);color:#4a5568;font-family:'DM Mono',monospace;font-size:14px;padding:4px 10px;border-radius:4px;cursor:pointer;" title="Menu" aria-label="Open menu" aria-haspopup="true">&#8942;</button>
     <div id="headerMenu" style="display:none;position:absolute;right:0;top:calc(100% + 6px);background:rgba(14,16,21,0.97);border:1px solid rgba(255,255,255,0.08);border-radius:6px;padding:4px 0;z-index:50;-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);box-shadow:0 8px 32px rgba(0,0,0,0.5);min-width:160px;">
       <div style="font-size:9px;color:#556;letter-spacing:1px;text-transform:uppercase;padding:6px 14px 2px;">Browse</div>
@@ -1335,6 +1337,7 @@ function buildNode(node, sectionTitle, depth, parentUl, parentKey, disambig, pos
   else prog.textContent = 'Track';
   prog.addEventListener('click', e => {
     e.stopPropagation();
+    if (!ACCESS_CONFIG.GUEST_CAN_SAVE_PROGRESS && isGuest()) { requireAuth('track your progress'); return; }
     const cur = STATE.progress[key] || 'none';
     const next = {none:'want',want:'drilling',drilling:'learned',learned:'none'}[cur];
     if (next === 'none') { if (!confirm('Remove from tracked techniques?')) return; delete STATE.progress[key]; prog.className = 'progress-pill'; prog.textContent = 'Track'; }
@@ -1356,7 +1359,7 @@ function buildNode(node, sectionTitle, depth, parentUl, parentKey, disambig, pos
   noteBtn.textContent = '✎';
   noteBtn.setAttribute('aria-label', 'Add note');
   noteBtn.title = 'Add note';
-  noteBtn.addEventListener('click', e => { e.stopPropagation(); openNotePanel(key, node.t); });
+  noteBtn.addEventListener('click', e => { e.stopPropagation(); if (!ACCESS_CONFIG.GUEST_CAN_USE_NOTES && isGuest()) { requireAuth('add notes'); return; } openNotePanel(key, node.t); });
   li.dataset.hasNote = STATE.notes[key] ? '1' : '0';
   actions.appendChild(noteBtn);
   } // end !isSchemaHeading for note button
@@ -1372,6 +1375,7 @@ function buildNode(node, sectionTitle, depth, parentUl, parentKey, disambig, pos
     if (_hitCount > 0) { hitBtn.style.color = 'var(--green)'; hitBtn.style.borderColor = 'var(--green)'; hitBtn.textContent = '\u2714 ' + _hitCount; }
     hitBtn.addEventListener('click', function(ev) {
       ev.stopPropagation();
+      if (!ACCESS_CONFIG.GUEST_CAN_LOG_SUCCESS && isGuest()) { requireAuth('log your successes'); return; }
       if (!STATE.successLog) STATE.successLog = [];
       STATE.successLog.push({ key: key, ts: Date.now() });
       _hitCount++;
@@ -5384,6 +5388,21 @@ _log('[GrapplingMap] Debug API ready: window.__APP_DEBUG__');
   });
 })();
 </script>
+<!-- Auth / Signup Modal -->
+<div id="authModal" style="display:none;position:fixed;inset:0;z-index:3000;align-items:center;justify-content:center;background:rgba(0,0,0,0.7);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);">
+  <div style="position:relative;width:min(90vw,380px);background:rgba(14,16,21,0.98);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:28px;box-shadow:0 16px 64px rgba(0,0,0,0.6);">
+    <button id="authModalClose" style="position:absolute;top:12px;right:12px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:#667;font-size:16px;width:32px;height:32px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;">×</button>
+    <div style="font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:600;color:var(--accent);margin-bottom:6px;">Create Your Account</div>
+    <div style="font-family:'Barlow Condensed',sans-serif;font-size:12px;color:#667;margin-bottom:16px;">Unlock the full map, track your game, and start training.</div>
+    <div id="authModalForm">
+      <input id="authEmail" type="email" placeholder="Email" style="width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);font-family:'DM Mono',monospace;font-size:13px;padding:10px 12px;border-radius:6px;margin-bottom:8px;outline:none;">
+      <input id="authPassword" type="password" placeholder="Password" style="width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);font-family:'DM Mono',monospace;font-size:13px;padding:10px 12px;border-radius:6px;margin-bottom:12px;outline:none;">
+      <button id="authSignupBtn" style="width:100%;background:var(--accent);border:none;color:#000;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:600;padding:12px;border-radius:8px;cursor:pointer;letter-spacing:0.5px;margin-bottom:8px;">Create Account</button>
+      <button id="authLoginBtn" style="width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--border);color:var(--text-dim);font-family:'Barlow Condensed',sans-serif;font-size:12px;padding:10px;border-radius:8px;cursor:pointer;">Already have an account? Log in</button>
+    </div>
+    <div id="authModalStatus" style="font-family:'DM Mono',monospace;font-size:11px;color:#667;margin-top:8px;text-align:center;display:none;"></div>
+  </div>
+</div>
 <!-- Start Here Modal -->
 <div id="startHereModal" style="display:none;position:fixed;inset:0;z-index:2500;align-items:center;justify-content:center;background:rgba(0,0,0,0.7);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);">
   <div id="startHereModalInner" style="position:relative;width:min(90vw,480px);max-height:80vh;overflow-y:auto;background:rgba(14,16,21,0.98);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:24px;box-shadow:0 16px 64px rgba(0,0,0,0.6);-webkit-overflow-scrolling:touch;">
@@ -5392,6 +5411,61 @@ _log('[GrapplingMap] Debug API ready: window.__APP_DEBUG__');
   </div>
 </div>
 <script>
+// ─── AUTH UI LOGIC ──────────────────────────────────────────────────────────
+(function initAuthUI() {
+  var authBtn = document.getElementById('authBtn');
+  var authUserBtn = document.getElementById('authUserBtn');
+  var authModal = document.getElementById('authModal');
+  var authModalClose = document.getElementById('authModalClose');
+
+  function showAuthModal() { authModal.style.display = 'flex'; }
+  function hideAuthModal() { authModal.style.display = 'none'; }
+  window.showAuthModal = showAuthModal;
+
+  // Update header based on auth state
+  function updateAuthUI() {
+    if (isGuest()) {
+      authBtn.style.display = '';
+      authUserBtn.style.display = 'none';
+    } else {
+      authBtn.style.display = 'none';
+      authUserBtn.style.display = '';
+      authUserBtn.textContent = AUTH_USER ? AUTH_USER.displayName || AUTH_USER.email || 'Account' : 'Account';
+    }
+  }
+
+  authBtn.addEventListener('click', showAuthModal);
+  authModalClose.addEventListener('click', hideAuthModal);
+  authModal.addEventListener('click', function(e) { if (e.target === authModal) hideAuthModal(); });
+
+  // Signup/login buttons (shell — no backend yet)
+  document.getElementById('authSignupBtn').addEventListener('click', function() {
+    var status = document.getElementById('authModalStatus');
+    status.style.display = '';
+    status.textContent = 'Connecting to Supabase... (not yet wired)';
+    status.style.color = '#667';
+  });
+  document.getElementById('authLoginBtn').addEventListener('click', function() {
+    var status = document.getElementById('authModalStatus');
+    status.style.display = '';
+    status.textContent = 'Login coming soon — Supabase integration pending';
+    status.style.color = '#667';
+  });
+
+  // Gate function — shows auth modal when guest tries premium action
+  window.requireAuth = function(featureName) {
+    if (isMember()) return true;
+    showAuthModal();
+    var status = document.getElementById('authModalStatus');
+    status.style.display = '';
+    status.textContent = 'Create an account to ' + (featureName || 'use this feature');
+    status.style.color = 'var(--accent)';
+    return false;
+  };
+
+  updateAuthUI();
+})();
+
 // Register service worker for PWA/offline support
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js').catch(function(){});
