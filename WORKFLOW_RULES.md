@@ -149,6 +149,18 @@ Code = technical gatekeeper. Aaron = final owner. ChatGPT/Claude Chat = optional
 6. At batch end: report NOW results + confirm NEXT is ready
 7. If not obvious → defer for Aaron or ChatGPT/Claude Chat review
 
+## Suggestion Restart on Repo Update
+After meaningful repo updates, Code sets `suggestion_pass_needed: yes` in AUTOMATION_SUGGESTIONS_TRIGGER.md.
+
+**Practical flow:**
+1. Code writes the trigger after commit/push at true stopping points
+2. Claude Chat and/or Cowork check the trigger at their next session start
+3. They write suggestions to AUTOMATION_SUGGESTIONS_INBOX.md (source-labeled)
+4. Code ingests inbox into AUTOMATION_SUGGESTIONS.md / AUTOMATION_NEXT.md on next review pass
+5. Trigger is reset to `suggestion_pass_needed: no`
+
+**Direct Cowork → Claude Chat triggering: NOT possible** in the current setup. No automation bridge exists between Cowork and Claude Chat sessions. Cross-agent triggering requires Aaron to manually start sessions or check the trigger. The practical version is file-based coordination — each agent checks the trigger at session start.
+
 ## Manual vs Automated Task Priority
 - **Manual/ad hoc tasks from Aaron** (video moves, folder fixes, verifications, memory corrections, direct filesystem actions) → run immediately, even if an automation loop is active.
 - **Automated tasks** (website iteration prompts, KM batch continuations) → defer to queue when interrupted by a manual task.

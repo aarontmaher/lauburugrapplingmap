@@ -1,25 +1,44 @@
 # AUTOMATION NEXT
+Updated: 2026-03-24 (from inbox ingest)
 
-## Ready: Batch F — Quick wins from latest audit
+## Batch I — Quick UX wins (code-decidable, safe, easy)
 | Item | Description | Source | Effort |
 |------|-------------|--------|--------|
-| F1 | Share button toast "Link copied" | Audit F1 | easy |
-| F2 | Untrack confirmation (LEARNED → None) | Audit D1 | easy |
-| F3 | TRACK ALL tooltip: "Track all as Drilling (N)" | Audit D3 | easy |
-| F4 | Notes unsaved warning on close | Audit C8 | easy |
-| F5 | Random Drill toast feedback | Audit G6 | easy |
-| F6 | "0 transitions" in graph: neutral color instead of red | Audit E4 | easy |
+| CW1 | Mobile: disable graph auto-rotation by default | Cowork | easy |
+| CW6 | Graph: visible "Recenter" button on canvas | Cowork | easy |
+| CW8 | Notes nodes rendered distinctly (italic, dimmed, no pill) | Cowork | easy |
+| CW9 | Robust video URL parser (handle youtube.com/watch?v= too) | Cowork | easy |
+| CC5 | Replace emoji video buttons with styled text | Chat | easy |
+| CC7 | Graph: node video indicator (marker on nodes with videos) | Chat | easy |
 
-## After That: Batch G — Rename "Offensive transitions" + Add "Unexplored" filter
+## Batch J — Game intelligence features (medium, high value)
 | Item | Description | Source | Effort |
 |------|-------------|--------|--------|
-| G1 | Rename "Offensive transitions" display label | B5/Q1 | easy |
-| G2 | Add "Unexplored" filter (inverse of My Game) | I1/M4 | easy |
-| G3 | Add "Want to learn" bookmark state | X6/Q2 | easy |
+| CW12 | "Connected but untracked" suggestions | Cowork | medium |
+| CW13 | Game strength indicator per position (Strong/Building/Gap) | Cowork | easy |
+| CW14 | Drill from graph — start training a specific position | Cowork | medium |
+| CC6 | Graph: game-coloured nodes (blue drilling, green learned) | Chat | medium |
+| CC10 | Game coverage heatmap on graph | Chat | medium |
 
-## Pending Aaron Review
-- M1: "Start Here" beginner card (needs position list from Aaron)
-- M2: Difficulty tags (needs classification from Aaron)
-- M3: Simpler perspective labels (Aaron's wording choice)
-- F1-F12: Feature requests from persona analysis
-- F9: Body font change (visual identity decision)
+## Batch K — Training flow upgrades (medium)
+| Item | Description | Source | Effort |
+|------|-------------|--------|--------|
+| CW10 | Auto-advance after drill timer | Cowork | easy |
+| CW11 | Session summary after training | Cowork | medium |
+| CC3 | Drilling duration tracker | Chat | medium |
+| CC4 | Weekly training summary | Chat | medium |
+
+## Later / Needs Aaron
+| Item | Description | Source | Effort |
+|------|-------------|--------|--------|
+| CW3 | Drilling queue badge on Reference view | Cowork | easy |
+| CW4 | Dynamic subtitle based on user state | Cowork | easy |
+| CW15 | Video player pinned while scrolling | Cowork | medium |
+| CW16 | Quick-drill FAB on mobile | Cowork | easy |
+| CW17 | Share position/technique via URL (deep links) | Cowork | easy-medium |
+| CW18 | "My path" visualization on graph | Cowork | medium |
+| CC8 | Edge direction indicators | Chat | medium |
+| CC9 | Technique notes with timestamps | Chat | medium |
+| CC14 | Sparring journal | Chat | large |
+| CC15 | Coach mode | Chat | large |
+| CC16 | Custom technique chains | Chat | large |

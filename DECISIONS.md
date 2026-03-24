@@ -31,6 +31,7 @@ Last updated: 2026-03-23
 - Built-out filter: excludes Hand Fighting
 - COMMIT_MIN: 5 videos per technique folder for playlists
 - Automation: old KM bridge only (mark_done.sh + bridge_cycle.sh). Watcher flow retired.
+- Belt syllabus: ALL technique selections must come from Aaron's existing mapped content only. Code must NOT invent or substitute techniques. Unconfirmed slots = "needs Aaron selection".
 
 ## Website
 - Node size formula: pow(_w, 0.85) * 1.8
