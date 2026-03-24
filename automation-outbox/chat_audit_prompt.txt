@@ -1,0 +1,12 @@
+Review the current GrapplingMap product at aarontmaher.github.io/Chat-gpt/ as three real grapplers (beginner, intermediate, advanced).
+
+Recent changes include: belt progression UI with visual belt icon, sub-positions toggle in Position Map settings, game strength indicators (Strong/Building/Gap) on positions, connected-but-untracked suggestions on position cards, drill-from-graph button, Supabase auth (signup/login/logout working), guest preview with gating.
+
+Focus on:
+1. Does the product feel like a training partner or a passive library?
+2. Is the guest-to-member boundary clear and motivating?
+3. Do the new game intelligence features (strength, suggestions, drill-from-graph) help?
+4. What are the top 5 improvements that would make the biggest human difference?
+5. What should be avoided or removed?
+
+Be practical, opinionated, and human-centered. Output ranked improvements.

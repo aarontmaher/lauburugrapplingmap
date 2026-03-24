@@ -1485,7 +1485,18 @@ function buildNode(node, sectionTitle, depth, parentUl, parentKey, disambig, pos
       // Inline stats on position header
       var statsSpan = document.createElement('span');
       statsSpan.className = 'pos-stats';
-      statsSpan.textContent = techCount + ' techniques' + (trackedCount > 0 ? ' \u00b7 ' + trackedCount + ' tracked' : '');
+      // Game strength indicator
+      var learnedCount = 0, drillingCount = 0;
+      childUl.querySelectorAll('.tree-item[data-progress]').forEach(function(t) {
+        if (t.dataset.progress === 'learned') learnedCount++;
+        if (t.dataset.progress === 'drilling') drillingCount++;
+      });
+      var _strengthLabel = '', _strengthColor = '';
+      if (learnedCount >= 3) { _strengthLabel = 'Strong'; _strengthColor = 'var(--green)'; }
+      else if (drillingCount + learnedCount >= 2) { _strengthLabel = 'Building'; _strengthColor = 'var(--blue)'; }
+      else if (trackedCount > 0) { _strengthLabel = 'Started'; _strengthColor = 'var(--accent3)'; }
+      var strengthHtml = _strengthLabel ? ' \u00b7 <span style="color:'+_strengthColor+';font-weight:500;">'+_strengthLabel+'</span>' : '';
+      statsSpan.innerHTML = techCount + ' techniques' + (trackedCount > 0 ? ' \u00b7 ' + trackedCount + ' tracked' : '') + strengthHtml;
       content.appendChild(statsSpan);
       li._posStats = statsSpan;
       li._posChildUl = childUl;
@@ -1531,6 +1542,24 @@ function buildNode(node, sectionTitle, depth, parentUl, parentKey, disambig, pos
               if (seen2.has(e.target_label)) return;
               seen2.add(e.target_label);
               html += '<div class="pos-conn-item" data-nav="' + e.target_label.replace(/"/g,'&quot;') + '">' + posLabel + ' <span class="conn-arrow">\u2192</span> ' + e.target_label + '</div>';
+            });
+          }
+          // CW12: Connected but untracked suggestions
+          var allConnected = new Set();
+          inbound.forEach(function(e) { allConnected.add(e.source_label); });
+          outbound.forEach(function(e) { allConnected.add(e.target_label); });
+          var untracked = [];
+          allConnected.forEach(function(lbl) {
+            if (lbl === posLabel) return;
+            // Check if any technique under this position is tracked
+            var posNorm = normalizeSegment(lbl);
+            var hasTracked = Object.keys(STATE.progress).some(function(k) { return k.split('|')[1] === posNorm; });
+            if (!hasTracked) untracked.push(lbl);
+          });
+          if (untracked.length > 0) {
+            html += '<div class="pos-conn-label" style="margin-top:6px;color:var(--accent3);">Connected — not yet tracked</div>';
+            untracked.slice(0, 4).forEach(function(lbl) {
+              html += '<div class="pos-conn-item" data-nav="' + lbl.replace(/"/g,'&quot;') + '" style="color:var(--accent3);opacity:0.7;">\u2192 ' + lbl + '</div>';
             });
           }
           connCard.innerHTML = html;
@@ -2852,7 +2881,10 @@ window.initGraph3D = (function() {
 
     // ── Badges: keep → REF only ───────────────────────────────────────
     var b=document.getElementById('g3dDetailBadges');b.innerHTML='';
-    b.innerHTML='<span style="background:rgba(255,255,255,0.04);color:#8899aa;border:1px solid rgba(255,255,255,0.08);font-family:\'Barlow Condensed\',monospace;font-size:10px;letter-spacing:1px;padding:3px 10px;border-radius:12px;cursor:pointer;transition:all 0.15s;" onmouseenter="this.style.background=\'rgba(232,255,71,0.1)\';this.style.color=\'#c4cdd8\';this.style.borderColor=\'rgba(232,255,71,0.3)\'" onmouseleave="this.style.background=\'rgba(255,255,255,0.04)\';this.style.color=\'#8899aa\';this.style.borderColor=\'rgba(255,255,255,0.08)\'" onclick="closeDetail3d();switchToReferenceNode(\''+nd.label.replace(/'/g,"\\'")+'\',\''+nd.section.replace(/'/g,"\\'")+'\')">↗ Open in Reference</span>';
+    var _posNorm = normalizeSegment(nd.label);
+    var _posDrillCount = Object.entries(STATE.progress).filter(function(kv) { return kv[0].split('|')[1] === _posNorm && kv[1] === 'drilling'; }).length;
+    b.innerHTML='<span style="background:rgba(255,255,255,0.04);color:#8899aa;border:1px solid rgba(255,255,255,0.08);font-family:\'Barlow Condensed\',monospace;font-size:10px;letter-spacing:1px;padding:3px 10px;border-radius:12px;cursor:pointer;transition:all 0.15s;" onmouseenter="this.style.background=\'rgba(232,255,71,0.1)\';this.style.color=\'#c4cdd8\';this.style.borderColor=\'rgba(232,255,71,0.3)\'" onmouseleave="this.style.background=\'rgba(255,255,255,0.04)\';this.style.color=\'#8899aa\';this.style.borderColor=\'rgba(255,255,255,0.08)\'" onclick="closeDetail3d();switchToReferenceNode(\''+nd.label.replace(/'/g,"\\'")+'\',\''+nd.section.replace(/'/g,"\\'")+'\')">↗ Reference</span>'
+    + (_posDrillCount > 0 ? '<span style="background:rgba(71,200,255,0.08);color:var(--blue);border:1px solid rgba(71,200,255,0.2);font-family:\'Barlow Condensed\',monospace;font-size:10px;letter-spacing:1px;padding:3px 10px;border-radius:12px;cursor:pointer;" onclick="closeDetail3d();switchToTab(\'reference\');applyRefFilter(\'drilling\');switchToReferenceNode(\''+nd.label.replace(/'/g,"\\'")+'\',\''+nd.section.replace(/'/g,"\\'")+'\')">▶ Drill '+_posDrillCount+'</span>' : '');
 
     // ── Look up position in SECTIONS ──────────────────────────────────
     var sectNode = null;
