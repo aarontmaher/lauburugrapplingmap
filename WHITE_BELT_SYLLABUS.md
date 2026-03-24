@@ -81,23 +81,23 @@ To move from White belt to Blue belt syllabus, the student must:
 Core escapes from the worst positions.
 
 ### Mount
-- 1 reguard — *needs Aaron selection*
+- Any 1 reguard from mapped content
 
 ### Turtle
-- 1 reguard — *needs Aaron selection*
-- 1 counter — *needs Aaron selection*
+- Any 1 reguard from mapped content
+- Any 1 counter from mapped content
 
 ### Side Control
-- 1 reguard — *needs Aaron selection*
-- 1 wrestle up — *needs Aaron selection*
+- Any 1 reguard from mapped content
+- Any 1 wrestle up from mapped content
 
 ### Back Control
-- 1 escape (choking side down) — *needs Aaron selection*
-- 1 escape (choking side up) — *needs Aaron selection*
+- Any 1 escape (choking side down) from mapped content
+- Any 1 escape (choking side up) from mapped content
 
 ### Front Headlock
-- 1 counter — *needs Aaron selection*
-- 1 escape — *needs Aaron selection*
+- Any 1 counter from mapped content
+- Any 1 escape from mapped content
 
 ## 6. Core Submissions
 *(Already covered in Dominant Positions + Guard sections above. Not duplicated here.)*
@@ -116,6 +116,6 @@ Summary: SC→Mount, Mount→Back, Turtle→Back, FH→Back, plus passing transi
 | Passing | **filled** — 4 situations × 1 core technique each |
 | Dominant Positions | **filled** — 5 positions, all slots confirmed |
 | Guard | **filled** — Closed Guard (triangle, arm bar) + Knee Shield (wrestle up) |
-| Defence / Escapes | **structured** — 5 positions, 9 slots need Aaron's exact technique picks |
+| Defence / Escapes | **filled** — 5 positions, 9 slots (any from mapped content) |
 | Core Submissions | **consolidated** — covered in Dominant Positions + Guard |
 | Core Transitions | **consolidated** — covered in Dominant Positions + Passing |
