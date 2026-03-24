@@ -325,6 +325,8 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
   /* Search: easier to tap + auto-expand on focus */
   .search-wrap { min-height: 36px; }
   #refBottomBar input:focus, #g3dToolbar input:focus { width: 180px; transition: width 0.2s; }
+  /* Scroll fade hint for overflow filter bars */
+  #refBottomBar::after { content: ''; position: absolute; right: 0; top: 0; bottom: 0; width: 24px; background: linear-gradient(to right, transparent, rgba(18,21,28,0.9)); pointer-events: none; z-index: 1; }
 
   /* View tabs: full width on mobile */
   .view-tab { flex: 1; text-align: center; padding: 8px 10px; font-size: 12px; }
@@ -1678,7 +1680,14 @@ function buildSections() {
     // Count videos in section
     function countSectionVideos(nodes) {
       var v = 0;
-      (nodes || []).forEach(function(n) { if (n.v || n.l) v++; if (n.c) v += countSectionVideos(n.c); });
+      (nodes || []).forEach(function(n) {
+        if (n.v || n.l) v++;
+        // Also check for video marker children (Instructional video / Live video)
+        if (n.c) {
+          n.c.forEach(function(ch) { if ((ch.t === 'Instructional video' && ch.v) || (ch.t === 'Live video' && ch.l)) v++; });
+          v += countSectionVideos(n.c);
+        }
+      });
       return v;
     }
     var vidTotal = countSectionVideos(section.nodes);
@@ -2494,7 +2503,10 @@ function updateHomePanel() {
     recentEl.innerHTML = '<div style="font-family:Barlow Condensed,sans-serif;font-size:10px;color:#556;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">Continue</div>';
     var rList = document.createElement('div');
     rList.style.cssText = 'display:flex;gap:6px;flex-wrap:wrap;';
+    var _seenLabels = new Set();
     recent.forEach(function(r) {
+      if (_seenLabels.has(r.label)) return;
+      _seenLabels.add(r.label);
       var chip = document.createElement('button');
       chip.style.cssText = 'background:var(--surface2);border:1px solid var(--border);color:var(--text-dim);font-family:Barlow Condensed,sans-serif;font-size:12px;padding:4px 10px;border-radius:12px;cursor:pointer;white-space:nowrap;transition:all 0.15s;';
       chip.textContent = r.label;
@@ -3693,7 +3705,10 @@ window.initGraph3D = (function() {
       let initSt=0;
       const initSim=setInterval(()=>{runForce3d(simNodes3d,ACTIVE_EDGES,4);syncEdges3d(null);initSt+=4;if(initSt>=160){clearInterval(initSim);autoFitCamera3d();var obt=document.getElementById('g3dOnboardingText');if(obt)obt.textContent='Click a position to explore techniques';}},16);
       // Auto-hide onboarding after 8 seconds regardless
-      setTimeout(function(){ var ob=document.getElementById('g3dOnboarding'); if(ob) ob.style.opacity='0'; setTimeout(function(){ if(ob) ob.style.display='none'; }, 1000); }, 8000);
+      // Update onboarding text after graph renders, then fade out
+      var ob=document.getElementById('g3dOnboardingText');
+      if(ob) ob.textContent='Click a position to explore techniques';
+      setTimeout(function(){ var obW=document.getElementById('g3dOnboarding'); if(obW) obW.style.opacity='0'; setTimeout(function(){ if(obW) obW.style.display='none'; }, 1000); }, 5000);
 
       // Camera controls
       let downX=0,downY=0,isDrag=false;
