@@ -5484,7 +5484,8 @@ _log('[GrapplingMap] Debug API ready: window.__APP_DEBUG__');
     status.style.display = ''; status.textContent = 'Creating account...'; status.style.color = '#667';
     if (!_supabase) { status.textContent = 'Auth service not available — check Supabase config'; status.style.color = '#f85149'; return; }
     try {
-      var result = await _supabase.auth.signUp({ email: email, password: password });
+      var _redirectUrl = window.location.origin + window.location.pathname;
+      var result = await _supabase.auth.signUp({ email: email, password: password, options: { emailRedirectTo: _redirectUrl } });
       if (result.error) {
         var errMsg = result.error.message || result.error.msg || (typeof result.error === 'string' ? result.error : JSON.stringify(result.error));
         status.textContent = errMsg; status.style.color = '#f85149'; return;
