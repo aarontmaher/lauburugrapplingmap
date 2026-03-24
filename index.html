@@ -461,11 +461,16 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
       <span class="belt-chevron">&#9662;</span>
     </div>
     <div class="belt-dropdown" id="beltDropdown">
-      <div class="belt-option current" data-belt="white" onclick="selectBelt('white');"><span class="belt-dot" style="background:#fff;"></span> White Belt</div>
-      <div class="belt-option future" data-belt="blue" onclick="selectBelt('blue');"><span class="belt-dot" style="background:#2563eb;"></span> Blue Belt</div>
+      <div style="font-size:9px;color:#556;letter-spacing:1px;text-transform:uppercase;padding:6px 14px 2px;">Filter by Syllabus</div>
+      <div class="belt-option" data-belt="all" onclick="applyBeltFilter(null);"><span class="belt-dot" style="background:transparent;border-color:#556;"></span> All Content</div>
+      <div class="belt-option current" data-belt="white" onclick="applyBeltFilter('white');"><span class="belt-dot" style="background:#fff;"></span> White Belt</div>
+      <div class="belt-option future" data-belt="blue" onclick="applyBeltFilter('blue');"><span class="belt-dot" style="background:#2563eb;"></span> Blue Belt</div>
       <div class="belt-option future" data-belt="purple" onclick="selectBelt('purple');"><span class="belt-dot" style="background:#7c3aed;"></span> Purple Belt</div>
       <div class="belt-option future" data-belt="brown" onclick="selectBelt('brown');"><span class="belt-dot" style="background:#92400e;"></span> Brown Belt</div>
       <div class="belt-option future" data-belt="black" onclick="selectBelt('black');"><span class="belt-dot" style="background:#1a1a1a;border-color:#555;"></span> Black Belt</div>
+      <div class="belt-dropdown-divider"></div>
+      <div style="font-size:9px;color:#556;letter-spacing:1px;text-transform:uppercase;padding:6px 14px 2px;">Syllabus</div>
+      <div class="belt-option" onclick="showBeltSyllabus(getCurrentBelt());"><span style="font-size:10px;">&#128196;</span> View Syllabus</div>
       <div class="belt-dropdown-divider"></div>
       <button class="belt-apply-btn" id="beltApplyBtn" onclick="applyForNextBelt();">Apply for Blue Belt</button>
     </div>
@@ -563,6 +568,7 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
     <kbd style="background:#1a1e28;border:1px solid #2a3040;border-radius:3px;padding:2px 6px;font-size:10px;color:var(--text-dim);">S</kbd><span>Random drill (shuffle)</span>
     <kbd style="background:#1a1e28;border:1px solid #2a3040;border-radius:3px;padding:2px 6px;font-size:10px;color:var(--text-dim);">V</kbd><span>All Videos</span>
     <kbd style="background:#1a1e28;border:1px solid #2a3040;border-radius:3px;padding:2px 6px;font-size:10px;color:var(--text-dim);">W</kbd><span>Recently Watched</span>
+    <kbd style="background:#1a1e28;border:1px solid #2a3040;border-radius:3px;padding:2px 6px;font-size:10px;color:var(--text-dim);">B</kbd><span>Cycle belt filter (All → White → Blue)</span>
     <kbd style="background:#1a1e28;border:1px solid #2a3040;border-radius:3px;padding:2px 6px;font-size:10px;color:var(--text-dim);">G</kbd><span>Toggle Reference ↔ Network</span>
     <kbd style="background:#1a1e28;border:1px solid #2a3040;border-radius:3px;padding:2px 6px;font-size:10px;color:var(--text-dim);">H</kbd><span>Toggle game coverage heatmap</span>
     <kbd style="background:#1a1e28;border:1px solid #2a3040;border-radius:3px;padding:2px 6px;font-size:10px;color:var(--text-dim);">N</kbd><span>Toggle Next Up suggestions</span>
@@ -869,6 +875,90 @@ var BELT_RANKS = [
   { id: 'black',  name: 'Black Belt',  color: '#1a1a1a', nextId: null }
 ];
 
+// ─── BELT SYLLABUS FILTER DATA ────────────────────────────────────────────────
+// Maps belt → positions (normalized names) → technique keywords for filtering.
+// An empty techniques array means "show all content for this position".
+// Technique keywords are matched as lowercase substrings within position subtrees.
+var BELT_SYLLABUS_FILTER = {
+  white: {
+    positions: {
+      // Wrestling / Hand Fighting
+      'collar_tie': ['arm drag', 'sweep single', 'double leg', 'front headlock'],
+      'underhook': ['arm drag', 'sweep single', 'double leg', 'front headlock'],
+      // Passing situations
+      'supine_guard': [],
+      'seated_guard': [],
+      'knee_shield_half_guard': [],
+      'closed_guard': [],
+      // Dominant Positions
+      'front_headlock': ['anaconda', 'go-behind', 'go behind'],
+      'side_control': ['kimura', 'mount'],
+      'mount': ['head arm choke', 'head-arm choke', 'back'],
+      'back_control': ['rear naked choke', 'rear naked', 'rnc'],
+      'turtle': ['back']
+    }
+  },
+  blue: {
+    includesLower: true,  // includes all white belt positions
+    positions: {
+      // All white belt positions (deepened - empty = show all)
+      'front_headlock': [],
+      'side_control': [],
+      'mount': [],
+      'back_control': [],
+      'turtle': [],
+      // New positions for blue belt
+      'half_guard': [],
+      'half_guard_passing': [],
+      'butterfly_guard': [],
+      'north_south': [],
+      'head_inside_single_leg': [],
+      'head_outside_single_leg': [],
+      'double_leg': [],
+      // Scrambles
+      'berimbolo': [],
+      'crab_ride': [],
+      'grounded_5050': []
+    }
+  }
+};
+
+function getBeltPositionSet(beltId) {
+  var data = BELT_SYLLABUS_FILTER[beltId];
+  if (!data) return new Set();
+  var posSet = new Set();
+  Object.keys(data.positions).forEach(function(p) { posSet.add(p); });
+  if (data.includesLower && BELT_SYLLABUS_FILTER.white) {
+    Object.keys(BELT_SYLLABUS_FILTER.white.positions).forEach(function(p) { posSet.add(p); });
+  }
+  return posSet;
+}
+
+function getBeltTechniqueFilters(beltId) {
+  var data = BELT_SYLLABUS_FILTER[beltId];
+  if (!data) return new Map();
+  var m = new Map();
+  Object.keys(data.positions).forEach(function(p) {
+    m.set(p, data.positions[p]);
+  });
+  if (data.includesLower && BELT_SYLLABUS_FILTER.white) {
+    Object.keys(BELT_SYLLABUS_FILTER.white.positions).forEach(function(p) {
+      var existing = m.get(p);
+      var lower = BELT_SYLLABUS_FILTER.white.positions[p];
+      if (!existing) {
+        m.set(p, lower);
+      } else if (existing.length === 0 || lower.length === 0) {
+        m.set(p, []);
+      } else {
+        var merged = existing.slice();
+        lower.forEach(function(t) { if (merged.indexOf(t) === -1) merged.push(t); });
+        m.set(p, merged);
+      }
+    });
+  }
+  return m;
+}
+
 function getCurrentBelt() {
   return UserStore.load('grapplingBelt') || 'white';
 }
@@ -1077,12 +1167,66 @@ function showBeltApplication(currentBeltId, nextBeltId) {
   modal.style.display = 'flex';
 }
 
+// ─── BELT SYLLABUS FILTER MODE ────────────────────────────────────────────────
+function applyBeltFilter(beltId) {
+  STATE.beltFilter = beltId;
+  // Close dropdown
+  var dd = document.getElementById('beltDropdown');
+  var badge = document.getElementById('beltBadge');
+  if (dd) dd.classList.remove('open');
+  if (badge) badge.classList.remove('open');
+
+  // Update belt badge UI to reflect filter state
+  var dot = document.getElementById('beltDot');
+  var label = document.getElementById('beltLabel');
+  if (beltId && BELT_SYLLABUS_FILTER[beltId]) {
+    var rank = getBeltRank(beltId);
+    if (dot) dot.style.background = rank.color;
+    if (label) label.textContent = rank.name + ' Filter';
+    if (badge) { badge.style.borderColor = 'rgba(232,255,71,0.4)'; badge.style.background = 'rgba(232,255,71,0.06)'; }
+  } else {
+    var currentRank = getBeltRank(getCurrentBelt());
+    if (dot) dot.style.background = currentRank.color;
+    if (label) label.textContent = currentRank.name;
+    if (badge) { badge.style.borderColor = ''; badge.style.background = ''; }
+  }
+
+  // Update dropdown selected states
+  document.querySelectorAll('#beltDropdown .belt-option[data-belt]').forEach(function(opt) {
+    opt.classList.remove('active');
+    var activeBelt = beltId || 'all';
+    if (opt.dataset.belt === activeBelt) opt.style.color = 'var(--accent)';
+    else opt.style.color = '';
+  });
+
+  if (!beltId) {
+    // Clear belt filter - re-apply current standard filter
+    applyRefFilter(STATE.currentFilter || 'all');
+    // Clear 3D belt filter
+    window._beltPositionSet = null;
+    if (typeof window._rebuildFilter3dBelt === 'function') window._rebuildFilter3dBelt();
+    showToast('Belt filter cleared — showing all content');
+    return;
+  }
+
+  showToast(getBeltRank(beltId).name + ' syllabus filter active');
+
+  // Apply to Reference tree (belt composition happens inside applyRefFilter)
+  applyRefFilter(STATE.currentFilter || 'all');
+
+  // Apply to 3D graph
+  var posSet = getBeltPositionSet(beltId);
+  window._beltPositionSet = posSet;
+  if (typeof window._rebuildFilter3dBelt === 'function') window._rebuildFilter3dBelt();
+}
+
 // ─── STATE ───────────────────────────────────────────────────────────────────
 const STATE = {
   progress: {},
   notes: {},
   currentNoteKey: null,
   currentFilter: 'all',
+  beltFilter: null,  // null = no belt filter, 'white'/'blue' = active belt syllabus filter
   totalNodes: 0,
   learnedNodes: 0
 };
@@ -2753,21 +2897,51 @@ function applyRefFilter(filter) {
     else if (filter === 'builtout') show = li.dataset.builtout === '1';
     li.style.display = show ? '' : 'none';
   });
-  if (filter !== 'all') revealAncestorItems();
+  // ── Belt filter composition: additionally hide positions/techniques not in active belt syllabus ──
+  if (STATE.beltFilter && BELT_SYLLABUS_FILTER[STATE.beltFilter]) {
+    var _beltPosSet = getBeltPositionSet(STATE.beltFilter);
+    var _beltTechFilters = getBeltTechniqueFilters(STATE.beltFilter);
+    document.querySelectorAll('.tree-item[data-depth="0"]').forEach(function(posLi) {
+      if (posLi.style.display === 'none') return; // already hidden by standard filter
+      var posLabel = posLi.querySelector(':scope > .node .node-label');
+      if (!posLabel) return;
+      var posNorm = normalizeSegment(posLabel.textContent.replace(' \u2605', '').trim());
+      if (!_beltPosSet.has(posNorm)) {
+        // Hide entire position subtree
+        posLi.style.display = 'none';
+        return;
+      }
+      // Check if we need technique-level filtering
+      var keywords = _beltTechFilters.get(posNorm);
+      if (keywords && keywords.length > 0) {
+        posLi.querySelectorAll('.tree-item').forEach(function(childLi) {
+          if (childLi.style.display === 'none') return; // already hidden
+          if (childLi.dataset.schema === '1' || childLi.dataset.ot === '1' || childLi.dataset.notes === '1') return;
+          var childLabel = childLi.querySelector(':scope > .node .node-label');
+          if (!childLabel) return;
+          var childText = childLabel.textContent.toLowerCase().trim();
+          var matches = keywords.some(function(kw) { return childText.indexOf(kw.toLowerCase()) !== -1; });
+          if (!matches) childLi.style.display = 'none';
+        });
+      }
+    });
+  }
+  if (filter !== 'all' || STATE.beltFilter) revealAncestorItems();
+  var beltActive = !!STATE.beltFilter;
   let anyVisible = false;
   document.querySelectorAll('.section').forEach(sec => {
     const visible = Array.from(sec.querySelectorAll('.tree-item')).some(li => li.style.display !== 'none');
     sec.style.display = visible ? '' : 'none';
     if (visible) anyVisible = true;
-    if (filter !== 'all' && visible) sec.classList.remove('collapsed');
+    if ((filter !== 'all' || beltActive) && visible) sec.classList.remove('collapsed');
   });
   // Update section header counts to reflect filtered results
   document.querySelectorAll('.section').forEach(sec => {
     var countSpan = sec.querySelector('.section-header span');
-    if (countSpan && filter !== 'all') {
+    if (countSpan && (filter !== 'all' || beltActive)) {
       var visibleItems = Array.from(sec.querySelectorAll('.tree-item[data-schema="0"][data-ot="0"][data-notes="0"]:not([style*="display: none"])')).length;
       countSpan.textContent = visibleItems + ' matching';
-    } else if (countSpan && filter === 'all') {
+    } else if (countSpan && filter === 'all' && !beltActive) {
       // Restore original counts
       var totalItems = sec.querySelectorAll('.tree-item').length;
       var posItems = sec.querySelectorAll('.tree-item[data-depth="0"]').length;
@@ -2776,7 +2950,7 @@ function applyRefFilter(filter) {
   });
   updateStats(); // Refresh dynamic header count for active filter
   const emptyEl = document.getElementById('refEmpty');
-  if (filter !== 'all' && !anyVisible) {
+  if ((filter !== 'all' || beltActive) && !anyVisible) {
     const labels = {
       drilling:'No techniques marked as Drilling yet.\nSelect techniques and mark them as Drilling to see them here.',
       mygame:'No techniques in My Game yet.\nTrack techniques you\'re working on to build your game map.',
@@ -4450,7 +4624,45 @@ window.initGraph3D = (function() {
         if(n.depth===1) ensureNextUpGlow3d(n);
       });
     }
+    // ── Belt filter overlay: hide non-belt nodes on top of status filter ──
+    if (window._beltPositionSet && window._beltPositionSet.size > 0) {
+      var beltPosSet = window._beltPositionSet;
+      var beltIds = new Set();
+      var netNdsBelt = NET_NODES.filter(function(n) { return n.in_network; });
+      netNdsBelt.forEach(function(n) {
+        if (n.depth !== 1) return;
+        var norm = normalizeSegment(n.label);
+        if (beltPosSet.has(norm)) beltIds.add(n.id);
+      });
+      // Include depth-2 children of matched positions
+      netNdsBelt.forEach(function(n) {
+        if (n.depth === 2 && beltIds.has(n.parent_id)) beltIds.add(n.id);
+      });
+      netNdsBelt.forEach(function(n) {
+        var m = meshMap3d[n.id]; if (!m) return;
+        if (!beltIds.has(n.id)) {
+          m.material.opacity = 0; m.visible = false;
+          var ring = ringMap3d[n.id]; if (ring) ring.visible = false;
+        }
+      });
+      edgeMeshes3d.forEach(function(e) {
+        if (!beltIds.has(e.source) || !beltIds.has(e.target)) {
+          e.line.visible = false; e._mat.opacity = 0;
+        }
+      });
+      // Orphans
+      NET_NODES.filter(function(n) { return isGraphableNode(n) && !n.in_network; }).forEach(function(n) {
+        var norm = normalizeSegment(n.label);
+        var m = meshMap3d[n.id]; if (!m) return;
+        if (!beltPosSet.has(norm)) { m.material.opacity = 0; m.visible = false; }
+      });
+    }
   }
+
+  // Expose belt rebuild hook for external applyBeltFilter() to trigger
+  window._rebuildFilter3dBelt = function() {
+    rebuildFilter3d(statusFilter3d);
+  };
 
   function drawLabels3d(){
     const lc=document.getElementById('g3dLabelCanvas');
@@ -5210,6 +5422,13 @@ document.addEventListener('keydown', e => {
   if (e.key === 'h' && !inInput && document.getElementById('graph3dView').style.display !== 'none') { if(window._g3dToggleHeatmap) window._g3dToggleHeatmap(); }
   // N: toggle Next Up suggestions on graph view
   if (e.key === 'n' && !inInput && document.getElementById('graph3dView').style.display !== 'none') { if(window._g3dToggleNextUp) window._g3dToggleNextUp(); }
+  // B: cycle belt filter (none → white → blue → none)
+  if (e.key === 'b' && !inInput) {
+    var _belts = [null, 'white', 'blue'];
+    var _curIdx = _belts.indexOf(STATE.beltFilter);
+    var _nextIdx = (_curIdx + 1) % _belts.length;
+    applyBeltFilter(_belts[_nextIdx]);
+  }
   // ?: toggle help panel
   if (e.key === '?' && !inInput) {
     var hp = document.getElementById('kbdHelpPanel');
@@ -5217,6 +5436,8 @@ document.addEventListener('keydown', e => {
   }
   // Esc clears technique selection when Reference tab is visible
   if (e.key === 'Escape' && document.getElementById('referenceView').style.display !== 'none') {
+    // If belt filter active, clear it first
+    if (STATE.beltFilter) { applyBeltFilter(null); return; }
     clearTechniqueSelection();
     // Also close help panel
     document.getElementById('kbdHelpPanel').style.display = 'none';
@@ -6317,6 +6538,13 @@ window.__APP_DEBUG__ = {
       if (boBtn) { boBtn.click(); return 'built-out toggled'; }
     }
     return 'filter not found: ' + name;
+  },
+  setBeltFilter: function(belt) {
+    if (typeof applyBeltFilter === 'function') {
+      applyBeltFilter(belt === 'all' || belt === 'none' ? null : belt);
+      return 'belt filter set: ' + (belt || 'none');
+    }
+    return 'belt filter not available';
   }
 };
 _log('[GrapplingMap] Debug API ready: window.__APP_DEBUG__');
