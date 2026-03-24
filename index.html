@@ -442,7 +442,7 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
 <!-- ══ REFERENCE VIEW ══════════════════════════════════════════════════════ -->
 <div id="referenceView" style="display:none;flex-direction:column;flex:1;min-height:0;">
   <div id="refHomePanel" style="display:none;padding:10px 12px;background:var(--surface);border-bottom:1px solid var(--border);flex-shrink:0;max-height:40vh;overflow-y:auto;">
-    <div id="refHomeStartHere" style="display:none;margin-bottom:8px;"></div>
+    <div id="refHomeStartHereLink" style="display:none;margin-bottom:8px;"></div>
     <div id="refHomeDrills" style="display:none;margin-bottom:8px;"></div>
     <div id="refHomeGame" style="display:none;margin-bottom:8px;"></div>
     <div id="refHomeTrain" style="display:none;margin-bottom:8px;"></div>
@@ -2284,12 +2284,16 @@ function updateHomePanel() {
   var recentEl = document.getElementById('refHomeRecent');
   var hasAnything = false;
 
-  // ─── START HERE (show for new users with no/little progress) ───
+  // ─── START HERE (modal for new users) ───
+  var startLinkEl = document.getElementById('refHomeStartHereLink');
   var totalTracked = Object.keys(STATE.progress).length;
-  if (totalTracked <= 3 && startEl) {
-    hasAnything = true;
-    startEl.style.display = '';
-    var _shSections = [
+  var _startHereDismissed = localStorage.getItem('startHereDismissed') === '1';
+  // Show as modal for new users who haven't dismissed
+  if (totalTracked <= 3 && !_startHereDismissed && document.getElementById('startHereModal')) {
+    var _shModal = document.getElementById('startHereModal');
+    var _shContent = document.getElementById('startHereContent');
+    if (_shModal.style.display !== 'flex') {
+      var _shSections = [
       { title: 'Wrestling', color: '#3abfaa', items: [
         { label: 'Front headlock snapdowns', search: 'snap' },
         { label: 'Double leg', search: 'double leg' },
@@ -2320,20 +2324,35 @@ function updateHomePanel() {
         { label: 'Underhook wrestle up (Knee Shield)', search: 'wrestle up' }
       ]}
     ];
-    var html = '<div style="font-family:Barlow Condensed,sans-serif;font-size:13px;font-weight:500;color:var(--accent);letter-spacing:0.5px;margin-bottom:6px;">Start Here</div>';
-    html += '<div style="font-family:Barlow Condensed,sans-serif;font-size:11px;color:#667;margin-bottom:8px;">New to no-gi? These fundamentals will get you started.</div>';
-    _shSections.forEach(function(sec) {
-      html += '<div style="margin-bottom:6px;">';
-      html += '<div style="font-family:Barlow Condensed,sans-serif;font-size:10px;color:' + sec.color + ';letter-spacing:1px;text-transform:uppercase;margin-bottom:3px;">' + sec.title + '</div>';
-      html += '<div style="display:flex;gap:5px;flex-wrap:wrap;">';
-      sec.items.forEach(function(item) {
-        html += '<button onclick="document.getElementById(\'refSearch\').value=\'' + item.search.replace(/'/g, "\\'") + '\';_refDoSearch();" style="background:rgba(255,255,255,0.02);border:1px solid var(--border);color:var(--text-dim);font-family:Barlow Condensed,sans-serif;font-size:11px;padding:3px 8px;border-radius:10px;cursor:pointer;white-space:nowrap;transition:all 0.15s;">' + item.label + '</button>';
+      var html = '<div style="font-family:Barlow Condensed,sans-serif;font-size:18px;font-weight:600;color:var(--accent);letter-spacing:0.5px;margin-bottom:4px;">New to Grappling? Start Here</div>';
+      html += '<div style="font-family:Barlow Condensed,sans-serif;font-size:12px;color:#667;margin-bottom:12px;">These no-gi fundamentals will get you started. Tap any item to find it.</div>';
+      _shSections.forEach(function(sec) {
+        html += '<div style="margin-bottom:8px;">';
+        html += '<div style="font-family:Barlow Condensed,sans-serif;font-size:11px;color:' + sec.color + ';letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">' + sec.title + '</div>';
+        html += '<div style="display:flex;gap:5px;flex-wrap:wrap;">';
+        sec.items.forEach(function(item) {
+          html += '<button onclick="document.getElementById(\'startHereModal\').style.display=\'none\';document.getElementById(\'refSearch\').value=\'' + item.search.replace(/'/g, "\\'") + '\';_refDoSearch();" style="background:rgba(255,255,255,0.03);border:1px solid var(--border);color:var(--text-dim);font-family:Barlow Condensed,sans-serif;font-size:12px;padding:5px 10px;border-radius:10px;cursor:pointer;white-space:nowrap;transition:all 0.15s;">' + item.label + '</button>';
+        });
+        html += '</div></div>';
       });
-      html += '</div></div>';
-    });
-    html += '<div style="margin-top:6px;font-size:10px;color:#445;font-family:Barlow Condensed,sans-serif;">Tap any item to find it in the reference.</div>';
-    startEl.innerHTML = html;
-  } else if (startEl) { startEl.style.display = 'none'; }
+      html += '<div style="display:flex;gap:10px;margin-top:14px;justify-content:center;">';
+      html += '<button onclick="document.getElementById(\'startHereModal\').style.display=\'none\';localStorage.setItem(\'startHereDismissed\',\'1\');" style="background:rgba(255,255,255,0.04);border:1px solid var(--border);color:var(--text-muted);font-family:Barlow Condensed,sans-serif;font-size:12px;padding:8px 16px;border-radius:8px;cursor:pointer;">I know what I\'m doing</button>';
+      html += '</div>';
+      _shContent.innerHTML = html;
+      _shModal.style.display = 'flex';
+      document.getElementById('startHereClose').addEventListener('click', function() {
+        _shModal.style.display = 'none';
+      });
+    }
+  }
+  // Show "Start Here" link on home panel for reopening
+  if (startLinkEl) {
+    if (totalTracked <= 3) {
+      hasAnything = true;
+      startLinkEl.style.display = '';
+      startLinkEl.innerHTML = '<button onclick="localStorage.removeItem(\'startHereDismissed\');updateHomePanel();" style="background:none;border:1px solid rgba(232,255,71,0.15);color:var(--accent);font-family:Barlow Condensed,sans-serif;font-size:11px;padding:4px 10px;border-radius:8px;cursor:pointer;opacity:0.7;">Start Here \u25B8</button>';
+    } else { startLinkEl.style.display = 'none'; }
+  }
 
   // ─── MY DRILLS ───
   var drillKeys = Object.entries(STATE.progress).filter(function(kv) { return kv[1] === 'drilling'; });
@@ -5323,6 +5342,13 @@ _log('[GrapplingMap] Debug API ready: window.__APP_DEBUG__');
   });
 })();
 </script>
+<!-- Start Here Modal -->
+<div id="startHereModal" style="display:none;position:fixed;inset:0;z-index:2500;align-items:center;justify-content:center;background:rgba(0,0,0,0.7);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);">
+  <div id="startHereModalInner" style="position:relative;width:min(90vw,480px);max-height:80vh;overflow-y:auto;background:rgba(14,16,21,0.98);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:24px;box-shadow:0 16px 64px rgba(0,0,0,0.6);-webkit-overflow-scrolling:touch;">
+    <button id="startHereClose" style="position:absolute;top:12px;right:12px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:#667;font-size:16px;width:32px;height:32px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;">×</button>
+    <div id="startHereContent"></div>
+  </div>
+</div>
 <script>
 // Register service worker for PWA/offline support
 if ('serviceWorker' in navigator) {
