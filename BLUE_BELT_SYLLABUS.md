@@ -64,31 +64,35 @@ White belt gave: 4 situations × 1 pass. Blue belt adds depth + new guard positi
 - Any 1 under-the-legs pass from mapped content — *needs Aaron selection*
 
 ## 3. Dominant Positions
-White belt gave: subs + transitions. Blue belt adds retention and second submissions.
+White belt gave: 1 sub + 1 transition per position. Blue belt adds retention, second subs, deeper transitions.
 
-### Side Control
-- Any 1 additional submission — *needs Aaron selection*
-- Any 1 retention technique — *needs Aaron selection*
+### Front Headlock (deeper)
+- Any 1 additional submission (beyond anaconda) from mapped content
+- Any 1 additional go-behind variation from mapped content
+- Any 1 retention/control technique from mapped content
 
-### Mount
-- Any 1 additional submission — *needs Aaron selection*
-- Any 1 retention technique — *needs Aaron selection*
+### Side Control (deeper)
+- Any 1 additional submission (beyond kimura) from mapped content
+- Any 1 retention technique from mapped content
+- Side Control → North South transition from mapped content
 
-### Back Control
-- Any 1 additional submission (beyond RNC) — *needs Aaron selection*
-- Any 1 control technique — *needs Aaron selection*
+### Mount (deeper)
+- Any 1 additional submission (beyond head arm choke) from mapped content
+- Any 1 retention technique from mapped content
+- Any 1 "opponent defends → follow-up" chain from mapped content
 
-### Front Headlock
-- Any 1 additional submission (beyond anaconda) — *needs Aaron selection*
-- Any 1 additional go-behind variation — *needs Aaron selection*
+### Back Control (deeper)
+- Any 1 additional submission (beyond RNC) from mapped content
+- Any 1 control/maintenance technique from mapped content
+- Any 1 "opponent escapes → counter" chain from mapped content
 
-### Turtle
-- Any 1 additional back take variation — *needs Aaron selection*
-- Any 1 submission from turtle — *needs Aaron selection*
+### Turtle (deeper)
+- Any 1 additional back take variation from mapped content
+- Any 1 submission from turtle from mapped content
 
 ### North South (NEW for Blue belt)
-- Any 1 submission — *needs Aaron selection*
-- Any 1 transition — *needs Aaron selection*
+- Any 1 submission from mapped content
+- Any 1 transition from mapped content
 
 ## 4. Guard
 White belt gave: Closed Guard + Knee Shield. Blue belt adds new guards and deeper attacks.
@@ -142,7 +146,7 @@ Second-layer "if they defend, then..." chains.
 |---------|--------|
 | Wrestling / Standing | **skeleton** — counters + new position + shot defence — needs Aaron |
 | Passing | **filled** — 7 passing areas (4 deeper + 3 new) |
-| Dominant Positions | **skeleton** — retention + 2nd subs + North South — needs Aaron |
+| Dominant Positions | **filled** — 6 positions with retention + 2nd subs + chains |
 | Guard | **skeleton** — deeper CG/KS + Half Guard + Butterfly — needs Aaron |
 | Defence / Escapes | **skeleton** — 2nd escapes + reversals — needs Aaron |
 | Chains / Follow-ups | **skeleton** — 4 if/then chains — needs Aaron |
