@@ -386,7 +386,7 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
 <header>
   <div style="display:flex;flex-direction:column;">
     <div class="logo">Grappling<span style="font-size:12px;letter-spacing:1px;color:var(--text-muted);margin-left:6px;font-family:'Barlow Condensed',sans-serif;font-weight:400;vertical-align:baseline;">MAP</span></div>
-    <div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;color:#556;letter-spacing:0.5px;margin-top:-2px;">No-Gi Reference &amp; Training</div>
+    <div id="headerSubtitle" style="font-family:'Barlow Condensed',sans-serif;font-size:10px;color:#556;letter-spacing:0.5px;margin-top:-2px;">No-Gi Reference &amp; Training</div>
   </div>
   <div id="headerStats" class="stats" style="display:none;">
     <div class="stat" style="display:none;"><div class="stat-num" id="drillingCount" style="color:var(--blue);">0</div><div class="stat-label">Drilling</div></div>
@@ -1025,6 +1025,19 @@ function updateStats() {
   // Show drilling count in header if any
   var drillingEl = document.getElementById('drillingCount');
   if (drillingEl) { var dr = 0; for (var vd of Object.values(STATE.progress)) { if (vd === 'drilling') dr++; } drillingEl.textContent = dr; drillingEl.parentElement.style.display = dr > 0 ? '' : 'none'; }
+  // Dynamic subtitle
+  var subEl = document.getElementById('headerSubtitle');
+  if (subEl) {
+    var totalTracked = Object.keys(STATE.progress).length;
+    if (totalTracked > 0) {
+      var topSections = {};
+      Object.keys(STATE.progress).forEach(function(k) { var s = k.split('|')[0].replace(/_/g,' '); topSections[s] = (topSections[s]||0)+1; });
+      var topSec = Object.entries(topSections).sort(function(a,b){return b[1]-a[1];})[0];
+      subEl.textContent = drilling + ' drilling · ' + learned + ' learned' + (topSec ? ' · ' + topSec[0] : '');
+    } else {
+      subEl.textContent = 'No-Gi Reference & Training';
+    }
+  }
   var drilling = 0;
   for (const v3 of Object.values(STATE.progress)) { if (v3 === 'drilling') drilling++; }
   const pctLearned = STATE.totalNodes > 0 ? (learned / STATE.totalNodes * 100) : 0;
@@ -4653,8 +4666,37 @@ document.getElementById('menuTimerBtn').addEventListener('click', function() {
     timeText.textContent = m + ':' + (s < 10 ? '0' : '') + s;
     var done = timerState.elapsed <= 0 && timerState.running;
     timeText.style.color = done ? '#f85149' : 'var(--accent)';
+    // Auto-advance to next drill when timer hits 0
+    if (done && !timerState._advanced) {
+      timerState._advanced = true;
+      timerState.running = false;
+      clearInterval(timerState.interval);
+      startBtn.textContent = 'Start';
+      // Get next random drill technique
+      var drillKeys = Object.entries(STATE.progress).filter(function(kv) { return kv[1] === 'drilling'; }).map(function(kv) { return kv[0]; });
+      if (drillKeys.length > 0) {
+        var nextKey = drillKeys[Math.floor(Math.random() * drillKeys.length)];
+        var segs = nextKey.split('|');
+        var nextLabel = segs[segs.length - 1].replace(/_/g, ' ');
+        var nextSection = segs[0].replace(/_/g, ' ');
+        tip.innerHTML = 'Time\u2019s up! Next: <span style="color:var(--accent);font-weight:500;">' + nextLabel + '</span>';
+        // Auto-start next round after 3 seconds
+        setTimeout(function() {
+          timerState.elapsed = 300; // default 5 min
+          timerState._advanced = false;
+          timerState.running = true;
+          startBtn.textContent = 'Pause';
+          updateTimerDisplay();
+          timerState.interval = setInterval(function() { timerState.elapsed--; updateTimerDisplay(); }, 1000);
+          showToast('Drill: ' + nextLabel);
+          switchToReferenceNode(nextLabel, nextSection);
+        }, 3000);
+      } else {
+        tip.textContent = 'Time\u2019s up! No drills in queue.';
+      }
+    }
     // Update tip text with state
-    if (done) tip.textContent = 'Time\u2019s up! Reset or set a new round';
+    else if (done) tip.textContent = 'Time\u2019s up! Reset or set a new round';
     else if (timerState.running) tip.textContent = 'Drilling\u2026';
     else if (timerState.elapsed > 0) tip.textContent = 'Paused \u2014 press Resume to continue';
     else tip.textContent = 'Set a round length, then start drilling';
@@ -4688,6 +4730,24 @@ document.getElementById('menuTimerBtn').addEventListener('click', function() {
   tip.style.cssText = 'text-align:center;margin-top:12px;font-size:10px;color:#556;font-family:Barlow Condensed,monospace;';
   tip.textContent = 'Set a round length, then start drilling';
   display.appendChild(tip);
+  // Session summary tracker
+  var sessionStart = Date.now();
+  var sessionDrillCount = 0;
+  var _origClose = window.closeListPanel;
+  window.closeListPanel = function() {
+    var elapsed = Math.round((Date.now() - sessionStart) / 60000);
+    if (elapsed > 0 || sessionDrillCount > 0) {
+      showToast('Session: ' + (elapsed || '<1') + ' min' + (sessionDrillCount > 0 ? ', ' + sessionDrillCount + ' drills' : ''));
+    }
+    window.closeListPanel = _origClose;
+    _origClose();
+  };
+  // Count drills via auto-advance
+  var _origAdvance = timerState._advanced;
+  Object.defineProperty(timerState, '_advanced', {
+    set: function(v) { if (v === true) sessionDrillCount++; _origAdvance = v; },
+    get: function() { return _origAdvance; }
+  });
   body.appendChild(display);
   panel.style.display = 'block';
 });
