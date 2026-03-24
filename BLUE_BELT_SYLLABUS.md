@@ -39,13 +39,29 @@ White belt gave: 3 positions × 4 attacks. Blue belt adds counters and second la
 - Shin whizzer defence chain — *needs Aaron selection*
 
 ## 2. Passing
-White belt gave: 4 situations × 1 pass. Blue belt adds second passes and guard-specific passing.
+White belt gave: 4 situations × 1 pass. Blue belt adds depth + new guard positions.
 
-- Supine guard passing — any 1 additional pass
-- Seated guard passing — any 1 additional pass
-- Knee shield half guard passing — any 1 additional pass
-- Half guard passing — any 1 core pass — *needs Aaron selection*
-- Butterfly guard passing — any 1 core pass — *needs Aaron selection*
+### Supine Guard Passing (deeper)
+- Any 1 additional pass from mapped content
+- J-point passing — any 2 connected passes from mapped content (e.g. north-south pass chain)
+
+### Seated Guard Passing (deeper)
+- Any 1 additional pass from mapped content
+
+### Knee Shield Half Guard Passing (deeper)
+- Any 1 additional pass from mapped content
+
+### Closed Guard Opening (deeper)
+- Any 1 additional opening sequence from mapped content
+
+### Half Guard Passing (NEW for Blue belt)
+- Any 1 core pass from mapped content
+
+### Butterfly Guard Passing (NEW for Blue belt)
+- Any 1 core pass from mapped content
+
+### Under-the-legs Passing (NEW for Blue belt)
+- Any 1 under-the-legs pass from mapped content — *needs Aaron selection*
 
 ## 3. Dominant Positions
 White belt gave: subs + transitions. Blue belt adds retention and second submissions.
@@ -125,7 +141,7 @@ Second-layer "if they defend, then..." chains.
 | Section | Status |
 |---------|--------|
 | Wrestling / Standing | **skeleton** — counters + new position + shot defence — needs Aaron |
-| Passing | **skeleton** — 2 new guards + additional passes — needs Aaron |
+| Passing | **filled** — 7 passing areas (4 deeper + 3 new) |
 | Dominant Positions | **skeleton** — retention + 2nd subs + North South — needs Aaron |
 | Guard | **skeleton** — deeper CG/KS + Half Guard + Butterfly — needs Aaron |
 | Defence / Escapes | **skeleton** — 2nd escapes + reversals — needs Aaron |
