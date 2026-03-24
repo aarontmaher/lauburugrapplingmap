@@ -5547,20 +5547,45 @@ _log('[GrapplingMap] Debug API ready: window.__APP_DEBUG__');
   // Logout (add to user button)
   authUserBtn.addEventListener('click', async function() {
     if (!confirm('Log out?')) return;
-    await _supabase.auth.signOut();
+    if (_supabase) await _supabase.auth.signOut();
+    localStorage.removeItem('gm_auth_cache');
     setAuthGuest();
     showToast('Logged out');
   });
 
-  // Auto-detect session on page load
+  // Auto-detect session on page load (with offline fallback)
   (async function() {
-    if (!_supabase) return;
+    if (!_supabase) {
+      // Supabase SDK not loaded — use localStorage as fallback (offline mode)
+      var cachedAuth = localStorage.getItem('gm_auth_cache');
+      if (cachedAuth) {
+        try { var cached = JSON.parse(cachedAuth); if (cached && cached.id) { setAuthMember(cached); console.log('Auth: using cached session (offline)'); } } catch(e) {}
+      }
+      return;
+    }
+    // Show loading state briefly
+    authBtn.textContent = '...';
+    authBtn.style.display = '';
     try {
       var session = await _supabase.auth.getSession();
       if (session.data && session.data.session && session.data.session.user) {
         setAuthMember(session.data.session.user);
+        // Cache for offline fallback
+        localStorage.setItem('gm_auth_cache', JSON.stringify({ id: session.data.session.user.id, email: session.data.session.user.email, displayName: session.data.session.user.user_metadata && session.data.session.user.user_metadata.display_name || session.data.session.user.email }));
+      } else {
+        authBtn.textContent = 'Create Account';
+        localStorage.removeItem('gm_auth_cache');
       }
-    } catch(e) { console.warn('Auth session check failed:', e); }
+    } catch(e) {
+      console.warn('Auth session check failed (may be offline):', e);
+      // Offline fallback — try cached auth
+      var cachedAuth2 = localStorage.getItem('gm_auth_cache');
+      if (cachedAuth2) {
+        try { var cached2 = JSON.parse(cachedAuth2); if (cached2 && cached2.id) { setAuthMember(cached2); showToast('Offline — using cached session'); } } catch(e2) {}
+      } else {
+        authBtn.textContent = 'Create Account';
+      }
+    }
   })();
 
   // Listen for auth state changes (e.g. email confirmation in another tab)
