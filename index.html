@@ -3307,10 +3307,47 @@ window.initGraph3D = (function() {
   }
   function applyProg3d() {
     const p=loadProg3d();
+    // First pass: set per-node status from progress
     NET_NODES.forEach(n=>{
       const s=p[n.key]||'none';
       n.status=s==='learned'?'learned':s==='drilling'?'drilling':'none';
     });
+    // Second pass: compute position-level game strength for depth-1 nodes
+    // Aggregate technique progress under each position key prefix
+    var posStats={};
+    Object.entries(p).forEach(function(kv){
+      var segs=kv[0].split('|');
+      if(segs.length<2) return;
+      var posKey=segs[0]+'|'+segs[1];
+      if(!posStats[posKey]) posStats[posKey]={drilling:0,learned:0,total:0,hits:0};
+      posStats[posKey].total++;
+      if(kv[1]==='drilling') posStats[posKey].drilling++;
+      if(kv[1]==='learned') posStats[posKey].learned++;
+    });
+    // Count hit frequency per position from successLog
+    var sLog=STATE.successLog||[];
+    sLog.forEach(function(e){
+      var segs=e.key.split('|');
+      if(segs.length<2) return;
+      var posKey=segs[0]+'|'+segs[1];
+      if(!posStats[posKey]) posStats[posKey]={drilling:0,learned:0,total:0,hits:0};
+      posStats[posKey].hits++;
+    });
+    // Assign game strength to depth-1 position nodes
+    NET_NODES.forEach(function(n){
+      if(n.depth!==1){n._gameStrength='none';n._gameHits=0;return;}
+      // Match by position key prefix (section|position)
+      var nSegs=n.key.split('|');
+      var nPosKey=nSegs.length>=2?nSegs[0]+'|'+nSegs[1]:n.key;
+      var ps=posStats[nPosKey];
+      if(!ps||ps.total===0){n._gameStrength='none';n._gameHits=0;return;}
+      n._gameHits=ps.hits;
+      if(ps.learned>=3) n._gameStrength='strong';
+      else if(ps.learned>=1||ps.drilling>=2) n._gameStrength='building';
+      else n._gameStrength='gap';
+    });
+    // Update game legend visibility
+    if(typeof window._updateGameLegend3d==='function') window._updateGameLegend3d();
   }
 
   function computeW3d(nodes, edges) {
@@ -3334,9 +3371,38 @@ window.initGraph3D = (function() {
   }
 
   function nodeCol3d(n,THREE){
+    // Game-strength coloring: Strong=green, Building=blue, Gap=warm, none=section color
+    var base=new THREE.Color(SECT_HEX3[n.section_idx]||0x445566);
+    var gs=n._gameStrength||'none';
+    if(gs==='strong'){
+      // Green tint blended with section color for identity
+      base.lerp(new THREE.Color(0x34d399),0.65);
+      return base;
+    }
+    if(gs==='building'){
+      // Blue tint blended with section color
+      base.lerp(new THREE.Color(0x47c8ff),0.55);
+      return base;
+    }
+    if(gs==='gap'){
+      // Warm orange hint — tracked but weak
+      base.lerp(new THREE.Color(0xff6b35),0.35);
+      return base;
+    }
+    // Fallback: per-technique status for non-position nodes or untracked positions
     if(n.status==='learned') return new THREE.Color(0xe8ff47);
-    if(n.status==='drilling'){const c=new THREE.Color(SECT_HEX3[n.section_idx]||0x445566);c.lerp(new THREE.Color(0x47c8ff),0.5);return c;}
-    const c=new THREE.Color(SECT_HEX3[n.section_idx]||0x445566);c.multiplyScalar(0.72);return c;
+    if(n.status==='drilling'){base=new THREE.Color(SECT_HEX3[n.section_idx]||0x445566);base.lerp(new THREE.Color(0x47c8ff),0.5);return base;}
+    base.multiplyScalar(0.72);return base;
+  }
+
+  // Compute emissive intensity for a node based on game strength + hit frequency
+  function nodeEmI3d(n){
+    var gs=n._gameStrength||'none';
+    if(gs==='strong') return 0.55+Math.min((n._gameHits||0)*0.01,0.15); // bright glow
+    if(gs==='building') return 0.35+Math.min((n._gameHits||0)*0.008,0.1);
+    if(gs==='gap') return 0.25;
+    // Fallback for non-game nodes
+    return n.status==='none'?0.12:0.35;
   }
 
   function randSph3d(r){const u=Math.random(),v=Math.random(),t=2*Math.PI*u,p=Math.acos(2*v-1);return[r*Math.sin(p)*Math.cos(t),r*Math.sin(p)*Math.sin(t),r*Math.cos(p)];}
@@ -3392,7 +3458,7 @@ window.initGraph3D = (function() {
   function resetHL3d(){
     selectedId3d=null;
     if(selRing3d)selRing3d.visible=false;
-    Object.values(meshMap3d).forEach(m=>{if(!m.visible)return;const nd=nodeMap3d[m.userData.id];if(!nd)return;if(!nd.in_network){m.material.opacity=ORPHAN_OPACITY;m.material.emissiveIntensity=0.05;return;}m.material.opacity=nd.status==='none'?0.72:0.9;m.material.emissiveIntensity=nd.status==='none'?0.12:0.35;});
+    Object.values(meshMap3d).forEach(m=>{if(!m.visible)return;const nd=nodeMap3d[m.userData.id];if(!nd)return;if(!nd.in_network){m.material.opacity=ORPHAN_OPACITY;m.material.emissiveIntensity=0.05;return;}m.material.opacity=(nd._gameStrength&&nd._gameStrength!=='none')||nd.status!=='none'?0.9:0.72;m.material.emissiveIntensity=nodeEmI3d(nd);});
     edgeMeshes3d.forEach(e=>{if(e.line.visible){e._mat.opacity=e._base;e.line.material.linewidth=1.5;}});
     Object.values(ringMap3d).forEach(r=>{if(r.visible)r.material.opacity=0.18;});
   }
@@ -3522,7 +3588,12 @@ window.initGraph3D = (function() {
 
     // ── Badges: keep → REF only ───────────────────────────────────────
     var b=document.getElementById('g3dDetailBadges');b.innerHTML='';
-    b.innerHTML='<span style="background:rgba(255,255,255,0.04);color:#8899aa;border:1px solid rgba(255,255,255,0.08);font-family:\'Barlow Condensed\',monospace;font-size:10px;letter-spacing:1px;padding:3px 10px;border-radius:12px;cursor:pointer;transition:all 0.15s;" onmouseenter="this.style.background=\'rgba(232,255,71,0.1)\';this.style.color=\'#c4cdd8\';this.style.borderColor=\'rgba(232,255,71,0.3)\'" onmouseleave="this.style.background=\'rgba(255,255,255,0.04)\';this.style.color=\'#8899aa\';this.style.borderColor=\'rgba(255,255,255,0.08)\'" onclick="closeDetail3d();switchToReferenceNode(\''+nd.label.replace(/'/g,"\\'")+'\',\''+nd.section.replace(/'/g,"\\'")+'\')">↗ Open in Reference</span>';
+    var _refBadge='<span style="background:rgba(255,255,255,0.04);color:#8899aa;border:1px solid rgba(255,255,255,0.08);font-family:\'Barlow Condensed\',monospace;font-size:10px;letter-spacing:1px;padding:3px 10px;border-radius:12px;cursor:pointer;transition:all 0.15s;" onmouseenter="this.style.background=\'rgba(232,255,71,0.1)\';this.style.color=\'#c4cdd8\';this.style.borderColor=\'rgba(232,255,71,0.3)\'" onmouseleave="this.style.background=\'rgba(255,255,255,0.04)\';this.style.color=\'#8899aa\';this.style.borderColor=\'rgba(255,255,255,0.08)\'" onclick="closeDetail3d();switchToReferenceNode(\''+nd.label.replace(/'/g,"\\'")+'\',\''+nd.section.replace(/'/g,"\\'")+'\')">↗ Open in Reference</span>';
+    var _gsBadge='';
+    if(nd._gameStrength==='strong') _gsBadge='<span style="background:rgba(52,211,153,0.08);color:#34d399;border:1px solid rgba(52,211,153,0.2);font-family:Barlow Condensed,monospace;font-size:10px;letter-spacing:1px;padding:3px 10px;border-radius:12px;">Strong</span>';
+    else if(nd._gameStrength==='building') _gsBadge='<span style="background:rgba(71,200,255,0.08);color:#47c8ff;border:1px solid rgba(71,200,255,0.2);font-family:Barlow Condensed,monospace;font-size:10px;letter-spacing:1px;padding:3px 10px;border-radius:12px;">Building</span>';
+    else if(nd._gameStrength==='gap') _gsBadge='<span style="background:rgba(255,107,53,0.08);color:#ff6b35;border:1px solid rgba(255,107,53,0.2);font-family:Barlow Condensed,monospace;font-size:10px;letter-spacing:1px;padding:3px 10px;border-radius:12px;">Gap</span>';
+    b.innerHTML=_refBadge+(_gsBadge?' '+_gsBadge:'');
 
     // ── Look up position in SECTIONS ──────────────────────────────────
     var sectNode = null;
@@ -4072,7 +4143,7 @@ window.initGraph3D = (function() {
     netNds.forEach(n=>{
       const m=meshMap3d[n.id];if(!m)return;
       m.geometry.dispose();m.geometry=new THREE.SphereGeometry(n._r,14,14);
-      if(aIds.has(n.id)){const col=nodeCol3d(n,THREE);m.material.color.copy(col);m.material.emissive.copy(col);m.material.emissiveIntensity=n.status==='none'?0.12:0.35;m.material.opacity=0.9;m.visible=true;}
+      if(aIds.has(n.id)){const col=nodeCol3d(n,THREE);m.material.color.copy(col);m.material.emissive.copy(col);m.material.emissiveIntensity=nodeEmI3d(n);m.material.opacity=0.9;m.visible=true;}
       else if(isEmpty){m.material.opacity=0.15;m.visible=true;}
       else{m.material.opacity=sf==='all'?0.06:0;m.visible=sf==='all';}
       const ring=ringMap3d[n.id];if(ring)ring.visible=aIds.has(n.id)&&showRings3d&&n._w>20;
@@ -4218,8 +4289,8 @@ window.initGraph3D = (function() {
       const secKey = makeKey(secTitle, secTitle);
       const secExpanded = EXPANDED.has(secKey);
       if (!anyExpanded || secExpanded) {
-        mesh.material.opacity = n.status === 'none' ? 0.72 : 0.9;
-        mesh.material.emissiveIntensity = n.status === 'none' ? 0.12 : 0.35;
+        mesh.material.opacity = (n._gameStrength&&n._gameStrength!=='none')||n.status!=='none' ? 0.9 : 0.72;
+        mesh.material.emissiveIntensity = nodeEmI3d(n);
       } else {
         mesh.material.opacity = 0.08;
         mesh.material.emissiveIntensity = 0.03;
@@ -4316,6 +4387,31 @@ window.initGraph3D = (function() {
           });
           g3dLeg.appendChild(row);
         });
+        // Game strength legend — shows when user has any tracked techniques
+        var gameItems=[
+          {color:'#34d399',label:'Strong'},
+          {color:'#47c8ff',label:'Building'},
+          {color:'#ff6b35',label:'Gap'}
+        ];
+        var gameSep=document.createElement('div');
+        gameSep.id='g3dLegendGameSep';
+        gameSep.style.cssText='height:1px;background:rgba(255,255,255,0.06);margin:4px 0;display:none;';
+        g3dLeg.appendChild(gameSep);
+        gameItems.forEach(function(gi){
+          var grow=document.createElement('div');
+          grow.className='g3d-legend-game';
+          grow.style.cssText='display:none;align-items:center;gap:6px;padding:1px 0;';
+          grow.innerHTML='<span style="width:7px;height:7px;border-radius:50%;background:'+gi.color+';display:inline-block;box-shadow:0 0 4px '+gi.color+'40;"></span><span style="color:#667;font-size:10px;">'+gi.label+'</span>';
+          g3dLeg.appendChild(grow);
+        });
+        // Show/hide game legend based on whether any positions have game strength
+        window._updateGameLegend3d=function(){
+          var hasGame=NET_NODES.some(function(n){return n._gameStrength&&n._gameStrength!=='none';});
+          var sep=document.getElementById('g3dLegendGameSep');
+          if(sep) sep.style.display=hasGame?'block':'none';
+          var gRows=document.querySelectorAll('.g3d-legend-game');
+          gRows.forEach(function(r){r.style.display=hasGame?'flex':'none';});
+        };
       }
       const lc=document.getElementById('g3dLabelCanvas');
       lc.width=W;lc.height=H;
@@ -4348,7 +4444,7 @@ window.initGraph3D = (function() {
         const p=randSph3d(n.in_network?450:650);n.x=p[0];n.y=p[1];n.z=p[2];
         const col=nodeCol3d(n,THREE);
         var opac = allOrphan ? 0.9 : (n.in_network ? 0.9 : ORPHAN_OPACITY);
-        var emI = allOrphan ? 0.12 : (n.in_network ? (n.status==='none'?0.12:0.35) : 0.05);
+        var emI = allOrphan ? 0.12 : (n.in_network ? nodeEmI3d(n) : 0.05);
         const mat=new THREE.MeshPhongMaterial({color:col.clone(),emissive:col.clone(),emissiveIntensity:emI,shininess:120,transparent:true,opacity:opac});
         const mesh=new THREE.Mesh(new THREE.SphereGeometry(n._r,14,14),mat);
         mesh.position.set(n.x,n.y,n.z);mesh.userData={id:n.id};pivot3d.add(mesh);meshMap3d[n.id]=mesh;
@@ -4420,7 +4516,11 @@ window.initGraph3D = (function() {
             hoveredId3d=nd.id;
             const col=SECT_CSS3[nd.section_idx]||'#888';
             const si=nd.status==='learned'?'<span style="color:#e8ff47"> ✓</span>':nd.status==='drilling'?'<span style="color:#47c8ff"> ⟳</span>':'';
-            tip.innerHTML=`<span style="color:${col};font-family:Barlow Condensed,monospace;font-weight:600;">${nd.label}</span>${si}`;
+            var gsTag='';
+            if(nd._gameStrength==='strong') gsTag=' <span style="color:#34d399;font-size:10px;">Strong</span>';
+            else if(nd._gameStrength==='building') gsTag=' <span style="color:#47c8ff;font-size:10px;">Building</span>';
+            else if(nd._gameStrength==='gap') gsTag=' <span style="color:#ff6b35;font-size:10px;">Gap</span>';
+            tip.innerHTML=`<span style="color:${col};font-family:Barlow Condensed,monospace;font-weight:600;">${nd.label}</span>${si}${gsTag}`;
             const r2=wrap.getBoundingClientRect();
             tip.style.display='block';tip.style.left=(e.clientX-r2.left+14)+'px';tip.style.top=(e.clientY-r2.top-10)+'px';
             canvas.style.cursor='pointer';
@@ -4616,7 +4716,7 @@ window.initGraph3D = (function() {
       document.getElementById('g3dOptRotate').addEventListener('change',function(){autoRotate3d=this.checked;});
       document.getElementById('g3dOptHubOnly').addEventListener('change',function(){
         hubOnly3d=this.checked;
-        NET_NODES.filter(isGraphableNode).forEach(n=>{const m=meshMap3d[n.id];if(!m||!m.visible)return;if(!n.in_network){m.material.opacity=ORPHAN_OPACITY;return;}m.material.opacity=hubOnly3d&&n._w<hubThresh3d?0.04:(n.status==='none'?0.72:0.9);});
+        NET_NODES.filter(isGraphableNode).forEach(n=>{const m=meshMap3d[n.id];if(!m||!m.visible)return;if(!n.in_network){m.material.opacity=ORPHAN_OPACITY;return;}m.material.opacity=hubOnly3d&&n._w<hubThresh3d?0.04:((n._gameStrength&&n._gameStrength!=='none')||n.status!=='none'?0.9:0.72);});
       });
       var _boDebugOnce=false;
       applyBuiltOut3d=function(){
@@ -4629,7 +4729,7 @@ window.initGraph3D = (function() {
           var sampleNode=NET_NODES.find(function(n){return n.in_network;});
           _log('builtOutNetMap size:',netMap.size,'| sample map key:',[...netMap.keys()][0],'| sample node key:',sampleNode?sampleNode.key:'N/A');
         }
-        NET_NODES.filter(isGraphableNode).forEach(function(n){var m=meshMap3d[n.id];if(!m)return;if(!n.in_network){if(builtOut3d){m.visible=false;}return;}var isBuilt=netMap.get(n.key)===true;if(builtOut3d&&!isBuilt){m.visible=false;m.material.opacity=0;}else{m.visible=true;m.material.opacity=n.status==='none'?0.72:0.9;}});
+        NET_NODES.filter(isGraphableNode).forEach(function(n){var m=meshMap3d[n.id];if(!m)return;if(!n.in_network){if(builtOut3d){m.visible=false;}return;}var isBuilt=netMap.get(n.key)===true;if(builtOut3d&&!isBuilt){m.visible=false;m.material.opacity=0;}else{m.visible=true;m.material.opacity=(n._gameStrength&&n._gameStrength!=='none')||n.status!=='none'?0.9:0.72;}});
         // Also hide edges to hidden nodes when Developed filter active
         if(builtOut3d){edgeMeshes3d.forEach(function(e){var sm=meshMap3d[e.source],tm=meshMap3d[e.target];e.line.visible=!!(sm&&sm.visible&&tm&&tm.visible);});}
         // Hide rings for hidden nodes
