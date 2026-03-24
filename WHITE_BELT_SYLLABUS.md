@@ -78,12 +78,26 @@ To move from White belt to Blue belt syllabus, the student must:
 - Underhook wrestle up (confirmed)
 
 ## 5. Defence / Escapes
-Core escapes from the worst positions. *Needs Aaron — which escapes for each?*
+Core escapes from the worst positions.
 
-- Mount escape — *needs Aaron selection*
-- Side control escape — *needs Aaron selection*
-- Back escape — *needs Aaron selection*
-- Turtle recovery — *needs Aaron selection*
+### Mount
+- 1 reguard — *needs Aaron selection*
+
+### Turtle
+- 1 reguard — *needs Aaron selection*
+- 1 counter — *needs Aaron selection*
+
+### Side Control
+- 1 reguard — *needs Aaron selection*
+- 1 wrestle up — *needs Aaron selection*
+
+### Back Control
+- 1 escape (choking side down) — *needs Aaron selection*
+- 1 escape (choking side up) — *needs Aaron selection*
+
+### Front Headlock
+- 1 counter — *needs Aaron selection*
+- 1 escape — *needs Aaron selection*
 
 ## 6. Core Submissions
 *(Already covered in Dominant Positions + Guard sections above. Not duplicated here.)*
@@ -102,6 +116,6 @@ Summary: SC→Mount, Mount→Back, Turtle→Back, FH→Back, plus passing transi
 | Passing | **filled** — 4 situations × 1 core technique each |
 | Dominant Positions | **filled** — 5 positions, all slots confirmed |
 | Guard | **filled** — Closed Guard (triangle, arm bar) + Knee Shield (wrestle up) |
-| Defence / Escapes | **skeleton** — 4 slots need Aaron's escape picks |
+| Defence / Escapes | **structured** — 5 positions, 9 slots need Aaron's exact technique picks |
 | Core Submissions | **consolidated** — covered in Dominant Positions + Guard |
 | Core Transitions | **consolidated** — covered in Dominant Positions + Passing |
