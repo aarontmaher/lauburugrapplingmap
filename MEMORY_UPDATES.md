@@ -78,3 +78,11 @@
 - Chains: 4 sub-sections (A-D) — Mount chain, FH chain, SC chain, Takedown auto-filled from Wrestling 1D
 - Total: 51 open picks need Aaron, 4 OPML gaps flagged (CG sweeps, BG GP offence, Half guard empty, BC defender sparse)
 - All sections now "filled" status — every pick has mapped technique options listed from OPML
+
+## 2026-03-24 — BELT-SYLLABUS-BLUE-GUARD-01: Guard Direction File
+- Created BELT_SYLLABUS_DIRECTION.md documenting overall belt syllabus direction
+- Blue belt Guard / Bottom already fully structured (5 sub-sections A-E) from BLUE-03 batch
+- Guard direction documented: Layer 1 (deepen White belt guards) + Layer 2 (new positions)
+- 7 open picks in Guard all need Aaron — no structural work remaining
+- 4 OPML gaps flagged (CG sweeps, BG GP offence, Half guard empty, Half butterfly sparse)
+- Wrestling picks confirmed blocked — Guard work proceeded independently as instructed

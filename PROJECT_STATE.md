@@ -51,7 +51,15 @@ J point, K guard, Quarter guard, Supine Guard, Mount, Turtle, Berimbolo, Grounde
 ## Uncommitted
 - This session's index.html changes not yet committed/pushed
 
+## Belt Syllabus
+- White belt: COMPLETE (all slots filled)
+- Blue belt: all 6 sections structured, 51 open picks need Aaron, 5 OPML gaps flagged
+- Blue belt Guard / Bottom: fully structured (5 sub-sections), 7 picks need Aaron
+- BELT_SYLLABUS_DIRECTION.md created with guard direction + overall status
+
 ## Input-limited (needs Aaron)
 - Octopus Guard OPML decision
 - Guard OT: 16/19 positions have zero OT lines
 - Saddle canonical name
+- Blue belt: 51 technique picks across all sections
+- OPML gaps: CG sweeps, BG GP offence, Half guard content, BC defender detail
