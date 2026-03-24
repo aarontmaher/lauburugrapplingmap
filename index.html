@@ -507,6 +507,7 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
     <div style="width:1px;height:22px;background:rgba(255,255,255,0.08);margin:0 4px;"></div>
     <button class="g3d-tb-btn" id="g3dBuiltOutBtn">Detailed</button>
     <div style="width:1px;height:22px;background:rgba(255,255,255,0.08);margin:0 4px;"></div>
+    <button class="g3d-tb-btn" id="g3dRecenterBtn">Recenter</button>
     <button class="g3d-tb-btn" id="g3dFindPathBtn">Find Path</button>
     <button class="g3d-tb-btn" id="g3dOptionsBtn">Settings</button>
     <div id="g3dMediaBtns" style="display:contents;"></div>
@@ -1082,12 +1083,12 @@ function buildPopup(popupEl, node, sectionTitle, color, pathKey) {
   if (node.v) {
     const vb = document.createElement('button');
     vb.className = 'btn-video';
-    vb.textContent = '📖 Instructional';
+    vb.textContent = '▶ Instructional';
     vb.addEventListener('click', () => {
       const vidWrap = popupEl.querySelector('.popup-video');
       const vf = popupEl.querySelector('iframe');
       if (vidWrap.style.display === 'block') {
-        vidWrap.style.display = 'none'; vf.src = ''; vb.textContent = '📖 Instructional';
+        vidWrap.style.display = 'none'; vf.src = ''; vb.textContent = '▶ Instructional';
       } else {
         const vidId = node.v.split('/').pop().split('?')[0];
         vf.src = 'https://www.youtube.com/embed/' + vidId + '?autoplay=1';
@@ -1101,12 +1102,12 @@ function buildPopup(popupEl, node, sectionTitle, color, pathKey) {
   if (node.l) {
     const lb = document.createElement('button');
     lb.className = 'btn-video btn-live';
-    lb.textContent = '🎥 Live';
+    lb.textContent = '▶ Live';
     lb.addEventListener('click', () => {
       const vidWrap = popupEl.querySelector('.popup-video');
       const vf = popupEl.querySelector('iframe');
       if (vidWrap.style.display === 'block') {
-        vidWrap.style.display = 'none'; vf.src = ''; lb.textContent = '🎥 Live';
+        vidWrap.style.display = 'none'; vf.src = ''; lb.textContent = '▶ Live';
       } else {
         const vidId = node.l.split('/').pop().split('?')[0];
         vf.src = 'https://www.youtube.com/embed/' + vidId + '?autoplay=1';
@@ -1273,7 +1274,7 @@ function buildNode(node, sectionTitle, depth, parentUl, parentKey, disambig, pos
     document.querySelectorAll('.inline-player').forEach(function(p) {
       if (p.closest('.tree-item') !== keepLi) {
         var btn = p.closest('.tree-item').querySelector('.btn-video');
-        if (btn && btn.textContent.includes('Close')) btn.textContent = btn.dataset.origLabel || '📖 Instructional';
+        if (btn && btn.textContent.includes('Close')) btn.textContent = btn.dataset.origLabel || '▶ Instructional';
         p.remove();
       }
     });
@@ -1283,13 +1284,13 @@ function buildNode(node, sectionTitle, depth, parentUl, parentKey, disambig, pos
     const vWatched = STATE.videosWatched && STATE.videosWatched[node.v];
     const vBtn = document.createElement('button');
     vBtn.className = 'btn-video';
-    vBtn.textContent = (vWatched ? '\u2713 ' : '') + '📖 Instructional';
+    vBtn.textContent = (vWatched ? '\u2713 ' : '') + '▶ Instructional';
     if (vWatched) vBtn.style.opacity = '0.6';
     vBtn.addEventListener('click', e => {
       e.stopPropagation();
       const vidId = node.v.split('/').pop().split('?')[0];
       const existing = li.querySelector('.inline-player-i');
-      if (existing) { existing.remove(); vBtn.textContent = (vWatched ? '\u2713 ' : '') + '📖 Instructional'; return; }
+      if (existing) { existing.remove(); vBtn.textContent = (vWatched ? '\u2713 ' : '') + '▶ Instructional'; return; }
       closeOtherPlayers(li);
       const pw = document.createElement('div');
       pw.className = 'inline-player inline-player-i';
@@ -1304,12 +1305,12 @@ function buildNode(node, sectionTitle, depth, parentUl, parentKey, disambig, pos
   if (node.l) {
     const lBtn = document.createElement('button');
     lBtn.className = 'btn-video btn-live';
-    lBtn.textContent = '🎥 Live';
+    lBtn.textContent = '▶ Live';
     lBtn.addEventListener('click', e => {
       e.stopPropagation();
       const vidId = node.l.split('/').pop().split('?')[0];
       const existing = li.querySelector('.inline-player-l');
-      if (existing) { existing.remove(); lBtn.textContent = '🎥 Live'; return; }
+      if (existing) { existing.remove(); lBtn.textContent = '▶ Live'; return; }
       const pw = document.createElement('div');
       pw.className = 'inline-player inline-player-l';
       pw.style.cssText = 'padding:8px 0 4px ' + (indent+28) + 'px;';
@@ -2516,7 +2517,8 @@ window.initGraph3D = (function() {
   let selectedId3d=null, hoveredId3d=null, selRing3d=null;
   var _zoomedNodeId = null, _savedPivot = null, _savedZoom = null;
   const isMobile3d=()=>window.matchMedia('(max-width:768px)').matches;
-  let autoRotate3d=true, showRings3d=true, showTopLabels3d=true;
+  var _isMobileGraph = window.innerWidth <= 768;
+  let autoRotate3d=!_isMobileGraph, showRings3d=true, showTopLabels3d=true;
   let globalEdgeOpac=0.50, hubOnly3d=false, hubThresh3d=20, builtOut3d=false, showOrphans3d=false;
   const orphanMeshes3d=[];
   let statusFilter3d='all';
@@ -3784,6 +3786,7 @@ window.initGraph3D = (function() {
       document.getElementById('g3dCollapseAll').addEventListener('click',()=>{EXPANDED.clear();if(window.cmSyncExpanded)window.cmSyncExpanded();if(window.refSyncExpanded)window.refSyncExpanded();if(window.g3dSyncExpanded)window.g3dSyncExpanded();});
       document.getElementById('g3dExpandAll').addEventListener('click',()=>{SECTIONS.forEach(s=>{const sk=makeKey(s.title,s.title);EXPANDED.add(sk);walkWithKeys(s.nodes,sk,(nd,k)=>{if(nd.c&&nd.c.length)EXPANDED.add(k);});});if(window.cmSyncExpanded)window.cmSyncExpanded();if(window.refSyncExpanded)window.refSyncExpanded();if(window.g3dSyncExpanded)window.g3dSyncExpanded();});
       document.getElementById('g3dReset').addEventListener('click',()=>{tRX=0;tRY=0;tZ3d=1100;resetHL3d();closeDetail3d();});
+      document.getElementById('g3dRecenterBtn').addEventListener('click',()=>{tRX=0;tRY=0;tZ3d=1100;});
       document.getElementById('g3dDetailClose').addEventListener('click',()=>{resetHL3d();closeDetail3d();});
       // Swipe-down-to-dismiss on mobile for detail panel
       (function(){
