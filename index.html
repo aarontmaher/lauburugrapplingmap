@@ -6204,6 +6204,35 @@ var AIActions = {
     if (!body) body = 'No connections mapped for ' + label;
     return { title: label + ' connections', body: body };
   },
+  nextMove: function() {
+    // Recommend positions connected to your game that you're NOT yet training
+    var trackedPosNorms = new Set();
+    Object.keys(STATE.progress).forEach(function(k) { trackedPosNorms.add(k.split('|')[1]); });
+    if (trackedPosNorms.size === 0) return { title: 'Start tracking first', body: 'Track a few techniques as Drilling, then ask me for your next move.' };
+    // Find graph neighbors of tracked positions that aren't tracked
+    var recommendations = [];
+    var seen = new Set();
+    NET_EDGES.forEach(function(e) {
+      var srcNorm = normalizeSegment(e.source_label), tgtNorm = normalizeSegment(e.target_label);
+      // If source is tracked and target is NOT
+      if (trackedPosNorms.has(srcNorm) && !trackedPosNorms.has(tgtNorm) && !seen.has(tgtNorm)) {
+        seen.add(tgtNorm); recommendations.push({ label: e.target_label, from: e.source_label, section: '' });
+      }
+      // If target is tracked and source is NOT
+      if (trackedPosNorms.has(tgtNorm) && !trackedPosNorms.has(srcNorm) && !seen.has(srcNorm)) {
+        seen.add(srcNorm); recommendations.push({ label: e.source_label, from: e.target_label, section: '' });
+      }
+    });
+    if (recommendations.length === 0) return { title: 'Your game covers all connected positions!', body: 'Every position connected to your current training is already tracked.' };
+    // Look up sections
+    var posSecMap = {};
+    SECTIONS.forEach(function(s) { (s.nodes || []).forEach(function(n) { posSecMap[n.t] = s.title; }); });
+    var items = recommendations.slice(0, 6).map(function(r) {
+      var sec = posSecMap[r.label] || '';
+      return { label: r.label, meta: 'from ' + r.from, onClick: function() { switchToReferenceNode(r.label, sec); } };
+    });
+    return { title: 'Expand your game (' + recommendations.length + ' suggestions)', items: items, body: recommendations.length > 6 ? '...and ' + (recommendations.length - 6) + ' more connected positions' : '' };
+  },
   weeklySummary: function() {
     var now = Date.now();
     var weekMs = 7 * 24 * 60 * 60 * 1000;
@@ -6295,6 +6324,7 @@ var AIActions = {
 
   var actions = [
     { label: 'What to drill?', fn: function() { renderResponse(AIActions.whatToDrill()); } },
+    { label: 'Next move', fn: function() { renderResponse(AIActions.nextMove()); } },
     { label: 'Weak areas', fn: function() { renderResponse(AIActions.weakAreas()); } },
     { label: 'Build session', fn: function() { renderResponse(AIActions.buildSession()); } },
     { label: 'My game', fn: function() { renderResponse(AIActions.myGame()); } },
@@ -6326,6 +6356,9 @@ var AIActions = {
     // Route to existing AI actions based on keywords
     if (q.includes('drill') && (q.includes('next') || q.includes('what') || q.includes('should') || q === 'drill' || q === 'drills')) {
       return renderResponse(AIActions.whatToDrill());
+    }
+    if (q.includes('next move') || q.includes('expand') || q.includes('grow') || q === 'next') {
+      return renderResponse(AIActions.nextMove());
     }
     if (q.includes('weak') || q.includes('gap') || q.includes('missing')) {
       return renderResponse(AIActions.weakAreas());
