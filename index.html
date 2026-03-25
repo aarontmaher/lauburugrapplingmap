@@ -289,7 +289,7 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
   #refBottomBar input { width: 100px; font-size: 16px; }
   #g3dToolbar { left: 8px !important; right: 8px !important; transform: none !important; bottom: calc(10px + env(safe-area-inset-bottom)) !important; max-width: 100% !important; gap: 4px !important; padding: 6px 8px !important; flex-wrap: wrap !important; row-gap: 6px !important; }
   #g3dToolbar input { width: 90px; font-size: 16px; }
-  .g3d-tb-btn { font-size: 11px; padding: 0 10px; height: 34px; min-width: 38px; }
+  .g3d-tb-btn { font-size: 11px; padding: 0 10px; height: 38px; min-width: 44px; }
   /* Toolbar dividers: collapse on wrap to save space */
   #refBottomBar > div[style*="width:1px"], #g3dToolbar > div[style*="width:1px"] { display: none; }
   /* Belt filter chip on toolbar */
@@ -332,8 +332,8 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
   /* Scroll fade hint for overflow filter bars */
   #refBottomBar::after { content: ''; position: absolute; right: 0; top: 0; bottom: 0; width: 24px; background: linear-gradient(to right, transparent, rgba(18,21,28,0.9)); pointer-events: none; z-index: 1; }
 
-  /* View tabs: full width on mobile */
-  .view-tab { flex: 1; text-align: center; padding: 8px 10px; font-size: 12px; }
+  /* View tabs: full width on mobile with WCAG touch targets */
+  .view-tab { flex: 1; text-align: center; padding: 10px 10px; font-size: 12px; min-height: 44px; }
 
   /* Video modal: near-full-screen on mobile */
   #videoModal { align-items: flex-start !important; padding-top: calc(40px + env(safe-area-inset-top)); }
@@ -3604,7 +3604,7 @@ window.initGraph3D = (function() {
     aEdges.forEach(e=>{var w=e.visibleWeight||e.weight;inn[e.target]=(inn[e.target]||0)+w;out[e.source]=(out[e.source]||0)+w;});
     active.forEach(n=>{
       if(n.depth===1){n._in=(inn[n.id]||0)+1;n._out=out[n.id]||0;n._w=n._in*1.5+n._out+8;n._r=Math.max(2.5,1.5+Math.pow(n._w,0.85)*1.8);}
-      if(SUBPOSITION_TRIAL&&n.depth===2){n._in=(inn[n.id]||0);n._out=out[n.id]||0;n._w=n._in+n._out+3;n._r=Math.max(1.5,1+Math.pow(n._w,0.7)*1.2);}
+      else if(SUBPOSITION_TRIAL&&n.depth===2){n._in=(inn[n.id]||0);n._out=out[n.id]||0;n._w=n._in+n._out+3;n._r=Math.max(1.5,1+Math.pow(n._w,0.7)*1.2);}
       else{n._in=inn[n.id]||0;n._out=out[n.id]||0;n._w=2;n._r=2.0;}
     });
     // Belt-relative node scaling: when belt filter shrinks the node set,
@@ -3643,13 +3643,17 @@ window.initGraph3D = (function() {
       if(isEmpty){e.line.visible=true;e._base=0.04;e._mat.opacity=0.04;return;}
       const vis=aIds.has(e.source)&&aIds.has(e.target);var ew=e.visibleWeight||e.weight;e.line.visible=vis;e._base=vis?Math.min(Math.max(0.2,0.2+ew*0.08),globalEdgeOpac):0;if(vis)e._mat.opacity=e._base;
     });
-    if(sf!=='all'&&aIds.size>0){
-      const asn=simNodes3d.filter(n=>aIds.has(n.id));
-      asn.forEach(n=>{const p=randSph3d(400);n.x=p[0];n.y=p[1];n.z=p[2];n.vx=0;n.vy=0;n.vz=0;const nd=nodeMap3d[n.id];if(nd){nd.x=n.x;nd.y=n.y;nd.z=n.z;}const m=meshMap3d[n.id];if(m)m.position.set(n.x,n.y,n.z);});
+    if(aIds.size>0){
+      var doRelayout = sf !== 'all';
+      var layoutNodes = doRelayout ? simNodes3d.filter(n=>aIds.has(n.id)) : simNodes3d;
+      var layoutEdges = doRelayout ? aEdges : ACTIVE_EDGES;
+      if (doRelayout) {
+        layoutNodes.forEach(n=>{const p=randSph3d(400);n.x=p[0];n.y=p[1];n.z=p[2];n.vx=0;n.vy=0;n.vz=0;const nd=nodeMap3d[n.id];if(nd){nd.x=n.x;nd.y=n.y;nd.z=n.z;}const m=meshMap3d[n.id];if(m)m.position.set(n.x,n.y,n.z);});
+      }
       syncEdges3d(aIds);
       if(window._g3dfsim)clearInterval(window._g3dfsim);
       let st=0;
-      window._g3dfsim=setInterval(()=>{runForce3d(simNodes3d.filter(n=>aIds.has(n.id)),aEdges,4);syncEdges3d(aIds);st+=4;if(st>=140)clearInterval(window._g3dfsim);},16);
+      window._g3dfsim=setInterval(()=>{runForce3d(layoutNodes,layoutEdges,4);syncEdges3d(doRelayout?aIds:null);st+=4;if(st>=140)clearInterval(window._g3dfsim);},16);
     }
     if(typeof applyBuiltOut3d==='function') applyBuiltOut3d();
     else if(builtOut3d) _warn('applyBuiltOut3d not available');
@@ -5943,7 +5947,7 @@ _log('[GrapplingMap] Debug API ready: window.__APP_DEBUG__');
   updateBeltVisual(currentBelt);
   window._getCurrentBelt = function() { return currentBelt; };
   window.BELT_POSITIONS = BELT_POSITIONS;
-  window._setBelt = function(belt) { setBelt(belt); if (beltFilterActive) applyBeltFilter(); };
+  window._setBelt = function(belt) { setBelt(belt); if (beltFilterActive) { applyBeltFilter(); if (window._g3dRebuildFilter) window._g3dRebuildFilter(); } };
 })();
 
 (function initAuthUI() {
