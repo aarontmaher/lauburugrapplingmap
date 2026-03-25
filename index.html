@@ -6056,6 +6056,28 @@ var AIActions = {
     if (outbound.length) body += 'Leads to: ' + [...new Set(outbound)].join(', ');
     if (!body) body = 'No connections mapped for ' + label;
     return { title: label + ' connections', body: body };
+  },
+  weeklySummary: function() {
+    var now = Date.now();
+    var weekMs = 7 * 24 * 60 * 60 * 1000;
+    var thisWeek = 0, lastWeek = 0;
+    var thisWeekTechs = [];
+    if (STATE.lastPracticed) {
+      Object.entries(STATE.lastPracticed).forEach(function(kv) {
+        var age = now - kv[1];
+        if (age < weekMs) {
+          thisWeek++;
+          var s = kv[0].split('|'); thisWeekTechs.push(s[s.length-1].replace(/_/g,' '));
+        } else if (age < weekMs * 2) { lastWeek++; }
+      });
+    }
+    var successThisWeek = (STATE.successLog || []).filter(function(e) { return (now - e.ts) < weekMs; }).length;
+    if (thisWeek === 0 && successThisWeek === 0) return { title: 'No activity this week', body: 'Start drilling to see your weekly summary here.' };
+    var body = thisWeek + ' technique' + (thisWeek !== 1 ? 's' : '') + ' practiced this week';
+    if (lastWeek > 0) body += ' (vs ' + lastWeek + ' last week)';
+    if (successThisWeek > 0) body += '\n' + successThisWeek + ' success' + (successThisWeek !== 1 ? 'es' : '') + ' logged';
+    var items = thisWeekTechs.slice(0, 6).map(function(t) { return { label: t }; });
+    return { title: 'This week', items: items.length ? items : undefined, body: body };
   }
 };
 
@@ -6123,7 +6145,8 @@ var AIActions = {
     { label: 'Weak areas', fn: function() { renderResponse(AIActions.weakAreas()); } },
     { label: 'Build session', fn: function() { renderResponse(AIActions.buildSession()); } },
     { label: 'My game', fn: function() { renderResponse(AIActions.myGame()); } },
-    { label: 'Connections', fn: function() { renderResponse(AIActions.connections()); } }
+    { label: 'Connections', fn: function() { renderResponse(AIActions.connections()); } },
+    { label: 'This week', fn: function() { renderResponse(AIActions.weeklySummary()); } }
   ];
 
   actions.forEach(function(a) {
