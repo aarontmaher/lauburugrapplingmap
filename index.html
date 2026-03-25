@@ -1148,7 +1148,8 @@ function updateStats() {
       var topSections = {};
       Object.keys(STATE.progress).forEach(function(k) { var s = k.split('|')[0].replace(/_/g,' '); topSections[s] = (topSections[s]||0)+1; });
       var topSec = Object.entries(topSections).sort(function(a,b){return b[1]-a[1];})[0];
-      subEl.textContent = drilling + ' drilling · ' + learned + ' learned' + (topSec ? ' · ' + topSec[0] : '');
+      var _drSub = 0; for (var _vs of Object.values(STATE.progress)) { if (_vs === 'drilling') _drSub++; }
+      subEl.textContent = _drSub + ' drilling · ' + learned + ' learned' + (topSec ? ' · ' + topSec[0] : '');
     } else {
       subEl.textContent = 'No-Gi Reference & Training';
     }
@@ -5895,6 +5896,7 @@ _log('[GrapplingMap] Debug API ready: window.__APP_DEBUG__');
 
   updateBeltVisual(currentBelt);
   window._getCurrentBelt = function() { return currentBelt; };
+  window.BELT_POSITIONS = BELT_POSITIONS;
   window._setBelt = function(belt) { setBelt(belt); if (beltFilterActive) applyBeltFilter(); };
 })();
 
@@ -6292,8 +6294,9 @@ var AIActions = {
       if (window._setBelt) window._setBelt(belt);
       return renderResponse({ title: belt.charAt(0).toUpperCase() + belt.slice(1) + ' Belt selected', body: 'Your belt has been set. The syllabus and recommendations will reflect this.' });
     }
-    // Fallback: try searching
-    hideAI();
+    // Fallback: show message, then search
+    renderResponse({ title: 'Searching for: ' + q, body: 'I didn\'t understand that as a command, so I\'m searching the reference for it.' });
+    setTimeout(function() { hideAI(); }, 1500);
     document.getElementById('refSearch').value = q;
     if (typeof _refDoSearch === 'function') _refDoSearch();
     switchToTab('reference');
