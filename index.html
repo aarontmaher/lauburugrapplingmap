@@ -3501,9 +3501,22 @@ window.initGraph3D = (function() {
     var beltPosSet = (window._beltFilterActive && window._getCurrentBelt) ? BELT_POSITIONS[window._getCurrentBelt()] : null;
     function isBeltAllowed(n) {
       if (!beltPosSet) return true; // no belt filter or Black belt = show all
-      if (n.depth !== 1) return true; // sub-positions follow parent
-      var posNorm = n.key ? n.key.split('|')[1] : normalizeSegment(n.label);
-      return beltPosSet.has(posNorm);
+      // Depth 1 = position node: check directly
+      if (n.depth === 1) {
+        var posNorm = n.key ? n.key.split('|')[1] : normalizeSegment(n.label);
+        return beltPosSet.has(posNorm);
+      }
+      // Depth 2+ = sub-position/child: check parent position
+      if (n.depth >= 2 && n.parent_id !== undefined && n.parent_id !== null) {
+        var parent = nodeMap3d[n.parent_id];
+        if (parent) {
+          var parentNorm = parent.key ? parent.key.split('|')[1] : normalizeSegment(parent.label);
+          return beltPosSet.has(parentNorm);
+        }
+      }
+      // Depth 0 = section: show if any child position is in belt set
+      if (n.depth === 0) return true; // sections always show, positions inside get filtered
+      return false; // strict: hide anything we can't classify
     }
 
     var isPositionFilter = (sf === 'drilling' || sf === 'learned' || sf === 'mygame');
