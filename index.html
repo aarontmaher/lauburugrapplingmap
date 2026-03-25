@@ -6260,7 +6260,13 @@ var AIActions = {
           meta.textContent = item.meta;
           row.appendChild(meta);
         }
-        if (item.onClick) row.addEventListener('click', function() { hideAI(); item.onClick(); });
+        if (item.onClick) {
+          row.addEventListener('click', function() { hideAI(); item.onClick(); });
+          var arrow = document.createElement('span');
+          arrow.style.cssText = 'color:#556;font-size:10px;flex-shrink:0;';
+          arrow.textContent = '→';
+          row.appendChild(arrow);
+        }
         responseEl.appendChild(row);
       });
     }
