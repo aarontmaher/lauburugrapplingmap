@@ -2437,7 +2437,7 @@ function switchToTab(view) {
   document.getElementById('referenceView').style.display = view === 'reference' ? 'flex' : 'none';
   document.getElementById('graph3dView').style.display = view === 'graph3d' ? 'flex' : 'none';
   document.getElementById('graph3dView').style.flexDirection = 'column';
-  if (view === 'graph3d') { requestAnimationFrame(() => requestAnimationFrame(initGraph3D)); if(window._g3dResume) window._g3dResume(); }
+  if (view === 'graph3d') { requestAnimationFrame(() => requestAnimationFrame(initGraph3D)); if(window._g3dResume) window._g3dResume(); setTimeout(function(){window.dispatchEvent(new Event('resize'));},100); }
   else { if(window._g3dPause) window._g3dPause(); }
   // Blur any focused search input on tab switch
   var activeEl = document.activeElement;
@@ -3520,14 +3520,14 @@ window.initGraph3D = (function() {
       if (!beltPosSet) return true; // no belt filter or Black belt = show all
       // Depth 1 = position node: check directly
       if (n.depth === 1) {
-        var posNorm = n.key ? n.key.split('|')[1] : normalizeSegment(n.label);
+        var _kp = n.key ? n.key.split('|') : []; var posNorm = _kp.length > 0 ? _kp[_kp.length - 1] : normalizeSegment(n.label);
         return beltPosSet.has(posNorm);
       }
       // Depth 2+ = sub-position/child: check parent position
       if (n.depth >= 2 && n.parent_id !== undefined && n.parent_id !== null) {
         var parent = nodeMap3d[n.parent_id];
         if (parent) {
-          var parentNorm = parent.key ? parent.key.split('|')[1] : normalizeSegment(parent.label);
+          var _pkp = parent.key ? parent.key.split('|') : []; var parentNorm = _pkp.length > 0 ? _pkp[_pkp.length - 1] : normalizeSegment(parent.label);
           return beltPosSet.has(parentNorm);
         }
       }
@@ -4350,7 +4350,7 @@ window.initGraph3D = (function() {
 
 
 document.addEventListener('keydown', e => {
-  var inInput = e.target.matches('input, textarea, [contenteditable]');
+  var inInput = e.target && e.target.matches ? e.target.matches('input, textarea, [contenteditable]') : false;
   // G: toggle Reference ↔ Network
   if (e.key === 'g' && !inInput) {
     const cur = document.querySelector('.view-tab.active')?.dataset.view;
@@ -4626,7 +4626,7 @@ document.getElementById('menuDrillingBtn').addEventListener('click', function() 
     var lp = STATE.lastPracticed && STATE.lastPracticed[d.key];
     return {
       label: d.label,
-      meta: d.meta + (lp ? ' · ' + timeAgo(lp) : ' · not yet practiced'),
+      meta: d.meta + (lp ? ' · ' + timeAgo(lp) : ' · marked for drilling'),
       onClick: function() { closeListPanel(); switchToReferenceNode(d.label, d.meta); }
     };
   }));
@@ -5911,7 +5911,8 @@ _log('[GrapplingMap] Debug API ready: window.__APP_DEBUG__');
     // Filter Reference tree to belt positions
     document.querySelectorAll('.tree-item[data-depth="0"]').forEach(function(li) {
       var key = li.dataset.key || '';
-      var posNorm = key.split('|')[1] || '';
+      var keyParts = key.split('|');
+      var posNorm = keyParts[keyParts.length - 1] || '';
       li.style.display = posSet.has(posNorm) ? '' : 'none';
     });
     // Hide sections with no visible positions
@@ -6314,7 +6315,7 @@ var AIActions = {
     if (result.action) {
       var btn = document.createElement('button');
       btn.style.cssText = 'margin-top:10px;background:var(--accent);border:none;color:#000;font-family:Barlow Condensed,sans-serif;font-size:12px;font-weight:500;padding:6px 14px;border-radius:6px;cursor:pointer;';
-      btn.textContent = 'Go there →';
+      btn.textContent = result.actionLabel || 'Go there →';
       btn.addEventListener('click', function() { hideAI(); result.action(); });
       responseEl.appendChild(btn);
     }
@@ -6390,12 +6391,8 @@ var AIActions = {
       if (window._setBelt) window._setBelt(belt);
       return renderResponse({ title: belt.charAt(0).toUpperCase() + belt.slice(1) + ' Belt selected', body: 'Your belt has been set. The syllabus and recommendations will reflect this.' });
     }
-    // Fallback: show message, then search
-    renderResponse({ title: 'Searching for: ' + q, body: 'I didn\'t understand that as a command, so I\'m searching the reference for it.' });
-    setTimeout(function() { hideAI(); }, 1500);
-    document.getElementById('refSearch').value = q;
-    if (typeof _refDoSearch === 'function') _refDoSearch();
-    switchToTab('reference');
+    // Fallback: show inline message with search link (don't auto-switch tabs)
+    renderResponse({ title: 'I didn\'t understand that', body: 'Try: "drill", "next move", "weak areas", "build session", "my game", or "this week".', actionLabel: 'Search for "' + q + '" →', action: function() { hideAI(); document.getElementById('refSearch').value = q; if (typeof _refDoSearch === 'function') _refDoSearch(); switchToTab('reference'); } });
   }
 
   function handleChatSubmit() {
