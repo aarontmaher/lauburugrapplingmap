@@ -410,11 +410,11 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
     </div>
     <div id="beltDropdown" style="display:none;position:absolute;right:0;top:calc(100% + 6px);background:rgba(14,16,21,0.97);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:8px 0;z-index:60;-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);box-shadow:0 8px 32px rgba(0,0,0,0.5);min-width:180px;">
       <div style="font-size:9px;color:#556;letter-spacing:1px;text-transform:uppercase;padding:4px 14px;">Belt Progression</div>
-      <button class="belt-opt" data-belt="white" style="display:block;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">⬜ White Belt</button>
-      <button class="belt-opt" data-belt="blue" style="display:block;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">🟦 Blue Belt</button>
-      <button class="belt-opt" data-belt="purple" style="display:block;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">🟪 Purple Belt</button>
-      <button class="belt-opt" data-belt="brown" style="display:block;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">🟫 Brown Belt</button>
-      <button class="belt-opt" data-belt="black" style="display:block;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">⬛ Black Belt</button>
+      <button class="belt-opt" data-belt="white" style="display:block;width:100%;text-align:left;background:none;border:none;color:#c4cdd8;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">⬜ White Belt</button>
+      <button class="belt-opt belt-locked" data-belt="blue" style="display:block;width:100%;text-align:left;background:none;border:none;color:#4a5568;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:default;opacity:0.5;">🔒 Blue Belt</button>
+      <button class="belt-opt belt-locked" data-belt="purple" style="display:block;width:100%;text-align:left;background:none;border:none;color:#4a5568;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:default;opacity:0.5;">🔒 Purple Belt</button>
+      <button class="belt-opt belt-locked" data-belt="brown" style="display:block;width:100%;text-align:left;background:none;border:none;color:#4a5568;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:default;opacity:0.5;">🔒 Brown Belt</button>
+      <button class="belt-opt belt-locked" data-belt="black" style="display:block;width:100%;text-align:left;background:none;border:none;color:#4a5568;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:default;opacity:0.5;">🔒 Black Belt</button>
       <div style="height:1px;background:rgba(255,255,255,0.06);margin:4px 0;"></div>
       <button id="beltFilterBtn" style="display:block;width:100%;text-align:left;background:none;border:none;color:var(--accent3);font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;font-weight:500;">Filter to syllabus</button>
       <button id="beltApplyBtn" style="display:block;width:100%;text-align:left;background:none;border:none;color:var(--accent);font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;font-weight:500;">Apply for Next Belt →</button>
@@ -2566,34 +2566,46 @@ function updateHomePanel() {
     var _shContent = document.getElementById('startHereContent');
     if (_shModal.style.display !== 'flex') {
       var _shSections = [
-      { title: 'Wrestling', color: '#3abfaa', items: [
-        { label: 'Front headlock snapdowns', search: 'snap' },
+      { title: 'Wrestling Offense', color: '#3abfaa', items: [
+        { label: 'Arm drag \u2192 Rear body lock', search: 'arm drag' },
+        { label: 'Sweep single', search: 'sweep single' },
         { label: 'Double leg', search: 'double leg' },
-        { label: 'Sweep single', search: 'single leg' },
-        { label: 'Arm drag', search: 'arm drag' },
-        { label: 'Collar tie snapdown', search: 'collar tie' },
-        { label: 'Underhook setups', search: 'underhook' }
+        { label: 'Collar tie \u2192 Snap down \u2192 Front headlock', search: 'snap' },
+        { label: 'Rear body lock offense', search: 'rear body lock' }
       ]},
-      { title: 'Passing', color: '#e05a30', items: [
-        { label: 'Supine guard pass', search: 'supine guard' },
-        { label: 'Seated guard pass', search: 'seated guard' },
-        { label: 'Knee shield pass', search: 'knee shield' }
+      { title: 'Hand Fighting', color: '#3abfaa', items: [
+        { label: 'Wrist control \u2192 Arm drag', search: 'wrist control' },
+        { label: 'Collar tie \u2192 Snap down', search: 'collar tie' },
+        { label: 'Underhook \u2192 Double leg', search: 'underhook' },
+        { label: 'Overhook \u2192 Ankle pick', search: 'overhook' }
+      ]},
+      { title: 'Guard Passing', color: '#e05a30', items: [
+        { label: 'Supine guard pass \u2192 J point', search: 'supine guard' },
+        { label: 'Seated guard pass \u2192 J point', search: 'seated guard' },
+        { label: 'J point \u2192 Toreando', search: 'toreando' },
+        { label: 'Knee shield smash \u2192 Side control / Mount', search: 'knee shield' },
+        { label: 'Shin pummel \u2192 J point', search: 'shin pummel' }
       ]},
       { title: 'Dominant Positions', color: '#f0c040', items: [
-        { label: 'Side Control \u2192 Mount', search: 'side control' },
-        { label: 'Mount \u2192 Back', search: 'mount' },
-        { label: 'Turtle \u2192 Back', search: 'turtle' },
-        { label: 'Front Headlock \u2192 Back', search: 'front headlock' },
-        { label: 'Rear naked choke', search: 'rear naked' },
-        { label: 'Kimura (Side Control)', search: 'kimura' },
+        { label: 'Anaconda (Front headlock)', search: 'anaconda' },
+        { label: 'Kimura (Side control)', search: 'kimura' },
         { label: 'Head arm choke (Mount)', search: 'head arm' },
-        { label: 'Bolt cutter to D\'Arce (Turtle)', search: 'bolt cutter' },
-        { label: 'Anaconda (Front Headlock)', search: 'anaconda' }
+        { label: 'Gift wrap back take (Mount)', search: 'gift wrap' },
+        { label: 'Seatbelt back take (Turtle)', search: 'seatbelt' }
       ]},
-      { title: 'Guard', color: '#9b72f5', items: [
-        { label: 'Triangle (Closed Guard)', search: 'triangle' },
-        { label: 'Arm bar (Closed Guard)', search: 'arm bar' },
-        { label: 'Underhook wrestle up (Knee Shield)', search: 'wrestle up' }
+      { title: 'Guard Playing', color: '#9b72f5', items: [
+        { label: 'Triangle (Closed guard)', search: 'triangle' },
+        { label: 'Arm bar (Closed guard)', search: 'arm bar' },
+        { label: 'Hip bump sweep (Closed guard)', search: 'hip bump' },
+        { label: 'Wrestle up (Knee shield)', search: 'wrestle up' },
+        { label: 'Kiss of the dragon (RDLR)', search: 'kiss of the dragon' },
+        { label: 'Straight ankle lock (SLX)', search: 'ankle lock' }
+      ]},
+      { title: 'Defence / Escapes', color: '#667', items: [
+        { label: 'Mount escape \u2192 Knee shield', search: 'ankle peel' },
+        { label: 'Side control escape \u2192 Knee shield', search: 'elbow flare' },
+        { label: 'Back control escape', search: 'baseball bat' },
+        { label: 'Turtle reguard', search: 'reguard' }
       ]}
     ];
       var html = '<div style="font-family:Barlow Condensed,sans-serif;font-size:18px;font-weight:600;color:var(--accent);letter-spacing:0.5px;margin-bottom:4px;">New to Grappling? Start Here</div>';
@@ -5819,6 +5831,14 @@ _log('[GrapplingMap] Debug API ready: window.__APP_DEBUG__');
     <div id="startHereContent"></div>
   </div>
 </div>
+
+<!-- Belt Application Modal -->
+<div id="beltApplyModal" style="display:none;position:fixed;inset:0;z-index:2500;align-items:center;justify-content:center;background:rgba(0,0,0,0.7);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);">
+  <div style="position:relative;width:min(90vw,520px);max-height:85vh;overflow-y:auto;background:rgba(14,16,21,0.98);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:28px;box-shadow:0 16px 64px rgba(0,0,0,0.6);-webkit-overflow-scrolling:touch;">
+    <button id="beltApplyClose" style="position:absolute;top:12px;right:12px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:#667;font-size:16px;width:32px;height:32px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;">×</button>
+    <div id="beltApplyContent"></div>
+  </div>
+</div>
 <script>
 // ─── AUTH UI LOGIC ──────────────────────────────────────────────────────────
 // ─── BELT PROGRESSION UI ────────────────────────────────────────────────────
@@ -5833,18 +5853,18 @@ _log('[GrapplingMap] Debug API ready: window.__APP_DEBUG__');
   var BELT_NAMES = { white: 'White Belt', blue: 'Blue Belt', purple: 'Purple Belt', brown: 'Brown Belt', black: 'Black Belt' };
   // Cumulative belt position sets (each includes all lower belts)
   var BELT_POSITIONS = {
-    white: new Set(['mount','side_control','back_control','turtle','front_headlock','closed_guard','knee_shield_half_guard','wrist_control','collar_tie','underhook','head_inside_single_leg','double_leg']),
+    white: new Set(['mount','side_control','back_control','turtle','front_headlock','closed_guard','knee_shield_half_guard','wrist_control','collar_tie','underhook','double_leg','supine_guard','j_point','seated_guard','reverse_de_la_riva','single_leg_x','overhook','wrestling_bodylock','shots']),
     blue: null, // computed below
     purple: null,
     brown: null,
     black: null // black = show all
   };
-  // Blue = White + half guard, butterfly, DLR, north south, half guard passing
-  BELT_POSITIONS.blue = new Set([...BELT_POSITIONS.white, 'half_guard','butterfly_guard','de_la_riva','north_south','half_guard_passing','seated_guard','supine_guard','j_point','quarter_guard']);
-  // Purple = Blue + K guard, outside ashi, knee shield camping, berimbolo, crab ride, grounded 50/50
-  BELT_POSITIONS.purple = new Set([...BELT_POSITIONS.blue, 'k_guard','outside_ashi','berimbolo','crab_ride','grounded_5050','overhook','2_on_1_you']);
+  // Blue = White + half guard, butterfly, DLR extended, north south, half guard passing, quarter guard
+  BELT_POSITIONS.blue = new Set([...BELT_POSITIONS.white, 'half_guard','butterfly_guard','de_la_riva','north_south','half_guard_passing','quarter_guard','head_inside_single_leg','headquarters']);
+  // Purple = Blue + K guard, outside ashi, berimbolo, crab ride, grounded 50/50, 2-on-1
+  BELT_POSITIONS.purple = new Set([...BELT_POSITIONS.blue, 'k_guard','outside_ashi','berimbolo','crab_ride','grounded_5050','2_on_1_you']);
   // Brown = Purple + all remaining guards + scrambles
-  BELT_POSITIONS.brown = new Set([...BELT_POSITIONS.purple, 'butterfly_ashi','single_leg_x','x_guard','shin_pin','headquarters','reverse_de_la_riva','half_butterfly']);
+  BELT_POSITIONS.brown = new Set([...BELT_POSITIONS.purple, 'butterfly_ashi','x_guard','shin_pin','half_butterfly']);
   // Black = everything
   BELT_POSITIONS.black = null;
 
@@ -5879,9 +5899,12 @@ _log('[GrapplingMap] Debug API ready: window.__APP_DEBUG__');
   dd.addEventListener('click', function(ev) { ev.stopPropagation(); });
   document.addEventListener('click', function() { dd.style.display = 'none'; });
 
-  // Belt option clicks
+  // Belt option clicks (locked belts blocked)
   document.querySelectorAll('.belt-opt').forEach(function(btn) {
-    btn.addEventListener('click', function() { setBelt(btn.dataset.belt); dd.style.display = 'none'; });
+    btn.addEventListener('click', function() {
+      if (btn.classList.contains('belt-locked')) { showToast('Complete your current belt to unlock ' + BELT_NAMES[btn.dataset.belt]); return; }
+      setBelt(btn.dataset.belt); dd.style.display = 'none';
+    });
   });
 
   // Belt syllabus filter toggle
@@ -5937,10 +5960,53 @@ _log('[GrapplingMap] Debug API ready: window.__APP_DEBUG__');
     if (window._g3dRebuildFilter) window._g3dRebuildFilter();
   });
 
-  // Apply for Next Belt
+  // Apply for Next Belt — real modal
+  var _beltApplyModal = document.getElementById('beltApplyModal');
+  var _beltApplyContent = document.getElementById('beltApplyContent');
+  document.getElementById('beltApplyClose').addEventListener('click', function() { _beltApplyModal.style.display = 'none'; });
+  _beltApplyModal.addEventListener('click', function(e) { if (e.target === _beltApplyModal) _beltApplyModal.style.display = 'none'; });
   document.getElementById('beltApplyBtn').addEventListener('click', function() {
     dd.style.display = 'none';
-    showToast('Belt application — coming soon. Record your video proof!');
+    var nextBelt = {white:'Blue',blue:'Purple',purple:'Brown',brown:'Black',black:null}[currentBelt];
+    if (!nextBelt) { showToast('You are already at the highest belt'); return; }
+    var posSet = BELT_POSITIONS[currentBelt];
+    var totalPositions = posSet ? posSet.size : 0;
+    var trackedCount = 0, learnedCount = 0;
+    if (posSet) {
+      Object.entries(STATE.progress).forEach(function(kv) {
+        var keyParts = kv[0].split('|');
+        var posNorm = keyParts.length >= 3 ? keyParts[2] : keyParts[keyParts.length - 1];
+        if (posSet.has(posNorm)) {
+          trackedCount++;
+          if (kv[1] === 'learned') learnedCount++;
+        }
+      });
+    }
+    var html = '<div style="font-family:Barlow Condensed,sans-serif;">';
+    html += '<div style="font-size:20px;font-weight:600;color:var(--accent);letter-spacing:0.5px;margin-bottom:4px;">Apply for ' + nextBelt + ' Belt</div>';
+    html += '<div style="font-size:12px;color:#667;margin-bottom:16px;">Progression is earned through demonstrated competence, not just checking boxes.</div>';
+    html += '<div style="font-size:13px;color:var(--text-dim);line-height:1.8;margin-bottom:16px;">';
+    html += '<div style="font-size:10px;color:#556;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">Requirements</div>';
+    html += '<div style="padding:4px 0;display:flex;align-items:flex-start;gap:8px;"><span style="color:var(--accent);flex-shrink:0;">1.</span> All ' + BELT_NAMES[currentBelt] + ' techniques marked as <span style="color:var(--green);font-weight:500;">Learned</span></div>';
+    html += '<div style="padding:4px 0;display:flex;align-items:flex-start;gap:8px;"><span style="color:var(--accent);flex-shrink:0;">2.</span> Each technique hit in live rolling (logged via the <span style="color:var(--blue);">success button</span>)</div>';
+    html += '<div style="padding:4px 0;display:flex;align-items:flex-start;gap:8px;"><span style="color:var(--accent);flex-shrink:0;">3.</span> Video footage of key techniques being executed in live rolling</div>';
+    html += '<div style="padding:4px 0;display:flex;align-items:flex-start;gap:8px;"><span style="color:var(--accent);flex-shrink:0;">4.</span> Additional general live rolling footage showing overall competence</div>';
+    html += '<div style="padding:4px 0;display:flex;align-items:flex-start;gap:8px;"><span style="color:var(--accent);flex-shrink:0;">5.</span> Demonstration that you can <em>apply</em> these techniques, not just know they exist</div>';
+    html += '</div>';
+    // Progress summary
+    html += '<div style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:8px;padding:12px 14px;margin-bottom:16px;">';
+    html += '<div style="font-size:10px;color:#556;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">Your Progress</div>';
+    html += '<div style="font-size:13px;color:var(--text-dim);">' + trackedCount + ' techniques tracked · ' + learnedCount + ' learned</div>';
+    html += '<div style="margin-top:8px;height:6px;background:rgba(255,255,255,0.04);border-radius:3px;overflow:hidden;">';
+    var pct = totalPositions > 0 ? Math.round(learnedCount / totalPositions * 100) : 0;
+    html += '<div style="height:100%;width:' + pct + '%;background:var(--accent);border-radius:3px;transition:width 0.3s;"></div>';
+    html += '</div>';
+    html += '<div style="font-size:10px;color:#556;margin-top:4px;">' + pct + '% of positions at Learned status</div>';
+    html += '</div>';
+    html += '<div style="font-size:11px;color:#556;font-style:italic;text-align:center;">Belt applications will be reviewed manually. This system is about real progression.</div>';
+    html += '</div>';
+    _beltApplyContent.innerHTML = html;
+    _beltApplyModal.style.display = 'flex';
   });
 
   updateBeltVisual(currentBelt);
