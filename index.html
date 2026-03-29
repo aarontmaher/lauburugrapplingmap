@@ -637,7 +637,7 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
     <button class="btn-save-note" id="noteSaveBtn">Save Note</button>
     <button class="btn-clear-note" id="noteTimestampBtn" title="Insert timestamp marker">⏱ Timestamp</button>
     <button class="btn-clear-note" id="noteClearBtn">Clear</button>
-    <button class="btn-clear-note" id="noteCloseBtn" style="margin-left:auto;">Close</button>
+    <button class="btn-clear-note" id="noteCloseBtn" style="margin-left:auto;" onclick="if(typeof closeNotePanel==='function')closeNotePanel();">Close</button>
   </div>
 </div>
 
@@ -860,7 +860,8 @@ function saveState() {
     lastPracticed: STATE.lastPracticed || {},
     videosWatched: STATE.videosWatched || {},
     successLog: STATE.successLog || [],
-    drillingStarted: STATE.drillingStarted || {}
+    drillingStarted: STATE.drillingStarted || {},
+    drillTime: STATE.drillTime || {}
   };
   UserStore.saveAppState(appState);
 }
@@ -899,6 +900,7 @@ function loadState() {
     STATE.videosWatched = appState.videosWatched || {};
     STATE.successLog = appState.successLog || [];
     STATE.drillingStarted = appState.drillingStarted || {};
+    STATE.drillTime = appState.drillTime || {};
   }
 }
 
@@ -992,7 +994,14 @@ function updateBottomBarMedia() {
     shareBtn.textContent = '\u{1F517} Share';
     shareBtn.style.cssText = 'border-radius:12px;';
     shareBtn.addEventListener('click', function() {
-      var url = location.origin + location.pathname + '#' + (c.id === 'refMediaBtns' ? 'ref' : 'net') + '/' + encodeURIComponent(SELECTED_NODE.label) + (SELECTED_NODE.section ? '/' + encodeURIComponent(SELECTED_NODE.section) : '');
+      // CW17: Use technique key for deep links when available
+      var hashPart;
+      if (SELECTED_NODE.key && SELECTED_NODE.key.indexOf('|') !== -1) {
+        hashPart = 'tech=' + encodeURIComponent(SELECTED_NODE.key);
+      } else {
+        hashPart = 'pos=' + encodeURIComponent(SELECTED_NODE.label) + (SELECTED_NODE.section ? '&sec=' + encodeURIComponent(SELECTED_NODE.section) : '');
+      }
+      var url = location.origin + location.pathname + '#' + hashPart;
       navigator.clipboard.writeText(url).then(function() {
         shareBtn.textContent = '\u2713 Copied';
         setTimeout(function() { shareBtn.textContent = '\u{1F517} Share'; }, 1500);
@@ -1541,6 +1550,17 @@ function buildNode(node, sectionTitle, depth, parentUl, parentKey, disambig, pos
   });
   li.dataset.progress = curProg;
   actions.appendChild(prog);
+  // CC3: Drilling duration display
+  var _dtSecs = STATE.drillTime && STATE.drillTime[key] ? STATE.drillTime[key] : 0;
+  if (_dtSecs > 0) {
+    var _dtSpan = document.createElement('span');
+    _dtSpan.className = 'drill-time-label';
+    _dtSpan.style.cssText = 'font-family:DM Mono,monospace;font-size:9px;color:var(--text-muted);white-space:nowrap;margin-left:2px;';
+    var _dtMin = Math.round(_dtSecs / 60);
+    _dtSpan.textContent = (_dtMin < 1 ? '<1' : _dtMin) + ' min drilled';
+    _dtSpan.dataset.drillTimeKey = key;
+    actions.appendChild(_dtSpan);
+  }
   } // end !isSchemaHeading
 
   // Note button (skip for schema headings)
@@ -2261,7 +2281,8 @@ function revealAncestorItems() {
 // ─── SEARCH (Reference) ───────────────────────────────────────────────────────
 let _refSearchTimer;
 // BJJ spelling variants: compound→spaced forms for search normalization
-var _bjjAliases = {'armbar':'arm bar','armbars':'arm bar','armlock':'arm lock','leglock':'leg lock','leglocks':'leg lock','headlock':'head lock','kimura':'kimura','kneebar':'knee bar','toebar':'toe bar','footlock':'foot lock','heelhook':'heel hook','wristlock':'wrist lock','bodylock':'body lock','backtake':'back take','singleleg':'single leg','doubleleg':'double leg','halfguard':'half guard','closedguard':'closed guard','openguard':'open guard','dlariva':'de la riva','delariva':'de la riva','rdlr':'reverse de la riva','slx':'single leg x','xguard':'x guard','northsouth':'north south','sidecontrol':'side control','backcontrol':'back control','fronthead':'front headlock','frontheadlock':'front headlock','kneeshield':'knee shield','butterflyhalf':'half butterfly','rnc':'rear naked choke','rearnakedchoke':'rear naked choke','rearnaked':'rear naked','darce':'darce','anaconda':'anaconda','guillotine':'guillotine','triangle':'triangle','armtriangle':'arm triangle'};
+// CW51: BJJ search alias map — normalizes common spelling variants
+var _bjjAliases = {'armbar':'arm bar','armbars':'arm bar','armlock':'arm lock','leglock':'leg lock','leglocks':'leg lock','headlock':'head lock','kimura':'kimura','kneebar':'knee bar','toebar':'toe bar','footlock':'foot lock','heelhook':'heel hook','wristlock':'wrist lock','bodylock':'body lock','backtake':'back take','singleleg':'single leg','doubleleg':'double leg','halfguard':'half guard','closedguard':'closed guard','openguard':'open guard','dlariva':'de la riva','delariva':'de la riva','dlr':'de la riva','rdlr':'reverse de la riva','slx':'single leg x','xguard':'x guard','northsouth':'north south','sidecontrol':'side control','backcontrol':'back control','fronthead':'front headlock','frontheadlock':'front headlock','kneeshield':'knee shield','butterflyhalf':'half butterfly','rnc':'rear naked choke','rearnakedchoke':'rear naked choke','rearnaked':'rear naked','darce':'d\'arce','darcechoke':'d\'arce','anaconda':'anaconda','guillotine':'guillotine','triangle':'triangle','armtriangle':'arm triangle','kneecut':'knee cut','kneeslice':'knee slice','headsingle':'head inside single leg','headoutsingle':'head outside single leg','lowanke':'low ankle','anklepick':'ankle pick','omoplata':'omoplata','berimbolo':'berimbolo','crabride':'crab ride','kissofthedragon':'kiss of the dragon','kotd':'kiss of the dragon','giftwrap':'gift wrap','bodytriangle':'body triangle','seatbelt':'seatbelt','crucifix':'crucifix','lockdown':'lockdown','electricchair':'electric chair','twister':'twister','katagatame':'head arm choke','headandarm':'head arm choke','headarm':'head arm choke','americana':'americana','ezekiel':'ezekiel','gogoplata':'gogoplata','guillotines':'guillotine','rncchoke':'rear naked choke','mataleao':'rear naked choke','toehold':'toe hold','straightankle':'straight ankle','outsideashi':'outside ashi','insideashi':'inside ashi','butterflyashi':'butterfly ashi','5050':'50/50','fiftyfifty':'50/50','kguard':'k guard','quarterguard':'quarter guard','supineguard':'supine guard','jpoint':'j point','shinpin':'shin pin','headquarters':'headquarters','halfbutterfly':'half butterfly','seatedguard':'seated guard'};
 function _refDoSearch() {
   var q = document.getElementById('refSearch').value.toLowerCase().trim();
   // Expand BJJ aliases for search
@@ -2558,6 +2579,21 @@ function refreshAllViews() {
     const nb = li.querySelector('.btn-note');
     if (nb) nb.className = STATE.notes[key] ? 'btn-note has-note' : 'btn-note';
     li.dataset.hasNote = STATE.notes[key] ? '1' : '0';
+    // CC3: Update drill time labels
+    var dtLabel = li.querySelector('.drill-time-label');
+    var dtSecs = STATE.drillTime && STATE.drillTime[key] ? STATE.drillTime[key] : 0;
+    if (dtSecs > 0 && !dtLabel) {
+      dtLabel = document.createElement('span');
+      dtLabel.className = 'drill-time-label';
+      dtLabel.style.cssText = 'font-family:DM Mono,monospace;font-size:9px;color:var(--text-muted);white-space:nowrap;margin-left:2px;';
+      dtLabel.dataset.drillTimeKey = key;
+      var acts = li.querySelector('.node-actions');
+      if (acts) acts.appendChild(dtLabel);
+    }
+    if (dtLabel) {
+      var dtMin = Math.round(dtSecs / 60);
+      dtLabel.textContent = (dtMin < 1 ? '<1' : dtMin) + ' min drilled';
+    }
   });
   // Re-apply current filter so items leaving a state disappear immediately
   if (STATE.currentFilter && STATE.currentFilter !== 'all') applyRefFilter(STATE.currentFilter);
@@ -2586,51 +2622,39 @@ function updateHomePanel() {
     var _shModal = document.getElementById('startHereModal');
     var _shContent = document.getElementById('startHereContent');
     if (_shModal.style.display !== 'flex') {
+      // P3/CW55: Aaron-approved Start Here content
       var _shSections = [
-      { title: 'Wrestling Offense', color: '#3abfaa', items: [
-        { label: 'Arm drag \u2192 Rear body lock', search: 'arm drag' },
-        { label: 'Sweep single', search: 'sweep single' },
+      { title: 'Wrestling', color: '#3abfaa', items: [
+        { label: 'Front headlock snapdowns', search: 'snapdown' },
         { label: 'Double leg', search: 'double leg' },
-        { label: 'Collar tie \u2192 Snap down \u2192 Front headlock', search: 'snap' },
-        { label: 'Rear body lock offense', search: 'rear body lock' }
+        { label: 'Sweep single', search: 'sweep single' },
+        { label: 'Wrist control \u2192 Arm drag', search: 'arm drag' },
+        { label: 'Collar tie \u2192 Snapdown', search: 'collar tie' }
       ]},
-      { title: 'Hand Fighting', color: '#3abfaa', items: [
-        { label: 'Wrist control \u2192 Arm drag', search: 'wrist control' },
-        { label: 'Collar tie \u2192 Snap down', search: 'collar tie' },
-        { label: 'Underhook \u2192 Double leg', search: 'underhook' },
-        { label: 'Overhook \u2192 Ankle pick', search: 'overhook' }
-      ]},
-      { title: 'Guard Passing', color: '#e05a30', items: [
-        { label: 'Supine guard pass \u2192 J point', search: 'supine guard' },
-        { label: 'Seated guard pass \u2192 J point', search: 'seated guard' },
-        { label: 'J point \u2192 Toreando', search: 'toreando' },
-        { label: 'Knee shield smash \u2192 Side control / Mount', search: 'knee shield' },
-        { label: 'Shin pummel \u2192 J point', search: 'shin pummel' }
+      { title: 'Passing', color: '#e05a30', items: [
+        { label: 'Supine guard \u2014 1 core pass', search: 'supine guard' },
+        { label: 'Seated guard \u2014 1 core pass', search: 'seated guard' },
+        { label: 'Knee shield half guard \u2014 1 core pass', search: 'knee shield' }
       ]},
       { title: 'Dominant Positions', color: '#f0c040', items: [
-        { label: 'Anaconda (Front headlock)', search: 'anaconda' },
-        { label: 'Kimura (Side control)', search: 'kimura' },
-        { label: 'Head arm choke (Mount)', search: 'head arm' },
-        { label: 'Gift wrap back take (Mount)', search: 'gift wrap' },
-        { label: 'Seatbelt back take (Turtle)', search: 'seatbelt' }
+        { label: 'Side Control \u2192 Mount', search: 'side control' },
+        { label: 'Mount \u2192 Back', search: 'mount' },
+        { label: 'Turtle \u2192 Back', search: 'turtle' },
+        { label: 'Front Headlock \u2192 Back', search: 'front headlock' },
+        { label: 'Rear naked choke (Back)', search: 'rear naked choke' },
+        { label: 'Kimura (Side Control)', search: 'kimura' },
+        { label: 'Head arm choke (Mount)', search: 'head arm choke' },
+        { label: 'Bolt cutter to D\'Arce (Turtle)', search: 'bolt cutter' },
+        { label: 'Anaconda (Front Headlock)', search: 'anaconda' }
       ]},
-      { title: 'Guard Playing', color: '#9b72f5', items: [
-        { label: 'Triangle (Closed guard)', search: 'triangle' },
-        { label: 'Arm bar (Closed guard)', search: 'arm bar' },
-        { label: 'Hip bump sweep (Closed guard)', search: 'hip bump' },
-        { label: 'Wrestle up (Knee shield)', search: 'wrestle up' },
-        { label: 'Kiss of the dragon (RDLR)', search: 'kiss of the dragon' },
-        { label: 'Straight ankle lock (SLX)', search: 'ankle lock' }
-      ]},
-      { title: 'Defence / Escapes', color: '#667', items: [
-        { label: 'Mount escape \u2192 Knee shield', search: 'ankle peel' },
-        { label: 'Side control escape \u2192 Knee shield', search: 'elbow flare' },
-        { label: 'Back control escape', search: 'baseball bat' },
-        { label: 'Turtle reguard', search: 'reguard' }
+      { title: 'Guard', color: '#9b72f5', items: [
+        { label: 'Triangle (Closed Guard)', search: 'triangle' },
+        { label: 'Arm bar (Closed Guard)', search: 'arm bar' },
+        { label: 'Underhook wrestle up (Knee Shield)', search: 'wrestle up' }
       ]}
     ];
-      var html = '<div style="font-family:Barlow Condensed,sans-serif;font-size:18px;font-weight:600;color:var(--accent);letter-spacing:0.5px;margin-bottom:4px;">New to Grappling? Start Here</div>';
-      html += '<div style="font-family:Barlow Condensed,sans-serif;font-size:12px;color:#667;margin-bottom:12px;">These no-gi fundamentals will get you started. Tap any item to find it.</div>';
+      var html = '<div style="font-family:Barlow Condensed,sans-serif;font-size:18px;font-weight:600;color:var(--accent);letter-spacing:0.5px;margin-bottom:4px;">Start Here \u2014 Your First Techniques</div>';
+      html += '<div style="font-family:Barlow Condensed,sans-serif;font-size:12px;color:#667;margin-bottom:12px;">New to no-gi? Here\'s where to begin. These fundamentals give you a complete base game.</div>';
       _shSections.forEach(function(sec) {
         html += '<div style="margin-bottom:8px;">';
         html += '<div style="font-family:Barlow Condensed,sans-serif;font-size:11px;color:' + sec.color + ';letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">' + sec.title + '</div>';
@@ -3097,7 +3121,7 @@ window.initGraph3D = (function() {
     var _posNorm = normalizeSegment(nd.label);
     var _posDrillCount = Object.entries(STATE.progress).filter(function(kv) { return kv[0].split('|')[1] === _posNorm && kv[1] === 'drilling'; }).length;
     b.innerHTML='<span style="background:rgba(255,255,255,0.04);color:#8899aa;border:1px solid rgba(255,255,255,0.08);font-family:\'Barlow Condensed\',monospace;font-size:10px;letter-spacing:1px;padding:3px 10px;border-radius:12px;cursor:pointer;transition:all 0.15s;" onmouseenter="this.style.background=\'rgba(232,255,71,0.1)\';this.style.color=\'#c4cdd8\';this.style.borderColor=\'rgba(232,255,71,0.3)\'" onmouseleave="this.style.background=\'rgba(255,255,255,0.04)\';this.style.color=\'#8899aa\';this.style.borderColor=\'rgba(255,255,255,0.08)\'" onclick="closeDetail3d();switchToReferenceNode(\''+nd.label.replace(/'/g,"\\'")+'\',\''+nd.section.replace(/'/g,"\\'")+'\')">↗ Reference</span>'
-    + (_posDrillCount > 0 ? '<span style="background:rgba(71,200,255,0.08);color:var(--blue);border:1px solid rgba(71,200,255,0.2);font-family:\'Barlow Condensed\',monospace;font-size:10px;letter-spacing:1px;padding:3px 10px;border-radius:12px;cursor:pointer;" onclick="closeDetail3d();switchToTab(\'reference\');applyRefFilter(\'drilling\');switchToReferenceNode(\''+nd.label.replace(/'/g,"\\'")+'\',\''+nd.section.replace(/'/g,"\\'")+'\')">▶ Drill '+_posDrillCount+'</span>' : '');
+    + '<span style="background:rgba(71,200,255,0.08);color:var(--blue);border:1px solid rgba(71,200,255,0.2);font-family:\'Barlow Condensed\',monospace;font-size:10px;letter-spacing:1px;padding:3px 10px;border-radius:12px;cursor:pointer;" onclick="drillFromGraph(\''+nd.label.replace(/'/g,"\\'")+'\',\''+nd.section.replace(/'/g,"\\'")+'\','+_posDrillCount+')">▶ Drill' + (_posDrillCount > 0 ? ' ' + _posDrillCount : '') + '</span>';
 
     // ── Look up position in SECTIONS ──────────────────────────────────
     var sectNode = null;
@@ -3520,6 +3544,22 @@ window.initGraph3D = (function() {
     document.getElementById('g3dDetail').style.transform=isMobile3d()?'translateY(100%)':'translateX(100%)';
     document.getElementById('g3dLegend').style.display='';
   }
+
+  // CW14: Drill from graph — navigate to Reference and start drilling a position
+  window.drillFromGraph = function(label, section, drillCount) {
+    closeDetail3d();
+    if (drillCount > 0) {
+      switchToTab('reference');
+      applyRefFilter('drilling');
+      switchToReferenceNode(label, section);
+      // Open drill timer after navigating
+      setTimeout(function() { document.getElementById('menuTimerBtn').click(); }, 400);
+    } else {
+      switchToTab('reference');
+      switchToReferenceNode(label, section);
+      showToast('No techniques to drill \u2014 mark some first');
+    }
+  };
 
   // Build set of position norms + labels that have ≥1 technique with given status(es)
   function getMatchedPositions(statuses) {
@@ -4502,7 +4542,7 @@ document.addEventListener('keydown', e => {
 })();
 // Export progress
 document.getElementById('menuExportBtn').addEventListener('click', function() {
-  var data = { progress: STATE.progress, notes: STATE.notes, recentViewed: STATE.recentViewed || [], successLog: STATE.successLog || [], exportedAt: new Date().toISOString() };
+  var data = { progress: STATE.progress, notes: STATE.notes, recentViewed: STATE.recentViewed || [], successLog: STATE.successLog || [], drillTime: STATE.drillTime || {}, exportedAt: new Date().toISOString() };
   var blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
   var a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
@@ -4526,6 +4566,7 @@ document.getElementById('menuImportBtn').addEventListener('click', function() {
         if (data.notes) STATE.notes = data.notes;
         if (data.recentViewed) STATE.recentViewed = data.recentViewed;
         if (data.successLog) STATE.successLog = data.successLog;
+        if (data.drillTime) STATE.drillTime = data.drillTime;
         saveState(); updateStats(); refreshAllViews();
         showToast('Progress imported successfully');
       } catch(e) { showToast('Could not read file — check format'); }
@@ -4540,6 +4581,7 @@ document.getElementById('menuResetBtn').addEventListener('click', function() {
   STATE.progress = {};
   STATE.notes = {};
   STATE.recentViewed = [];
+  STATE.drillTime = {};
   saveState(); updateStats(); refreshAllViews();
   showToast('All progress has been reset');
 });
@@ -5064,11 +5106,24 @@ document.getElementById('menuTimerBtn').addEventListener('click', function() {
       timerState.running = false;
       clearInterval(timerState.interval);
       startBtn.textContent = 'Resume';
+      // CC3: Save accumulated drill time on pause
+      saveState();
     } else {
       timerState.running = true;
       startBtn.textContent = 'Pause';
+      // CC3: Set current drill key from SELECTED_NODE if not already set
+      if (!timerState._currentDrillKey && SELECTED_NODE && SELECTED_NODE.key) {
+        timerState._currentDrillKey = SELECTED_NODE.key;
+      }
       timerState.interval = setInterval(function() {
         timerState.elapsed--;
+        // CC3: Accumulate drill time for the current technique
+        if (timerState._currentDrillKey) {
+          if (!STATE.drillTime) STATE.drillTime = {};
+          STATE.drillTime[timerState._currentDrillKey] = (STATE.drillTime[timerState._currentDrillKey] || 0) + 1;
+          // Save every 10 seconds to avoid excessive writes
+          if ((STATE.drillTime[timerState._currentDrillKey] % 10) === 0) saveState();
+        }
         updateTimerDisplay();
       }, 1000);
     }
@@ -5455,18 +5510,36 @@ if (typeof updateQuickAccess === 'function') updateQuickAccess();
   var hash = location.hash.slice(1);
   var deepLinked = false;
   if (hash) {
-    var parts = hash.split('/').map(decodeURIComponent);
-    if (parts[0] === 'ref' && parts[1]) {
+    // CW17: Parse new deep link formats: #tech=key, #pos=label&sec=section
+    if (hash.indexOf('tech=') === 0) {
+      var techKey = decodeURIComponent(hash.slice(5).split('&')[0]);
+      var _techSegs = techKey.split('|');
+      var _techLabel = _techSegs[_techSegs.length - 1].replace(/_/g, ' ');
+      var _techSection = _techSegs[0].replace(/_/g, ' ');
       switchToTab('reference');
-      setTimeout(function() { switchToReferenceNode(parts[1], parts[2] || ''); }, 200);
+      setTimeout(function() { switchToReferenceNode(_techLabel, _techSection); }, 200);
       deepLinked = true;
-    } else if (parts[0] === 'net' && parts[1]) {
-      requestAnimationFrame(function() { requestAnimationFrame(initGraph3D); });
-      setTimeout(function() { if (window._g3dSelectByLabel) window._g3dSelectByLabel(parts[1]); }, 500);
+    } else if (hash.indexOf('pos=') === 0) {
+      var _posParams = {};
+      hash.split('&').forEach(function(p) { var kv = p.split('='); if (kv.length === 2) _posParams[kv[0]] = decodeURIComponent(kv[1]); });
+      switchToTab('reference');
+      setTimeout(function() { switchToReferenceNode(_posParams.pos || '', _posParams.sec || ''); }, 200);
       deepLinked = true;
-    } else if (parts[0] === 'net') {
-      requestAnimationFrame(function() { requestAnimationFrame(initGraph3D); });
-      deepLinked = true;
+    } else {
+      // Legacy formats: #ref/label/section, #net/label/section
+      var parts = hash.split('/').map(decodeURIComponent);
+      if (parts[0] === 'ref' && parts[1]) {
+        switchToTab('reference');
+        setTimeout(function() { switchToReferenceNode(parts[1], parts[2] || ''); }, 200);
+        deepLinked = true;
+      } else if (parts[0] === 'net' && parts[1]) {
+        requestAnimationFrame(function() { requestAnimationFrame(initGraph3D); });
+        setTimeout(function() { if (window._g3dSelectByLabel) window._g3dSelectByLabel(parts[1]); }, 500);
+        deepLinked = true;
+      } else if (parts[0] === 'net') {
+        requestAnimationFrame(function() { requestAnimationFrame(initGraph3D); });
+        deepLinked = true;
+      }
     }
   }
   if (!deepLinked) {
@@ -5493,11 +5566,17 @@ if (typeof updateQuickAccess === 'function') updateQuickAccess();
 // Update hash on tab switch and selection
 function updateHash() {
   var view = document.getElementById('graph3dView').style.display !== 'none' ? 'net' : 'ref';
-  var label = SELECTED_NODE ? SELECTED_NODE.label : '';
-  var section = SELECTED_NODE ? SELECTED_NODE.section : '';
   var h = view;
-  if (label) h += '/' + encodeURIComponent(label);
-  if (section) h += '/' + encodeURIComponent(section);
+  // CW17: Use tech= deep link when a technique is selected with a full key
+  if (SELECTED_NODE && SELECTED_NODE.key && SELECTED_NODE.key.indexOf('|') !== -1) {
+    h = 'tech=' + encodeURIComponent(SELECTED_NODE.key);
+  } else if (SELECTED_NODE && SELECTED_NODE.label) {
+    // Position-level: use pos= format
+    h = 'pos=' + encodeURIComponent(SELECTED_NODE.label) + (SELECTED_NODE.section ? '&sec=' + encodeURIComponent(SELECTED_NODE.section) : '');
+  } else {
+    // No selection — just view
+    h = view;
+  }
   if (location.hash.slice(1) !== h) history.replaceState(null, '', '#' + h);
 }
 // DIAG: verify NET_NODES key format for position-matching branch selection
@@ -6396,6 +6475,8 @@ _log('[GrapplingMap] Debug API ready: window.__APP_DEBUG__');
       }
     } catch(e) {
       console.warn('Auth session check failed (may be offline):', e);
+      // CW46: Never overwrite page title on auth error — show toast instead
+      showToast('Auth check failed — continuing offline');
       // Offline fallback — try cached auth
       var cachedAuth2 = localStorage.getItem('gm_auth_cache');
       if (cachedAuth2) {
@@ -6585,10 +6666,11 @@ var AIActions = {
         }
         if (item.onClick) {
           row.addEventListener('click', function() { hideAI(); item.onClick(); });
-          var arrow = document.createElement('span');
-          arrow.style.cssText = 'color:#556;font-size:10px;flex-shrink:0;';
-          arrow.textContent = '→';
-          row.appendChild(arrow);
+          // CW57: Show "Go there →" link text (not just arrow) so items look navigable
+          var goLink = document.createElement('span');
+          goLink.style.cssText = 'color:var(--accent3);font-size:10px;flex-shrink:0;font-family:Barlow Condensed,sans-serif;letter-spacing:0.5px;opacity:0.7;';
+          goLink.textContent = 'Go there \u2192';
+          row.appendChild(goLink);
         }
         responseEl.appendChild(row);
       });
@@ -6642,7 +6724,8 @@ var AIActions = {
     if (!q) return;
 
     // Route to existing AI actions based on keywords
-    if (q.includes('drill') && (q.includes('next') || q.includes('what') || q.includes('should') || q === 'drill' || q === 'drills')) {
+    // CW49: "drill" alone (or "drills") triggers whatToDrill
+    if (q === 'drill' || q === 'drills' || (q.includes('drill') && (q.includes('next') || q.includes('what') || q.includes('should') || q.includes('focus') || q.includes('practice')))) {
       return renderResponse(AIActions.whatToDrill());
     }
     if (q.includes('next move') || q.includes('expand') || q.includes('grow') || q === 'next') {
@@ -6698,12 +6781,24 @@ var AIActions = {
   });
 })();
 
-// Quick-drill FAB
+// CW16: Quick-drill FAB — opens drill timer with all DRILLING techniques on mobile
 (function() {
   var fab = document.getElementById('quickDrillFab');
   if (!fab) return;
-  fab.addEventListener('click', function() { document.getElementById('menuRandomBtn').click(); });
-  // Show on mobile when drills exist
+  fab.addEventListener('click', function() {
+    var drillKeys = Object.entries(STATE.progress).filter(function(kv) { return kv[1] === 'drilling'; }).map(function(kv) { return kv[0]; });
+    if (drillKeys.length === 0) { showToast('No drills yet \u2014 mark techniques as Drilling first'); return; }
+    // Pick a random drill to navigate to, then open the timer
+    var randomKey = drillKeys[Math.floor(Math.random() * drillKeys.length)];
+    var segments = randomKey.split('|');
+    var label = segments[segments.length - 1].replace(/_/g, ' ');
+    var section = segments[0].replace(/_/g, ' ');
+    switchToReferenceNode(label, section);
+    showToast('Drill: ' + label);
+    // Open drill timer
+    setTimeout(function() { document.getElementById('menuTimerBtn').click(); }, 300);
+  });
+  // Show on mobile only when drills exist
   function updateFab() {
     var hasDrills = Object.values(STATE.progress).some(function(v) { return v === 'drilling'; });
     fab.style.display = (hasDrills && window.innerWidth <= 768) ? '' : 'none';
