@@ -159,10 +159,11 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
 .tree-item[data-ot="1"] > .node .node-label::before { content: '\2192 '; color: #ff9966; font-style: normal; font-size: 10px; }
 .tree-item[data-ot="1"] > .node { background: rgba(255,153,102,0.015); border-radius: 3px; cursor: pointer; }
 .tree-item[data-ot="1"] > .node:hover .node-label { text-decoration: underline; text-decoration-color: rgba(255,153,102,0.3); text-underline-offset: 2px; }
-/* Notes rows */
-.tree-item[data-notes="1"] > .node .node-label { font-size: 11px; color: var(--accent3); font-style: italic; opacity: 0.8; }
-.tree-item[data-notes="1"] > .node .node-label::before { content: '\270E '; color: var(--accent3); font-style: normal; font-size: 10px; }
-.tree-item[data-notes="1"] > .node { background: rgba(167,139,250,0.02); border-radius: 3px; }
+/* Notes rows — CW8: italic, dimmed, no pill/badge */
+.tree-item[data-notes="1"] > .node .node-label { font-size: 11px; color: #999; font-style: italic; opacity: 0.5; }
+.tree-item[data-notes="1"] > .node .node-label::before { content: '\270E '; color: #999; font-style: normal; font-size: 10px; }
+.tree-item[data-notes="1"] > .node { background: none; border-radius: 3px; }
+.tree-item[data-notes="1"] > .node .node-actions { display: none; }
 
 /* ── 3D GRAPH VIEW ── */
 #graph3dView { position: relative; background: #0e1015; overflow: hidden; }
@@ -523,6 +524,9 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
   <!-- Top toolbar removed — controls live in bottom bar -->
   <!-- Canvas fills everything -->
   <canvas id="g3dCanvas" style="position:absolute;inset:0;width:100%;height:100%;display:block;z-index:0;"></canvas>
+
+  <!-- CW6: Floating recenter button on canvas -->
+  <button id="g3dRecenterFloat" title="Recenter camera" style="position:absolute;bottom:80px;right:16px;z-index:12;background:rgba(18,21,28,0.75);border:1px solid rgba(255,255,255,0.12);color:#8892a4;font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:0.5px;padding:6px 12px;border-radius:6px;cursor:pointer;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);transition:all 0.15s;">&#8982; Recenter</button>
 
   <!-- Vignette -->
   <div style="position:absolute;inset:0;background:radial-gradient(ellipse at center,transparent 50%,rgba(14,16,21,0.6) 100%);pointer-events:none;z-index:1;"></div>
@@ -1148,16 +1152,25 @@ function updateStats() {
   // Show drilling count in header if any
   var drillingEl = document.getElementById('drillingCount');
   if (drillingEl) { var dr = 0; for (var vd of Object.values(STATE.progress)) { if (vd === 'drilling') dr++; } drillingEl.textContent = dr; drillingEl.parentElement.style.display = dr > 0 ? '' : 'none'; }
-  // Dynamic subtitle
+  // CW4: Dynamic subtitle based on user state
   var subEl = document.getElementById('headerSubtitle');
   if (subEl) {
+    var _drSub = 0; for (var _vs of Object.values(STATE.progress)) { if (_vs === 'drilling') _drSub++; }
     var totalTracked = Object.keys(STATE.progress).length;
-    if (totalTracked > 0) {
-      var topSections = {};
-      Object.keys(STATE.progress).forEach(function(k) { var s = k.split('|')[0].replace(/_/g,' '); topSections[s] = (topSections[s]||0)+1; });
-      var topSec = Object.entries(topSections).sort(function(a,b){return b[1]-a[1];})[0];
-      var _drSub = 0; for (var _vs of Object.values(STATE.progress)) { if (_vs === 'drilling') _drSub++; }
-      subEl.textContent = _drSub + ' drilling · ' + learned + ' learned' + (topSec ? ' · ' + topSec[0] : '');
+    if (totalTracked === 0) {
+      // New user — no progress at all
+      subEl.textContent = 'Start mapping your grappling game';
+    } else if (learned === 0 && _drSub > 0) {
+      // Has drilling but nothing learned yet
+      var _drPosSub = new Set();
+      Object.keys(STATE.progress).forEach(function(k) { if (STATE.progress[k] === 'drilling') { var seg = k.split('|')[1]; if (seg) _drPosSub.add(seg); } });
+      subEl.textContent = 'Drilling ' + _drSub + ' technique' + (_drSub !== 1 ? 's' : '') + ' across ' + _drPosSub.size + ' position' + (_drPosSub.size !== 1 ? 's' : '');
+    } else if (learned > 0 || _drSub > 0) {
+      // Active progress — has learned and/or drilling
+      var parts = [];
+      if (learned > 0) parts.push(learned + ' technique' + (learned !== 1 ? 's' : '') + ' learned');
+      if (_drSub > 0) parts.push(_drSub + ' drilling');
+      subEl.textContent = parts.join(', ');
     } else {
       subEl.textContent = 'No-Gi Reference & Training';
     }
@@ -1258,7 +1271,7 @@ function buildPopup(popupEl, node, sectionTitle, color, pathKey) {
       if (vidWrap.style.display === 'block') {
         vidWrap.style.display = 'none'; vf.src = ''; vb.textContent = '▶ Instructional';
       } else {
-        const vidId = node.v.split('/').pop().split('?')[0];
+        const vidId = window.extractYouTubeId(node.v);
         vf.src = 'https://www.youtube.com/embed/' + vidId + '?autoplay=1';
         vidWrap.style.display = 'block'; vb.textContent = '✕ Close';
       }
@@ -1277,7 +1290,7 @@ function buildPopup(popupEl, node, sectionTitle, color, pathKey) {
       if (vidWrap.style.display === 'block') {
         vidWrap.style.display = 'none'; vf.src = ''; lb.textContent = '▶ Live';
       } else {
-        const vidId = node.l.split('/').pop().split('?')[0];
+        const vidId = window.extractYouTubeId(node.l);
         vf.src = 'https://www.youtube.com/embed/' + vidId + '?autoplay=1';
         vidWrap.style.display = 'block'; lb.textContent = '✕ Close';
       }
@@ -1447,7 +1460,7 @@ function buildNode(node, sectionTitle, depth, parentUl, parentKey, disambig, pos
     if (vWatched) vBtn.style.opacity = '0.6';
     vBtn.addEventListener('click', e => {
       e.stopPropagation();
-      const vidId = node.v.split('/').pop().split('?')[0];
+      const vidId = window.extractYouTubeId(node.v);
       const existing = li.querySelector('.inline-player-i');
       if (existing) { existing.remove(); vBtn.textContent = (vWatched ? '\u2713 ' : '') + '▶ Instructional'; return; }
       closeOtherPlayers(li);
@@ -1467,7 +1480,7 @@ function buildNode(node, sectionTitle, depth, parentUl, parentKey, disambig, pos
     lBtn.textContent = '▶ Live';
     lBtn.addEventListener('click', e => {
       e.stopPropagation();
-      const vidId = node.l.split('/').pop().split('?')[0];
+      const vidId = window.extractYouTubeId(node.l);
       const existing = li.querySelector('.inline-player-l');
       if (existing) { existing.remove(); lBtn.textContent = '▶ Live'; return; }
       const pw = document.createElement('div');
@@ -1639,8 +1652,15 @@ function buildNode(node, sectionTitle, depth, parentUl, parentKey, disambig, pos
       if (learnedCount >= 3) { _strengthLabel = 'Strong'; _strengthColor = 'var(--green)'; }
       else if (drillingCount + learnedCount >= 2) { _strengthLabel = 'Building'; _strengthColor = 'var(--blue)'; }
       else if (trackedCount > 0) { _strengthLabel = 'Started'; _strengthColor = 'var(--accent3)'; }
-      var strengthHtml = _strengthLabel ? ' \u00b7 <span style="color:'+_strengthColor+';font-weight:500;">'+_strengthLabel+'</span>' : '';
-      statsSpan.innerHTML = techCount + ' techniques' + (trackedCount > 0 ? ' \u00b7 ' + trackedCount + ' tracked' : '') + strengthHtml;
+      else { _strengthLabel = 'Gap'; _strengthColor = '#ff6b6b'; }
+      var _dotHtml = '<span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:'+_strengthColor+';margin-right:4px;vertical-align:middle;opacity:0.85;"></span>';
+      var strengthHtml = ' \u00b7 ' + _dotHtml + '<span style="color:'+_strengthColor+';font-weight:500;">'+_strengthLabel+'</span>';
+      // CW3: Drilling queue badge — count techniques in DRILLING under this position
+      var posDrillBadgeHtml = '';
+      if (drillingCount > 0) {
+        posDrillBadgeHtml = ' <span class="pos-drill-badge" style="display:inline-block;font-size:9px;font-family:DM Mono,monospace;background:var(--blue);color:#fff;padding:1px 5px;border-radius:8px;margin-left:4px;vertical-align:middle;line-height:1.3;font-weight:600;opacity:0.85;">' + drillingCount + '</span>';
+      }
+      statsSpan.innerHTML = techCount + ' techniques' + (trackedCount > 0 ? ' \u00b7 ' + trackedCount + ' tracked' : '') + strengthHtml + posDrillBadgeHtml;
       content.appendChild(statsSpan);
       li._posStats = statsSpan;
       li._posChildUl = childUl;
@@ -1701,9 +1721,10 @@ function buildNode(node, sectionTitle, depth, parentUl, parentKey, disambig, pos
             if (!hasTracked) untracked.push(lbl);
           });
           if (untracked.length > 0) {
-            html += '<div class="pos-conn-label" style="margin-top:6px;color:var(--accent3);">Connected — not yet tracked</div>';
+            html += '<div class="pos-conn-label" style="margin-top:8px;color:var(--accent3);font-size:10px;letter-spacing:0.5px;">Suggested next</div>';
+            html += '<div style="font-size:10px;color:var(--text-muted);margin-bottom:4px;font-style:italic;">You drill ' + posLabel + ' but haven\u2019t started these connected positions</div>';
             untracked.slice(0, 4).forEach(function(lbl) {
-              html += '<div class="pos-conn-item" data-nav="' + lbl.replace(/"/g,'&quot;') + '" style="color:var(--accent3);opacity:0.7;">\u2192 ' + lbl + '</div>';
+              html += '<div class="pos-conn-item" data-nav="' + lbl.replace(/"/g,'&quot;') + '" style="color:var(--accent3);opacity:0.8;">\u2192 ' + lbl + ' <span style="font-size:9px;opacity:0.6;margin-left:4px;">Start tracking?</span></div>';
             });
           }
           connCard.innerHTML = html;
@@ -2745,6 +2766,8 @@ window.initGraph3D = (function() {
   const isMobile3d=()=>window.matchMedia('(max-width:768px)').matches;
   var _isMobileGraph = window.innerWidth <= 768;
   let autoRotate3d=!_isMobileGraph, showRings3d=true, showTopLabels3d=true;
+  // CW1: Sync auto-rotate checkbox with mobile default
+  if(_isMobileGraph){var _arCb=document.getElementById('g3dOptRotate');if(_arCb)_arCb.checked=false;}
   let globalEdgeOpac=0.50, hubOnly3d=false, hubThresh3d=20, builtOut3d=false, showOrphans3d=false;
   const orphanMeshes3d=[];
   let statusFilter3d='all';
@@ -2832,9 +2855,29 @@ window.initGraph3D = (function() {
   }
   function applyProg3d() {
     const p=loadProg3d();
+    // Build per-position aggregate: check all progress keys that belong to each position
+    const posAgg={};
+    Object.entries(p).forEach(function(kv){
+      var segs=kv[0].split('|');
+      if(segs.length>=2){
+        var posKey=segs[0]+'|'+segs[1];
+        if(!posAgg[posKey]) posAgg[posKey]={hasDrilling:false,hasLearned:false};
+        if(kv[1]==='drilling') posAgg[posKey].hasDrilling=true;
+        if(kv[1]==='learned') posAgg[posKey].hasLearned=true;
+      }
+    });
     NET_NODES.forEach(n=>{
-      const s=p[n.key]||'none';
-      n.status=s==='learned'?'learned':s==='drilling'?'drilling':'none';
+      if(n.depth===1){
+        // Position node: use aggregated status from child techniques
+        var agg=posAgg[n.key];
+        if(agg&&agg.hasLearned&&agg.hasDrilling) n.status='both';
+        else if(agg&&agg.hasLearned) n.status='learned';
+        else if(agg&&agg.hasDrilling) n.status='drilling';
+        else n.status='none';
+      } else {
+        const s=p[n.key]||'none';
+        n.status=s==='learned'?'learned':s==='drilling'?'drilling':'none';
+      }
     });
   }
 
@@ -2859,9 +2902,10 @@ window.initGraph3D = (function() {
   }
 
   function nodeCol3d(n,THREE){
-    if(n.status==='learned') return new THREE.Color(0xe8ff47);
-    if(n.status==='drilling'){const c=new THREE.Color(SECT_HEX3[n.section_idx]||0x445566);c.lerp(new THREE.Color(0x47c8ff),0.5);return c;}
-    const c=new THREE.Color(SECT_HEX3[n.section_idx]||0x445566);c.multiplyScalar(0.72);return c;
+    if(n.status==='both'){const c=new THREE.Color(SECT_HEX3[n.section_idx]||0x445566);c.lerp(new THREE.Color(0x2dd4aa),0.55);return c;} // teal tint for both
+    if(n.status==='learned'){const c=new THREE.Color(SECT_HEX3[n.section_idx]||0x445566);c.lerp(new THREE.Color(0x34d399),0.5);return c;} // green tint
+    if(n.status==='drilling'){const c=new THREE.Color(SECT_HEX3[n.section_idx]||0x445566);c.lerp(new THREE.Color(0x47c8ff),0.5);return c;} // blue tint
+    const c=new THREE.Color(SECT_HEX3[n.section_idx]||0x445566);c.multiplyScalar(0.5);return c; // muted gray default
   }
 
   function randSph3d(r){const u=Math.random(),v=Math.random(),t=2*Math.PI*u,p=Math.acos(2*v-1);return[r*Math.sin(p)*Math.cos(t),r*Math.sin(p)*Math.sin(t),r*Math.cos(p)];}
@@ -2899,7 +2943,7 @@ window.initGraph3D = (function() {
         n.vx*=damp;n.vy*=damp;n.vz*=damp;
         n.x+=n.vx;n.y+=n.vy;n.z+=n.vz;
         const nd=nodeMap3d[n.id];if(nd){nd.x=n.x;nd.y=n.y;nd.z=n.z;}
-        const m=meshMap3d[n.id];if(m)m.position.set(n.x,n.y,n.z);
+        const m=meshMap3d[n.id];if(m){m.position.set(n.x,n.y,n.z);if(window._vidIndicators3d&&window._vidIndicators3d[n.id]){var vi=window._vidIndicators3d[n.id];vi.position.set(n.x,n.y+(m.geometry.parameters?m.geometry.parameters.radius:2)+2,n.z);}}
       });
     }
   }
@@ -2911,7 +2955,7 @@ window.initGraph3D = (function() {
       const pos=e.line.geometry.attributes.position;
       pos.setXYZ(0,src.x,src.y,src.z);pos.setXYZ(1,tgt.x,tgt.y,tgt.z);pos.needsUpdate=true;
       // Position direction arrow at 80% from source to target
-      if(e._arrow){var ax=src.x+(tgt.x-src.x)*0.8,ay=src.y+(tgt.y-src.y)*0.8,az=src.z+(tgt.z-src.z)*0.8;e._arrow.position.set(ax,ay,az);e._arrow.visible=e.line.visible;if(e._arrowMat)e._arrowMat.opacity=e._mat.opacity*0.8;}
+      if(e._arrow){var ax=src.x+(tgt.x-src.x)*0.8,ay=src.y+(tgt.y-src.y)*0.8,az=src.z+(tgt.z-src.z)*0.8;e._arrow.position.set(ax,ay,az);e._arrow.visible=e.line.visible;if(e._arrowMat)e._arrowMat.opacity=e._mat.opacity*0.8;var dx=tgt.x-src.x,dy=tgt.y-src.y,dz=tgt.z-src.z;var dl=Math.sqrt(dx*dx+dy*dy+dz*dz)||1;var dir=new THREE.Vector3(dx/dl,dy/dl,dz/dl);var up=new THREE.Vector3(0,1,0);var q=new THREE.Quaternion();q.setFromUnitVectors(up,dir);e._arrow.quaternion.copy(q);}
     });
     Object.entries(ringMap3d).forEach(([id,r])=>{const n=nodeMap3d[id];if(n)r.position.set(n.x,n.y,n.z);});
   }
@@ -3575,7 +3619,7 @@ window.initGraph3D = (function() {
         showEmptyState3d(sf);
       }
     } else {
-      active = netNds.filter(n => (sf === 'all' || n.status === sf) && isBeltAllowed(n));
+      active = netNds.filter(n => (sf === 'all' || n.status === sf || (sf === 'drilling' && n.status === 'both') || (sf === 'learned' && n.status === 'both')) && isBeltAllowed(n));
     }
 
     const aIds=new Set(active.map(n=>n.id));
@@ -3646,12 +3690,15 @@ window.initGraph3D = (function() {
       else if(isEmpty){m.material.opacity=0.15;m.visible=true;}
       else{m.material.opacity=sf==='all'?0.06:0;m.visible=sf==='all';}
       const ring=ringMap3d[n.id];if(ring)ring.visible=aIds.has(n.id)&&showRings3d&&n._w>20;
+      // CC7: sync video indicator visibility with mesh
+      if(window._vidIndicators3d&&window._vidIndicators3d[n.id]){window._vidIndicators3d[n.id].visible=m.visible&&m.material.opacity>0.1;}
     });
     // Orphan nodes: hide when filter is active, show at reduced opacity for 'all'
     NET_NODES.filter(function(n){return isGraphableNode(n)&&!n.in_network;}).forEach(function(n){
       var m=meshMap3d[n.id];if(!m)return;
       if (sf !== 'all') { m.material.opacity=0; m.visible=false; }
       else { m.material.opacity=ORPHAN_OPACITY;m.material.emissiveIntensity=0.05;m.visible=showOrphans3d; }
+      if(window._vidIndicators3d&&window._vidIndicators3d[n.id]){window._vidIndicators3d[n.id].visible=m.visible&&m.material.opacity>0.1;}
     });
     edgeMeshes3d.forEach(e=>{
       if(isEmpty){e.line.visible=true;e._base=0.04;e._mat.opacity=0.04;return;}
@@ -3659,7 +3706,7 @@ window.initGraph3D = (function() {
     });
     if(sf!=='all'&&aIds.size>0){
       const asn=simNodes3d.filter(n=>aIds.has(n.id));
-      asn.forEach(n=>{const p=randSph3d(400);n.x=p[0];n.y=p[1];n.z=p[2];n.vx=0;n.vy=0;n.vz=0;const nd=nodeMap3d[n.id];if(nd){nd.x=n.x;nd.y=n.y;nd.z=n.z;}const m=meshMap3d[n.id];if(m)m.position.set(n.x,n.y,n.z);});
+      asn.forEach(n=>{const p=randSph3d(400);n.x=p[0];n.y=p[1];n.z=p[2];n.vx=0;n.vy=0;n.vz=0;const nd=nodeMap3d[n.id];if(nd){nd.x=n.x;nd.y=n.y;nd.z=n.z;}const m=meshMap3d[n.id];if(m){m.position.set(n.x,n.y,n.z);if(window._vidIndicators3d&&window._vidIndicators3d[n.id]){var vi=window._vidIndicators3d[n.id];vi.position.set(n.x,n.y+(m.geometry.parameters?m.geometry.parameters.radius:2)+2,n.z);}}});
       syncEdges3d(aIds);
       if(window._g3dfsim)clearInterval(window._g3dfsim);
       let st=0;
@@ -3927,6 +3974,15 @@ window.initGraph3D = (function() {
           const ring=new THREE.Mesh(new THREE.TorusGeometry(n._r*1.55,0.5,6,32),rmat);
           ring.userData={nodeId:n.id};pivot3d.add(ring);ringMap3d[n.id]=ring;
         }
+        // CC7: Video indicator — small orange dot offset above nodes with video
+        if(n.has_video){
+          var viMat=new THREE.MeshBasicMaterial({color:0xff6b35,transparent:true,opacity:0.9});
+          var viMesh=new THREE.Mesh(new THREE.SphereGeometry(Math.max(1.2,n._r*0.28),8,8),viMat);
+          viMesh.position.set(n.x,n.y+n._r+2,n.z);
+          pivot3d.add(viMesh);
+          if(!window._vidIndicators3d)window._vidIndicators3d={};
+          window._vidIndicators3d[n.id]=viMesh;
+        }
         const sn={id:n.id,x:n.x,y:n.y,z:n.z,vx:0,vy:0,vz:0};
         simNodes3d.push(sn);simByID3d[n.id]=sn;
       });
@@ -3942,8 +3998,8 @@ window.initGraph3D = (function() {
         const geo=new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0,0,0),new THREE.Vector3(1,1,1)]);
         const line=new THREE.Line(geo,mat);pivot3d.add(line);
         var ek=e.edgeKey || (normalizeSegment((nodeMap3d[e.source]||{}).label||'')+'|'+normalizeSegment((nodeMap3d[e.target]||{}).label||''));
-        // Direction indicator: small sphere at 80% towards target
-        var arrowGeo = new THREE.SphereGeometry(0.8, 6, 6);
+        // CC8: Direction indicator — cone arrowhead at 80% towards target
+        var arrowGeo = new THREE.ConeGeometry(1.6, 4.5, 6);
         var arrowMat = new THREE.MeshBasicMaterial({color:cs,transparent:true,opacity:base*0.8});
         var arrow = new THREE.Mesh(arrowGeo, arrowMat);
         arrow.visible = true;
@@ -3999,7 +4055,7 @@ window.initGraph3D = (function() {
             const nd=nodeMap3d[hits[0].object.userData.id];if(!nd){tip.style.display='none';canvas.style.cursor='default';return;}
             hoveredId3d=nd.id;
             const col=SECT_CSS3[nd.section_idx]||'#888';
-            const si=nd.status==='learned'?'<span style="color:#e8ff47"> ✓</span>':nd.status==='drilling'?'<span style="color:#47c8ff"> ⟳</span>':'';
+            const si=nd.status==='both'?'<span style="color:#2dd4aa"> ✓⟳</span>':nd.status==='learned'?'<span style="color:#34d399"> ✓</span>':nd.status==='drilling'?'<span style="color:#47c8ff"> ⟳</span>':'';
             tip.innerHTML=`<span style="color:${col};font-family:Barlow Condensed,monospace;font-weight:600;">${nd.label}</span>${si}`;
             const r2=wrap.getBoundingClientRect();
             tip.style.display='block';tip.style.left=(e.clientX-r2.left+14)+'px';tip.style.top=(e.clientY-r2.top-10)+'px';
@@ -4113,6 +4169,7 @@ window.initGraph3D = (function() {
       document.getElementById('g3dExpandAll').addEventListener('click',()=>{SECTIONS.forEach(s=>{const sk=makeKey(s.title,s.title);EXPANDED.add(sk);walkWithKeys(s.nodes,sk,(nd,k)=>{if(nd.c&&nd.c.length)EXPANDED.add(k);});});if(window.cmSyncExpanded)window.cmSyncExpanded();if(window.refSyncExpanded)window.refSyncExpanded();if(window.g3dSyncExpanded)window.g3dSyncExpanded();});
       document.getElementById('g3dReset').addEventListener('click',()=>{tRX=0;tRY=0;tZ3d=1100;resetHL3d();closeDetail3d();});
       document.getElementById('g3dRecenterBtn').addEventListener('click',()=>{tRX=0;tRY=0;tZ3d=1100;});
+      document.getElementById('g3dRecenterFloat').addEventListener('click',()=>{tRX=0;tRY=0;tZ3d=1100;});
       document.getElementById('g3dDetailClose').addEventListener('click',()=>{resetHL3d();closeDetail3d();});
       // Swipe-down-to-dismiss on mobile for detail panel
       (function(){
@@ -4909,12 +4966,21 @@ document.getElementById('menuTimerBtn').addEventListener('click', function() {
     timeText.textContent = m + ':' + (s < 10 ? '0' : '') + s;
     var done = timerState.elapsed <= 0 && timerState.running;
     timeText.style.color = done ? '#f85149' : 'var(--accent)';
-    // Auto-advance to next drill when timer hits 0
+    // Auto-advance to next drill when timer hits 0 (CW10)
     if (done && !timerState._advanced) {
       timerState._advanced = true;
       timerState.running = false;
       clearInterval(timerState.interval);
       startBtn.textContent = 'Start';
+      // Track position for session summary
+      if (timerState._currentDrillKey) {
+        var _segs = timerState._currentDrillKey.split('|');
+        if (_segs.length >= 2) {
+          var _posName = _segs[1].replace(/_/g, ' ');
+          if (!timerState._sessionPositions) timerState._sessionPositions = {};
+          timerState._sessionPositions[_posName] = true;
+        }
+      }
       // Get next random drill technique
       var drillKeys = Object.entries(STATE.progress).filter(function(kv) { return kv[1] === 'drilling'; }).map(function(kv) { return kv[0]; });
       if (drillKeys.length > 0) {
@@ -4922,18 +4988,67 @@ document.getElementById('menuTimerBtn').addEventListener('click', function() {
         var segs = nextKey.split('|');
         var nextLabel = segs[segs.length - 1].replace(/_/g, ' ');
         var nextSection = segs[0].replace(/_/g, ' ');
-        tip.innerHTML = 'Time\u2019s up! Next: <span style="color:var(--accent);font-weight:500;">' + nextLabel + '</span>';
-        // Auto-start next round after 3 seconds
-        setTimeout(function() {
-          timerState.elapsed = 300; // default 5 min
-          timerState._advanced = false;
-          timerState.running = true;
-          startBtn.textContent = 'Pause';
-          updateTimerDisplay();
-          timerState.interval = setInterval(function() { timerState.elapsed--; updateTimerDisplay(); }, 1000);
-          showToast('Drill: ' + nextLabel);
-          switchToReferenceNode(nextLabel, nextSection);
-        }, 3000);
+        // Visible countdown: "Next in 3...2...1..."
+        var _countdownSecs = 3;
+        timerState._autoAdvanceCancelled = false;
+        function _updateCountdown() {
+          if (timerState._autoAdvanceCancelled) return;
+          if (_countdownSecs <= 0) {
+            // Advance to next drill
+            timerState._currentDrillKey = nextKey;
+            timerState.elapsed = 300; // default 5 min
+            timerState._advanced = false;
+            timerState.running = true;
+            startBtn.textContent = 'Pause';
+            updateTimerDisplay();
+            timerState.interval = setInterval(function() { timerState.elapsed--; updateTimerDisplay(); }, 1000);
+            showToast('Drill: ' + nextLabel);
+            switchToReferenceNode(nextLabel, nextSection);
+            if (!STATE.lastPracticed) STATE.lastPracticed = {};
+            STATE.lastPracticed[nextKey] = Date.now();
+            saveState();
+            // Remove cancel hint
+            if (_cancelHint && _cancelHint.parentNode) _cancelHint.remove();
+            return;
+          }
+          tip.innerHTML = 'Next in <span style="color:var(--accent);font-weight:700;font-size:13px;">' + _countdownSecs + '</span>... <span style="color:var(--blue);">' + nextLabel + '</span>';
+          // Progress bar under tip
+          var _pctLeft = (_countdownSecs / 3) * 100;
+          if (!timerState._countdownBar) {
+            timerState._countdownBar = document.createElement('div');
+            timerState._countdownBar.style.cssText = 'height:3px;background:var(--accent);border-radius:2px;margin:6px auto 0;transition:width 0.9s linear;';
+            timerState._countdownBar.style.width = '100%';
+            tip.parentNode.insertBefore(timerState._countdownBar, tip.nextSibling);
+          }
+          timerState._countdownBar.style.width = _pctLeft + '%';
+          _countdownSecs--;
+          timerState._countdownTimer = setTimeout(_updateCountdown, 1000);
+        }
+        _updateCountdown();
+        // Cancel hint
+        var _cancelHint = document.createElement('div');
+        _cancelHint.style.cssText = 'text-align:center;margin-top:6px;font-size:9px;color:#556;font-family:Barlow Condensed,monospace;cursor:pointer;';
+        _cancelHint.textContent = 'Click here or press Space to cancel auto-advance';
+        _cancelHint.addEventListener('click', function() { _cancelAutoAdvance(); });
+        tip.parentNode.insertBefore(_cancelHint, tip.nextSibling);
+        function _cancelAutoAdvance() {
+          timerState._autoAdvanceCancelled = true;
+          clearTimeout(timerState._countdownTimer);
+          if (timerState._countdownBar && timerState._countdownBar.parentNode) timerState._countdownBar.remove();
+          timerState._countdownBar = null;
+          if (_cancelHint && _cancelHint.parentNode) _cancelHint.remove();
+          tip.innerHTML = 'Auto-advance cancelled. <span style="color:var(--accent);">Next was: ' + nextLabel + '</span>';
+          startBtn.textContent = 'Start';
+        }
+        // Space key cancels auto-advance
+        function _spaceCancel(e) {
+          if (e.code === 'Space' && !timerState._autoAdvanceCancelled && timerState._advanced) {
+            e.preventDefault();
+            _cancelAutoAdvance();
+            document.removeEventListener('keydown', _spaceCancel);
+          }
+        }
+        document.addEventListener('keydown', _spaceCancel);
       } else {
         tip.textContent = 'Time\u2019s up! No drills in queue.';
       }
@@ -4973,14 +5088,63 @@ document.getElementById('menuTimerBtn').addEventListener('click', function() {
   tip.style.cssText = 'text-align:center;margin-top:12px;font-size:10px;color:#556;font-family:Barlow Condensed,monospace;';
   tip.textContent = 'Set a round length, then start drilling';
   display.appendChild(tip);
-  // Session summary tracker
+  // Session summary tracker (CW11)
   var sessionStart = Date.now();
   var sessionDrillCount = 0;
+  timerState._sessionPositions = timerState._sessionPositions || {};
   var _origClose = window.closeListPanel;
   window.closeListPanel = function() {
-    var elapsed = Math.round((Date.now() - sessionStart) / 60000);
-    if (elapsed > 0 || sessionDrillCount > 0) {
-      showToast('Session: ' + (elapsed || '<1') + ' min' + (sessionDrillCount > 0 ? ', ' + sessionDrillCount + ' drills' : ''));
+    var elapsedMs = Date.now() - sessionStart;
+    var elapsedMin = Math.round(elapsedMs / 60000);
+    var elapsedSec = Math.round(elapsedMs / 1000);
+    // Show session summary modal if there was meaningful activity (CW11)
+    if (elapsedSec >= 10 || sessionDrillCount > 0) {
+      // Build positions list
+      var posNames = Object.keys(timerState._sessionPositions || {});
+      var posText = posNames.length > 0 ? posNames.join(', ') : 'None tracked';
+      // Time display
+      var timeStr = elapsedMin >= 1 ? elapsedMin + ' min' : elapsedSec + ' sec';
+      // Create overlay
+      var overlay = document.createElement('div');
+      overlay.style.cssText = 'position:fixed;inset:0;background:rgba(8,10,14,0.85);z-index:4000;display:flex;align-items:center;justify-content:center;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);animation:fadeIn 0.2s ease;';
+      var modal = document.createElement('div');
+      modal.style.cssText = 'background:var(--card-bg,#141820);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:28px 32px;max-width:340px;width:calc(100vw - 40px);text-align:center;box-shadow:0 8px 32px rgba(0,0,0,0.4);';
+      // Title
+      var title = document.createElement('div');
+      title.style.cssText = 'font-family:Bebas Neue,sans-serif;font-size:22px;color:var(--accent);letter-spacing:1px;margin-bottom:16px;';
+      title.textContent = 'Session Complete';
+      modal.appendChild(title);
+      // Stats grid
+      var stats = document.createElement('div');
+      stats.style.cssText = 'display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;';
+      function _addStat(label, value, color) {
+        var cell = document.createElement('div');
+        cell.style.cssText = 'background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.05);border-radius:8px;padding:10px 8px;';
+        cell.innerHTML = '<div style="font-family:Bebas Neue,sans-serif;font-size:24px;color:' + (color || 'var(--accent)') + ';letter-spacing:1px;">' + value + '</div>'
+          + '<div style="font-family:Barlow Condensed,sans-serif;font-size:10px;color:#556;text-transform:uppercase;letter-spacing:0.5px;">' + label + '</div>';
+        stats.appendChild(cell);
+      }
+      _addStat('Techniques', sessionDrillCount, 'var(--accent)');
+      _addStat('Time', timeStr, 'var(--blue)');
+      modal.appendChild(stats);
+      // Positions covered
+      if (posNames.length > 0) {
+        var posSection = document.createElement('div');
+        posSection.style.cssText = 'margin-bottom:16px;text-align:left;';
+        posSection.innerHTML = '<div style="font-family:Barlow Condensed,sans-serif;font-size:10px;color:#556;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Positions covered</div>'
+          + '<div style="font-family:Barlow Condensed,monospace;font-size:12px;color:#8892a4;line-height:1.6;">' + posNames.map(function(p) { return '<span style="display:inline-block;background:rgba(71,200,255,0.06);border:1px solid rgba(71,200,255,0.15);border-radius:6px;padding:2px 8px;margin:2px 3px 2px 0;">' + p + '</span>'; }).join('') + '</div>';
+        modal.appendChild(posSection);
+      }
+      // Done button
+      var doneBtn = document.createElement('button');
+      doneBtn.style.cssText = 'background:var(--accent);color:#000;border:none;font-family:Barlow Condensed,sans-serif;font-size:14px;font-weight:600;padding:10px 32px;border-radius:10px;cursor:pointer;letter-spacing:0.5px;transition:all 0.15s;';
+      doneBtn.textContent = 'Done';
+      doneBtn.addEventListener('click', function() { overlay.remove(); });
+      modal.appendChild(doneBtn);
+      overlay.appendChild(modal);
+      // Click overlay background to dismiss
+      overlay.addEventListener('click', function(e) { if (e.target === overlay) overlay.remove(); });
+      document.body.appendChild(overlay);
     }
     window.closeListPanel = _origClose;
     _origClose();
@@ -5030,11 +5194,59 @@ document.getElementById('menuCircuitBtn').addEventListener('click', function() {
   startBtn.textContent = 'Start Circuit';
   startBtn.addEventListener('click', function() {
     closeListPanel();
+    var _circuitStart = Date.now();
+    var _circuitPositions = {};
     // Run circuit: navigate to each drill with timer
     var idx = 0;
+    function _showCircuitSummary() {
+      // CW11: session summary modal for circuit
+      var elapsedMs = Date.now() - _circuitStart;
+      var elapsedMin = Math.round(elapsedMs / 60000);
+      var elapsedSec = Math.round(elapsedMs / 1000);
+      var timeStr = elapsedMin >= 1 ? elapsedMin + ' min' : elapsedSec + ' sec';
+      var posNames = Object.keys(_circuitPositions);
+      var overlay = document.createElement('div');
+      overlay.style.cssText = 'position:fixed;inset:0;background:rgba(8,10,14,0.85);z-index:4000;display:flex;align-items:center;justify-content:center;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);animation:fadeIn 0.2s ease;';
+      var modal = document.createElement('div');
+      modal.style.cssText = 'background:var(--card-bg,#141820);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:28px 32px;max-width:340px;width:calc(100vw - 40px);text-align:center;box-shadow:0 8px 32px rgba(0,0,0,0.4);';
+      var title = document.createElement('div');
+      title.style.cssText = 'font-family:Bebas Neue,sans-serif;font-size:22px;color:var(--accent);letter-spacing:1px;margin-bottom:16px;';
+      title.textContent = 'Circuit Complete';
+      modal.appendChild(title);
+      var stats = document.createElement('div');
+      stats.style.cssText = 'display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;';
+      function _cStat(label, value, color) {
+        var cell = document.createElement('div');
+        cell.style.cssText = 'background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.05);border-radius:8px;padding:10px 8px;';
+        cell.innerHTML = '<div style="font-family:Bebas Neue,sans-serif;font-size:24px;color:' + (color || 'var(--accent)') + ';letter-spacing:1px;">' + value + '</div>'
+          + '<div style="font-family:Barlow Condensed,sans-serif;font-size:10px;color:#556;text-transform:uppercase;letter-spacing:0.5px;">' + label + '</div>';
+        stats.appendChild(cell);
+      }
+      _cStat('Techniques', circuitItems.length, 'var(--accent)');
+      _cStat('Time', timeStr, 'var(--blue)');
+      modal.appendChild(stats);
+      if (posNames.length > 0) {
+        var posSection = document.createElement('div');
+        posSection.style.cssText = 'margin-bottom:16px;text-align:left;';
+        posSection.innerHTML = '<div style="font-family:Barlow Condensed,sans-serif;font-size:10px;color:#556;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Positions covered</div>'
+          + '<div style="font-family:Barlow Condensed,monospace;font-size:12px;color:#8892a4;line-height:1.6;">' + posNames.map(function(p) { return '<span style="display:inline-block;background:rgba(71,200,255,0.06);border:1px solid rgba(71,200,255,0.15);border-radius:6px;padding:2px 8px;margin:2px 3px 2px 0;">' + p + '</span>'; }).join('') + '</div>';
+        modal.appendChild(posSection);
+      }
+      var doneBtn = document.createElement('button');
+      doneBtn.style.cssText = 'background:var(--accent);color:#000;border:none;font-family:Barlow Condensed,sans-serif;font-size:14px;font-weight:600;padding:10px 32px;border-radius:10px;cursor:pointer;letter-spacing:0.5px;transition:all 0.15s;';
+      doneBtn.textContent = 'Done';
+      doneBtn.addEventListener('click', function() { overlay.remove(); });
+      modal.appendChild(doneBtn);
+      overlay.appendChild(modal);
+      overlay.addEventListener('click', function(e) { if (e.target === overlay) overlay.remove(); });
+      document.body.appendChild(overlay);
+    }
     function runDrill() {
-      if (idx >= circuitItems.length) { showToast('Circuit complete! ' + circuitItems.length + ' drills done'); return; }
+      if (idx >= circuitItems.length) { _showCircuitSummary(); return; }
       var d = circuitItems[idx];
+      // Track position
+      var _cSegs = d.key.split('|');
+      if (_cSegs.length >= 2) _circuitPositions[_cSegs[1].replace(/_/g, ' ')] = true;
       showToast('Drill ' + (idx+1) + '/' + circuitItems.length + ': ' + d.label);
       switchToReferenceNode(d.label, d.section);
       if (!STATE.lastPracticed) STATE.lastPracticed = {};
@@ -5047,7 +5259,7 @@ document.getElementById('menuCircuitBtn').addEventListener('click', function() {
           showToast('Rest 30s, then: ' + circuitItems[idx].label);
           setTimeout(runDrill, 30000);
         } else {
-          showToast('Circuit complete! ' + circuitItems.length + ' drills done');
+          _showCircuitSummary();
         }
       }, 120000);
     }
@@ -5753,13 +5965,19 @@ _log('[GrapplingMap] Debug API ready: window.__APP_DEBUG__');
   var titleEl = document.getElementById('videoModalTitle');
   var closeBtn = document.getElementById('videoModalClose');
 
-  // Extract YouTube video ID from various URL formats
+  // Extract YouTube video ID from various URL formats (CW9: robust parser)
   window.extractYouTubeId = function(url) {
     if (!url) return '';
-    // youtube.com/watch?v=ID
-    var match = url.match(/[?&]v=([^&]+)/);
+    // youtube.com/watch?v=ID or youtube.com/watch?…&v=ID
+    var match = url.match(/[?&]v=([^&#]+)/);
     if (match) return match[1];
-    // youtu.be/ID or youtube.com/embed/ID
+    // youtube.com/embed/ID
+    var embedMatch = url.match(/youtube\.com\/embed\/([^?&#]+)/);
+    if (embedMatch) return embedMatch[1];
+    // youtu.be/ID
+    var shortMatch = url.match(/youtu\.be\/([^?&#]+)/);
+    if (shortMatch) return shortMatch[1];
+    // Fallback: last path segment
     return url.split('/').pop().split('?')[0];
   };
   // Track video as watched

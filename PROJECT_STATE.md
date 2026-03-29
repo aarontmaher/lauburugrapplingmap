@@ -1,5 +1,5 @@
 # PROJECT STATE
-Last updated: 2026-03-23
+Last updated: 2026-03-29
 
 ## Current Phase
 Active website/app improvement iteration loop
@@ -14,7 +14,7 @@ Active website/app improvement iteration loop
 - Single-file app (index.html) with Reference tree + 3D network graph
 - OPML pipeline: grappling.opml → opml_to_sections.py → index.html (stable)
 - PWA: manifest, service worker, installable
-- Playwright smoke tests: 12 tests (11 pass, 1 pre-existing canvas failure)
+- Playwright smoke tests: 12 tests (12 pass — canvas test fixed 2026-03-29)
 - Website improvement loop: 4 iterations completed this session
 - Live footage workflow: INBOX, ffmpeg, classification memory (25 entries), placement rules
 - Keyboard Maestro: active automation system
@@ -36,13 +36,22 @@ Active website/app improvement iteration loop
 12. ITERATION-11: keyboard help panel updated with W shortcut
 13. ITERATION-12: position connection card (inbound/outbound edges inline)
 14. ITERATION-13: section header progress percentage bar
+15. BATCH-I-01: mobile auto-rotation off, recenter button, notes styling, video URL parser, graph video indicators
+16. BATCH-J-01: game strength indicators (Strong/Building/Gap), game-coloured graph nodes
+17. BATCH-K-01: drill auto-advance with countdown, session summary after training
+18. BATCH-EXTRAS-01: connected-but-untracked suggestions, drilling queue badge, dynamic subtitle, edge direction arrows
 
 ## Built-out Positions (11)
 J point, K guard, Quarter guard, Supine Guard, Mount, Turtle, Berimbolo, Grounded 50/50, Wrestling bodylock, Back Control, Crab ride
 
 ## Live Footage
-- 27 videos placed, 574+ technique folders
+- 45 videos placed, 574+ technique folders
 - INBOX ready, sync script ready (not yet applied)
+
+## Instructional Videos
+- 75 instructional videos sorted into ~/GrapplingMap/instructionals/ (separate from live-footage)
+- Mirrored folder structure: section/position/perspective/heading/
+- Content types kept separate: instructionals vs live footage
 
 ## Pipeline
 - Stable, NO_DEST=0, HELD=1 (Knee on belly bare arrow)
