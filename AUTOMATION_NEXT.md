@@ -16,7 +16,7 @@ Updated: 2026-03-29 (overnight run)
 |------|-------------|--------|--------|
 | CW12 | "Connected but untracked" suggestions | Cowork | ✅ done |
 | CW13 | Game strength indicator per position (Strong/Building/Gap) | Cowork | ✅ done |
-| CW14 | Drill from graph — start training a specific position | Cowork | pending |
+| CW14 | Drill from graph — start training a specific position | Cowork | ✅ done |
 | CC6 | Graph: game-coloured nodes (blue drilling, green learned) | Chat | ✅ done |
 | CC10 | Game coverage heatmap on graph | Chat | pending |
 
@@ -25,7 +25,7 @@ Updated: 2026-03-29 (overnight run)
 |------|-------------|--------|--------|
 | CW10 | Auto-advance after drill timer | Cowork | ✅ done |
 | CW11 | Session summary after training | Cowork | ✅ done |
-| CC3 | Drilling duration tracker | Chat | pending |
+| CC3 | Drilling duration tracker | Chat | ✅ done |
 | CC4 | Weekly training summary | Chat | pending |
 
 ## Later / Needs Aaron
@@ -34,8 +34,8 @@ Updated: 2026-03-29 (overnight run)
 | CW3 | Drilling queue badge on Reference view | Cowork | ✅ done |
 | CW4 | Dynamic subtitle based on user state | Cowork | ✅ done |
 | CW15 | Video player pinned while scrolling | Cowork | medium |
-| CW16 | Quick-drill FAB on mobile | Cowork | easy |
-| CW17 | Share position/technique via URL (deep links) | Cowork | easy-medium |
+| CW16 | Quick-drill FAB on mobile | Cowork | ✅ done |
+| CW17 | Share position/technique via URL (deep links) | Cowork | ✅ done |
 | CW18 | "My path" visualization on graph | Cowork | medium |
 | CC8 | Edge direction indicators | Chat | ✅ done |
 | CC9 | Technique notes with timestamps | Chat | medium |

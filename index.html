@@ -144,9 +144,13 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
 .btn-track-all:hover { border-color: var(--blue); color: var(--blue); background: rgba(71,200,255,0.06); }
 .children { list-style: none; }
 .tree-item.collapsed > .children { display: none; }
-.inline-player { margin: 6px 0 4px; max-width: 480px; position: sticky; bottom: 60px; z-index: 20; }
+.inline-player { margin: 6px 0 4px; max-width: 480px; z-index: 20; }
 .inline-player > div { border-radius: 6px !important; box-shadow: 0 4px 16px rgba(0,0,0,0.4); }
 .inline-player iframe { border-radius: 4px; }
+/* CW15: Pinned video player while scrolling */
+.inline-player.pinned-video { position: fixed; top: 0; right: 0; width: 40%; max-width: 320px; z-index: 200; margin: 8px; opacity: 0.95; transition: opacity 0.2s, width 0.2s; box-shadow: 0 4px 24px rgba(0,0,0,0.6); border-radius: 8px; }
+.inline-player.pinned-video > div { border-radius: 8px !important; }
+.inline-player.pinned-video iframe { border-radius: 6px; }
 /* Position-level rows (depth 0) */
 .tree-item[data-depth="0"] > .node .node-label { font-family: 'Barlow Condensed', sans-serif; font-size: 14px; font-weight: 600; letter-spacing: 0.5px; color: var(--text); }
 .tree-item[data-depth="0"] > .node { min-height: 38px; padding-top: 6px; padding-bottom: 6px; }
@@ -435,6 +439,7 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
       <button id="menuRandomBtn" style="display:block;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Random Drill</button>
       <button id="menuTimerBtn" style="display:block;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Drill Timer</button>
       <button id="menuCircuitBtn" style="display:block;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Drill Circuit</button>
+      <button id="menuWeeklySummaryBtn" style="display:block;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Weekly Summary</button>
       <div style="height:1px;background:rgba(255,255,255,0.06);margin:4px 0;"></div>
       <div style="font-size:9px;color:#556;letter-spacing:1px;text-transform:uppercase;padding:6px 14px 2px;">Progress</div>
       <button id="menuProgressBtn" style="display:block;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Dashboard</button>
@@ -861,7 +866,8 @@ function saveState() {
     videosWatched: STATE.videosWatched || {},
     successLog: STATE.successLog || [],
     drillingStarted: STATE.drillingStarted || {},
-    drillTime: STATE.drillTime || {}
+    drillTime: STATE.drillTime || {},
+    dailyDrillLog: STATE.dailyDrillLog || {}
   };
   UserStore.saveAppState(appState);
 }
@@ -901,7 +907,19 @@ function loadState() {
     STATE.successLog = appState.successLog || [];
     STATE.drillingStarted = appState.drillingStarted || {};
     STATE.drillTime = appState.drillTime || {};
+    STATE.dailyDrillLog = appState.dailyDrillLog || {};
   }
+}
+
+// CC4: Record daily drill activity for weekly summary
+function recordDrillActivity(techniqueKey, seconds) {
+  if (!techniqueKey || !seconds) return;
+  if (!STATE.dailyDrillLog) STATE.dailyDrillLog = {};
+  var today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
+  if (!STATE.dailyDrillLog[today]) STATE.dailyDrillLog[today] = { techniques: {}, totalSeconds: 0 };
+  var entry = STATE.dailyDrillLog[today];
+  entry.techniques[techniqueKey] = (entry.techniques[techniqueKey] || 0) + seconds;
+  entry.totalSeconds += seconds;
 }
 
 const KEY_VERSION = 2;
@@ -2885,7 +2903,8 @@ window.initGraph3D = (function() {
       var segs=kv[0].split('|');
       if(segs.length>=2){
         var posKey=segs[0]+'|'+segs[1];
-        if(!posAgg[posKey]) posAgg[posKey]={hasDrilling:false,hasLearned:false};
+        if(!posAgg[posKey]) posAgg[posKey]={hasDrilling:false,hasLearned:false,trackedCount:0};
+        if(kv[1]==='drilling'||kv[1]==='learned'||kv[1]==='want') posAgg[posKey].trackedCount++;
         if(kv[1]==='drilling') posAgg[posKey].hasDrilling=true;
         if(kv[1]==='learned') posAgg[posKey].hasLearned=true;
       }
@@ -2898,6 +2917,8 @@ window.initGraph3D = (function() {
         else if(agg&&agg.hasLearned) n.status='learned';
         else if(agg&&agg.hasDrilling) n.status='drilling';
         else n.status='none';
+        // CC10: store tracked technique count for heatmap coloring
+        n._trackedCount = agg ? agg.trackedCount : 0;
       } else {
         const s=p[n.key]||'none';
         n.status=s==='learned'?'learned':s==='drilling'?'drilling':'none';
@@ -2925,11 +2946,33 @@ window.initGraph3D = (function() {
     maxIn3d=Math.max(1,...nodes.filter(n=>n.depth===1).map(n=>n._in||0));
   }
 
+  // CC10: Heatmap coloring based on tracked technique count per position
+  // 0 = very dim gray, 1-3 = light tint, 4-7 = medium, 8+ = full saturation
+  function _heatmapIntensity(count) {
+    if (count <= 0) return 0;
+    if (count <= 3) return 0.3 + (count / 3) * 0.2; // 0.3-0.5
+    if (count <= 7) return 0.5 + ((count - 3) / 4) * 0.25; // 0.5-0.75
+    return Math.min(1.0, 0.75 + ((count - 7) / 8) * 0.25); // 0.75-1.0
+  }
   function nodeCol3d(n,THREE){
-    if(n.status==='both'){const c=new THREE.Color(SECT_HEX3[n.section_idx]||0x445566);c.lerp(new THREE.Color(0x2dd4aa),0.55);return c;} // teal tint for both
-    if(n.status==='learned'){const c=new THREE.Color(SECT_HEX3[n.section_idx]||0x445566);c.lerp(new THREE.Color(0x34d399),0.5);return c;} // green tint
-    if(n.status==='drilling'){const c=new THREE.Color(SECT_HEX3[n.section_idx]||0x445566);c.lerp(new THREE.Color(0x47c8ff),0.5);return c;} // blue tint
-    const c=new THREE.Color(SECT_HEX3[n.section_idx]||0x445566);c.multiplyScalar(0.5);return c; // muted gray default
+    var tc = n._trackedCount || 0;
+    var baseCol = new THREE.Color(SECT_HEX3[n.section_idx]||0x445566);
+    if (tc === 0) {
+      // Cold: very dim desaturated gray
+      baseCol.multiplyScalar(0.35);
+      var hsl = {}; baseCol.getHSL(hsl);
+      baseCol.setHSL(hsl.h, hsl.s * 0.3, hsl.l * 0.7);
+      return baseCol;
+    }
+    var intensity = _heatmapIntensity(tc);
+    // Status tint: overlay tracking status color at reduced strength
+    if(n.status==='both') baseCol.lerp(new THREE.Color(0x2dd4aa), 0.35 * intensity);
+    else if(n.status==='learned') baseCol.lerp(new THREE.Color(0x34d399), 0.3 * intensity);
+    else if(n.status==='drilling') baseCol.lerp(new THREE.Color(0x47c8ff), 0.3 * intensity);
+    // Apply heatmap intensity: scale saturation and lightness
+    var hsl = {}; baseCol.getHSL(hsl);
+    baseCol.setHSL(hsl.h, Math.min(1, hsl.s * (0.4 + intensity * 0.8)), Math.min(0.75, hsl.l * (0.5 + intensity * 0.7)));
+    return baseCol;
   }
 
   function randSph3d(r){const u=Math.random(),v=Math.random(),t=2*Math.PI*u,p=Math.acos(2*v-1);return[r*Math.sin(p)*Math.cos(t),r*Math.sin(p)*Math.sin(t),r*Math.cos(p)];}
@@ -4582,8 +4625,105 @@ document.getElementById('menuResetBtn').addEventListener('click', function() {
   STATE.notes = {};
   STATE.recentViewed = [];
   STATE.drillTime = {};
+  STATE.dailyDrillLog = {};
   saveState(); updateStats(); refreshAllViews();
   showToast('All progress has been reset');
+});
+// CC4: Weekly Summary modal
+document.getElementById('menuWeeklySummaryBtn').addEventListener('click', function() {
+  document.getElementById('headerMenu').style.display = 'none';
+  var log = STATE.dailyDrillLog || {};
+  var now = new Date();
+  var days = [];
+  for (var i = 6; i >= 0; i--) {
+    var d = new Date(now);
+    d.setDate(d.getDate() - i);
+    var key = d.toISOString().slice(0, 10);
+    var dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+    days.push({ date: key, dayName: dayNames[d.getDay()], entry: log[key] || null });
+  }
+  var totalSeconds = 0;
+  var uniqueTechs = {};
+  var positions = {};
+  var techDrillCounts = {};
+  days.forEach(function(day) {
+    if (!day.entry) return;
+    totalSeconds += day.entry.totalSeconds || 0;
+    Object.keys(day.entry.techniques || {}).forEach(function(tk) {
+      var segs = tk.split('|');
+      var techLabel = segs[segs.length - 1].replace(/_/g, ' ');
+      uniqueTechs[techLabel] = true;
+      techDrillCounts[techLabel] = (techDrillCounts[techLabel] || 0) + (day.entry.techniques[tk] || 0);
+      if (segs.length >= 2) positions[segs[1].replace(/_/g, ' ')] = true;
+    });
+  });
+  var uniqueCount = Object.keys(uniqueTechs).length;
+  var posCount = Object.keys(positions).length;
+  var mostDrilled = '';
+  var maxSec = 0;
+  Object.entries(techDrillCounts).forEach(function(kv) { if (kv[1] > maxSec) { maxSec = kv[1]; mostDrilled = kv[0]; } });
+  var totalMin = Math.floor(totalSeconds / 60);
+  var totalStr = totalMin >= 60 ? Math.floor(totalMin / 60) + 'h ' + (totalMin % 60) + 'm' : totalMin + 'm';
+  // Max seconds in a single day for bar chart scaling
+  var maxDaySec = 1;
+  days.forEach(function(day) { if (day.entry && day.entry.totalSeconds > maxDaySec) maxDaySec = day.entry.totalSeconds; });
+  // Build modal
+  var overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(8,10,14,0.85);z-index:4000;display:flex;align-items:center;justify-content:center;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);animation:fadeIn 0.2s ease;';
+  var modal = document.createElement('div');
+  modal.style.cssText = 'background:#141820;border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:28px 32px;max-width:380px;width:calc(100vw - 40px);text-align:center;box-shadow:0 8px 32px rgba(0,0,0,0.4);';
+  var title = document.createElement('div');
+  title.style.cssText = 'font-family:Bebas Neue,sans-serif;font-size:22px;color:var(--accent);letter-spacing:1px;margin-bottom:16px;';
+  title.textContent = 'Weekly Summary';
+  modal.appendChild(title);
+  if (totalSeconds === 0) {
+    var empty = document.createElement('div');
+    empty.style.cssText = 'font-family:Barlow Condensed,sans-serif;font-size:13px;color:#556;padding:20px 0;';
+    empty.textContent = 'No drill activity in the last 7 days. Start a drill timer to track your training.';
+    modal.appendChild(empty);
+  } else {
+    // Stats grid
+    var stats = document.createElement('div');
+    stats.style.cssText = 'display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;';
+    function _ws(label, value, color) {
+      var cell = document.createElement('div');
+      cell.style.cssText = 'background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.05);border-radius:8px;padding:10px 8px;';
+      cell.innerHTML = '<div style="font-family:Bebas Neue,sans-serif;font-size:24px;color:' + (color||'var(--accent)') + ';letter-spacing:1px;">' + value + '</div>'
+        + '<div style="font-family:Barlow Condensed,sans-serif;font-size:10px;color:#556;text-transform:uppercase;letter-spacing:0.5px;">' + label + '</div>';
+      stats.appendChild(cell);
+    }
+    _ws('Total Time', totalStr, 'var(--blue)');
+    _ws('Techniques', uniqueCount, 'var(--accent)');
+    _ws('Positions', posCount, 'var(--green)');
+    _ws('Most Drilled', mostDrilled || '-', 'var(--accent2)');
+    modal.appendChild(stats);
+    // Day-by-day breakdown
+    var breakdown = document.createElement('div');
+    breakdown.style.cssText = 'text-align:left;margin-bottom:16px;';
+    breakdown.innerHTML = '<div style="font-family:Barlow Condensed,sans-serif;font-size:10px;color:#556;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">Last 7 days</div>';
+    days.forEach(function(day) {
+      var sec = day.entry ? day.entry.totalSeconds : 0;
+      var pct = Math.round((sec / maxDaySec) * 100);
+      var minStr = sec >= 60 ? Math.floor(sec / 60) + 'm' : sec + 's';
+      var row = document.createElement('div');
+      row.style.cssText = 'display:flex;align-items:center;gap:8px;margin-bottom:4px;';
+      row.innerHTML = '<span style="width:32px;font-family:DM Mono,monospace;font-size:10px;color:#667;flex-shrink:0;">' + day.dayName + '</span>'
+        + '<div style="flex:1;height:6px;background:rgba(255,255,255,0.04);border-radius:3px;overflow:hidden;">'
+        + '<div style="height:100%;width:' + (sec > 0 ? Math.max(pct, 4) : 0) + '%;background:var(--blue);border-radius:3px;transition:width 0.3s;"></div>'
+        + '</div>'
+        + '<span style="width:32px;text-align:right;font-family:DM Mono,monospace;font-size:10px;color:' + (sec > 0 ? '#8892a4' : '#334') + ';">' + (sec > 0 ? minStr : '-') + '</span>';
+      breakdown.appendChild(row);
+    });
+    modal.appendChild(breakdown);
+  }
+  var doneBtn = document.createElement('button');
+  doneBtn.style.cssText = 'background:var(--accent);color:#000;border:none;font-family:Barlow Condensed,sans-serif;font-size:14px;font-weight:600;padding:10px 32px;border-radius:10px;cursor:pointer;letter-spacing:0.5px;transition:all 0.15s;';
+  doneBtn.textContent = 'Done';
+  doneBtn.addEventListener('click', function() { overlay.remove(); });
+  modal.appendChild(doneBtn);
+  overlay.appendChild(modal);
+  overlay.addEventListener('click', function(e) { if (e.target === overlay) overlay.remove(); });
+  document.body.appendChild(overlay);
 });
 // List panel helpers
 function openListPanel(title, items) {
@@ -5121,6 +5261,8 @@ document.getElementById('menuTimerBtn').addEventListener('click', function() {
         if (timerState._currentDrillKey) {
           if (!STATE.drillTime) STATE.drillTime = {};
           STATE.drillTime[timerState._currentDrillKey] = (STATE.drillTime[timerState._currentDrillKey] || 0) + 1;
+          // CC4: Record daily drill activity every second
+          recordDrillActivity(timerState._currentDrillKey, 1);
           // Save every 10 seconds to avoid excessive writes
           if ((STATE.drillTime[timerState._currentDrillKey] % 10) === 0) saveState();
         }
@@ -5450,6 +5592,60 @@ document.getElementById('referenceView').addEventListener('click', function(e) {
     clearTechniqueSelection();
   }
 });
+// CW15: Pin video player to top-right when user scrolls past it
+(function() {
+  var sectionsEl = document.getElementById('sections');
+  if (!sectionsEl) return;
+  var _pinnedPlayer = null;
+  var _pinnedPlaceholder = null;
+  sectionsEl.addEventListener('scroll', function() {
+    var players = sectionsEl.querySelectorAll('.inline-player');
+    if (!players.length) {
+      // No players — clean up any pinned state
+      if (_pinnedPlayer) { _pinnedPlayer.classList.remove('pinned-video'); _pinnedPlayer = null; }
+      if (_pinnedPlaceholder) { _pinnedPlaceholder.remove(); _pinnedPlaceholder = null; }
+      return;
+    }
+    // Find the active inline player (the one with an iframe)
+    var activePlayer = null;
+    players.forEach(function(p) { if (p.querySelector('iframe')) activePlayer = p; });
+    if (!activePlayer) return;
+    // Check if player is scrolled out of view (above the visible area)
+    var containerRect = sectionsEl.getBoundingClientRect();
+    if (activePlayer.classList.contains('pinned-video')) {
+      // Check if placeholder is back in view — unpin
+      if (_pinnedPlaceholder) {
+        var phRect = _pinnedPlaceholder.getBoundingClientRect();
+        if (phRect.top >= containerRect.top) {
+          activePlayer.classList.remove('pinned-video');
+          _pinnedPlaceholder.remove();
+          _pinnedPlaceholder = null;
+          _pinnedPlayer = null;
+        }
+      }
+    } else {
+      var playerRect = activePlayer.getBoundingClientRect();
+      if (playerRect.bottom < containerRect.top) {
+        // Player is above visible area — pin it
+        _pinnedPlayer = activePlayer;
+        // Insert placeholder to preserve scroll height
+        _pinnedPlaceholder = document.createElement('div');
+        _pinnedPlaceholder.style.height = playerRect.height + 'px';
+        _pinnedPlaceholder.className = 'pinned-video-placeholder';
+        activePlayer.parentNode.insertBefore(_pinnedPlaceholder, activePlayer);
+        activePlayer.classList.add('pinned-video');
+      }
+    }
+  });
+  // Clean up pinned state when player is removed (e.g. user clicks Close)
+  var _obs = new MutationObserver(function(mutations) {
+    if (_pinnedPlayer && !document.body.contains(_pinnedPlayer)) {
+      _pinnedPlayer = null;
+      if (_pinnedPlaceholder) { _pinnedPlaceholder.remove(); _pinnedPlaceholder = null; }
+    }
+  });
+  _obs.observe(sectionsEl, { childList: true, subtree: true });
+})();
 checkKeyVersion();
 loadState();
 initDataFromSections();
