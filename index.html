@@ -5858,10 +5858,12 @@ if (typeof updateQuickAccess === 'function') updateQuickAccess();
         deepLinked = true;
       } else if (parts[0] === 'net' && parts[1]) {
         requestAnimationFrame(function() { requestAnimationFrame(initGraph3D); });
+        setTimeout(function(){ window.dispatchEvent(new Event('resize')); }, 150);
         setTimeout(function() { if (window._g3dSelectByLabel) window._g3dSelectByLabel(parts[1]); }, 500);
         deepLinked = true;
       } else if (parts[0] === 'net') {
         requestAnimationFrame(function() { requestAnimationFrame(initGraph3D); });
+        setTimeout(function(){ window.dispatchEvent(new Event('resize')); }, 150);
         deepLinked = true;
       }
     }
@@ -5874,6 +5876,8 @@ if (typeof updateQuickAccess === 'function') updateQuickAccess();
       }
     } else {
       requestAnimationFrame(function() { requestAnimationFrame(initGraph3D); });
+      // CW62: dispatch resize after initial graph init to ensure canvas sizes correctly
+      setTimeout(function(){ window.dispatchEvent(new Event('resize')); }, 150);
     }
   }
   // Safety: if deep link handled the view but graph wasn't inited, ensure it inits when user switches
@@ -6601,7 +6605,7 @@ _log('[GrapplingMap] Debug API ready: window.__APP_DEBUG__');
     if (posSet) {
       Object.entries(STATE.progress).forEach(function(kv) {
         var keyParts = kv[0].split('|');
-        var posNorm = keyParts.length >= 3 ? keyParts[2] : keyParts[keyParts.length - 1];
+        var posNorm = keyParts.length >= 2 ? keyParts[1] : keyParts[keyParts.length - 1];
         if (posSet.has(posNorm)) {
           trackedCount++;
           if (kv[1] === 'learned') learnedCount++;
