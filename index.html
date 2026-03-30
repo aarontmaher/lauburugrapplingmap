@@ -73,7 +73,7 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
 .tab { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; padding: 5px 10px; border: 1px solid var(--border); background: transparent; color: var(--text-muted); cursor: pointer; border-radius: 2px; transition: all 0.15s; }
 .tab:hover { color: var(--text); border-color: var(--text-muted); }
 .tab.active { color: var(--bg); background: var(--accent); border-color: var(--accent); }
-.toolbar-btn { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; padding: 5px 10px; border: 1px solid var(--border); background: transparent; color: var(--text-muted); cursor: pointer; border-radius: 2px; transition: all 0.15s; }
+.toolbar-btn { font-family: 'DM Mono', monospace; font-size: 12px; letter-spacing: 1px; text-transform: uppercase; padding: 5px 10px; border: 1px solid var(--border); background: transparent; color: var(--text-muted); cursor: pointer; border-radius: 2px; transition: all 0.15s; }
 .toolbar-btn:hover { color: var(--accent); border-color: var(--accent); }
 
 /* ── REFERENCE VIEW ── */
@@ -126,7 +126,7 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
 .btn-video:hover { background: var(--accent2); color: #000; }
 .btn-live { border-color: var(--green) !important; color: var(--green) !important; background: rgba(52,211,153,0.06) !important; }
 .btn-live:hover { background: var(--green) !important; color: #000 !important; }
-.btn-note { font-family: 'DM Mono', monospace; font-size: 11px; padding: 2px 8px; border: 1px solid var(--border); color: var(--text-muted); background: transparent; cursor: pointer; border-radius: 12px; transition: all 0.15s; }
+.btn-note { font-family: 'DM Mono', monospace; font-size: 12px; padding: 2px 8px; border: 1px solid var(--border); color: var(--text-muted); background: transparent; cursor: pointer; border-radius: 12px; transition: all 0.15s; }
 .btn-note:hover { border-color: var(--accent3); color: var(--accent3); }
 .btn-note.has-note { border-color: var(--accent3); color: var(--accent3); background: rgba(167,139,250,0.06); }
 .progress-pill { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.5px; padding: 3px 8px; border: 1px solid var(--border); color: var(--text-muted); background: transparent; cursor: pointer; border-radius: 12px; transition: all 0.15s; text-transform: uppercase; white-space: nowrap; }
@@ -272,8 +272,8 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
   .toolbar { gap: 6px; padding: 8px 10px; }
   .search-wrap { min-width: 140px; }
   .filter-tabs { gap: 3px; }
-  .tab { font-size: 10px; padding: 6px 10px; min-height: 36px; }
-  .toolbar-btn { font-size: 10px; padding: 6px 10px; min-height: 36px; }
+  .tab { font-size: 10px; padding: 6px 10px; min-height: 44px; }
+  .toolbar-btn { font-size: 10px; padding: 6px 10px; min-height: 44px; }
 
   /* Reference: tighter section padding */
   .sections { padding: 8px 8px; }
@@ -294,7 +294,7 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
   #refBottomBar input { width: 100px; font-size: 16px; }
   #g3dToolbar { left: 8px !important; right: 8px !important; transform: none !important; bottom: calc(10px + env(safe-area-inset-bottom)) !important; max-width: 100% !important; gap: 4px !important; padding: 6px 8px !important; flex-wrap: wrap !important; row-gap: 6px !important; }
   #g3dToolbar input { width: 90px; font-size: 16px; }
-  .g3d-tb-btn { font-size: 11px; padding: 0 10px; height: 38px; min-width: 44px; }
+  .g3d-tb-btn { font-size: 11px; padding: 0 10px; height: 44px; min-width: 44px; }
   /* Toolbar dividers: collapse on wrap to save space */
   #refBottomBar > div[style*="width:1px"], #g3dToolbar > div[style*="width:1px"] { display: none; }
   /* Belt filter chip on toolbar */
@@ -303,11 +303,12 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
   .section-title { font-size: 15px; }
   /* Touch feedback */
   .g3d-tb-btn:active { transform: scale(0.95); }
-  .btn-video { min-height: 36px; padding: 8px 14px; font-size: 11px; }
+  .view-tab { min-height: 44px; padding: 10px 16px; }
+  .btn-video { min-height: 44px; padding: 8px 14px; font-size: 12px; }
   .btn-video:active { transform: scale(0.95); }
-  .progress-pill { min-height: 36px; padding: 6px 12px; font-size: 11px; }
+  .progress-pill { min-height: 44px; padding: 6px 12px; font-size: 12px; }
   .progress-pill:active { transform: scale(0.95); }
-  .btn-note { min-height: 36px; min-width: 36px; font-size: 14px; display: flex; align-items: center; justify-content: center; }
+  .btn-note { min-height: 44px; min-width: 44px; font-size: 14px; display: flex; align-items: center; justify-content: center; }
   .node-toggle { min-width: 28px; min-height: 28px; }
   .section-header:active { background: var(--surface2); }
   .node:active { background: rgba(255,255,255,0.06); }
@@ -422,7 +423,7 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
       <button class="belt-opt belt-locked" data-belt="black" style="display:block;width:100%;text-align:left;background:none;border:none;color:#4a5568;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:default;opacity:0.5;">🔒 Black Belt</button>
       <div style="height:1px;background:rgba(255,255,255,0.06);margin:4px 0;"></div>
       <button id="beltFilterBtn" style="display:block;width:100%;text-align:left;background:none;border:none;color:var(--accent3);font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;font-weight:500;">Filter to syllabus</button>
-      <button id="beltApplyBtn" style="display:block;width:100%;text-align:left;background:none;border:none;color:var(--accent);font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;font-weight:500;">Apply for Next Belt →</button>
+      <button id="beltApplyBtn" style="display:none;width:100%;text-align:left;background:none;border:none;color:var(--accent);font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;font-weight:500;">Apply for Next Belt →</button>
     </div>
     <button id="authBtn" style="background:var(--accent);border:none;color:#000;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:600;padding:6px 14px;border-radius:6px;cursor:pointer;letter-spacing:0.5px;display:none;">Create Account</button>
     <button id="authUserBtn" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:var(--text-dim);font-family:'Barlow Condensed',sans-serif;font-size:12px;padding:5px 12px;border-radius:6px;cursor:pointer;display:none;"></button>
@@ -676,8 +677,11 @@ var SUPABASE_URL = 'https://rejalrfmievikabgsakf.supabase.co';
 var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJlamFscmZtaWV2aWthYmdzYWtmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzNTQ1NjYsImV4cCI6MjA4OTkzMDU2Nn0.dfE3EfP7PYTe4Pi07c65BxI1W-0NfE6vqZBFJJpL-fM';
 var _supabase = null;
 try {
-  if (window.supabase && window.supabase.createClient) {
+  if (window._supabaseInitialized) { _supabase = window._supabaseClient; }
+  else if (window.supabase && window.supabase.createClient) {
     _supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    window._supabaseClient = _supabase;
+    window._supabaseInitialized = true;
     console.log('Supabase client initialized');
   } else {
     console.warn('Supabase SDK not loaded — auth will not work');
@@ -1615,7 +1619,7 @@ function buildNode(node, sectionTitle, depth, parentUl, parentKey, disambig, pos
     hitBtn.className = 'btn-note';
     hitBtn.textContent = '\u2714';
     hitBtn.title = 'Log success — hit this in training';
-    hitBtn.style.cssText = 'font-size:11px;';
+    hitBtn.style.cssText = 'font-size:12px;';
     var _hitCount = (STATE.successLog || []).filter(function(e) { return e.key === key; }).length;
     if (_hitCount > 0) { hitBtn.style.color = 'var(--green)'; hitBtn.style.borderColor = 'var(--green)'; hitBtn.textContent = '\u2714 ' + _hitCount; }
     hitBtn.addEventListener('click', function(ev) {
@@ -5112,9 +5116,8 @@ document.getElementById('menuProgressBtn').addEventListener('click', function() 
   items.push({ label: '', meta: '', customHtml: sparkHtml });
   // Section breakdown with color dots + drilling/learned split
   items.push({ label: 'By section', meta: '', isHeader: true });
+  // CW36: Use only canonical SECTIONS titles to avoid duplicates from tracked data
   var allSectionNames = new Set();
-  Object.keys(bySectionDrill).forEach(function(s) { allSectionNames.add(s); });
-  Object.keys(bySectionLearn).forEach(function(s) { allSectionNames.add(s); });
   SECTIONS.forEach(function(s) { allSectionNames.add(s.title); });
   var maxBySection = 0;
   allSectionNames.forEach(function(s) { var t = (bySectionDrill[s]||0) + (bySectionLearn[s]||0); if (t > maxBySection) maxBySection = t; });
@@ -6431,8 +6434,8 @@ _log('[GrapplingMap] Debug API ready: window.__APP_DEBUG__');
 <div id="authModal" style="display:none;position:fixed;inset:0;z-index:3000;align-items:center;justify-content:center;background:rgba(0,0,0,0.7);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);">
   <div style="position:relative;width:min(90vw,380px);background:rgba(14,16,21,0.98);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:28px;box-shadow:0 16px 64px rgba(0,0,0,0.6);">
     <button id="authModalClose" style="position:absolute;top:12px;right:12px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:#667;font-size:16px;width:32px;height:32px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;">×</button>
-    <div style="font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:600;color:var(--accent);margin-bottom:6px;">Create Your Account</div>
-    <div style="font-family:'Barlow Condensed',sans-serif;font-size:12px;color:#667;margin-bottom:16px;">Track progress across 994 techniques. Build your personal game map. Drill with timers. Find gaps in your system.</div>
+    <div style="font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:600;color:var(--accent);margin-bottom:6px;">Save your progress &amp; get AI coaching</div>
+    <div style="font-family:'Barlow Condensed',sans-serif;font-size:12px;color:#667;margin-bottom:16px;">Sync progress tracking across devices, get AI coach feedback, and keep your drill history. The full map is already yours — an account unlocks the tools to train smarter.</div>
     <div id="authModalForm">
       <input id="authEmail" type="email" placeholder="Email" style="width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);font-family:'DM Mono',monospace;font-size:13px;padding:10px 12px;border-radius:6px;margin-bottom:8px;outline:none;">
       <input id="authPassword" type="password" placeholder="Password" style="width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);font-family:'DM Mono',monospace;font-size:13px;padding:10px 12px;border-radius:6px;margin-bottom:12px;outline:none;">
@@ -6671,12 +6674,12 @@ _log('[GrapplingMap] Debug API ready: window.__APP_DEBUG__');
   authModal.addEventListener('click', function(e) { if (e.target === authModal) hideAuthModal(); });
 
   // Auth state setter
-  function setAuthMember(user) {
+  function setAuthMember(user, _fromCache) {
     AUTH_STATE = 'member';
     AUTH_USER = { id: user.id, email: user.email, displayName: user.user_metadata && user.user_metadata.display_name || user.email };
     updateAuthUI();
     hideAuthModal();
-    showToast('Welcome, ' + (AUTH_USER.displayName || AUTH_USER.email));
+    if (!_fromCache) { showToast('Welcome back, ' + (user.user_metadata && user.user_metadata.display_name || user.email) + ' \u2014 your progress is synced'); }
     // First-login migration: push local data to cloud if not done
     var alreadyMigrated = UserStore.load('gm_migrated') === '1';
     if (!alreadyMigrated) {
@@ -6777,7 +6780,7 @@ _log('[GrapplingMap] Debug API ready: window.__APP_DEBUG__');
       // Supabase SDK not loaded — use localStorage as fallback (offline mode)
       var cachedAuth = localStorage.getItem('gm_auth_cache');
       if (cachedAuth) {
-        try { var cached = JSON.parse(cachedAuth); if (cached && cached.id) { setAuthMember(cached); console.log('Auth: using cached session (offline)'); } } catch(e) {}
+        try { var cached = JSON.parse(cachedAuth); if (cached && cached.id) { setAuthMember(cached, true); console.log('Auth: using cached session (offline)'); } } catch(e) {}
       }
       return;
     }
@@ -6787,7 +6790,7 @@ _log('[GrapplingMap] Debug API ready: window.__APP_DEBUG__');
     try {
       var session = await _supabase.auth.getSession();
       if (session.data && session.data.session && session.data.session.user) {
-        setAuthMember(session.data.session.user);
+        setAuthMember(session.data.session.user, true);
         // Cache for offline fallback
         localStorage.setItem('gm_auth_cache', JSON.stringify({ id: session.data.session.user.id, email: session.data.session.user.email, displayName: session.data.session.user.user_metadata && session.data.session.user.user_metadata.display_name || session.data.session.user.email }));
       } else {
@@ -6801,7 +6804,7 @@ _log('[GrapplingMap] Debug API ready: window.__APP_DEBUG__');
       // Offline fallback — try cached auth
       var cachedAuth2 = localStorage.getItem('gm_auth_cache');
       if (cachedAuth2) {
-        try { var cached2 = JSON.parse(cachedAuth2); if (cached2 && cached2.id) { setAuthMember(cached2); showToast('Offline — using cached session'); } } catch(e2) {}
+        try { var cached2 = JSON.parse(cachedAuth2); if (cached2 && cached2.id) { setAuthMember(cached2, true); showToast('Offline — using cached session'); } } catch(e2) {}
       } else {
         authBtn.textContent = 'Create Account';
       }
