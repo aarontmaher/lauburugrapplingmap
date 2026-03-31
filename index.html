@@ -441,6 +441,7 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
       <button id="menuTimerBtn" style="display:block;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Drill Timer</button>
       <button id="menuCircuitBtn" style="display:block;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Drill Circuit</button>
       <button id="menuWeeklySummaryBtn" style="display:block;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Weekly Summary</button>
+      <button id="menuJournalBtn" style="display:block;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Sparring Journal</button>
       <div style="height:1px;background:rgba(255,255,255,0.06);margin:4px 0;"></div>
       <div style="font-size:9px;color:#556;letter-spacing:1px;text-transform:uppercase;padding:6px 14px 2px;">Progress</div>
       <button id="menuProgressBtn" style="display:block;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Dashboard</button>
@@ -471,6 +472,7 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
     <kbd style="background:#1a1e28;border:1px solid #2a3040;border-radius:3px;padding:2px 6px;font-size:10px;color:var(--text-dim);">S</kbd><span>Random drill (shuffle)</span>
     <kbd style="background:#1a1e28;border:1px solid #2a3040;border-radius:3px;padding:2px 6px;font-size:10px;color:var(--text-dim);">V</kbd><span>All Videos</span>
     <kbd style="background:#1a1e28;border:1px solid #2a3040;border-radius:3px;padding:2px 6px;font-size:10px;color:var(--text-dim);">W</kbd><span>Recently Watched</span>
+    <kbd style="background:#1a1e28;border:1px solid #2a3040;border-radius:3px;padding:2px 6px;font-size:10px;color:var(--text-dim);">J</kbd><span>Sparring Journal</span>
     <kbd style="background:#1a1e28;border:1px solid #2a3040;border-radius:3px;padding:2px 6px;font-size:10px;color:var(--text-dim);">G</kbd><span>Toggle Reference ↔ Network</span>
     <kbd style="background:#1a1e28;border:1px solid #2a3040;border-radius:3px;padding:2px 6px;font-size:10px;color:var(--text-dim);">?</kbd><span>Toggle this help panel</span>
   </div>
@@ -858,7 +860,8 @@ const STATE = {
   currentNoteKey: null,
   currentFilter: 'all',
   totalNodes: 0,
-  learnedNodes: 0
+  learnedNodes: 0,
+  sparringLog: []
 };
 
 function saveState() {
@@ -873,7 +876,8 @@ function saveState() {
     successLog: STATE.successLog || [],
     drillingStarted: STATE.drillingStarted || {},
     drillTime: STATE.drillTime || {},
-    dailyDrillLog: STATE.dailyDrillLog || {}
+    dailyDrillLog: STATE.dailyDrillLog || {},
+    sparringLog: STATE.sparringLog || []
   };
   UserStore.saveAppState(appState);
 }
@@ -914,6 +918,7 @@ function loadState() {
     STATE.drillingStarted = appState.drillingStarted || {};
     STATE.drillTime = appState.drillTime || {};
     STATE.dailyDrillLog = appState.dailyDrillLog || {};
+    STATE.sparringLog = appState.sparringLog || [];
   }
 }
 
@@ -4664,6 +4669,8 @@ document.addEventListener('keydown', e => {
   if (e.key === 'v' && !inInput) { document.getElementById('menuVideosBtn').click(); }
   // W: recently watched
   if (e.key === 'w' && !inInput) { document.getElementById('menuWatchedBtn').click(); }
+  // J: sparring journal
+  if (e.key === 'j' && !inInput) { document.getElementById('menuJournalBtn').click(); }
   // ?: toggle help panel
   if (e.key === '?' && !inInput) {
     var hp = document.getElementById('kbdHelpPanel');
@@ -4712,7 +4719,7 @@ document.addEventListener('keydown', e => {
 })();
 // Export progress
 document.getElementById('menuExportBtn').addEventListener('click', function() {
-  var data = { progress: STATE.progress, notes: STATE.notes, recentViewed: STATE.recentViewed || [], successLog: STATE.successLog || [], drillTime: STATE.drillTime || {}, exportedAt: new Date().toISOString() };
+  var data = { progress: STATE.progress, notes: STATE.notes, recentViewed: STATE.recentViewed || [], successLog: STATE.successLog || [], drillTime: STATE.drillTime || {}, sparringLog: STATE.sparringLog || [], exportedAt: new Date().toISOString() };
   var blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
   var a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
@@ -4737,6 +4744,7 @@ document.getElementById('menuImportBtn').addEventListener('click', function() {
         if (data.recentViewed) STATE.recentViewed = data.recentViewed;
         if (data.successLog) STATE.successLog = data.successLog;
         if (data.drillTime) STATE.drillTime = data.drillTime;
+        if (data.sparringLog) STATE.sparringLog = data.sparringLog;
         saveState(); updateStats(); refreshAllViews();
         showToast('Progress imported successfully');
       } catch(e) { showToast('Could not read file — check format'); }
@@ -4753,6 +4761,7 @@ document.getElementById('menuResetBtn').addEventListener('click', function() {
   STATE.recentViewed = [];
   STATE.drillTime = {};
   STATE.dailyDrillLog = {};
+  STATE.sparringLog = [];
   saveState(); updateStats(); refreshAllViews();
   showToast('All progress has been reset');
 });
@@ -7130,6 +7139,306 @@ var AIActions = {
     if (e.key === 'Enter') { e.preventDefault(); handleChatSubmit(); }
   });
 })();
+
+// CC14: Sparring Journal
+document.getElementById('menuJournalBtn').addEventListener('click', function() {
+  document.getElementById('headerMenu').style.display = 'none';
+  openSparringJournal();
+});
+
+function openSparringJournal() {
+  // Remove existing overlay if any
+  var existing = document.getElementById('sparringJournalOverlay');
+  if (existing) existing.remove();
+
+  var log = STATE.sparringLog || [];
+
+  var overlay = document.createElement('div');
+  overlay.id = 'sparringJournalOverlay';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(8,10,14,0.88);z-index:4000;display:flex;align-items:flex-start;justify-content:center;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);animation:fadeIn 0.2s ease;overflow-y:auto;padding:24px 10px;';
+
+  var panel = document.createElement('div');
+  panel.style.cssText = 'background:#141820;border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:0;max-width:480px;width:calc(100vw - 24px);box-shadow:0 8px 32px rgba(0,0,0,0.4);margin:auto;';
+
+  // ── Header ──
+  var hdr = document.createElement('div');
+  hdr.style.cssText = 'display:flex;align-items:center;justify-content:space-between;padding:20px 24px 12px;border-bottom:1px solid rgba(255,255,255,0.06);';
+  hdr.innerHTML = '<div style="font-family:Bebas Neue,sans-serif;font-size:22px;color:var(--accent);letter-spacing:1px;">Sparring Journal</div>'
+    + '<button id="sjClose" style="background:none;border:none;color:#4a5568;font-size:20px;cursor:pointer;padding:0 4px;">\u00d7</button>';
+  panel.appendChild(hdr);
+
+  var content = document.createElement('div');
+  content.style.cssText = 'padding:16px 24px 24px;max-height:calc(100vh - 120px);overflow-y:auto;';
+
+  // ── Stats Summary ──
+  var statsHtml = buildJournalStats(log);
+  var statsDiv = document.createElement('div');
+  statsDiv.innerHTML = statsHtml;
+  content.appendChild(statsDiv);
+
+  // ── Log Session Form ──
+  var formDiv = document.createElement('div');
+  formDiv.style.cssText = 'margin-top:16px;';
+  var today = new Date().toISOString().slice(0, 10);
+  formDiv.innerHTML = '<div style="font-family:Bebas Neue,sans-serif;font-size:16px;color:var(--text);letter-spacing:1px;margin-bottom:10px;">Log Session</div>'
+    + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">'
+    + '<div><label style="font-family:Barlow Condensed,sans-serif;font-size:10px;color:#556;text-transform:uppercase;letter-spacing:0.5px;">Date</label>'
+    + '<input id="sjDate" type="date" value="' + today + '" style="width:100%;background:#181c26;border:1px solid rgba(255,255,255,0.08);border-radius:6px;padding:6px 8px;color:#c4cdd8;font-family:DM Mono,monospace;font-size:12px;outline:none;"></div>'
+    + '<div><label style="font-family:Barlow Condensed,sans-serif;font-size:10px;color:#556;text-transform:uppercase;letter-spacing:0.5px;">Duration (min)</label>'
+    + '<input id="sjDuration" type="number" value="60" min="1" max="600" style="width:100%;background:#181c26;border:1px solid rgba(255,255,255,0.08);border-radius:6px;padding:6px 8px;color:#c4cdd8;font-family:DM Mono,monospace;font-size:12px;outline:none;"></div>'
+    + '</div>'
+    + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">'
+    + '<div><label style="font-family:Barlow Condensed,sans-serif;font-size:10px;color:#556;text-transform:uppercase;letter-spacing:0.5px;">Rounds</label>'
+    + '<input id="sjRounds" type="number" value="5" min="1" max="50" style="width:100%;background:#181c26;border:1px solid rgba(255,255,255,0.08);border-radius:6px;padding:6px 8px;color:#c4cdd8;font-family:DM Mono,monospace;font-size:12px;outline:none;"></div>'
+    + '<div><label style="font-family:Barlow Condensed,sans-serif;font-size:10px;color:#556;text-transform:uppercase;letter-spacing:0.5px;">Partner</label>'
+    + '<input id="sjPartner" type="text" placeholder="Optional" style="width:100%;background:#181c26;border:1px solid rgba(255,255,255,0.08);border-radius:6px;padding:6px 8px;color:#c4cdd8;font-family:DM Mono,monospace;font-size:12px;outline:none;"></div>'
+    + '</div>'
+    // Mood selector
+    + '<div style="margin-bottom:8px;"><label style="font-family:Barlow Condensed,sans-serif;font-size:10px;color:#556;text-transform:uppercase;letter-spacing:0.5px;">Session Mood</label>'
+    + '<div id="sjMoodGroup" style="display:flex;gap:6px;margin-top:4px;">'
+    + '<button data-mood="great" class="sj-mood-btn" style="flex:1;padding:6px 4px;border-radius:6px;border:1px solid rgba(255,255,255,0.08);background:transparent;color:#8892a4;font-family:Barlow Condensed,sans-serif;font-size:12px;cursor:pointer;transition:all 0.15s;text-align:center;">\ud83d\udd25 Great</button>'
+    + '<button data-mood="good" class="sj-mood-btn sj-mood-active" style="flex:1;padding:6px 4px;border-radius:6px;border:1px solid var(--accent);background:rgba(232,255,71,0.1);color:var(--accent);font-family:Barlow Condensed,sans-serif;font-size:12px;cursor:pointer;transition:all 0.15s;text-align:center;">\ud83d\udc4d Good</button>'
+    + '<button data-mood="ok" class="sj-mood-btn" style="flex:1;padding:6px 4px;border-radius:6px;border:1px solid rgba(255,255,255,0.08);background:transparent;color:#8892a4;font-family:Barlow Condensed,sans-serif;font-size:12px;cursor:pointer;transition:all 0.15s;text-align:center;">\ud83d\ude10 OK</button>'
+    + '<button data-mood="tough" class="sj-mood-btn" style="flex:1;padding:6px 4px;border-radius:6px;border:1px solid rgba(255,255,255,0.08);background:transparent;color:#8892a4;font-family:Barlow Condensed,sans-serif;font-size:12px;cursor:pointer;transition:all 0.15s;text-align:center;">\ud83d\udcaa Tough</button>'
+    + '</div></div>'
+    // Notes
+    + '<div style="margin-bottom:8px;"><label style="font-family:Barlow Condensed,sans-serif;font-size:10px;color:#556;text-transform:uppercase;letter-spacing:0.5px;">Notes</label>'
+    + '<textarea id="sjNotes" rows="2" placeholder="How was the session?" style="width:100%;background:#181c26;border:1px solid rgba(255,255,255,0.08);border-radius:6px;padding:6px 8px;color:#c4cdd8;font-family:DM Mono,monospace;font-size:12px;outline:none;resize:vertical;margin-top:4px;"></textarea></div>'
+    // Highlights area
+    + '<div style="margin-bottom:10px;">'
+    + '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;"><label style="font-family:Barlow Condensed,sans-serif;font-size:10px;color:#556;text-transform:uppercase;letter-spacing:0.5px;">Highlights</label>'
+    + '<button id="sjAddHighlight" style="background:none;border:1px solid rgba(255,255,255,0.08);color:#8892a4;font-family:DM Mono,monospace;font-size:10px;padding:3px 8px;border-radius:4px;cursor:pointer;">+ Add</button></div>'
+    + '<div id="sjHighlights"></div>'
+    + '</div>'
+    // Save
+    + '<button id="sjSave" style="width:100%;background:var(--accent);color:#000;border:none;font-family:Barlow Condensed,sans-serif;font-size:14px;font-weight:600;padding:10px;border-radius:10px;cursor:pointer;letter-spacing:0.5px;transition:all 0.15s;">Save Session</button>';
+  content.appendChild(formDiv);
+
+  // ── Session History ──
+  var histDiv = document.createElement('div');
+  histDiv.id = 'sjHistory';
+  histDiv.style.cssText = 'margin-top:20px;';
+  histDiv.innerHTML = buildJournalHistory(log);
+  content.appendChild(histDiv);
+
+  panel.appendChild(content);
+  overlay.appendChild(panel);
+  document.body.appendChild(overlay);
+
+  // ── Event: close ──
+  document.getElementById('sjClose').addEventListener('click', function() { overlay.remove(); });
+  overlay.addEventListener('click', function(e) { if (e.target === overlay) overlay.remove(); });
+
+  // ── Event: mood selector ──
+  var selectedMood = 'good';
+  document.getElementById('sjMoodGroup').addEventListener('click', function(e) {
+    var btn = e.target.closest('[data-mood]');
+    if (!btn) return;
+    selectedMood = btn.dataset.mood;
+    document.querySelectorAll('.sj-mood-btn').forEach(function(b) {
+      b.style.border = '1px solid rgba(255,255,255,0.08)';
+      b.style.background = 'transparent';
+      b.style.color = '#8892a4';
+      b.classList.remove('sj-mood-active');
+    });
+    btn.style.border = '1px solid var(--accent)';
+    btn.style.background = 'rgba(232,255,71,0.1)';
+    btn.style.color = 'var(--accent)';
+    btn.classList.add('sj-mood-active');
+  });
+
+  // ── Event: add highlight row ──
+  document.getElementById('sjAddHighlight').addEventListener('click', function() {
+    addHighlightRow(document.getElementById('sjHighlights'));
+  });
+
+  // ── Event: save session ──
+  document.getElementById('sjSave').addEventListener('click', function() {
+    var date = document.getElementById('sjDate').value;
+    var duration = parseInt(document.getElementById('sjDuration').value) || 60;
+    var rounds = parseInt(document.getElementById('sjRounds').value) || 5;
+    var partner = document.getElementById('sjPartner').value.trim();
+    var notes = document.getElementById('sjNotes').value.trim();
+    // Gather highlights
+    var highlights = [];
+    document.querySelectorAll('.sj-highlight-row').forEach(function(row) {
+      var type = row.querySelector('.sj-hl-type').value;
+      var technique = row.querySelector('.sj-hl-technique').value.trim();
+      var success = row.querySelector('.sj-hl-success').dataset.success === 'true';
+      if (technique) {
+        highlights.push({ type: type, technique: technique, position: '', success: success });
+      }
+    });
+    var entry = {
+      id: Date.now(),
+      date: date,
+      duration: duration,
+      rounds: rounds,
+      partner: partner,
+      notes: notes,
+      highlights: highlights,
+      mood: selectedMood
+    };
+    if (!STATE.sparringLog) STATE.sparringLog = [];
+    STATE.sparringLog.unshift(entry);
+    saveState();
+    showToast('Session logged');
+    // Refresh the panel in place
+    overlay.remove();
+    openSparringJournal();
+  });
+
+  // ── Event: Esc to close ──
+  function sjEscHandler(e) {
+    if (e.key === 'Escape') { overlay.remove(); document.removeEventListener('keydown', sjEscHandler); e.stopPropagation(); }
+  }
+  document.addEventListener('keydown', sjEscHandler);
+
+  // ── Event delegation for history ──
+  histDiv.addEventListener('click', function(e) {
+    // Expand/collapse
+    var toggle = e.target.closest('[data-sj-toggle]');
+    if (toggle) {
+      var id = toggle.dataset.sjToggle;
+      var detail = document.getElementById('sjDetail-' + id);
+      if (detail) detail.style.display = detail.style.display === 'none' ? 'block' : 'none';
+      return;
+    }
+    // Delete
+    var del = e.target.closest('[data-sj-delete]');
+    if (del) {
+      var delId = parseInt(del.dataset.sjDelete);
+      if (!confirm('Delete this sparring session?')) return;
+      STATE.sparringLog = (STATE.sparringLog || []).filter(function(e) { return e.id !== delId; });
+      saveState();
+      overlay.remove();
+      openSparringJournal();
+    }
+  });
+}
+
+function addHighlightRow(container) {
+  var row = document.createElement('div');
+  row.className = 'sj-highlight-row';
+  row.style.cssText = 'display:flex;gap:6px;align-items:center;margin-bottom:4px;';
+  row.innerHTML = '<select class="sj-hl-type" style="background:#181c26;border:1px solid rgba(255,255,255,0.08);border-radius:4px;padding:4px 6px;color:#c4cdd8;font-family:DM Mono,monospace;font-size:11px;outline:none;">'
+    + '<option value="submission">Submission</option><option value="sweep">Sweep</option><option value="pass">Pass</option><option value="escape">Escape</option><option value="takedown">Takedown</option></select>'
+    + '<input class="sj-hl-technique" type="text" placeholder="Technique" style="flex:1;background:#181c26;border:1px solid rgba(255,255,255,0.08);border-radius:4px;padding:4px 6px;color:#c4cdd8;font-family:DM Mono,monospace;font-size:11px;outline:none;min-width:0;">'
+    + '<button class="sj-hl-success" data-success="true" style="background:rgba(52,211,153,0.15);border:1px solid rgba(52,211,153,0.3);color:var(--green);font-size:13px;padding:2px 8px;border-radius:4px;cursor:pointer;line-height:1;" title="Toggle success/fail">\u2713</button>'
+    + '<button class="sj-hl-remove" style="background:none;border:none;color:#556;font-size:14px;cursor:pointer;padding:0 2px;" title="Remove">\u00d7</button>';
+  container.appendChild(row);
+  // Success toggle
+  row.querySelector('.sj-hl-success').addEventListener('click', function() {
+    var btn = this;
+    if (btn.dataset.success === 'true') {
+      btn.dataset.success = 'false';
+      btn.textContent = '\u2717';
+      btn.style.background = 'rgba(248,81,73,0.15)';
+      btn.style.borderColor = 'rgba(248,81,73,0.3)';
+      btn.style.color = '#f85149';
+    } else {
+      btn.dataset.success = 'true';
+      btn.textContent = '\u2713';
+      btn.style.background = 'rgba(52,211,153,0.15)';
+      btn.style.borderColor = 'rgba(52,211,153,0.3)';
+      btn.style.color = 'var(--green)';
+    }
+  });
+  // Remove button
+  row.querySelector('.sj-hl-remove').addEventListener('click', function() { row.remove(); });
+}
+
+function buildJournalStats(log) {
+  if (!log || log.length === 0) {
+    return '<div style="text-align:center;font-family:Barlow Condensed,sans-serif;font-size:13px;color:#556;padding:12px 0;">No sessions logged yet. Log your first sparring session below.</div>';
+  }
+  var totalSessions = log.length;
+  var totalMinutes = 0;
+  var partners = {};
+  var hlBreakdown = { submission: 0, sweep: 0, pass: 0, escape: 0, takedown: 0 };
+  log.forEach(function(e) {
+    totalMinutes += (e.duration || 0);
+    if (e.partner) partners[e.partner] = (partners[e.partner] || 0) + 1;
+    (e.highlights || []).forEach(function(h) {
+      if (hlBreakdown.hasOwnProperty(h.type)) hlBreakdown[h.type]++;
+    });
+  });
+  var totalHours = (totalMinutes / 60).toFixed(1);
+  var topPartner = '-';
+  var topCount = 0;
+  Object.entries(partners).forEach(function(kv) { if (kv[1] > topCount) { topCount = kv[1]; topPartner = kv[0]; } });
+  var hlTotal = Object.values(hlBreakdown).reduce(function(a, b) { return a + b; }, 0);
+
+  var html = '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:4px;">';
+  html += _sjStatCell('Sessions', totalSessions, 'var(--blue)');
+  html += _sjStatCell('Hours', totalHours, 'var(--accent)');
+  html += _sjStatCell('Top Partner', topPartner, 'var(--accent2)');
+  html += '</div>';
+  if (hlTotal > 0) {
+    html += '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:4px;">';
+    var hlLabels = { submission: 'Sub', sweep: 'Sweep', pass: 'Pass', escape: 'Escape', takedown: 'TD' };
+    Object.entries(hlBreakdown).forEach(function(kv) {
+      if (kv[1] > 0) {
+        html += '<span style="font-family:DM Mono,monospace;font-size:10px;color:#8892a4;background:rgba(255,255,255,0.04);padding:2px 8px;border-radius:4px;">' + hlLabels[kv[0]] + ': ' + kv[1] + '</span>';
+      }
+    });
+    html += '</div>';
+  }
+  return html;
+}
+
+function _sjStatCell(label, value, color) {
+  return '<div style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.05);border-radius:8px;padding:8px 6px;text-align:center;">'
+    + '<div style="font-family:Bebas Neue,sans-serif;font-size:20px;color:' + color + ';letter-spacing:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + value + '</div>'
+    + '<div style="font-family:Barlow Condensed,sans-serif;font-size:9px;color:#556;text-transform:uppercase;letter-spacing:0.5px;">' + label + '</div>'
+    + '</div>';
+}
+
+function buildJournalHistory(log) {
+  if (!log || log.length === 0) return '';
+  var moodEmoji = { great: '\ud83d\udd25', good: '\ud83d\udc4d', ok: '\ud83d\ude10', tough: '\ud83d\udcaa' };
+  var html = '<div style="font-family:Bebas Neue,sans-serif;font-size:16px;color:var(--text);letter-spacing:1px;margin-bottom:8px;">Session History</div>';
+  log.forEach(function(entry) {
+    var emoji = moodEmoji[entry.mood] || '\ud83d\udc4d';
+    var hlCount = (entry.highlights || []).length;
+    html += '<div style="border:1px solid rgba(255,255,255,0.06);border-radius:8px;margin-bottom:6px;overflow:hidden;">';
+    // Summary row (clickable)
+    html += '<div data-sj-toggle="' + entry.id + '" style="display:flex;align-items:center;gap:8px;padding:8px 12px;cursor:pointer;transition:background 0.15s;" onmouseover="this.style.background=\'rgba(255,255,255,0.02)\'" onmouseout="this.style.background=\'transparent\'">';
+    html += '<span style="font-family:DM Mono,monospace;font-size:11px;color:#8892a4;min-width:74px;">' + entry.date + '</span>';
+    html += '<span style="font-family:Barlow Condensed,sans-serif;font-size:12px;color:var(--text-dim);">' + entry.duration + 'min</span>';
+    html += '<span style="font-family:Barlow Condensed,sans-serif;font-size:12px;color:var(--text-dim);">' + entry.rounds + 'rd</span>';
+    if (entry.partner) html += '<span style="font-family:Barlow Condensed,sans-serif;font-size:12px;color:var(--blue);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:80px;">w/ ' + _escHtml(entry.partner) + '</span>';
+    html += '<span style="margin-left:auto;font-size:13px;" title="' + (entry.mood || 'good') + '">' + emoji + '</span>';
+    if (hlCount > 0) html += '<span style="font-family:DM Mono,monospace;font-size:9px;color:var(--accent);background:rgba(232,255,71,0.08);padding:1px 5px;border-radius:6px;">' + hlCount + '</span>';
+    html += '</div>';
+    // Detail (hidden by default)
+    html += '<div id="sjDetail-' + entry.id + '" style="display:none;padding:6px 12px 10px;border-top:1px solid rgba(255,255,255,0.04);background:rgba(0,0,0,0.15);">';
+    if (entry.notes) {
+      html += '<div style="font-family:DM Mono,monospace;font-size:11px;color:#8892a4;margin-bottom:6px;white-space:pre-wrap;word-break:break-word;">' + _escHtml(entry.notes) + '</div>';
+    }
+    if (entry.highlights && entry.highlights.length > 0) {
+      html += '<div style="margin-bottom:6px;">';
+      entry.highlights.forEach(function(h) {
+        var color = h.success ? 'var(--green)' : '#f85149';
+        var icon = h.success ? '\u2713' : '\u2717';
+        html += '<div style="display:flex;align-items:center;gap:6px;font-family:DM Mono,monospace;font-size:10px;color:#8892a4;margin-bottom:2px;">'
+          + '<span style="color:' + color + ';">' + icon + '</span>'
+          + '<span style="text-transform:capitalize;color:var(--text-dim);">' + _escHtml(h.type) + '</span>'
+          + '<span style="color:var(--text);">' + _escHtml(h.technique) + '</span>'
+          + '</div>';
+      });
+      html += '</div>';
+    }
+    html += '<button data-sj-delete="' + entry.id + '" style="background:none;border:none;color:#f85149;font-family:DM Mono,monospace;font-size:10px;cursor:pointer;padding:2px 0;opacity:0.6;">Delete session</button>';
+    html += '</div></div>';
+  });
+  return html;
+}
+
+function _escHtml(s) {
+  if (!s) return '';
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
 
 // CW16: Quick-drill FAB — opens drill timer with all DRILLING techniques on mobile
 (function() {
