@@ -6722,7 +6722,11 @@ _log('[GrapplingMap] Debug API ready: window.__APP_DEBUG__');
     if (!_supabase) { status.textContent = 'Auth service not available — check Supabase config'; status.style.color = '#f85149'; return; }
     try {
       var _redirectUrl = window.location.origin + window.location.pathname;
-      var result = await _supabase.auth.signUp({ email: email, password: password, options: { emailRedirectTo: _redirectUrl } });
+      var _signupTimeout = new Promise(function(_, reject) { setTimeout(function() { reject(new Error('Signup timed out — try again')); }, 15000); });
+      var result = await Promise.race([
+        _supabase.auth.signUp({ email: email, password: password, options: { emailRedirectTo: _redirectUrl } }),
+        _signupTimeout
+      ]);
       if (result.error) {
         var errMsg = result.error.message || result.error.msg || (typeof result.error === 'string' ? result.error : JSON.stringify(result.error));
         status.textContent = errMsg; status.style.color = '#f85149'; return;
@@ -6755,9 +6759,18 @@ _log('[GrapplingMap] Debug API ready: window.__APP_DEBUG__');
     status.style.display = ''; status.textContent = 'Logging in...'; status.style.color = '#667';
     if (!_supabase) { status.textContent = 'Auth service not available — check Supabase config'; status.style.color = '#f85149'; return; }
     try {
-      var result = await _supabase.auth.signInWithPassword({ email: email, password: password });
+      var _loginTimeout = new Promise(function(_, reject) { setTimeout(function() { reject(new Error('Login timed out — try again')); }, 15000); });
+      var result = await Promise.race([
+        _supabase.auth.signInWithPassword({ email: email, password: password }),
+        _loginTimeout
+      ]);
       if (result.error) {
         var errMsg = result.error.message || result.error.msg || (typeof result.error === 'string' ? result.error : JSON.stringify(result.error));
+        if (result.error.message === 'Invalid login credentials' || (result.error.error_code && result.error.error_code === 'invalid_credentials')) {
+          errMsg = 'Invalid credentials — check your email and password. If you just signed up, confirm your email first.';
+        } else if (result.error.message === 'Email not confirmed') {
+          errMsg = 'Please confirm your email before logging in. Check your inbox for the confirmation link.';
+        }
         status.textContent = errMsg; status.style.color = '#f85149'; return;
       }
       if (result.data && result.data.user) { setAuthMember(result.data.user); }
