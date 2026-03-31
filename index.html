@@ -988,6 +988,25 @@ const SCHEMA_NAMES = new Set(['Setups / Entries','Control','Offence','Defence / 
   'Attacker','Defender','Passer','Guard player','You','Opponent','Initiative',
   'Defensive','Entries','Passes','Notes','Subtopic','Main topic']);
 
+// CW56: Lazy-render collapsed sections — track which sections have their DOM tree built
+const _materializedSections = new Set();
+
+// CW56: Count total real techniques from SECTIONS data (no DOM needed)
+function countTotalNodesFromData() {
+  var total = 0;
+  function countNodes(nodes) {
+    (nodes || []).forEach(function(n) {
+      var t = (n.t || '').trim();
+      if (t && !SCHEMA_NAMES.has(t) && !t.includes('\u2192') && t !== 'Notes') total++;
+      if (n.c) countNodes(n.c);
+    });
+  }
+  if (typeof SECTIONS !== 'undefined') {
+    SECTIONS.forEach(function(sec) { countNodes(sec.nodes); });
+  }
+  return total;
+}
+
 function setSelectedNode(key, label, section, vidUrl, liveUrl) {
   SELECTED_NODE = key ? { key, label, section, v: vidUrl || null, l: liveUrl || null } : null;
   if (key && label) { addRecentView(key, label, section); saveState(); }
@@ -1165,7 +1184,11 @@ function refSyncExpanded() {
     const title = div.dataset.section;
     const key = makeKey(title, title);
     const shouldBeExpanded = EXPANDED.has(key);
-    if (shouldBeExpanded) div.classList.remove('collapsed');
+    if (shouldBeExpanded) {
+      // CW56: Materialize section tree before expanding
+      materializeSection(title);
+      div.classList.remove('collapsed');
+    }
     else div.classList.add('collapsed');
   });
   // Sync node-level collapse in tree items (require data-key attribute)
@@ -1922,17 +1945,104 @@ function buildNode(node, sectionTitle, depth, parentUl, parentKey, disambig, pos
     }
   }
 
-  // Only count real techniques (not schema headings, not OT lines, not Notes)
-  if (!SCHEMA_NAMES.has(node.t.trim()) && !(node.t && node.t.includes('\u2192')) && node.t.trim() !== 'Notes') {
-    STATE.totalNodes++;
-  }
+  // CW56: totalNodes is now computed from data in buildSections(), not from DOM building
   parentUl.appendChild(li);
+}
+
+// CW56: Build the tree DOM for a single section (called on-demand when section is expanded)
+function materializeSection(sectionTitle) {
+  if (_materializedSections.has(sectionTitle)) return; // already built
+  var section = SECTIONS.find(function(s) { return s.title === sectionTitle; });
+  if (!section) return;
+  var div = document.querySelector('.section[data-section="' + sectionTitle + '"]');
+  if (!div) return;
+  var body = div.querySelector('.section-body');
+  if (!body) return;
+  // Remove placeholder if present
+  var placeholder = body.querySelector('.section-placeholder');
+  if (placeholder) placeholder.remove();
+  // Build the tree
+  var ul = document.createElement('ul');
+  ul.className = 'tree';
+  var sectionKey = makeKey(section.title, section.title);
+  var sibCounts = {};
+  section.nodes.forEach(function(node) {
+    var seg = normalizeSegment(node.t);
+    sibCounts[seg] = (sibCounts[seg] || 0) + 1;
+    var disambig = sibCounts[seg] > 1 ? '~' + sibCounts[seg] : '';
+    buildNode(node, section.title, 0, ul, sectionKey, disambig);
+  });
+  body.appendChild(ul);
+  _materializedSections.add(sectionTitle);
+  // Apply built-out markers to newly materialized DOM
+  if (window._builtOutMap) {
+    div.querySelectorAll('.tree-item[data-key]').forEach(function(li) {
+      var built = window._builtOutMap.get(li.dataset.key);
+      if (built !== undefined) {
+        li.dataset.builtout = built ? '1' : '0';
+        if (built) {
+          var lbl = li.querySelector(':scope > .node .node-label');
+          if (lbl && lbl.textContent.indexOf('\u2605') === -1) {
+            var star = document.createElement('span');
+            star.textContent = ' \u2605';
+            star.title = 'Has video or detailed content';
+            star.style.cssText = 'color:var(--accent);cursor:help;';
+            lbl.appendChild(star);
+          }
+        }
+      }
+    });
+  }
+  // Apply live playlist buttons to newly materialized items
+  if (window._livePlaylists && Object.keys(window._livePlaylists).length) {
+    div.querySelectorAll('.tree-item').forEach(function(li) {
+      var k = li.dataset.key;
+      var entry = window._livePlaylists[k];
+      if (entry && entry.youtubePlaylistId) {
+        var acts = li.querySelector('.node-actions');
+        if (!acts) return;
+        if (acts.querySelector('.btn-live')) return; // already has it
+        var btn = document.createElement('button');
+        btn.className = 'btn-video btn-live';
+        btn.textContent = '\u25b6 Live footage';
+        btn.addEventListener('click', function(ev) {
+          ev.stopPropagation();
+          window.open(youtubePlaylistUrl(entry.youtubePlaylistId), '_blank');
+        });
+        var pill = acts.querySelector('.progress-pill');
+        if (pill) acts.insertBefore(btn, pill);
+        else acts.appendChild(btn);
+      }
+    });
+  }
+  // Apply current progress state to newly materialized items
+  div.querySelectorAll('.tree-item[data-key]').forEach(function(li) {
+    var key = li.dataset.key;
+    if (!key) return;
+    var prog = STATE.progress[key] || 'none';
+    li.dataset.progress = prog;
+    var pill = li.querySelector('.progress-pill');
+    if (pill) {
+      pill.className = 'progress-pill' + (prog !== 'none' ? ' ' + prog : '');
+      pill.textContent = {none:'Track',drilling:'Drilling',learned:'Learned'}[prog];
+    }
+    var trackDot = li.querySelector('.track-dot');
+    if (trackDot) trackDot.className = 'track-dot' + (prog !== 'none' ? ' ' + prog : '');
+  });
+  _log('CW56: Materialized section:', sectionTitle);
+}
+
+// CW56: Materialize ALL sections (needed for global operations like search/filter)
+function materializeAllSections() {
+  SECTIONS.forEach(function(sec) { materializeSection(sec.title); });
 }
 
 function buildSections() {
   const container = document.getElementById('sections');
   container.innerHTML = '';
-  STATE.totalNodes = 0;
+  _materializedSections.clear(); // CW56: reset materialization tracking
+  // CW56: Compute totalNodes from data (not DOM), so stats work without full materialization
+  STATE.totalNodes = countTotalNodesFromData();
   SECTIONS.forEach((section, si) => {
     const div = document.createElement('div');
     div.className = 'section collapsed';
@@ -1979,6 +2089,8 @@ function buildSections() {
     }
     header.innerHTML = '<div class="section-dot" style="background:'+section.color+';box-shadow:0 0 4px '+section.color+'40;"></div><div class="section-title">'+section.title+'</div><span class="section-meta" style="font-family:Barlow Condensed,sans-serif;font-size:11px;color:var(--text-muted);letter-spacing:0.5px;">'+posCount+' positions \u00b7 '+techTotal+' techniques'+' \u00b7 '+vidTotal+' videos'+secPctHtml+'</span><div class="section-chevron">&#9662;</div>';
     header.addEventListener('click', e => {
+      // CW56: Materialize section tree on first expand
+      materializeSection(section.title);
       div.classList.toggle('collapsed');
       const sectionKey = makeKey(section.title, section.title);
       if (div.classList.contains('collapsed')) { EXPANDED.delete(sectionKey); }
@@ -1993,17 +2105,11 @@ function buildSections() {
     });
     const body = document.createElement('div');
     body.className = 'section-body';
-    const ul = document.createElement('ul');
-    ul.className = 'tree';
-    const sectionKey = makeKey(section.title, section.title);
-    const sibCounts = {};
-    section.nodes.forEach(node => {
-      const seg = normalizeSegment(node.t);
-      sibCounts[seg] = (sibCounts[seg] || 0) + 1;
-      const disambig = sibCounts[seg] > 1 ? '~' + sibCounts[seg] : '';
-      buildNode(node, section.title, 0, ul, sectionKey, disambig);
-    });
-    body.appendChild(ul);
+    // CW56: Don't build tree DOM upfront — add placeholder instead
+    var placeholder = document.createElement('div');
+    placeholder.className = 'section-placeholder';
+    placeholder.dataset.section = section.title;
+    body.appendChild(placeholder);
     div.appendChild(header);
     div.appendChild(body);
     container.appendChild(div);
@@ -2142,9 +2248,35 @@ function markBuiltOut() {
 
 // ─── INIT DATA FROM SECTIONS (boot step 2 — SECTIONS-based, no DOM) ──────────
 function initDataFromSections() {
-  // Initialize _techPositionMap — populated by buildNode() during buildSections()
-  // traversal so keys are IDENTICAL to STATE.progress keys by construction.
+  // CW56: Populate _techPositionMap from SECTIONS data (no DOM needed).
+  // Keys are constructed identically to buildNode() so they match STATE.progress keys.
   window._techPositionMap = new Map();
+  (function _buildTechPositionMap() {
+    SECTIONS.forEach(function(section) {
+      var sectionKey = makeKey(section.title, section.title);
+      var sibCounts = {};
+      (section.nodes || []).forEach(function(node) {
+        var seg = normalizeSegment(node.t);
+        sibCounts[seg] = (sibCounts[seg] || 0) + 1;
+        var disambig = sibCounts[seg] > 1 ? '~' + sibCounts[seg] : '';
+        var posEntry = { section: section.title, positionLabel: node.t, positionNorm: normalizeSegment(node.t) };
+        function walkForMap(n, parentKey, dis, pEntry) {
+          var key = (parentKey ? makePathKey(parentKey, n.t) : makeKey(section.title, n.t)) + (dis || '');
+          window._techPositionMap.set(key, pEntry);
+          if (n.c && n.c.length) {
+            var childSibCounts = {};
+            n.c.forEach(function(ch) {
+              var cseg = normalizeSegment(ch.t);
+              childSibCounts[cseg] = (childSibCounts[cseg] || 0) + 1;
+              var cdis = childSibCounts[cseg] > 1 ? '~' + childSibCounts[cseg] : '';
+              walkForMap(ch, key, cdis, pEntry);
+            });
+          }
+        }
+        walkForMap(node, sectionKey, disambig, posEntry);
+      });
+    });
+  })();
 
   // FIX 2: Build _transitionOccurrences + _edgeBaseWeight once on load.
   // Walk positions → find transition leaves (text contains →).
@@ -2382,6 +2514,8 @@ let _refSearchTimer;
 var _bjjAliases = {'armbar':'arm bar','armbars':'arm bar','armlock':'arm lock','leglock':'leg lock','leglocks':'leg lock','headlock':'head lock','kimura':'kimura','kneebar':'knee bar','toebar':'toe bar','footlock':'foot lock','heelhook':'heel hook','wristlock':'wrist lock','bodylock':'body lock','backtake':'back take','singleleg':'single leg','doubleleg':'double leg','halfguard':'half guard','closedguard':'closed guard','openguard':'open guard','dlariva':'de la riva','delariva':'de la riva','dlr':'de la riva','rdlr':'reverse de la riva','slx':'single leg x','xguard':'x guard','northsouth':'north south','sidecontrol':'side control','backcontrol':'back control','fronthead':'front headlock','frontheadlock':'front headlock','kneeshield':'knee shield','butterflyhalf':'half butterfly','rnc':'rear naked choke','rearnakedchoke':'rear naked choke','rearnaked':'rear naked','darce':'d\'arce','darcechoke':'d\'arce','anaconda':'anaconda','guillotine':'guillotine','triangle':'triangle','armtriangle':'arm triangle','kneecut':'knee cut','kneeslice':'knee slice','headsingle':'head inside single leg','headoutsingle':'head outside single leg','lowanke':'low ankle','anklepick':'ankle pick','omoplata':'omoplata','berimbolo':'berimbolo','crabride':'crab ride','kissofthedragon':'kiss of the dragon','kotd':'kiss of the dragon','giftwrap':'gift wrap','bodytriangle':'body triangle','seatbelt':'seatbelt','crucifix':'crucifix','lockdown':'lockdown','electricchair':'electric chair','twister':'twister','katagatame':'head arm choke','headandarm':'head arm choke','headarm':'head arm choke','americana':'americana','ezekiel':'ezekiel','gogoplata':'gogoplata','guillotines':'guillotine','rncchoke':'rear naked choke','mataleao':'rear naked choke','toehold':'toe hold','straightankle':'straight ankle','outsideashi':'outside ashi','insideashi':'inside ashi','butterflyashi':'butterfly ashi','5050':'50/50','fiftyfifty':'50/50','kguard':'k guard','quarterguard':'quarter guard','supineguard':'supine guard','jpoint':'j point','shinpin':'shin pin','headquarters':'headquarters','halfbutterfly':'half butterfly','seatedguard':'seated guard'};
 function _refDoSearch() {
   var q = document.getElementById('refSearch').value.toLowerCase().trim();
+  // CW56: Materialize all sections so search covers all content
+  if (q) materializeAllSections();
   // Expand BJJ aliases for search
   var qExpanded = _bjjAliases[q.replace(/\s+/g, '')] || q;
   document.querySelectorAll('.tree-item').forEach(function(li) {
@@ -2502,6 +2636,8 @@ document.querySelectorAll('#refBottomBar .g3d-tb-btn[data-filter]').forEach(tab 
 });
 function applyRefFilter(filter) {
   STATE.currentFilter = filter;
+  // CW56: Materialize all sections so filters work across all content
+  if (filter !== 'all') materializeAllSections();
   document.querySelectorAll('.tree-item').forEach(li => {
     let show = true;
     if (filter === 'drilling') show = li.dataset.progress === 'drilling';
@@ -2562,6 +2698,8 @@ document.getElementById('refCollapseAll').addEventListener('click', () => {
   if(window.g3dSyncExpanded) window.g3dSyncExpanded();
 });
 document.getElementById('refExpandAll').addEventListener('click', () => {
+  // CW56: Materialize all sections before expanding all
+  materializeAllSections();
   SECTIONS.forEach(s => { const sk = makeKey(s.title, s.title); EXPANDED.add(sk); walkWithKeys(s.nodes, sk, (nd, k) => { if (nd.c && nd.c.length) EXPANDED.add(k); }); });
   refSyncExpanded();
   if(window.cmSyncExpanded) window.cmSyncExpanded();
@@ -2611,6 +2749,8 @@ document.querySelectorAll('.view-tab').forEach(tab => {
 });
 function switchToReferenceNode(text, section) {
   switchToTab('reference');
+  // CW56: Materialize all sections — switchToReferenceNode expands all sections to find the target
+  materializeAllSections();
   // Reset filter to ALL so the target node is not hidden
   applyRefFilter('all');
   document.querySelectorAll('#refBottomBar .g3d-tb-btn[data-filter]').forEach(t => t.classList.remove('active'));
@@ -5829,6 +5969,8 @@ if (typeof SECTIONS === 'undefined' || !SECTIONS.length) {
   if (Object.keys(STATE.progress).length === 0) {
     var firstSection = document.querySelector('.section.collapsed');
     if (firstSection) {
+      // CW56: Materialize first section tree before expanding
+      materializeSection(SECTIONS[0].title);
       firstSection.classList.remove('collapsed');
       var sk = makeKey(SECTIONS[0].title, SECTIONS[0].title);
       EXPANDED.add(sk);
@@ -5957,7 +6099,9 @@ window.__APP_DEBUG__ = {
       sections: typeof SECTIONS !== 'undefined' ? SECTIONS.length : 0,
       domSections: document.querySelectorAll('.section').length,
       domTreeItems: document.querySelectorAll('.tree-item').length,
-      bootHealthy: document.querySelectorAll('.section').length > 0 && document.querySelectorAll('.tree-item').length > 0,
+      materializedSections: _materializedSections.size,
+      // CW56: bootHealthy no longer requires tree-items to exist (they're lazy-loaded)
+      bootHealthy: document.querySelectorAll('.section').length > 0,
       selectedNode: typeof SELECTED_NODE !== 'undefined' ? SELECTED_NODE : null,
       activeFilter: (document.querySelector('#refBottomBar .g3d-tb-btn.active[data-filter]') || {}).textContent || 'All',
       totalNodes: STATE.totalNodes || 0,
