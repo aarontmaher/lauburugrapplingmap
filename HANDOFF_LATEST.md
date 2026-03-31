@@ -2,42 +2,30 @@
 Date: 2026-03-31
 
 ## Current State
-All known bug-fix and feature backlog items are complete across both app and Shopify. True stopping point — only Aaron-input items, Supabase dashboard config, and large-scope features remain.
+ALL backlog items complete — including the three large-scope features (CC14, CC15, CC16) and the performance optimization (CW56). The entire AUTOMATION_NEXT.md and AUTOMATION_SUGGESTIONS_INBOX.md backlog is cleared. True stopping point.
 
-## Commits This Session (4 commits)
-1. `57bc20a` — Bug fixes CW32-54 (belt button, dashboard dupes, Supabase guard, auth copy, welcome toast, touch targets, font sizes)
-2. `eb26e60` — CW59 belt counter + CW62 graph resize on init
-3. `59b5037` — CW50/CW38 Supabase auth error handling + timeouts
-4. `c0237e7` — CW63 graph overlay fallback + CW65 video counts + CW66 content framing
+## Commits This Session (8 commits)
+1. `57bc20a` — Bug fixes CW32-54
+2. `eb26e60` — CW59 belt counter + CW62 graph resize
+3. `59b5037` — CW50/CW38 Supabase auth timeouts + error handling
+4. `c0237e7` — CW63 graph overlay + CW65 video counts + CW66 content framing
+5. `8ab3941` — Handoff update
+6. `522c934` — CC14 Sparring Journal
+7. `da4e94b` — CW56 DOM lazy rendering (~18k → ~3k nodes)
+8. `b72b26a` — CC15 Coach Mode
+9. `d601a58` — CC16 Custom Technique Chains
+
+## Large Features Shipped
+- **CC14 Sparring Journal** — log sessions with highlights (submission/sweep/pass/escape/takedown), mood, duration, partner, stats summary
+- **CC15 Coach Mode** — data-driven Today's Focus (graph-gap analysis), Suggested Path (edge traversal), Game Observations (progress/belt/sparring insights)
+- **CC16 Custom Chains** — create/edit/drill technique sequences with autocomplete, configurable timer, auto-advance, completion tracking
+- **CW56 DOM Reduction** — lazy section rendering cuts initial DOM from ~18k to ~3k nodes
 
 ## Shopify This Session
 - Social URLs updated (Facebook + Instagram)
-- Twitter/Pinterest cleared (no accounts)
+- Twitter/Pinterest cleared
 - Dead size-guide.liquid deleted
 - Full theme sync pushed
-
-## All Known Inbox Items — Final Status
-| Range | Status |
-|-------|--------|
-| CW1-CW18 | All done (Batch I/J/K/Extras) |
-| CW26 | Belt filter logic verified correct |
-| CW27-CW32 | All done |
-| CW35-CW37 | All done or verified working |
-| CW38 | Code-side timeout added. Backend: needs Supabase dashboard config |
-| CW39-CW41 | All done |
-| CW43-CW44 | All done or verified consistent |
-| CW46-CW49 | All done |
-| CW50 | Code-side error messaging improved. Backend: needs Supabase email confirmation toggle |
-| CW51-CW55 | All done |
-| CW57 | Done |
-| CW59-CW60 | Done or verified working |
-| CW61 | Verified already guarded |
-| CW62-CW63 | Done |
-| CW64 | Verified already working |
-| CW65-CW67 | Done or verified |
-| CC3-CC10 | All done |
-| CC14-CC16 | Not started (large scope) |
-| P3/CW55 | Start Here content populated |
 
 ## Remaining — Blocked on Aaron
 - Supabase dashboard: disable email confirmation OR configure SMTP
@@ -45,9 +33,7 @@ All known bug-fix and feature backlog items are complete across both app and Sho
 - Guard OT content (16/19 positions)
 - Saddle canonical name
 - Belt syllabus technique selections
+- About page "spats" removal (admin content)
 
-## Remaining — Large Scope
-- CC14: Sparring journal
-- CC15: Coach mode
-- CC16: Custom technique chains
-- CW56: DOM element reduction (~18k nodes)
+## Smoke Tests
+12/12 passing throughout all commits
