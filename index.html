@@ -9585,7 +9585,7 @@ function openCoachPanel() {
 
 // ── Guest Onboarding Tutorial ──────────────────────────────────────────
 (function() {
-  var TUTORIAL_VERSION = 1;
+  var TUTORIAL_VERSION = 2;
   var TUTORIAL_STEPS = [
     {
       id: 'welcome',
@@ -9635,6 +9635,31 @@ function openCoachPanel() {
       title: 'Interact with the Map',
       text: 'Tap any node to see its details. Drag to rotate. Pinch or scroll to zoom. Double-tap to zoom in.',
       target: '#g3dCanvas',
+      action: null
+    },
+    {
+      id: 'filter-mygame',
+      title: 'My Game Filter',
+      text: 'Focus on the positions that matter most to your personal game. As you track techniques, this filter narrows the map to just your developing system.',
+      target: '[data-filter="mygame"]',
+      action: function() {
+        // Ensure we're on the graph tab where filters are visible
+        var graphTab = document.querySelector('[data-view="graph3d"]');
+        if (graphTab && !graphTab.classList.contains('active')) graphTab.click();
+      }
+    },
+    {
+      id: 'filter-drilling',
+      title: 'Drilling Filter',
+      text: 'See only what you\u2019re actively practicing right now. Helps you focus training sessions on your current reps instead of the whole library.',
+      target: '[data-filter="drilling"]',
+      action: null
+    },
+    {
+      id: 'filter-syllabus',
+      title: 'Belt Syllabus',
+      text: 'Follow a structured learning path. The syllabus shows which positions to learn at each belt level, so you progress in order rather than browsing randomly.',
+      target: '#beltArea',
       action: null
     },
     {
