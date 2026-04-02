@@ -1,40 +1,42 @@
 # LATEST HANDOFF
-Date: 2026-04-01
+Date: 2026-04-02
 
 ## Current State
-All code lanes complete. Hero CTA fix deployed. Both Shopify and app at true stopping point.
+6 more features shipped. All suggestion/backlog items from AUTOMATION_SUGGESTIONS.md are now complete. True stopping point.
 
-## Today's Actions
-- Fixed hero CTA "Shop Now" button — was empty link, now points to `/collections/all`
-- Fixed 12 dead `#` and empty `button_link` values in `templates/index.json`
-- Pushed to live theme
-- Verified hero CTA works on live site
-- App: 12/12 tests passing, all backlog complete
-- Full storefront audit completed with findings classified
+## Today's Commits
+1. `4dc292b` — C1 (graph technique names), C5 (interactive legend), Game Summary
+2. `8fdf81a` — C2 (game map overlay), C3 (multi-hop path finder), Daily Suggestion card
 
-## Shopify Status
-**Live theme:** lauburu-dev (#147896795272)
-**All code-side fixes deployed.** Remaining items are admin/content:
+## All Suggestion Items — Final Status
+| Item | Status |
+|------|--------|
+| C1 Graph technique names | Done |
+| C2 Game map overlay | Done |
+| C3 Multi-hop path finder | Done |
+| C4 Edge direction indicators | Done (CC8) |
+| C5 Interactive legend | Done |
+| CC14 Sparring Journal | Done |
+| CC15 Coach Mode | Done |
+| CC16 Custom Chains | Done |
+| CW56 DOM reduction | Done |
+| Game Summary | Done |
+| Daily Suggestion card | Done |
+| All CW26-CW67 bug fixes | Done |
+| All Batch I/J/K features | Done |
+| P3 Start Here content | Done |
 
-### Cowork can do now (no Aaron decision needed):
-1. Paste brand-matched descriptions into 11 products (files ready in `~/Desktop/shopify-size-guides/product-descriptions/`)
-   - 7x Women's rashguards → `09-womens-rashguard.html`
-   - 2x Hoodies → `10-hoodie.html`
-   - 2x T-shirts → `11-tshirt.html`
-2. Check accessories inventory — all 5 show "Sold Out" on live site
-3. Verify footer copyright shows "Lauburu" not "Laburu" on live site
-4. Verify product notice blocks render on product pages
+## Smoke Tests
+12/12 passing
 
-### Blocked on Aaron:
-- Men's No-Gi Shorts size chart (Merchize supplier)
-- Coloured fleece variants — confirm same sizing as plain versions
-- Uni Sex Grappling Shorts — confirm same sizing as women's shorts
+## Shopify
+- Hero CTA fixed and deployed
+- All code-side fixes deployed
+- Cowork handling: streetwear consolidation, product descriptions, nav fixes
+- 22 product descriptions ready in ~/Desktop/shopify-size-guides/product-descriptions/
 
-## App Status
-**All backlog complete:** 30+ features, 16+ bug fixes, 3 large features (CC14/15/16), CW56 DOM reduction
-**Tests:** 12/12 passing
-**Remaining (Aaron-only):** Guard OT, Saddle canonical, belt syllabus
-
-## Size Guide Files Ready (22 products mapped)
-Mapping: `~/Shopify/product-mapping.json`
-Files: `~/Desktop/shopify-size-guides/product-descriptions/`
+## Remaining — Aaron Only
+- Guard OT content (16/19 positions)
+- Saddle canonical name
+- Belt syllabus technique selections
+- Men's No-Gi Shorts size chart (Merchize)
