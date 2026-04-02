@@ -155,6 +155,85 @@ test.describe('GrapplingMap smoke suite', () => {
     await expect(card).toHaveCount(1);
   });
 
+  test('Search alias resolves', async ({ page }) => {
+    // CW51: BJJ alias system — "armbar" should resolve to "arm bar"
+    await page.click('[data-view="reference"]');
+    const result = await page.evaluate(() => window.__APP_DEBUG__.focusSearch());
+    expect(result).toBe('focused');
+    await page.keyboard.type('armbar');
+    await page.waitForTimeout(400); // debounce
+    // At least one tree item should still be visible (alias resolved)
+    const visibleCount = await page.evaluate(() => {
+      return document.querySelectorAll('.tree-item:not([style*="display: none"])').length;
+    });
+    expect(visibleCount).toBeGreaterThan(0);
+  });
+
+  test('Filter buttons exist and are clickable', async ({ page }) => {
+    await page.click('[data-view="reference"]');
+    const filterBtns = page.locator('#refBottomBar .g3d-tb-btn[data-filter]');
+    const count = await filterBtns.count();
+    expect(count).toBeGreaterThanOrEqual(3);
+    // Click "All" button — verify no error
+    const allBtn = page.locator('#refBottomBar .g3d-tb-btn[data-filter="all"]');
+    await allBtn.click();
+  });
+
+  test('Share button exists', async ({ page }) => {
+    await page.click('[data-view="reference"]');
+    // Expand a section and select a position
+    await page.click('.section-title:has-text("Guard")');
+    await page.waitForTimeout(300);
+    const posLabel = page.locator('.section[data-section="Guard"] .tree > .tree-item > .node .node-label');
+    await posLabel.first().click();
+    await page.waitForTimeout(300);
+    // Verify a share button or share icon is visible
+    const shareBtn = page.locator('[id*="share"], [class*="share"], button:has-text("Share"), [title*="Share"], [aria-label*="Share"]');
+    const shareCount = await shareBtn.count();
+    expect(shareCount).toBeGreaterThan(0);
+  });
+
+  test('Recenter button on graph', async ({ page }) => {
+    await page.click('[data-view="graph3d"]');
+    // Headless Chromium may lack WebGL — accept button in DOM or fallback
+    const fallback = page.locator('#graph3dView:has-text("Network view is not available")');
+    const recenterBtn = page.locator('#g3dRecenterBtn');
+    const result = await Promise.race([
+      recenterBtn.waitFor({ state: 'attached', timeout: 10000 }).then(() => 'button'),
+      fallback.waitFor({ state: 'visible', timeout: 10000 }).then(() => 'fallback'),
+    ]);
+    expect(['button', 'fallback']).toContain(result);
+  });
+
+  test('Legend exists on graph', async ({ page }) => {
+    await page.click('[data-view="graph3d"]');
+    // Headless Chromium may lack WebGL — accept legend or fallback
+    const fallback = page.locator('#graph3dView:has-text("Network view is not available")');
+    const legendContainer = page.locator('#g3dLegend');
+    const result = await Promise.race([
+      legendContainer.waitFor({ state: 'attached', timeout: 10000 }).then(async () => {
+        // Legend container exists; wait for pills to be populated
+        await page.waitForTimeout(2000);
+        const pills = await page.locator('#g3dLegend [data-sec-idx]').count();
+        return pills >= 1 ? 'legend' : 'empty';
+      }),
+      fallback.waitFor({ state: 'visible', timeout: 10000 }).then(() => 'fallback'),
+    ]);
+    expect(['legend', 'fallback']).toContain(result);
+  });
+
+  test('Game Summary opens from menu', async ({ page }) => {
+    await page.click('#headerMenuToggle');
+    const menu = page.locator('#headerMenu');
+    await expect(menu).toBeVisible({ timeout: 3000 });
+    await page.click('#headerMenu >> text=Game Summary');
+    await page.waitForTimeout(500);
+    // Verify the list panel opens with Game Summary content
+    const panel = page.locator('#gameSummaryOverlay, #gameSummaryPanel, [class*="game-summary"], #listPanel:has-text("Game Summary")');
+    const count = await panel.count();
+    expect(count).toBeGreaterThan(0);
+  });
+
   test('No console errors on load', async ({ page }) => {
     const errors = [];
     page.on('console', msg => {
