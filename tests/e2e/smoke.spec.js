@@ -116,6 +116,45 @@ test.describe('GrapplingMap smoke suite', () => {
     expect(count).toBeGreaterThan(0);
   });
 
+  test('Journal opens via J key', async ({ page }) => {
+    await page.keyboard.press('j');
+    const overlay = page.locator('#sparringJournalOverlay');
+    await expect(overlay).toBeVisible({ timeout: 5000 });
+  });
+
+  test('Coach opens via C key', async ({ page }) => {
+    await page.keyboard.press('c');
+    const overlay = page.locator('#coachOverlay');
+    await expect(overlay).toBeVisible({ timeout: 5000 });
+  });
+
+  test('Keyboard help shows J and C shortcuts', async ({ page }) => {
+    await page.keyboard.press('?');
+    const panel = page.locator('#kbdHelpPanel');
+    await expect(panel).toBeVisible({ timeout: 3000 });
+    const text = await panel.textContent();
+    expect(text).toContain('J');
+    expect(text).toContain('C');
+  });
+
+  test('Menu contains new items', async ({ page }) => {
+    await page.click('#headerMenuToggle');
+    const menu = page.locator('#headerMenu');
+    await expect(menu).toBeVisible({ timeout: 3000 });
+    const text = await menu.textContent();
+    expect(text).toContain('Sparring Journal');
+    expect(text).toContain('Coach');
+    expect(text).toContain('Chains');
+    expect(text).toContain('Game Summary');
+  });
+
+  test('Daily suggestion card exists in DOM', async ({ page }) => {
+    await page.click('[data-view="reference"]');
+    const card = page.locator('#dailySuggestionCard');
+    // Card exists in the DOM (may be hidden if no progress data)
+    await expect(card).toHaveCount(1);
+  });
+
   test('No console errors on load', async ({ page }) => {
     const errors = [];
     page.on('console', msg => {
