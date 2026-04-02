@@ -2711,6 +2711,17 @@ function _refDoSearch() {
     countEl.style.display = 'none';
     clearEl.style.display = 'none';
   }
+  // ── Cross-tab: highlight matching positions on 3D graph ──────────
+  if (q && typeof window._highlightSearchNodes3d === 'function') {
+    var matchedPositionLabels = new Set();
+    document.querySelectorAll('.tree-item:not([style*="display: none"])').forEach(function(li) {
+      var posEntry = window._techPositionMap ? window._techPositionMap.get(li.dataset.key) : null;
+      if (posEntry) matchedPositionLabels.add(posEntry.positionLabel);
+    });
+    window._highlightSearchNodes3d(matchedPositionLabels);
+  } else if (!q && typeof window._clearSearchHighlight3d === 'function') {
+    window._clearSearchHighlight3d();
+  }
 }
 function _escHtml(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 document.getElementById('refSearch').addEventListener('input', function() {
@@ -3143,6 +3154,43 @@ window.initGraph3D = (function() {
   let simNodes3d=[], simByID3d={};
   let selectedId3d=null, hoveredId3d=null, selRing3d=null;
   var _zoomedNodeId = null, _savedPivot = null, _savedZoom = null;
+  // ── Fly-to animation state ──────────────────────────────────────────
+  var _flyTo = null; // { startX, startY, startZ, endX, endY, endZ, startTime, duration }
+  function flyToNode3d(nd) {
+    if (!nd || !pivot3d) return;
+    var sx = pivot3d.position.x, sy = pivot3d.position.y, sz = pivot3d.position.z;
+    var ex = -nd.x, ey = -nd.y, ez = -nd.z;
+    // Skip if already centered on this node (within tolerance)
+    if (Math.abs(sx - ex) < 0.5 && Math.abs(sy - ey) < 0.5 && Math.abs(sz - ez) < 0.5) return;
+    _flyTo = { startX: sx, startY: sy, startZ: sz, endX: ex, endY: ey, endZ: ez, startTime: performance.now(), duration: 500 };
+  }
+  function cancelFlyTo3d() { _flyTo = null; }
+  // ── Search highlight state for 3D graph ─────────────────────────────
+  var _searchHighlight3d = null; // Set of matched node labels, or null
+  function highlightSearchNodes3d(matchedLabels) {
+    if (!matchedLabels || matchedLabels.size === 0) { clearSearchHighlight3d(); return; }
+    _searchHighlight3d = matchedLabels;
+    Object.values(meshMap3d).forEach(function(m) {
+      if (!m.visible) return;
+      var nd = nodeMap3d[m.userData.id];
+      if (!nd) return;
+      if (_searchHighlight3d.has(nd.label)) {
+        m.material.emissiveIntensity = 0.8;
+        m.material.opacity = 1.0;
+      } else {
+        m.material.emissiveIntensity = 0.02;
+        m.material.opacity = 0.15;
+      }
+    });
+    edgeMeshes3d.forEach(function(e) { if (e.line.visible) e._mat.opacity = 0.02; });
+  }
+  function clearSearchHighlight3d() {
+    _searchHighlight3d = null;
+    if (selectedId3d) return; // don't reset if a node is actively selected
+    resetHL3d();
+  }
+  window._highlightSearchNodes3d = highlightSearchNodes3d;
+  window._clearSearchHighlight3d = clearSearchHighlight3d;
   const isMobile3d=()=>window.matchMedia('(max-width:768px)').matches;
   var _isMobileGraph = window.innerWidth <= 768;
   let autoRotate3d=!_isMobileGraph, showRings3d=true, showTopLabels3d=true;
@@ -3479,6 +3527,7 @@ window.initGraph3D = (function() {
     Object.entries(ringMap3d).forEach(function([nid,r]){if(!r.visible)return;var nidN=Number(nid);r.material.opacity=nidN===id?0.6:connected.has(nidN)?0.3:0.04;});
     edgeMeshes3d.forEach(function(e){if(!e.line.visible)return;if(e.source===id||e.target===id){e._mat.opacity=1.0;e.line.material.linewidth=2.0;}else{e._mat.opacity=0.03;e.line.material.linewidth=1.0;}});
     openDetail3d(nd3,inE,outE);
+    flyToNode3d(nd3);
   }
 
   // ── Count real techniques under a SECTIONS node (recursive) ────────
@@ -4594,7 +4643,7 @@ window.initGraph3D = (function() {
 
       // Camera controls
       let downX=0,downY=0,isDrag=false;
-      canvas.addEventListener('mousedown',e=>{downX=e.clientX;downY=e.clientY;isDrag=false;autoRotate3d=false;});
+      canvas.addEventListener('mousedown',e=>{downX=e.clientX;downY=e.clientY;isDrag=false;autoRotate3d=false;cancelFlyTo3d();});
       canvas.addEventListener('mousemove',e=>{
         if(e.buttons){if(Math.abs(e.clientX-downX)>3||Math.abs(e.clientY-downY)>3)isDrag=true;tRY+=(e.clientX-downX)*0.004;tRX+=(e.clientY-downY)*0.004;downX=e.clientX;downY=e.clientY;}
         else{
@@ -4628,13 +4677,13 @@ window.initGraph3D = (function() {
         if(id===selectedId3d){resetHL3d();closeDetail3d();return;}
         selectNode3d(id);
       });
-      canvas.addEventListener('wheel',e=>{e.preventDefault();autoRotate3d=false;tZ3d=Math.min(3500,Math.max(80,tZ3d+e.deltaY*0.8));},{passive:false});
+      canvas.addEventListener('wheel',e=>{e.preventDefault();autoRotate3d=false;cancelFlyTo3d();tZ3d=Math.min(3500,Math.max(80,tZ3d+e.deltaY*0.8));},{passive:false});
       canvas.addEventListener('mouseleave',()=>{hoveredId3d=null;document.getElementById('g3dTooltip').style.display='none';});
 
       // Touch controls (mobile)
       let touchX=0,touchY=0,isTouchDrag=false,_pinchDist=0;
       canvas.addEventListener('touchstart',e=>{
-        autoRotate3d=false;
+        autoRotate3d=false;cancelFlyTo3d();
         if(e.touches.length===2){
           // Pinch start
           var dx=e.touches[0].clientX-e.touches[1].clientX,dy=e.touches[0].clientY-e.touches[1].clientY;
@@ -5033,6 +5082,8 @@ window.initGraph3D = (function() {
       function _g3dLoop(){
         if(_g3dPaused){_g3dRafId=0;return;}
         _g3dRafId=requestAnimationFrame(_g3dLoop);
+        // ── Fly-to animation ──────────────────────────────────────────
+        if(_flyTo){var ft=_flyTo,elapsed=performance.now()-ft.startTime,t=Math.min(elapsed/ft.duration,1);var ease=t<0.5?2*t*t:1-Math.pow(-2*t+2,2)/2;pivot3d.position.x=ft.startX+(ft.endX-ft.startX)*ease;pivot3d.position.y=ft.startY+(ft.endY-ft.startY)*ease;pivot3d.position.z=ft.startZ+(ft.endZ-ft.startZ)*ease;if(t>=1)_flyTo=null;}
         rotX+=(tRX-rotX)*0.08;rotY+=(tRY-rotY)*0.08;zoom3d+=(tZ3d-zoom3d)*0.08;
         pivot3d.rotation.x=rotX;pivot3d.rotation.y=rotY;camera3d.position.z=zoom3d;
         if(autoRotate3d)tRY+=0.005;
