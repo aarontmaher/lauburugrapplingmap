@@ -287,7 +287,7 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
   /* 3D detail panel: bottom-sheet on mobile */
   #g3dDetail { width: 100% !important; border-left: none !important; border-top: none !important; top: auto !important; max-height: 60vh !important; border-radius: 16px 16px 0 0; box-shadow: 0 -4px 24px rgba(0,0,0,0.5); padding-bottom: env(safe-area-inset-bottom); }
   #g3dDetail::before { content: ''; display: block; width: 36px; height: 4px; background: rgba(255,255,255,0.2); border-radius: 2px; margin: 10px auto 6px; }
-  #g3dLegend { right: 16px !important; }
+  #g3dLegend { left: 8px !important; right: auto !important; max-width: calc(100% - 16px) !important; }
 
   /* Bottom bars: compact, safe-area-aware, wrap-friendly */
   #refBottomBar { flex-wrap: wrap; gap: 4px; padding: 6px 8px; padding-bottom: calc(6px + env(safe-area-inset-bottom)); overflow-x: auto; -webkit-overflow-scrolling: touch; row-gap: 6px; }
@@ -468,6 +468,7 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
       <button id="menuCoachBtn" style="display:block;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Coach</button>
       <div style="height:1px;background:rgba(255,255,255,0.06);margin:4px 0;"></div>
       <div style="font-size:9px;color:#556;letter-spacing:1px;text-transform:uppercase;padding:6px 14px 2px;">Progress</div>
+      <button id="menuGameSummaryBtn" style="display:block;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Game Summary</button>
       <button id="menuProgressBtn" style="display:block;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Dashboard</button>
       <button id="menuExportBtn" style="display:block;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Export</button>
       <button id="menuImportBtn" style="display:block;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Import</button>
@@ -624,6 +625,10 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
         <div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:2px;color:#4a5568;text-transform:uppercase;margin-bottom:6px;display:flex;align-items:center;gap:6px;">Headings<span style="flex:1;height:1px;background:rgba(255,255,255,0.04);"></span></div>
         <div id="g3dHeadingList"></div>
       </div>
+      <div id="g3dTechSec" style="margin-bottom:16px;display:none;">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:2px;color:#4a5568;text-transform:uppercase;margin-bottom:6px;display:flex;align-items:center;gap:6px;">Techniques<span style="flex:1;height:1px;background:rgba(255,255,255,0.04);"></span></div>
+        <div id="g3dTechList"></div>
+      </div>
       <div style="margin-bottom:16px;">
         <div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:2px;color:#4a5568;text-transform:uppercase;margin-bottom:6px;display:flex;align-items:center;gap:6px;">Connections<span style="flex:1;height:1px;background:rgba(255,255,255,0.04);"></span></div>
         <div id="g3dConnList"></div>
@@ -639,12 +644,7 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
   </div>
 
   <!-- Legend — static fallback; overwritten by initGraph3D from SECTIONS -->
-  <div id="g3dLegend" style="position:absolute;top:16px;right:280px;font-family:'Barlow Condensed',sans-serif;font-size:11px;color:#667;pointer-events:auto;z-index:5;line-height:2;transition:right 0.25s,opacity 0.25s;background:rgba(14,16,21,0.6);border:1px solid rgba(255,255,255,0.04);border-radius:6px;padding:6px 10px;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);opacity:0.8;">
-    <div style="display:flex;align-items:center;gap:5px;"><span style="width:6px;height:6px;border-radius:50%;background:#f0c040;display:inline-block;"></span>Wrestling</div>
-    <div style="display:flex;align-items:center;gap:5px;"><span style="width:6px;height:6px;border-radius:50%;background:#e05a30;display:inline-block;"></span>Guard</div>
-    <div style="display:flex;align-items:center;gap:5px;"><span style="width:6px;height:6px;border-radius:50%;background:#9b72f5;display:inline-block;"></span>Dominant Positions</div>
-    <div style="display:flex;align-items:center;gap:5px;"><span style="width:6px;height:6px;border-radius:50%;background:#3abfaa;display:inline-block;"></span>Scrambles</div>
-  </div>
+  <div id="g3dLegend" style="position:absolute;top:12px;left:12px;font-family:'Barlow Condensed',sans-serif;font-size:11px;color:#667;pointer-events:auto;z-index:5;transition:opacity 0.25s;background:rgba(14,16,21,0.6);border:1px solid rgba(255,255,255,0.04);border-radius:8px;padding:5px 8px;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);opacity:0.85;max-width:calc(100% - 24px);"></div>
 
   <!-- Tooltip -->
   <div id="g3dTooltip" style="position:absolute;display:none;background:rgba(18,21,28,0.95);border:1px solid rgba(255,255,255,0.08);border-radius:5px;padding:5px 10px;font-family:'Barlow Condensed',sans-serif;font-size:13px;color:#c4cdd8;pointer-events:none;z-index:20;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);max-width:200px;"></div>
@@ -3716,6 +3716,59 @@ window.initGraph3D = (function() {
       renderHeadings(perspectives[0], makePathKey(posBaseKey, perspectives[0].t));
     }
 
+    // ── C1: Technique names grouped by heading ──────────────────────
+    (function renderTechNames() {
+      var techSec = document.getElementById('g3dTechSec');
+      var techList = document.getElementById('g3dTechList');
+      techList.innerHTML = '';
+      var SKIP_T = new Set(['Instructional video', 'Live video', 'Notes']);
+      // Pick the active perspective node or sectNode directly
+      var srcNode = perspectives.length > 0 ? perspectives[0] : sectNode;
+      if (!srcNode || !srcNode.c) { techSec.style.display = 'none'; return; }
+      var hasContent = false;
+      srcNode.c.forEach(function(h) {
+        var ht = (h.t || '').trim();
+        if (!ht || PERSP_SET.has(ht)) return;
+        if (!h.c || h.c.length === 0) return;
+        // Collect technique names under this heading
+        var techs = [];
+        h.c.forEach(function(child) {
+          var ct = (child.t || '').trim();
+          if (!ct || SKIP_T.has(ct) || PERSP_SET.has(ct) || SCHEMA_NAMES.has(ct)) return;
+          techs.push(ct);
+        });
+        if (techs.length === 0) return;
+        hasContent = true;
+        var hLabel = document.createElement('div');
+        hLabel.style.cssText = 'font-family:Barlow Condensed,sans-serif;font-size:10px;color:#4a5568;letter-spacing:0.5px;text-transform:uppercase;margin-top:6px;margin-bottom:2px;';
+        hLabel.textContent = ht;
+        techList.appendChild(hLabel);
+        var MAX_SHOW = 5;
+        var shown = Math.min(techs.length, MAX_SHOW);
+        for (var ti = 0; ti < shown; ti++) {
+          (function(techName) {
+            var row = document.createElement('div');
+            row.style.cssText = 'font-family:Barlow Condensed,monospace;font-size:11px;color:#8899aa;padding:1px 0 1px 6px;cursor:pointer;transition:color 0.1s;';
+            row.textContent = techName;
+            row.addEventListener('mouseenter', function() { row.style.color = col; });
+            row.addEventListener('mouseleave', function() { row.style.color = '#8899aa'; });
+            row.addEventListener('click', function() {
+              closeDetail3d();
+              switchToReferenceNode(techName, nd.section);
+            });
+            techList.appendChild(row);
+          })(techs[ti]);
+        }
+        if (techs.length > MAX_SHOW) {
+          var more = document.createElement('div');
+          more.style.cssText = 'font-family:Barlow Condensed,monospace;font-size:10px;color:#556;padding:1px 0 1px 6px;';
+          more.textContent = '+' + (techs.length - MAX_SHOW) + ' more';
+          techList.appendChild(more);
+        }
+      });
+      techSec.style.display = hasContent ? 'block' : 'none';
+    })();
+
     // ── 3. CONNECTIONS from _transitionOccurrences ────────────────────
     var cl = document.getElementById('g3dConnList'); cl.innerHTML = '';
     var to = window._transitionOccurrences;
@@ -4245,40 +4298,60 @@ window.initGraph3D = (function() {
       ready=true;
       canvas.addEventListener('webglcontextlost',e=>{e.preventDefault();ready=false;},false);
 
+      // C5: Interactive legend — click section pills to toggle node visibility
       const g3dLeg=document.getElementById('g3dLegend');
       if(g3dLeg){
         g3dLeg.innerHTML='';
-        var _legendHighlight=null;
-        SECTIONS.forEach(function(s,i){
-          var row=document.createElement('div');
-          row.style.cssText='display:flex;align-items:center;gap:6px;cursor:pointer;padding:1px 0;border-radius:3px;transition:background 0.15s;';
-          var col=SECT_CSS3[i]||s.color;
-          row.innerHTML='<span style="width:7px;height:7px;border-radius:50%;background:'+col+';display:inline-block;box-shadow:0 0 4px '+col+'40;"></span><span style="color:#8899aa;">'+s.title.split(' ').slice(0,3).join(' ')+'</span>';
-          row.addEventListener('mouseenter',function(){row.style.background='rgba(255,255,255,0.06)';});
-          row.addEventListener('mouseleave',function(){row.style.background='';});
-          row.addEventListener('click',function(ev){
-            ev.stopPropagation();
-            if(_legendHighlight===i){
-              // Deselect: restore all
-              _legendHighlight=null;
-              Object.entries(meshMap3d).forEach(function(kv){if(kv[1].visible)kv[1].material.opacity=1.0;});
-              edgeMeshes3d.forEach(function(e){if(e.line.visible)e._mat.opacity=0.15;});
+        g3dLeg.style.display='flex';g3dLeg.style.flexWrap='wrap';g3dLeg.style.gap='4px';g3dLeg.style.lineHeight='1';
+        var _legendHidden=new Set(); // section indices currently hidden
+        function applyLegendFilter(){
+          // If all are hidden, restore all (toggle-all-off = show all)
+          var allOff=_legendHidden.size>=SECTIONS.length;
+          if(allOff) _legendHidden.clear();
+          // Update pill styles
+          g3dLeg.querySelectorAll('[data-sec-idx]').forEach(function(pill){
+            var si=parseInt(pill.getAttribute('data-sec-idx'),10);
+            var hidden=_legendHidden.has(si);
+            pill.style.opacity=hidden?'0.35':'1';
+            pill.style.textDecoration=hidden?'line-through':'none';
+          });
+          // Toggle node visibility
+          Object.entries(meshMap3d).forEach(function(kv){
+            var nd=nodeMap3d[kv[0]];
+            if(!nd)return;
+            var mesh=kv[1];
+            if(_legendHidden.has(nd.section_idx)){
+              mesh.visible=false;
             } else {
-              // Highlight this section only
-              _legendHighlight=i;
-              Object.entries(meshMap3d).forEach(function(kv){
-                var nd=nodeMap3d[kv[0]];
-                if(!kv[1].visible)return;
-                kv[1].material.opacity=(nd&&nd.section_idx===i)?1.0:0.08;
-              });
-              edgeMeshes3d.forEach(function(e){
-                if(!e.line.visible)return;
-                var sn=nodeMap3d[e.source],tn=nodeMap3d[e.target];
-                e._mat.opacity=(sn&&sn.section_idx===i)||(tn&&tn.section_idx===i)?0.3:0.02;
-              });
+              // Restore visibility respecting other filters (orphans etc)
+              if(!nd.in_network){mesh.visible=showOrphans3d;mesh.material.opacity=ORPHAN_OPACITY;}
+              else{mesh.visible=true;mesh.material.opacity=nd.status==='none'?0.72:0.9;}
             }
           });
-          g3dLeg.appendChild(row);
+          // Toggle edges: hide if either end is hidden
+          edgeMeshes3d.forEach(function(e){
+            var sn=nodeMap3d[e.source],tn=nodeMap3d[e.target];
+            if(!sn||!tn){e.line.visible=false;return;}
+            e.line.visible=!_legendHidden.has(sn.section_idx)&&!_legendHidden.has(tn.section_idx);
+            if(e.line.visible)e._mat.opacity=0.15;
+          });
+          // Labels auto-update in animation loop based on mesh visibility
+        }
+        SECTIONS.forEach(function(s,i){
+          var col=SECT_CSS3[i]||s.color;
+          var pill=document.createElement('span');
+          pill.setAttribute('data-sec-idx',i);
+          pill.style.cssText='display:inline-flex;align-items:center;gap:4px;cursor:pointer;padding:2px 8px;border-radius:10px;border:1px solid '+col+'44;background:'+col+'12;font-size:10px;color:#8899aa;font-family:Barlow Condensed,sans-serif;letter-spacing:0.3px;transition:all 0.15s;user-select:none;white-space:nowrap;';
+          pill.innerHTML='<span style="width:6px;height:6px;border-radius:50%;background:'+col+';display:inline-block;flex-shrink:0;"></span>'+s.title.split(' ').slice(0,2).join(' ');
+          pill.addEventListener('mouseenter',function(){pill.style.borderColor=col+'88';});
+          pill.addEventListener('mouseleave',function(){pill.style.borderColor=col+'44';});
+          pill.addEventListener('click',function(ev){
+            ev.stopPropagation();
+            if(_legendHidden.has(i)) _legendHidden.delete(i);
+            else _legendHidden.add(i);
+            applyLegendFilter();
+          });
+          g3dLeg.appendChild(pill);
         });
       }
       const lc=document.getElementById('g3dLabelCanvas');
@@ -8628,6 +8701,153 @@ function openCoachPanel() {
     document.getElementById('headerMenu').style.display = 'none';
     openChainsPanel();
   });
+})();
+
+// ── GAME SUMMARY PANEL ──────────────────────────────────────────────────────
+(function() {
+  document.getElementById('menuGameSummaryBtn').addEventListener('click', function() {
+    document.getElementById('headerMenu').style.display = 'none';
+    openGameSummary();
+  });
+
+  function openGameSummary() {
+    var prog = STATE.progress || {};
+    var allKeys = Object.keys(prog);
+
+    // Counts
+    var total = allKeys.length;
+    var drilling = allKeys.filter(function(k) { return prog[k] === 'drilling'; }).length;
+    var learned = allKeys.filter(function(k) { return prog[k] === 'learned'; }).length;
+    var want = allKeys.filter(function(k) { return prog[k] === 'want'; }).length;
+    var dPct = total > 0 ? Math.round(drilling / total * 100) : 0;
+    var lPct = total > 0 ? Math.round(learned / total * 100) : 0;
+    var wPct = total > 0 ? Math.round(want / total * 100) : 0;
+
+    // Per-position aggregation
+    var posData = {}; // posKey -> {section, label, drilling, learned, want, total}
+    allKeys.forEach(function(k) {
+      var segs = k.split('|');
+      if (segs.length < 3) return;
+      var posKey = segs[0] + '|' + segs[1];
+      if (!posData[posKey]) {
+        // Find label from SECTIONS
+        var secTitle = '';
+        var posLabel = segs[1].replace(/_/g, ' ');
+        if (typeof SECTIONS !== 'undefined') {
+          SECTIONS.forEach(function(s) {
+            if (normalizeSegment(s.title) === segs[0]) {
+              secTitle = s.title;
+              (s.nodes || []).forEach(function(n) {
+                if (normalizeSegment(n.t) === segs[1]) posLabel = n.t;
+              });
+            }
+          });
+        }
+        posData[posKey] = { section: secTitle, label: posLabel, drilling: 0, learned: 0, want: 0, total: 0 };
+      }
+      posData[posKey].total++;
+      if (prog[k] === 'drilling') posData[posKey].drilling++;
+      if (prog[k] === 'learned') posData[posKey].learned++;
+      if (prog[k] === 'want') posData[posKey].want++;
+    });
+
+    var positions = Object.values(posData);
+    // Strongest: top 3 by learned count
+    var strongest = positions.filter(function(p) { return p.learned > 0; }).sort(function(a, b) { return b.learned - a.learned; }).slice(0, 3);
+    // Building: top 3 by drilling count
+    var building = positions.filter(function(p) { return p.drilling > 0; }).sort(function(a, b) { return b.drilling - a.drilling; }).slice(0, 3);
+
+    // Game gaps: connected positions (in graph) that have zero tracked techniques
+    var gaps = [];
+    if (typeof NET_NODES !== 'undefined' && typeof ACTIVE_EDGES !== 'undefined') {
+      var trackedPosNorms = new Set();
+      allKeys.forEach(function(k) { var s = k.split('|'); if (s.length >= 2) trackedPosNorms.add(s[1]); });
+      var connectedIds = new Set();
+      ACTIVE_EDGES.forEach(function(e) { connectedIds.add(e.source); connectedIds.add(e.target); });
+      NET_NODES.forEach(function(n) {
+        if (n.depth !== 1 || !n.in_network) return;
+        var posNorm = n.key ? n.key.split('|')[1] || normalizeSegment(n.label) : normalizeSegment(n.label);
+        if (!trackedPosNorms.has(posNorm) && connectedIds.has(n.id)) {
+          gaps.push({ label: n.label, section: n.section });
+        }
+      });
+    }
+
+    // Suggested next move: highest-connected untracked position
+    var suggested = gaps.length > 0 ? gaps[0] : null;
+    if (gaps.length > 1 && typeof NET_NODES !== 'undefined') {
+      // Pick the gap with the most connections
+      var nodeConnCount = {};
+      if (typeof ACTIVE_EDGES !== 'undefined') {
+        ACTIVE_EDGES.forEach(function(e) {
+          nodeConnCount[e.source] = (nodeConnCount[e.source] || 0) + 1;
+          nodeConnCount[e.target] = (nodeConnCount[e.target] || 0) + 1;
+        });
+      }
+      gaps.sort(function(a, b) {
+        var aNode = NET_NODES.find(function(n) { return n.label === a.label; });
+        var bNode = NET_NODES.find(function(n) { return n.label === b.label; });
+        var aC = aNode ? (nodeConnCount[aNode.id] || 0) : 0;
+        var bC = bNode ? (nodeConnCount[bNode.id] || 0) : 0;
+        return bC - aC;
+      });
+      suggested = gaps[0];
+    }
+
+    // Recent sparring
+    var sparring = (STATE.sparringLog || []).slice(-3).reverse();
+
+    // Build items for openListPanel
+    var items = [];
+    // Stats header
+    items.push({ isHeader: true, label: 'Technique Stats' });
+    items.push({ label: total + ' tracked', meta: drilling + ' drilling (' + dPct + '%) \u00b7 ' + learned + ' learned (' + lPct + '%) \u00b7 ' + want + ' want (' + wPct + '%)', sectionDot: 'var(--accent)' });
+
+    // Strongest positions
+    if (strongest.length > 0) {
+      items.push({ isHeader: true, label: 'Strongest Positions' });
+      strongest.forEach(function(p) {
+        items.push({ label: p.label, meta: p.learned + ' learned \u00b7 ' + p.section, sectionDot: 'var(--accent)' });
+      });
+    }
+
+    // Building positions
+    if (building.length > 0) {
+      items.push({ isHeader: true, label: 'Building Positions' });
+      building.forEach(function(p) {
+        items.push({ label: p.label, meta: p.drilling + ' drilling \u00b7 ' + p.section, sectionDot: 'var(--blue)' });
+      });
+    }
+
+    // Game gaps
+    if (gaps.length > 0) {
+      items.push({ isHeader: true, label: 'Game Gaps' });
+      gaps.slice(0, 5).forEach(function(g) {
+        items.push({ label: g.label, meta: 'Connected but untracked \u00b7 ' + g.section, sectionDot: 'var(--accent2)' });
+      });
+    }
+
+    // Suggested next move
+    if (suggested) {
+      items.push({ isHeader: true, label: 'Suggested Next Move' });
+      items.push({ label: suggested.label, meta: 'Most connected untracked position \u00b7 ' + suggested.section, sectionDot: 'var(--green)',
+        onClick: function() { closeListPanel(); switchToReferenceNode(suggested.label, suggested.section); }
+      });
+    }
+
+    // Recent sparring
+    if (sparring.length > 0) {
+      items.push({ isHeader: true, label: 'Recent Sparring' });
+      sparring.forEach(function(s) {
+        var dateStr = s.date || (s.ts ? new Date(s.ts).toLocaleDateString() : '');
+        var meta = (s.partner || 'No partner') + (dateStr ? ' \u00b7 ' + dateStr : '');
+        if (s.notes) meta += ' \u2014 ' + s.notes.substring(0, 40);
+        items.push({ label: s.result || 'Session', meta: meta, sectionDot: '#667' });
+      });
+    }
+
+    openListPanel('Game Summary', items);
+  }
 })();
 
 // Register service worker for PWA/offline support
