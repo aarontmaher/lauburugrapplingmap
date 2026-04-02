@@ -17,6 +17,26 @@
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://aarontmaher.github.io/Chat-gpt/">
 <meta property="og:image" content="https://aarontmaher.github.io/Chat-gpt/icon-512.png">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Grappling Map",
+  "description": "No-gi grappling reference, training map, and coaching tool. Track techniques, drill with timers, find game gaps, and build your personal grappling system.",
+  "url": "https://aarontmaher.github.io/Chat-gpt/",
+  "applicationCategory": "SportsApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "AUD"
+  },
+  "author": {
+    "@type": "Person",
+    "name": "Aaron Maher"
+  }
+}
+</script>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='80'>🥋</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600&family=Bebas+Neue&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -6552,6 +6572,32 @@ performance.mark('app-ready');
 // Set print date for @media print header
 document.body.setAttribute('data-print-date', new Date().toLocaleDateString());
 
+// ─── WEB VITALS (lightweight, no library) ─────────────────────────────────────
+(function() {
+  var wv = window._webVitals = { lcp: null, cls: 0, fcp: null };
+  var debug = location.search.indexOf('debug=1') !== -1;
+  try {
+    new PerformanceObserver(function(list) {
+      var entries = list.getEntries();
+      wv.lcp = entries[entries.length - 1].startTime;
+      if (debug) console.log('[WebVitals] LCP:', Math.round(wv.lcp) + 'ms');
+    }).observe({ type: 'largest-contentful-paint', buffered: true });
+  } catch(e) {}
+  try {
+    new PerformanceObserver(function(list) {
+      list.getEntries().forEach(function(e) {
+        if (!e.hadRecentInput) wv.cls += e.value;
+      });
+      if (debug) console.log('[WebVitals] CLS:', wv.cls.toFixed(4));
+    }).observe({ type: 'layout-shift', buffered: true });
+  } catch(e) {}
+  try {
+    var paints = performance.getEntriesByType('paint');
+    var fcp = paints.find(function(p) { return p.name === 'first-contentful-paint'; });
+    if (fcp) { wv.fcp = fcp.startTime; if (debug) console.log('[WebVitals] FCP:', Math.round(wv.fcp) + 'ms'); }
+  } catch(e) {}
+})();
+
 // ─── DEBUG / TEST API ─────────────────────────────────────────────────────────
 window.__APP_DEBUG__ = {
   version: '1.0',
@@ -6578,7 +6624,8 @@ window.__APP_DEBUG__ = {
       activeFilter: (document.querySelector('#refBottomBar .g3d-tb-btn.active[data-filter]') || {}).textContent || 'All',
       totalNodes: STATE.totalNodes || 0,
       learnedNodes: STATE.learnedNodes || 0,
-      bootTimings: window._bootTimings || {}
+      bootTimings: window._bootTimings || {},
+      webVitals: window._webVitals || {}
     };
   },
   selectNodeByLabel: function(label) {
