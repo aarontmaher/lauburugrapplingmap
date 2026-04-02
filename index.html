@@ -519,6 +519,12 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
     <div id="refHomeTrain" style="display:none;margin-bottom:8px;"></div>
     <div id="refHomeRecent" style="display:none;"></div>
   </div>
+  <div id="dailySuggestionCard" style="display:none;margin:8px 16px 0;background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:6px;padding:10px 14px;font-family:'Barlow Condensed',sans-serif;position:relative;flex-shrink:0;">
+    <button id="dailySuggestionClose" style="position:absolute;top:6px;right:8px;background:none;border:none;color:var(--text-muted);font-size:16px;cursor:pointer;padding:0 4px;line-height:1;">&times;</button>
+    <div style="font-size:10px;letter-spacing:1.5px;color:var(--text-muted);text-transform:uppercase;margin-bottom:4px;">Today's Focus</div>
+    <div id="dailySuggestionText" style="font-size:14px;font-weight:500;color:var(--text);line-height:1.4;margin-bottom:6px;padding-right:20px;"></div>
+    <button id="dailySuggestionGo" style="background:var(--accent);color:#000;border:none;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;padding:4px 14px;border-radius:6px;cursor:pointer;letter-spacing:0.5px;transition:all 0.15s;">Go there &rarr;</button>
+  </div>
   <div class="sections" id="sections" style="flex:1;overflow-y:auto;"></div>
   <div id="refOnboarding" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:5;pointer-events:none;text-align:center;display:none;transition:opacity 0.5s;">
     <div style="background:rgba(14,16,21,0.85);border:1px solid rgba(255,255,255,0.06);border-radius:8px;padding:12px 20px;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);font-family:'Barlow Condensed',sans-serif;color:#667;">
@@ -580,6 +586,7 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
     <button class="g3d-tb-btn" id="g3dBuiltOutBtn">Detailed</button>
     <div style="width:1px;height:22px;background:rgba(255,255,255,0.08);margin:0 4px;"></div>
     <button class="g3d-tb-btn" id="g3dRecenterBtn">Recenter</button>
+    <button class="g3d-tb-btn" id="g3dMyMapBtn" title="Highlight your tracked positions">My Map</button>
     <button class="g3d-tb-btn" id="g3dFindPathBtn">Find Path</button>
     <button class="g3d-tb-btn" id="g3dOptionsBtn">Settings</button>
     <div id="g3dMediaBtns" style="display:contents;"></div>
@@ -648,6 +655,12 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
 
   <!-- Tooltip -->
   <div id="g3dTooltip" style="position:absolute;display:none;background:rgba(18,21,28,0.95);border:1px solid rgba(255,255,255,0.08);border-radius:5px;padding:5px 10px;font-family:'Barlow Condensed',sans-serif;font-size:13px;color:#c4cdd8;pointer-events:none;z-index:20;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);max-width:200px;"></div>
+
+  <!-- Path summary panel -->
+  <div id="g3dPathSummary" style="display:none;position:absolute;bottom:70px;left:50%;transform:translateX(-50%);z-index:12;background:rgba(18,21,28,0.95);border:1px solid rgba(0,255,136,0.25);border-radius:8px;padding:8px 14px;-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);max-width:calc(100vw - 40px);text-align:center;">
+    <div id="g3dPathText" style="font-family:'Barlow Condensed',sans-serif;font-size:13px;color:#c4cdd8;letter-spacing:0.3px;line-height:1.5;"></div>
+    <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--text-muted);margin-top:4px;">Press Escape to clear</div>
+  </div>
 
   <!-- Empty state overlay for DRILLING / LEARNED / MY GAME filters -->
   <div id="g3dEmptyState" style="display:none;position:absolute;inset:0;z-index:5;pointer-events:none;align-items:center;justify-content:center;">
@@ -4136,7 +4149,16 @@ window.initGraph3D = (function() {
         var centrality=1-(dist/maxDist); // 1=center, 0=edge
         return {id:n.id, score: n._w * (1 + centrality * 0.5)};
       }).sort((a,b)=>b.score-a.score);
-      scored.forEach(s=>showFor.add(s.id));
+      // C2: When game map overlay is active, only show labels for tracked positions
+      if(window._isGameMapActive&&window._isGameMapActive()&&window._gameMapTrackedIds){
+        scored.forEach(function(s){if(window._gameMapTrackedIds.has(s.id))showFor.add(s.id);});
+      } else {
+        scored.forEach(s=>showFor.add(s.id));
+      }
+    }
+    // C2: Ensure all tracked positions get labels when game map is active
+    if(window._isGameMapActive&&window._isGameMapActive()&&window._gameMapTrackedIds){
+      window._gameMapTrackedIds.forEach(function(tid){showFor.add(tid);});
     }
     if(selectedId3d) showFor.add(selectedId3d);
     if(hoveredId3d)  showFor.add(hoveredId3d);
@@ -4654,12 +4676,97 @@ window.initGraph3D = (function() {
       const optPanel=document.getElementById('g3dOptions');
       document.getElementById('g3dOptionsBtn').addEventListener('click',function(ev){ev.stopPropagation();optPanel.style.display=optPanel.style.display==='block'?'none':'block';});
 
-      // ── Find Path feature ──────────────────────────────────────────
-      var _pathMode = false, _pathFrom = null;
+      // ── C2: Game Map overlay (visual overlay, not a filter) ─────────
+      var _gameMapActive = false;
+      var _myMapBtn = document.getElementById('g3dMyMapBtn');
+      _myMapBtn.addEventListener('click', function() {
+        _gameMapActive = !_gameMapActive;
+        _myMapBtn.classList.toggle('active', _gameMapActive);
+        if (_gameMapActive) {
+          applyGameMapOverlay();
+        } else {
+          // Restore normal view
+          resetHL3d();
+          rebuildFilter3d(statusFilter3d);
+        }
+      });
+      function applyGameMapOverlay() {
+        var prog = loadProg3d();
+        // Build set of position norms that have any tracked technique
+        var trackedPosNorms = new Set();
+        Object.entries(prog).forEach(function(kv) {
+          if (kv[1] === 'drilling' || kv[1] === 'learned' || kv[1] === 'want') {
+            var segs = kv[0].split('|');
+            if (segs.length >= 2) trackedPosNorms.add(segs[1]);
+          }
+        });
+        // Map node IDs to tracked status
+        var trackedIds = new Set();
+        NET_NODES.filter(function(n) { return n.in_network && n.depth === 1; }).forEach(function(n) {
+          var posNorm = n.key ? n.key.split('|')[1] : normalizeSegment(n.label);
+          if (trackedPosNorms.has(posNorm)) trackedIds.add(n.id);
+        });
+        // Apply visual overlay to meshes
+        Object.entries(meshMap3d).forEach(function(kv) {
+          var m = kv[1]; if (!m.visible) return;
+          var nid = Number(kv[0]); var nd = nodeMap3d[nid];
+          if (!nd) return;
+          if (trackedIds.has(nid)) {
+            // Tracked: bright, slightly larger
+            var col = nodeCol3d(nd, THREE);
+            m.material.color.copy(col);
+            m.material.emissive.copy(col);
+            m.material.emissiveIntensity = 0.6;
+            m.material.opacity = 1.0;
+            var newR = (nd._r || 6) * 1.15;
+            m.geometry.dispose(); m.geometry = new THREE.SphereGeometry(newR, 14, 14);
+          } else {
+            // Untracked: very dim
+            m.material.opacity = 0.12;
+            m.material.emissiveIntensity = 0.02;
+            var dimR = (nd._r || 6) * 0.85;
+            m.geometry.dispose(); m.geometry = new THREE.SphereGeometry(dimR, 14, 14);
+          }
+        });
+        // Edges: bright between tracked, dim otherwise
+        edgeMeshes3d.forEach(function(e) {
+          if (!e.line.visible) return;
+          var bothTracked = trackedIds.has(e.source) && trackedIds.has(e.target);
+          var oneTracked = trackedIds.has(e.source) || trackedIds.has(e.target);
+          if (bothTracked) { e._mat.opacity = 0.6; e._mat.color.set(0xe8ff47); }
+          else if (oneTracked) { e._mat.opacity = 0.08; }
+          else { e._mat.opacity = 0.02; }
+        });
+        // Rings
+        Object.entries(ringMap3d).forEach(function(kv) {
+          var r = kv[1]; if (!r.visible) return;
+          r.material.opacity = trackedIds.has(Number(kv[0])) ? 0.4 : 0.02;
+        });
+        // Store for label rendering
+        window._gameMapTrackedIds = trackedIds;
+      }
+      // Expose for label rendering
+      window._isGameMapActive = function() { return _gameMapActive; };
+
+      // ── C3: Find Path feature (enhanced with summary panel) ─────────
+      var _pathMode = false, _pathFrom = null, _pathHighlightActive = false;
       var _pathBtn = document.getElementById('g3dFindPathBtn');
+      var _pathSummaryEl = document.getElementById('g3dPathSummary');
+      function clearPathHighlight() {
+        _pathHighlightActive = false;
+        _pathSummaryEl.style.display = 'none';
+        // Restore edge colors
+        edgeMeshes3d.forEach(function(e) {
+          if (!e.line.visible) return;
+          var nd = nodeMap3d[e.source];
+          e._mat.color.set(nd ? (SECT_HEX3[nd.section_idx] || 0x445566) : 0x445566);
+          e._mat.opacity = e._base || 0.15;
+        });
+        resetHL3d();
+      }
       _pathBtn.addEventListener('click', function() {
+        if (_pathHighlightActive) { clearPathHighlight(); return; }
         if (_pathMode) {
-          // Cancel path mode
           _pathMode = false; _pathFrom = null;
           _pathBtn.classList.remove('active');
           _pathBtn.textContent = 'Find Path';
@@ -4672,15 +4779,14 @@ window.initGraph3D = (function() {
         _pathBtn.textContent = 'Select start...';
         showToast('Click a position to start the path');
       });
-      // Override node click when in path mode
       window._g3dPathModeClick = function(nodeId) {
+        if (_pathHighlightActive) { clearPathHighlight(); return false; }
         if (!_pathMode) return false;
         var nd = nodeMap3d[nodeId];
         if (!nd || nd.depth !== 1) return false;
         if (!_pathFrom) {
           _pathFrom = nodeId;
           _pathBtn.textContent = 'Select end...';
-          // Highlight start node
           if (meshMap3d[nodeId]) meshMap3d[nodeId].material.color.set(0x00ff88);
           showToast('Now click the destination position');
           return true;
@@ -4704,15 +4810,16 @@ window.initGraph3D = (function() {
           });
         }
         if (found) {
-          // Reconstruct path
           var path = [nodeId];
           var step = nodeId;
           while (step !== _pathFrom) { step = prev[step]; path.unshift(step); }
-          // Highlight path
+          // Highlight path on graph
           var pathSet = new Set(path);
           Object.entries(meshMap3d).forEach(function(kv) {
             if (!kv[1].visible) return;
-            kv[1].material.opacity = pathSet.has(kv[0]) ? 1.0 : 0.06;
+            var nid = Number(kv[0]);
+            kv[1].material.opacity = pathSet.has(nid) ? 1.0 : 0.06;
+            if (pathSet.has(nid)) { kv[1].material.emissiveIntensity = 0.7; }
           });
           edgeMeshes3d.forEach(function(e) {
             if (!e.line.visible) return;
@@ -4720,23 +4827,37 @@ window.initGraph3D = (function() {
             for (var pi = 0; pi < path.length - 1; pi++) {
               if ((e.source === path[pi] && e.target === path[pi+1]) || (e.target === path[pi] && e.source === path[pi+1])) { onPath = true; break; }
             }
-            e._mat.opacity = onPath ? 0.6 : 0.01;
-            if (onPath) e._mat.color.set(0x00ff88);
+            e._mat.opacity = onPath ? 0.85 : 0.01;
+            if (onPath) { e._mat.color.set(0x00ff88); }
           });
-          // Show path names as toast
-          var pathNames = path.map(function(pid) { return nodeMap3d[pid] ? nodeMap3d[pid].label : '?'; });
-          showToast('Path: ' + pathNames.join(' → '));
-          // Open detail on destination
+          // Show path summary panel
+          var pathNames = path.map(function(pid) {
+            var pnd = nodeMap3d[pid];
+            return pnd ? pnd.label.replace(/\s*\((You|Opponent|Attacker|Defender|Passer|Guard player|Initiative|Defensive)\)\s*$/, '') : '?';
+          });
+          var hops = path.length - 1;
+          var textEl = document.getElementById('g3dPathText');
+          textEl.innerHTML = '<span style="color:#00ff88;font-weight:600;">' + pathNames.join('</span> <span style="color:var(--text-muted);">\u2192</span> <span style="color:#00ff88;font-weight:600;">') + '</span>'
+            + '<div style="font-size:11px;color:var(--text-muted);margin-top:2px;">' + hops + ' hop' + (hops !== 1 ? 's' : '') + '</div>';
+          _pathSummaryEl.style.display = 'block';
+          _pathHighlightActive = true;
           selectNode3d(nodeId);
         } else {
-          showToast('No path found between these positions');
+          // No path: show in summary panel
+          var fromLabel = nodeMap3d[_pathFrom] ? nodeMap3d[_pathFrom].label : '?';
+          var toLabel = nd ? nd.label : '?';
+          document.getElementById('g3dPathText').innerHTML = '<span style="color:#ff6b35;">No connected path found</span><div style="font-size:11px;color:var(--text-muted);margin-top:2px;">' + fromLabel + ' \u2194 ' + toLabel + '</div>';
+          _pathSummaryEl.style.display = 'block';
+          _pathHighlightActive = true;
         }
-        // Exit path mode
         _pathMode = false; _pathFrom = null;
         _pathBtn.classList.remove('active');
         _pathBtn.textContent = 'Find Path';
         return true;
       };
+      // Expose clear for Escape key
+      window._g3dClearPath = clearPathHighlight;
+      window._g3dIsPathActive = function() { return _pathHighlightActive; };
       optPanel.addEventListener('click',function(ev){ev.stopPropagation();});
       document.addEventListener('click',function(){if(optPanel.style.display==='block')optPanel.style.display='none';});
       document.getElementById('g3dOptRings').addEventListener('change',function(){showRings3d=this.checked;Object.values(ringMap3d).forEach(r=>{r.visible=showRings3d;});});
@@ -4925,8 +5046,16 @@ document.addEventListener('keydown', e => {
     // Also close help panel
     document.getElementById('kbdHelpPanel').style.display = 'none';
   }
-  // Esc resets 3D graph selection + zoom + blurs search
+  // Esc resets 3D graph selection + zoom + blurs search + clears path/game map
   if (e.key === 'Escape' && document.getElementById('graph3dView').style.display !== 'none') {
+    // Clear path highlight first if active
+    if (window._g3dIsPathActive && window._g3dIsPathActive()) { window._g3dClearPath(); return; }
+    // Deactivate game map overlay if active
+    if (window._isGameMapActive && window._isGameMapActive()) {
+      var mmBtn = document.getElementById('g3dMyMapBtn');
+      if (mmBtn) mmBtn.click();
+      return;
+    }
     var g3dSearchEl = document.getElementById('g3dSearch');
     if (g3dSearchEl && document.activeElement === g3dSearchEl) { g3dSearchEl.blur(); g3dSearchEl.value = ''; }
     if (window._g3dZoomOut) window._g3dZoomOut();
@@ -6086,6 +6215,81 @@ _log('TechPositionMap built:', window._techPositionMap.size);
 markBuiltOut();
 updateStats();
 if (typeof updateQuickAccess === 'function') updateQuickAccess();
+// ── Daily Suggestion Card ─────────────────────────────────────────────
+(function initDailySuggestion() {
+  var cardEl = document.getElementById('dailySuggestionCard');
+  var textEl = document.getElementById('dailySuggestionText');
+  var goBtn = document.getElementById('dailySuggestionGo');
+  var closeBtn = document.getElementById('dailySuggestionClose');
+  if (!cardEl || !textEl) return;
+  // Only show once per day
+  var today = new Date().toISOString().slice(0, 10);
+  var lastShown = localStorage.getItem('dailySuggestionDate');
+  if (lastShown === today) return;
+  // Need progress data to make a suggestion
+  if (Object.keys(STATE.progress).length === 0) return;
+  // Build tracked position norms
+  var trackedPosNorms = new Set();
+  Object.keys(STATE.progress).forEach(function(k) {
+    var segs = k.split('|');
+    if (segs.length >= 2) trackedPosNorms.add(segs[1]);
+  });
+  if (trackedPosNorms.size === 0) return;
+  // Find highest-value untracked connected position (reuses nextMove logic)
+  var suggestion = null, reason = '';
+  var seen = new Set();
+  var candidates = [];
+  if (typeof NET_EDGES !== 'undefined') {
+    NET_EDGES.forEach(function(e) {
+      var srcNorm = normalizeSegment(e.source_label), tgtNorm = normalizeSegment(e.target_label);
+      if (trackedPosNorms.has(srcNorm) && !trackedPosNorms.has(tgtNorm) && !seen.has(tgtNorm)) {
+        seen.add(tgtNorm);
+        candidates.push({ label: e.target_label, from: e.source_label, type: 'expand' });
+      }
+      if (trackedPosNorms.has(tgtNorm) && !trackedPosNorms.has(srcNorm) && !seen.has(srcNorm)) {
+        seen.add(srcNorm);
+        candidates.push({ label: e.source_label, from: e.target_label, type: 'expand' });
+      }
+    });
+  }
+  if (candidates.length > 0) {
+    // Pick one — use day-of-year as seed for variety
+    var dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(),0,0).getTime()) / 86400000);
+    var pick = candidates[dayOfYear % candidates.length];
+    suggestion = pick.label;
+    reason = 'Connected to ' + pick.from + ' \u2014 expand your game';
+  } else {
+    // Fallback: least recently drilled technique
+    var drilling = Object.entries(STATE.progress).filter(function(kv) { return kv[1] === 'drilling'; });
+    if (drilling.length > 0) {
+      var sorted = drilling.sort(function(a, b) {
+        var ta = (STATE.lastPracticed && STATE.lastPracticed[a[0]]) || 0;
+        var tb = (STATE.lastPracticed && STATE.lastPracticed[b[0]]) || 0;
+        return ta - tb;
+      });
+      var segs = sorted[0][0].split('|');
+      suggestion = segs[segs.length - 1].replace(/_/g, ' ');
+      reason = 'Least recently drilled \u2014 time for a refresh';
+    }
+  }
+  if (!suggestion) return;
+  textEl.innerHTML = '<strong>' + suggestion + '</strong> <span style="color:var(--text-dim);font-size:12px;">\u2014 ' + reason + '</span>';
+  cardEl.style.display = 'block';
+  // Look up section for navigation
+  var suggestionSection = '';
+  SECTIONS.forEach(function(s) {
+    (s.nodes || []).forEach(function(n) { if (n.t === suggestion) suggestionSection = s.title; });
+  });
+  goBtn.addEventListener('click', function() {
+    cardEl.style.display = 'none';
+    localStorage.setItem('dailySuggestionDate', today);
+    switchToReferenceNode(suggestion, suggestionSection);
+  });
+  closeBtn.addEventListener('click', function() {
+    cardEl.style.display = 'none';
+    localStorage.setItem('dailySuggestionDate', today);
+  });
+})();
 // Deep linking + resume
 (function() {
   var hash = location.hash.slice(1);
