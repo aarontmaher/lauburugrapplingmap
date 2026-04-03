@@ -637,6 +637,7 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
       <div style="height:1px;background:rgba(255,255,255,0.06);margin:4px 0;"></div>
       <div style="font-size:9px;color:#556;letter-spacing:1px;text-transform:uppercase;padding:6px 14px 2px;">Progress</div>
       <button id="menuGameSummaryBtn" style="display:block;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Game Summary</button>
+      <button id="menuSuggestionsBtn" style="display:none;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Suggestions</button>
       <button id="menuProgressBtn" style="display:block;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Dashboard</button>
       <button id="menuExportBtn" style="display:block;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Export</button>
       <button id="menuImportBtn" style="display:block;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Import</button>
@@ -1079,7 +1080,9 @@ const STATE = {
   totalNodes: 0,
   learnedNodes: 0,
   sparringLog: [],
-  chains: []
+  chains: [],
+  suggestions: [],
+  suggestion_handoffs: []
 };
 
 function saveState() {
@@ -1096,7 +1099,9 @@ function saveState() {
     drillTime: STATE.drillTime || {},
     dailyDrillLog: STATE.dailyDrillLog || {},
     sparringLog: STATE.sparringLog || [],
-    chains: STATE.chains || []
+    chains: STATE.chains || [],
+    suggestions: STATE.suggestions || [],
+    suggestion_handoffs: STATE.suggestion_handoffs || []
   };
   UserStore.saveAppState(appState);
 }
@@ -1139,6 +1144,8 @@ function loadState() {
     STATE.dailyDrillLog = appState.dailyDrillLog || {};
     STATE.sparringLog = appState.sparringLog || [];
     STATE.chains = appState.chains || [];
+    STATE.suggestions = appState.suggestions || [];
+    STATE.suggestion_handoffs = appState.suggestion_handoffs || [];
   }
 }
 
@@ -5403,13 +5410,17 @@ document.addEventListener('keydown', e => {
   var menuBtn = document.getElementById('headerMenuToggle');
   menuBtn.addEventListener('click', function(ev) {
     ev.stopPropagation();
-    menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+    var showing = menu.style.display === 'none';
+    menu.style.display = showing ? 'block' : 'none';
+    // Show Suggestions button for members only
+    var sugBtn = document.getElementById('menuSuggestionsBtn');
+    if (sugBtn) sugBtn.style.display = (showing && typeof isMember === 'function' && isMember()) ? 'block' : 'none';
   });
   document.addEventListener('click', function() { menu.style.display = 'none'; });
 })();
 // Export progress
 document.getElementById('menuExportBtn').addEventListener('click', function() {
-  var data = { progress: STATE.progress, notes: STATE.notes, recentViewed: STATE.recentViewed || [], successLog: STATE.successLog || [], drillTime: STATE.drillTime || {}, sparringLog: STATE.sparringLog || [], chains: STATE.chains || [], exportedAt: new Date().toISOString() };
+  var data = { progress: STATE.progress, notes: STATE.notes, recentViewed: STATE.recentViewed || [], successLog: STATE.successLog || [], drillTime: STATE.drillTime || {}, sparringLog: STATE.sparringLog || [], chains: STATE.chains || [], suggestions: STATE.suggestions || [], suggestion_handoffs: STATE.suggestion_handoffs || [], exportedAt: new Date().toISOString() };
   var blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
   var a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
@@ -5440,6 +5451,8 @@ document.getElementById('menuImportBtn').addEventListener('click', function() {
         if (data.drillTime) STATE.drillTime = data.drillTime;
         if (data.sparringLog) STATE.sparringLog = data.sparringLog;
         if (data.chains) STATE.chains = data.chains;
+        if (data.suggestions) STATE.suggestions = data.suggestions;
+        if (data.suggestion_handoffs) STATE.suggestion_handoffs = data.suggestion_handoffs;
         saveState(); updateStats(); refreshAllViews();
         showToast('Progress imported successfully');
       } catch(e) { showToast('Could not read file — check format'); }
@@ -5458,6 +5471,8 @@ document.getElementById('menuResetBtn').addEventListener('click', function() {
   STATE.dailyDrillLog = {};
   STATE.sparringLog = [];
   STATE.chains = [];
+  STATE.suggestions = [];
+  STATE.suggestion_handoffs = [];
   saveState(); updateStats(); refreshAllViews();
   showToast('All progress has been reset');
 });
@@ -5596,10 +5611,22 @@ function openListPanel(title, items) {
       // Section header rows
       if (item.isHeader) {
         var hdr = document.createElement('div');
-        hdr.style.cssText = 'padding:8px 0 4px;font-family:Barlow Condensed,sans-serif;font-size:11px;color:var(--text-muted);letter-spacing:0.5px;text-transform:uppercase;';
-        hdr.textContent = item.label;
         hdr.dataset.panelHeader = '1';
+        if (item.render) {
+          item.render(hdr);
+        } else {
+          hdr.style.cssText = 'padding:8px 0 4px;font-family:Barlow Condensed,sans-serif;font-size:11px;color:var(--text-muted);letter-spacing:0.5px;text-transform:uppercase;';
+          hdr.textContent = item.label;
+        }
         body.appendChild(hdr);
+        return;
+      }
+      // Custom render function (e.g. suggestion queue items)
+      if (item.render) {
+        var renderRow = document.createElement('div');
+        if (!item.isHeader) renderRow.dataset.panelItem = item.label || '';
+        item.render(renderRow);
+        body.appendChild(renderRow);
         return;
       }
       // Custom HTML items (e.g. sparklines)
@@ -7787,6 +7814,40 @@ _log('[GrapplingMap] Debug API ready: window.__APP_DEBUG__');
   updateAuthUI();
 })();
 
+// ─── SUGGESTION INTAKE ──────────────────────────────────────────────────────
+function classifySuggestion(text) {
+  var t = text.toLowerCase();
+  if (/bug|broken|crash|error|doesn'?t work|not working|fail/.test(t)) return { classification: 'bug', severity: 'high' };
+  if (/add|feature|could you|would be|should have|wish|want/.test(t)) return { classification: 'feature_request', severity: 'medium' };
+  if (/improve|better|confus|unclear|hard to|difficult|annoying/.test(t)) return { classification: 'improvement', severity: 'medium' };
+  return { classification: 'unclear', severity: 'unknown' };
+}
+
+function captureSuggestion(text) {
+  var cls = classifySuggestion(text);
+  var suggestion = {
+    id: 'SUG-' + Date.now(),
+    created_at: new Date().toISOString(),
+    source: 'website_ai_chat',
+    user_role: typeof isMember === 'function' && isMember() ? 'member' : 'guest',
+    page_or_surface: (document.querySelector('.view-tab.active') || {}).dataset ? (document.querySelector('.view-tab.active').dataset.view || 'unknown') : 'unknown',
+    current_view: (document.querySelector('.view-tab.active') || {}).dataset ? document.querySelector('.view-tab.active').dataset.view : '',
+    message_text: text,
+    normalized_summary: text.substring(0, 120),
+    classification: cls.classification,
+    severity_guess: cls.severity,
+    status: 'new',
+    approval_status: 'pending',
+    implementation_status: 'not_started',
+    selected_node: (typeof SELECTED_NODE !== 'undefined' && SELECTED_NODE) ? SELECTED_NODE.label : null
+  };
+  if (!STATE.suggestions) STATE.suggestions = [];
+  STATE.suggestions.unshift(suggestion);
+  saveState();
+  if (typeof srAnnounce === 'function') srAnnounce('Suggestion captured');
+  return suggestion;
+}
+
 // ─── AI ACTIONS (local-only smart assistant) ────────────────────────────────
 var AIActions = {
   whatToDrill: function() {
@@ -8012,7 +8073,15 @@ var AIActions = {
     { label: 'This week', key: 'thisWeek', fn: function() { renderResponse(AIActions.weeklySummary()); }, modes: ['train'] },
     { label: 'Game summary', key: 'gameSummary', fn: function() { renderResponse(AIActions.gameSummary()); }, modes: ['game'] },
     { label: 'Syllabus info', key: 'syllabusInfo', fn: function() { renderResponse(AIActions.syllabusInfo()); }, modes: ['syllabus'] },
-    { label: 'Why this filter?', key: 'whyFilter', fn: function() { renderResponse(AIActions.whyThisFilter()); }, modes: ['syllabus'] }
+    { label: 'Why this filter?', key: 'whyFilter', fn: function() { renderResponse(AIActions.whyThisFilter()); }, modes: ['syllabus'] },
+    { label: 'Suggest', key: 'suggest', fn: function() {
+      var text = prompt('Describe your suggestion, bug, or idea:');
+      if (text && text.trim()) {
+        var sug = captureSuggestion(text.trim());
+        var clsLabel = {bug:'\uD83D\uDD34 Bug', feature_request:'\uD83D\uDD35 Feature', improvement:'\uD83D\uDFE1 Improvement', unclear:'\u26AA Feedback'}[sug.classification] || 'Feedback';
+        renderResponse({ title: 'Suggestion captured \u2713', body: clsLabel + '\n' + sug.normalized_summary + '\n\nSaved as ' + sug.id });
+      }
+    }, modes: ['explore','train','game','syllabus'] }
   ];
 
   // Context-dependent actions (added dynamically)
@@ -8243,6 +8312,15 @@ var AIActions = {
     }
     if (q.includes('syllabus') || q.includes('belt progress') || q.includes('belt info')) {
       return renderResponse(AIActions.syllabusInfo());
+    }
+    // Suggestion detection
+    if (/\b(bug|broken|suggest|feature request|could you add|should have|would be nice|improve|fix this|doesn'?t work|feedback)\b/i.test(q)) {
+      var sug = captureSuggestion(text);
+      var clsLabel = {bug:'\uD83D\uDD34 Bug', feature_request:'\uD83D\uDD35 Feature', improvement:'\uD83D\uDFE1 Improvement', unclear:'\u26AA Feedback'}[sug.classification] || 'Feedback';
+      return renderResponse({
+        title: 'Suggestion captured \u2713',
+        body: clsLabel + '\n' + sug.normalized_summary + '\n\nSaved as ' + sug.id + ' for review.',
+      });
     }
     // Search for a technique/position by name
     if (q.includes('find') || q.includes('show') || q.includes('search') || q.includes('where')) {
@@ -9644,6 +9722,141 @@ function openCoachPanel() {
     document.getElementById('headerMenu').style.display = 'none';
     openGameSummary();
   });
+
+  // Suggestions queue (member-only)
+  document.getElementById('menuSuggestionsBtn').addEventListener('click', function() {
+    document.getElementById('headerMenu').style.display = 'none';
+    openSuggestionQueue();
+  });
+
+  function openSuggestionQueue() {
+    var suggestions = STATE.suggestions || [];
+    var currentFilter = 'all';
+
+    function buildItems(filter) {
+      var filtered = suggestions;
+      if (filter === 'pending') filtered = suggestions.filter(function(s) { return s.approval_status === 'pending'; });
+      else if (filter === 'approved') filtered = suggestions.filter(function(s) { return s.approval_status === 'approved'; });
+      else if (filter === 'rejected') filtered = suggestions.filter(function(s) { return s.approval_status === 'rejected'; });
+      else if (filter === 'deferred') filtered = suggestions.filter(function(s) { return s.approval_status === 'deferred'; });
+
+      var items = [];
+      // Filter row header
+      items.push({
+        isHeader: true,
+        label: '',
+        render: function(row) {
+          row.style.cssText = 'display:flex;gap:4px;flex-wrap:wrap;padding:6px 0 10px;';
+          ['all','pending','approved','rejected','deferred'].forEach(function(f) {
+            var btn = document.createElement('button');
+            btn.textContent = f.charAt(0).toUpperCase() + f.slice(1);
+            var active = f === filter;
+            btn.style.cssText = 'background:' + (active ? 'rgba(167,139,250,0.2)' : 'rgba(255,255,255,0.04)') + ';border:1px solid ' + (active ? 'rgba(167,139,250,0.4)' : 'rgba(255,255,255,0.08)') + ';color:' + (active ? 'var(--accent3)' : '#8892a4') + ';font-family:DM Mono,monospace;font-size:10px;padding:3px 10px;border-radius:4px;cursor:pointer;';
+            btn.addEventListener('click', function() {
+              currentFilter = f;
+              openSuggestionQueue();
+            });
+            row.appendChild(btn);
+          });
+        }
+      });
+
+      filtered.forEach(function(sug) {
+        var clsColors = {bug:'#f85149', feature_request:'#58a6ff', improvement:'#e8ff47', unclear:'#8b949e'};
+        var clsLabels = {bug:'Bug', feature_request:'Feature', improvement:'Improvement', unclear:'Unclear'};
+        var statusColors = {approved:'#3fb950', rejected:'#f85149', deferred:'#d29922', pending:'#8b949e'};
+        var clsColor = clsColors[sug.classification] || '#8b949e';
+        var statusColor = statusColors[sug.approval_status] || '#8b949e';
+
+        items.push({
+          label: '',
+          render: function(row) {
+            row.style.cssText = 'display:flex;flex-direction:column;gap:4px;padding:8px;border-bottom:1px solid rgba(255,255,255,0.04);';
+            // Top row: ID + timestamp + classification badge
+            var topRow = document.createElement('div');
+            topRow.style.cssText = 'display:flex;align-items:center;gap:6px;flex-wrap:wrap;';
+            var idEl = document.createElement('span');
+            idEl.style.cssText = 'font-family:DM Mono,monospace;font-size:10px;color:#556;';
+            idEl.textContent = sug.id;
+            topRow.appendChild(idEl);
+            var tsEl = document.createElement('span');
+            tsEl.style.cssText = 'font-family:DM Mono,monospace;font-size:9px;color:#444;';
+            tsEl.textContent = new Date(sug.created_at).toLocaleString();
+            topRow.appendChild(tsEl);
+            var badge = document.createElement('span');
+            badge.style.cssText = 'font-family:DM Mono,monospace;font-size:9px;padding:1px 6px;border-radius:3px;color:#fff;background:' + clsColor + ';';
+            badge.textContent = clsLabels[sug.classification] || sug.classification;
+            topRow.appendChild(badge);
+            var statusChip = document.createElement('span');
+            statusChip.style.cssText = 'font-family:DM Mono,monospace;font-size:9px;padding:1px 6px;border-radius:3px;color:#fff;background:' + statusColor + ';margin-left:auto;';
+            statusChip.textContent = sug.approval_status;
+            topRow.appendChild(statusChip);
+            row.appendChild(topRow);
+            // Message
+            var msgEl = document.createElement('div');
+            msgEl.style.cssText = 'font-family:DM Mono,monospace;font-size:11px;color:#c4cdd8;line-height:1.4;';
+            msgEl.textContent = sug.message_text.length > 80 ? sug.message_text.substring(0, 80) + '...' : sug.message_text;
+            row.appendChild(msgEl);
+            // Action buttons
+            var actRow = document.createElement('div');
+            actRow.style.cssText = 'display:flex;gap:4px;margin-top:2px;';
+            function makeBtn(label, color, action) {
+              var b = document.createElement('button');
+              b.style.cssText = 'background:rgba(255,255,255,0.04);border:1px solid ' + color + '40;color:' + color + ';font-family:DM Mono,monospace;font-size:9px;padding:2px 8px;border-radius:3px;cursor:pointer;';
+              b.textContent = label;
+              b.addEventListener('click', function(e) {
+                e.stopPropagation();
+                action();
+              });
+              return b;
+            }
+            actRow.appendChild(makeBtn('Approve', '#3fb950', function() {
+              sug.status = 'approved';
+              sug.approval_status = 'approved';
+              // Write handoff
+              if (!STATE.suggestion_handoffs) STATE.suggestion_handoffs = [];
+              STATE.suggestion_handoffs.push({
+                suggestion_id: sug.id,
+                approved_at: new Date().toISOString(),
+                approved_by: 'owner',
+                normalized_summary: sug.normalized_summary,
+                source_page: sug.page_or_surface,
+                original_message: sug.message_text,
+                classification: sug.classification,
+                severity_guess: sug.severity_guess,
+                automation_status: 'pending_audit'
+              });
+              saveState();
+              openSuggestionQueue();
+            }));
+            actRow.appendChild(makeBtn('Reject', '#f85149', function() {
+              sug.status = 'rejected';
+              sug.approval_status = 'rejected';
+              saveState();
+              openSuggestionQueue();
+            }));
+            actRow.appendChild(makeBtn('Defer', '#d29922', function() {
+              sug.status = 'deferred';
+              sug.approval_status = 'deferred';
+              saveState();
+              openSuggestionQueue();
+            }));
+            row.appendChild(actRow);
+          }
+        });
+      });
+
+      if (filtered.length === 0) {
+        items.push({ label: 'No suggestions' + (filter !== 'all' ? ' with status: ' + filter : '') + '.' });
+      }
+
+      return items;
+    }
+
+    var items = buildItems(currentFilter);
+    var pendingCount = suggestions.filter(function(s) { return s.approval_status === 'pending'; }).length;
+    openListPanel('Suggestion Queue (' + suggestions.length + (pendingCount > 0 ? ', ' + pendingCount + ' pending' : '') + ')', items);
+  }
 
   function openGameSummary() {
     var prog = STATE.progress || {};
