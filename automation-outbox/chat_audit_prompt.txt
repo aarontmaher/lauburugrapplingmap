@@ -1,4 +1,4 @@
-Review the current GrapplingMap product at aarontmaher.github.io/Chat-gpt/ focusing on the compact AI Coach widget (bottom-right, 320px).
+Review the current GrapplingMap product at www.lauburugrapplingmap.com/ focusing on the compact AI Coach widget (bottom-right, 320px).
 
 Key questions:
 1. Does the compact AI Coach feel right? Too small? Too hidden?

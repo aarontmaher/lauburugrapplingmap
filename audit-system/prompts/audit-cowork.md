@@ -2,7 +2,7 @@
 
 Read `~/Chat-gpt/audit-system/STATE.json` to confirm phase is "audit".
 
-Audit the live GrapplingMap website at https://aarontmaher.github.io/Chat-gpt/
+Audit the live GrapplingMap website at https://www.lauburugrapplingmap.com/
 
 ## What to check
 - Walk through as a guest first, then as a member if possible

@@ -40,7 +40,7 @@ Leave this running in a Terminal window. Press **Ctrl-C** to stop.
    - Copies it to `grappling.opml` in this repo
    - Updates `const SECTIONS` in `index.html`
    - Commits and pushes to GitHub
-   - Site updates at https://aarontmaher.github.io/Chat-gpt/ within ~1 minute
+   - Site updates at https://www.lauburugrapplingmap.com/ within ~1 minute
 
 > **Chrome tip:** Enable "Ask where to save each file before downloading" in Chrome Settings > Downloads so you can choose the exports folder each time.
 
@@ -124,4 +124,4 @@ python3 tools/opml_to_sections.py   # run manually to see the error
 
 **Site looks wrong after push**
 Check the Pages deploy status: https://github.com/aarontmaher/Chat-gpt/actions
-Then open DevTools Console at https://aarontmaher.github.io/Chat-gpt/ and look for JS errors.
+Then open DevTools Console at https://www.lauburugrapplingmap.com/ and look for JS errors.

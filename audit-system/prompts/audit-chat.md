@@ -2,7 +2,7 @@
 
 Read `~/Chat-gpt/audit-system/STATE.json` to confirm phase is "audit".
 
-Audit the GrapplingMap website at https://aarontmaher.github.io/Chat-gpt/ from a product/UX perspective.
+Audit the GrapplingMap website at https://www.lauburugrapplingmap.com/ from a product/UX perspective.
 
 ## What to evaluate
 - First-time user experience (is the value proposition clear?)

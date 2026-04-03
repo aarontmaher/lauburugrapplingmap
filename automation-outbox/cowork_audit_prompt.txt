@@ -1,4 +1,4 @@
-Audit the compact AI Coach widget on the live site at aarontmaher.github.io/Chat-gpt/
+Audit the compact AI Coach widget on the live site at www.lauburugrapplingmap.com/
 
 Test as GUEST and MEMBER. Focus on: compact layout, overlap, mobile, usability.
 

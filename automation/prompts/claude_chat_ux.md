@@ -5,7 +5,7 @@
 **Loop:** Read from `~/Chat-gpt/automation/state/AUDIT_STATE.json`
 
 ## Target
-https://aarontmaher.github.io/Chat-gpt/
+https://www.lauburugrapplingmap.com/
 
 ## Coverage Matrix (REQUIRED)
 For each finding, mark which surfaces you tested:
