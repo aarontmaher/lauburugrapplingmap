@@ -27,11 +27,45 @@ def test_graph_and_syllabus_routes_are_public():
 
 
 def test_tool_tier_catalog_matches_server_contract():
-    assert len(TOOL_TIER_REQUIREMENTS) == 15
+    assert len(TOOL_TIER_REQUIREMENTS) == 22
     assert get_tool_tier("get_work_status") == 1
     assert get_tool_tier("update_work_status") == 3
+    assert get_tool_tier("create_prompt_job") == 3
+    assert get_tool_tier("list_prompt_jobs") == 3
+    assert get_tool_tier("complete_prompt_job") == 3
     assert get_tool_tier("approve_batch") == 4
     assert get_tool_tier("submit_suggestion") == 2
+
+
+def test_work_status_role_expectations_are_claude_code_compatible(tmp_path):
+    tokens_path = tmp_path / "tokens.json"
+    tokens_path.write_text(
+        json.dumps(
+            {
+                "tokens": [
+                    {"token": "viewer-token", "role": "viewer", "client": "test"},
+                    {"token": "operator-token", "role": "operator", "client": "claude-code"},
+                ]
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    read_allowed, read_role, _ = check_auth("get_work_status", tokens_path=str(tokens_path))
+    write_denied, denied_role, _ = check_auth("update_work_status", tokens_path=str(tokens_path))
+    write_allowed, write_role, token_info = check_auth(
+        "update_work_status",
+        authorization="Bearer operator-token",
+        tokens_path=str(tokens_path),
+    )
+
+    assert read_allowed is True
+    assert read_role == "viewer"
+    assert write_denied is False
+    assert denied_role == "none"
+    assert write_allowed is True
+    assert write_role == "operator"
+    assert token_info["client"] == "claude-code"
 
 
 def test_check_auth_uses_tokens_json_roles(tmp_path):
@@ -81,3 +115,31 @@ def test_check_auth_uses_tokens_json_roles(tmp_path):
 def test_extract_bearer_token_parses_header():
     assert extract_bearer_token(authorization="Bearer hello") == "hello"
     assert extract_bearer_token(authorization="Token hello") is None
+
+
+def test_prompt_job_tools_are_operator_only(tmp_path):
+    tokens_path = tmp_path / "tokens.json"
+    tokens_path.write_text(
+        json.dumps(
+            {
+                "tokens": [
+                    {"token": "viewer-token", "role": "viewer", "client": "test"},
+                    {"token": "operator-token", "role": "operator", "client": "codex"},
+                ]
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    denied, denied_role, _ = check_auth("list_prompt_jobs", tokens_path=str(tokens_path))
+    allowed, role, token_info = check_auth(
+        "create_prompt_job",
+        authorization="Bearer operator-token",
+        tokens_path=str(tokens_path),
+    )
+
+    assert denied is False
+    assert denied_role == "none"
+    assert allowed is True
+    assert role == "operator"
+    assert token_info["client"] == "codex"

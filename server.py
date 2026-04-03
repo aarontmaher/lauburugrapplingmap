@@ -23,16 +23,24 @@ from config import (
     HANDOFF_LATEST_PATH,
     IMPLEMENTATION_RESULTS_DIR,
     ORCHESTRATE_SCRIPT,
+    PROMPT_JOBS_FILE,
     PROJECT_HANDOFF_ARTIFACTS_DIR,
     TOKENS_FILE,
     WORK_STATUS_FILE,
 )
 from parsers import (
+    cancel_prompt_job as cancel_prompt_job_parser,
+    claim_prompt_job as claim_prompt_job_parser,
+    complete_prompt_job as complete_prompt_job_parser,
+    create_prompt_job as create_prompt_job_parser,
+    fail_prompt_job as fail_prompt_job_parser,
+    get_prompt_job as get_prompt_job_parser,
     read_accepted_suggestions,
     read_automation_state,
     read_batch,
     read_batches,
     read_handoff,
+    list_prompt_jobs as list_prompt_jobs_parser,
     read_suggestions,
     read_suggestions_inbox,
 )
@@ -41,7 +49,7 @@ from parsers.suggestions import find_suggestion_by_id
 from parsers.whoop_proxy import get_normalized_daily
 
 
-mcp = FastMCP("GrapplingMap System", host="127.0.0.1", port=3847)
+mcp = FastMCP("GrapplingMap System", host="0.0.0.0", port=3847)
 
 
 def _now_iso() -> str:
@@ -423,6 +431,149 @@ def update_work_status_impl(
     )
 
 
+def create_prompt_job_impl(
+    target_agent: str,
+    prompt: str,
+    source_client: str | None = None,
+    priority: str = "normal",
+    *,
+    ctx: Context | None = None,
+    authorization: str | None = None,
+    prompt_jobs_path: str = PROMPT_JOBS_FILE,
+    tokens_path: str = TOKENS_FILE,
+    audit_log_path: str = AUDIT_LOG_FILE,
+) -> dict[str, Any]:
+    allowed, role, token_info, client, user = _auth_result("create_prompt_job", ctx=ctx, authorization=authorization, tokens_path=tokens_path)
+    params = {"target_agent": target_agent, "prompt": prompt, "source_client": source_client, "priority": priority}
+    if not allowed:
+        return _log_and_return("create_prompt_job", client=client, user=user, params=params, result=_unauthorized_response("create_prompt_job", role), changes=[], audit_log_path=audit_log_path)
+    item = create_prompt_job_parser(target_agent, prompt, source_client or str(token_info.get("client") or client), priority, path=prompt_jobs_path)
+    return _log_and_return(
+        "create_prompt_job",
+        client=client,
+        user=user,
+        params=params,
+        result=item,
+        changes=[f"{prompt_jobs_path}: created prompt job {item['item']['id']}"],
+        audit_log_path=audit_log_path,
+    )
+
+
+def list_prompt_jobs_impl(
+    status: str | None = None,
+    target_agent: str | None = None,
+    limit: int | None = 50,
+    *,
+    ctx: Context | None = None,
+    authorization: str | None = None,
+    prompt_jobs_path: str = PROMPT_JOBS_FILE,
+    tokens_path: str = TOKENS_FILE,
+    audit_log_path: str = AUDIT_LOG_FILE,
+) -> dict[str, Any]:
+    allowed, role, _, client, user = _auth_result("list_prompt_jobs", ctx=ctx, authorization=authorization, tokens_path=tokens_path)
+    params = {"status": status, "target_agent": target_agent, "limit": limit}
+    if not allowed:
+        return _log_and_return("list_prompt_jobs", client=client, user=user, params=params, result=_unauthorized_response("list_prompt_jobs", role), changes=[], audit_log_path=audit_log_path)
+    result = list_prompt_jobs_parser(path=prompt_jobs_path, status=status, target_agent=target_agent, limit=limit)
+    return _log_and_return("list_prompt_jobs", client=client, user=user, params=params, result=result, changes=[], audit_log_path=audit_log_path)
+
+
+def get_prompt_job_impl(
+    job_id: str,
+    *,
+    ctx: Context | None = None,
+    authorization: str | None = None,
+    prompt_jobs_path: str = PROMPT_JOBS_FILE,
+    tokens_path: str = TOKENS_FILE,
+    audit_log_path: str = AUDIT_LOG_FILE,
+) -> dict[str, Any]:
+    allowed, role, _, client, user = _auth_result("get_prompt_job", ctx=ctx, authorization=authorization, tokens_path=tokens_path)
+    params = {"id": job_id}
+    if not allowed:
+        return _log_and_return("get_prompt_job", client=client, user=user, params=params, result=_unauthorized_response("get_prompt_job", role), changes=[], audit_log_path=audit_log_path)
+    result = get_prompt_job_parser(job_id, path=prompt_jobs_path)
+    return _log_and_return("get_prompt_job", client=client, user=user, params=params, result=result, changes=[], audit_log_path=audit_log_path)
+
+
+def claim_prompt_job_impl(
+    job_id: str,
+    claimed_by: str,
+    *,
+    ctx: Context | None = None,
+    authorization: str | None = None,
+    prompt_jobs_path: str = PROMPT_JOBS_FILE,
+    tokens_path: str = TOKENS_FILE,
+    audit_log_path: str = AUDIT_LOG_FILE,
+) -> dict[str, Any]:
+    allowed, role, _, client, user = _auth_result("claim_prompt_job", ctx=ctx, authorization=authorization, tokens_path=tokens_path)
+    params = {"id": job_id, "claimed_by": claimed_by}
+    if not allowed:
+        return _log_and_return("claim_prompt_job", client=client, user=user, params=params, result=_unauthorized_response("claim_prompt_job", role), changes=[], audit_log_path=audit_log_path)
+    result = claim_prompt_job_parser(job_id, claimed_by, path=prompt_jobs_path)
+    changes = [f"{prompt_jobs_path}: claimed prompt job {job_id} by {claimed_by}"] if result["found"] else []
+    return _log_and_return("claim_prompt_job", client=client, user=user, params=params, result=result, changes=changes, audit_log_path=audit_log_path)
+
+
+def complete_prompt_job_impl(
+    job_id: str,
+    claimed_by: str,
+    result_summary: str,
+    result_artifact: str | None = None,
+    *,
+    ctx: Context | None = None,
+    authorization: str | None = None,
+    prompt_jobs_path: str = PROMPT_JOBS_FILE,
+    tokens_path: str = TOKENS_FILE,
+    audit_log_path: str = AUDIT_LOG_FILE,
+) -> dict[str, Any]:
+    allowed, role, _, client, user = _auth_result("complete_prompt_job", ctx=ctx, authorization=authorization, tokens_path=tokens_path)
+    params = {"id": job_id, "claimed_by": claimed_by, "result_summary": result_summary, "result_artifact": result_artifact}
+    if not allowed:
+        return _log_and_return("complete_prompt_job", client=client, user=user, params=params, result=_unauthorized_response("complete_prompt_job", role), changes=[], audit_log_path=audit_log_path)
+    result = complete_prompt_job_parser(job_id, claimed_by, result_summary, result_artifact, path=prompt_jobs_path)
+    changes = [f"{prompt_jobs_path}: completed prompt job {job_id}"] if result["found"] else []
+    return _log_and_return("complete_prompt_job", client=client, user=user, params=params, result=result, changes=changes, audit_log_path=audit_log_path)
+
+
+def fail_prompt_job_impl(
+    job_id: str,
+    claimed_by: str,
+    error: str,
+    result_summary: str | None = None,
+    *,
+    ctx: Context | None = None,
+    authorization: str | None = None,
+    prompt_jobs_path: str = PROMPT_JOBS_FILE,
+    tokens_path: str = TOKENS_FILE,
+    audit_log_path: str = AUDIT_LOG_FILE,
+) -> dict[str, Any]:
+    allowed, role, _, client, user = _auth_result("fail_prompt_job", ctx=ctx, authorization=authorization, tokens_path=tokens_path)
+    params = {"id": job_id, "claimed_by": claimed_by, "error": error, "result_summary": result_summary}
+    if not allowed:
+        return _log_and_return("fail_prompt_job", client=client, user=user, params=params, result=_unauthorized_response("fail_prompt_job", role), changes=[], audit_log_path=audit_log_path)
+    result = fail_prompt_job_parser(job_id, claimed_by, error, result_summary, path=prompt_jobs_path)
+    changes = [f"{prompt_jobs_path}: failed prompt job {job_id}"] if result["found"] else []
+    return _log_and_return("fail_prompt_job", client=client, user=user, params=params, result=result, changes=changes, audit_log_path=audit_log_path)
+
+
+def cancel_prompt_job_impl(
+    job_id: str,
+    *,
+    ctx: Context | None = None,
+    authorization: str | None = None,
+    prompt_jobs_path: str = PROMPT_JOBS_FILE,
+    tokens_path: str = TOKENS_FILE,
+    audit_log_path: str = AUDIT_LOG_FILE,
+) -> dict[str, Any]:
+    allowed, role, _, client, user = _auth_result("cancel_prompt_job", ctx=ctx, authorization=authorization, tokens_path=tokens_path)
+    params = {"id": job_id}
+    if not allowed:
+        return _log_and_return("cancel_prompt_job", client=client, user=user, params=params, result=_unauthorized_response("cancel_prompt_job", role), changes=[], audit_log_path=audit_log_path)
+    result = cancel_prompt_job_parser(job_id, path=prompt_jobs_path)
+    changes = [f"{prompt_jobs_path}: cancelled prompt job {job_id}"] if result["found"] else []
+    return _log_and_return("cancel_prompt_job", client=client, user=user, params=params, result=result, changes=changes, audit_log_path=audit_log_path)
+
+
 def approve_batch_impl(
     loop: int,
     reviewer: str,
@@ -568,6 +719,71 @@ def get_daily_performance_object(date: str) -> dict[str, Any]:
 def get_work_status() -> dict[str, Any]:
     """Get current work status for all coding agents — what each is working on, branch, last commit, and blockers."""
     return get_work_status_impl()
+
+
+@mcp.tool()
+def create_prompt_job(
+    target_agent: str,
+    prompt: str,
+    source_client: str | None = None,
+    priority: str = "normal",
+    ctx: Context | None = None,
+) -> dict[str, Any]:
+    """Create a private operator prompt job for remote dispatch to a target AI agent."""
+    return create_prompt_job_impl(target_agent, prompt, source_client, priority, ctx=ctx)
+
+
+@mcp.tool()
+def list_prompt_jobs(
+    status: str | None = None,
+    target_agent: str | None = None,
+    limit: int | None = 50,
+    ctx: Context | None = None,
+) -> dict[str, Any]:
+    """List private operator prompt jobs for remote dispatch and coordination."""
+    return list_prompt_jobs_impl(status, target_agent, limit, ctx=ctx)
+
+
+@mcp.tool()
+def get_prompt_job(id: str, ctx: Context | None = None) -> dict[str, Any]:
+    """Get one private operator prompt job by id."""
+    return get_prompt_job_impl(id, ctx=ctx)
+
+
+@mcp.tool()
+def claim_prompt_job(id: str, claimed_by: str, ctx: Context | None = None) -> dict[str, Any]:
+    """Claim a private operator prompt job for a specific worker or client."""
+    return claim_prompt_job_impl(id, claimed_by, ctx=ctx)
+
+
+@mcp.tool()
+def complete_prompt_job(
+    id: str,
+    claimed_by: str,
+    result_summary: str,
+    result_artifact: str | None = None,
+    ctx: Context | None = None,
+) -> dict[str, Any]:
+    """Mark a private operator prompt job as completed with a result summary."""
+    return complete_prompt_job_impl(id, claimed_by, result_summary, result_artifact, ctx=ctx)
+
+
+@mcp.tool()
+def fail_prompt_job(
+    id: str,
+    claimed_by: str,
+    error: str,
+    result_summary: str | None = None,
+    ctx: Context | None = None,
+) -> dict[str, Any]:
+    """Mark a private operator prompt job as failed with an error summary."""
+    return fail_prompt_job_impl(id, claimed_by, error, result_summary, ctx=ctx)
+
+
+@mcp.tool()
+def cancel_prompt_job(id: str, ctx: Context | None = None) -> dict[str, Any]:
+    """Cancel a private operator prompt job before completion."""
+    return cancel_prompt_job_impl(id, ctx=ctx)
 
 
 @mcp.tool()

@@ -742,6 +742,7 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
       <div style="font-size:9px;color:#556;letter-spacing:1px;text-transform:uppercase;padding:6px 14px 2px;">Progress</div>
       <button id="menuGameSummaryBtn" style="display:block;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Game Summary</button>
       <button id="menuSuggestionsBtn" style="display:none;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Suggestions</button>
+      <button id="menuPromptJobsBtn" style="display:none;width:100%;text-align:left;background:none;border:none;color:var(--accent);font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Remote Control</button>
       <button id="menuProgressBtn" style="display:block;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Dashboard</button>
       <button id="menuExportBtn" style="display:block;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Export</button>
       <button id="menuImportBtn" style="display:block;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Import</button>
@@ -1099,9 +1100,29 @@ try {
 
 var AUTH_STATE = 'guest'; // 'guest' or 'member' — now starts as guest, set to member on auth
 var AUTH_USER = null;      // Will hold { id, email, displayName } when logged in
+var AUTH_PROFILE = null;   // Optional profile with membership_status for operator UI gating
 
 function isGuest() { return AUTH_STATE === 'guest'; }
 function isMember() { return AUTH_STATE === 'member'; }
+function isOperatorRole(role) { return role === 'operator' || role === 'admin'; }
+function isOperatorUIEnabled() {
+  return window.__GM_OPERATOR_UI__ === true || !!(AUTH_PROFILE && isOperatorRole(AUTH_PROFILE.membership_status));
+}
+function updatePrivateOperatorUI() {
+  var btn = document.getElementById('menuPromptJobsBtn');
+  if (btn) btn.style.display = isOperatorUIEnabled() ? 'block' : 'none';
+}
+async function refreshAuthProfile() {
+  if (!isMember() || !_supabase) {
+    AUTH_PROFILE = null;
+    updatePrivateOperatorUI();
+    return null;
+  }
+  var profile = await UserStore._apiGet('profile');
+  AUTH_PROFILE = profile && !profile.error ? profile : null;
+  updatePrivateOperatorUI();
+  return AUTH_PROFILE;
+}
 
 const ACCESS_CONFIG = {
   GUEST_TECHNIQUE_LIMIT: 3,       // max techniques shown per heading for guests
@@ -1646,6 +1667,49 @@ async function whoopRequest(endpoint, method, body) {
   } catch(e) {
     return { ok: false, error: e && e.message ? e.message : 'request_failed' };
   }
+}
+
+async function promptJobsRequest(method, body, query) {
+  if (window.__GM_PROMPT_JOBS_BRIDGE__ && typeof window.__GM_PROMPT_JOBS_BRIDGE__.request === 'function') {
+    try { return await window.__GM_PROMPT_JOBS_BRIDGE__.request(method || 'GET', body || null, query || null); }
+    catch(e) { return { ok: false, error: e && e.message ? e.message : 'prompt_jobs_bridge_failed' }; }
+  }
+  var headers = await UserStore._getAuthHeaders();
+  if (!headers) return { ok: false, error: 'auth_required' };
+  var url = new URL(SUPABASE_FUNCTIONS_URL + '/prompt-jobs');
+  if (query) {
+    Object.keys(query).forEach(function(key) {
+      if (query[key] !== null && query[key] !== undefined && query[key] !== '') url.searchParams.set(key, String(query[key]));
+    });
+  }
+  var opts = { method: method || 'GET', headers: headers };
+  if ((method || 'GET') !== 'GET' && body != null) opts.body = JSON.stringify(body);
+  try {
+    var resp = await fetch(url.toString(), opts);
+    var payload = null;
+    try { payload = await resp.json(); } catch(e) { payload = null; }
+    if (!resp.ok) return Object.assign({ ok: false, error: 'request_failed', status: resp.status }, payload || {});
+    return Object.assign({ ok: true }, payload || {});
+  } catch(e) {
+    return { ok: false, error: e && e.message ? e.message : 'request_failed' };
+  }
+}
+
+function promptJobShortTitle(prompt) {
+  var text = String(prompt || '').replace(/\s+/g, ' ').trim();
+  if (!text) return 'Untitled prompt job';
+  var firstSentence = text.split(/[.!?]\s/)[0] || text;
+  return firstSentence.length > 72 ? firstSentence.slice(0, 71) + '…' : firstSentence;
+}
+
+function promptJobPreview(prompt) {
+  var text = String(prompt || '').replace(/\s+/g, ' ').trim();
+  return text.length > 120 ? text.slice(0, 119) + '…' : text;
+}
+
+function formatPromptJobWhen(value) {
+  if (!value) return 'just now';
+  return ccFormatWhen(value);
 }
 
 async function fetchWhoopStatus() {
@@ -6385,6 +6449,8 @@ document.addEventListener('keydown', e => {
     // Show Suggestions button for members only
     var sugBtn = document.getElementById('menuSuggestionsBtn');
     if (sugBtn) sugBtn.style.display = (showing && typeof isMember === 'function' && isMember()) ? 'block' : 'none';
+    var promptBtn = document.getElementById('menuPromptJobsBtn');
+    if (promptBtn) promptBtn.style.display = (showing && typeof isOperatorUIEnabled === 'function' && isOperatorUIEnabled()) ? 'block' : 'none';
   });
   document.addEventListener('click', function() { menu.style.display = 'none'; });
 })();
@@ -8776,6 +8842,7 @@ _log('[GrapplingMap] Debug API ready: window.__APP_DEBUG__');
       authUserBtn.style.display = '';
       authUserBtn.textContent = AUTH_USER ? AUTH_USER.displayName || (AUTH_USER.email ? AUTH_USER.email.split('@')[0] : 'Account') : 'Account';
     }
+    updatePrivateOperatorUI();
   }
 
   authBtn.addEventListener('click', showAuthModal);
@@ -8787,6 +8854,7 @@ _log('[GrapplingMap] Debug API ready: window.__APP_DEBUG__');
     AUTH_STATE = 'member';
     AUTH_USER = { id: user.id, email: user.email, displayName: user.user_metadata && user.user_metadata.display_name || user.email };
     updateAuthUI();
+    setTimeout(function() { refreshAuthProfile(); }, 0);
     hideAuthModal();
     if (!_fromCache) { showToast('Welcome back, ' + (user.user_metadata && user.user_metadata.display_name || user.email) + ' \u2014 your progress is synced'); }
     // First-login migration: push local data to cloud if not done
@@ -8811,6 +8879,7 @@ _log('[GrapplingMap] Debug API ready: window.__APP_DEBUG__');
   function setAuthGuest() {
     AUTH_STATE = 'guest';
     AUTH_USER = null;
+    AUTH_PROFILE = null;
     updateAuthUI();
     if (typeof buildSections === 'function') { buildSections(); markBuiltOut(); updateStats(); }
     if (typeof updateHomePanel === 'function') updateHomePanel();
@@ -8957,6 +9026,7 @@ _log('[GrapplingMap] Debug API ready: window.__APP_DEBUG__');
   };
 
   updateAuthUI();
+  updatePrivateOperatorUI();
 })();
 
 (function() {
@@ -10894,6 +10964,11 @@ function openCoachPanel() {
     openSuggestionQueue();
   });
 
+  document.getElementById('menuPromptJobsBtn').addEventListener('click', function() {
+    document.getElementById('headerMenu').style.display = 'none';
+    openPromptJobsManager();
+  });
+
   function openSuggestionQueue() {
     var suggestions = STATE.suggestions || [];
     var currentFilter = 'all';
@@ -11021,6 +11096,205 @@ function openCoachPanel() {
     var items = buildItems(currentFilter);
     var pendingCount = suggestions.filter(function(s) { return s.approval_status === 'pending'; }).length;
     openListPanel('Suggestion Queue (' + suggestions.length + (pendingCount > 0 ? ', ' + pendingCount + ' pending' : '') + ')', items);
+  }
+
+  async function openPromptJobsManager() {
+    if (!isMember()) { requireAuth('open Remote Control'); return; }
+    if (!isOperatorUIEnabled()) {
+      var profile = await refreshAuthProfile();
+      if (!(profile && isOperatorRole(profile.membership_status)) && window.__GM_OPERATOR_UI__ !== true) {
+        showToast('Operator access required');
+        return;
+      }
+    }
+
+    var overlay = document.createElement('div');
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.72);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;';
+    overlay.setAttribute('role', 'dialog');
+    overlay.setAttribute('aria-modal', 'true');
+    overlay.setAttribute('aria-label', 'Remote control prompt jobs');
+
+    var modal = document.createElement('div');
+    modal.style.cssText = 'background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;max-width:1080px;width:100%;max-height:86vh;overflow:hidden;box-shadow:0 20px 64px rgba(0,0,0,0.45);display:flex;flex-direction:column;gap:14px;';
+
+    var splitStyle = window.innerWidth < 920
+      ? 'display:flex;flex-direction:column;gap:14px;min-height:0;'
+      : 'display:grid;grid-template-columns:minmax(0,1.15fr) minmax(280px,0.85fr);gap:14px;min-height:0;flex:1;';
+
+    modal.innerHTML =
+      '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:14px;">' +
+        '<div>' +
+          '<div style="font-family:Bebas Neue,sans-serif;font-size:24px;color:var(--accent);letter-spacing:1px;">Remote Control</div>' +
+          '<div style="font-family:DM Mono,monospace;font-size:11px;color:var(--text-dim);line-height:1.6;margin-top:4px;">Private operator prompt dispatch. Separate from public Suggestions and website feedback.</div>' +
+        '</div>' +
+        '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">' +
+          '<span style="display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;border:1px solid rgba(232,255,71,0.18);background:rgba(232,255,71,0.08);font-family:DM Mono,monospace;font-size:10px;color:var(--accent);text-transform:uppercase;letter-spacing:0.8px;">Operator only</span>' +
+          '<button id="promptJobsRefreshBtn" style="min-height:40px;padding:0 14px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:var(--text-dim);font-family:Barlow Condensed,sans-serif;font-size:13px;letter-spacing:0.6px;text-transform:uppercase;border-radius:10px;cursor:pointer;">Refresh</button>' +
+          '<button id="promptJobsClose" aria-label="Close remote control" style="background:none;border:1px solid var(--border);color:var(--text-muted);font-size:16px;width:34px;height:34px;border-radius:50%;cursor:pointer;">×</button>' +
+        '</div>' +
+      '</div>' +
+      '<div id="promptJobsStatus" style="display:none;padding:10px 12px;border-radius:10px;font-family:DM Mono,monospace;font-size:11px;line-height:1.5;"></div>' +
+      '<div style="' + splitStyle + '">' +
+        '<div style="display:flex;flex-direction:column;gap:14px;min-width:0;min-height:0;">' +
+          '<div style="border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:14px;background:rgba(255,255,255,0.02);">' +
+            '<div style="font-family:Barlow Condensed,sans-serif;font-size:15px;letter-spacing:1.1px;text-transform:uppercase;color:var(--text);">Dispatch Prompt Job</div>' +
+            '<div style="font-size:12px;color:var(--text-dim);line-height:1.6;margin-top:6px;">Create a private remote prompt for one AI lane. Full prompt text stays in the detail view, not the list row.</div>' +
+            '<div style="display:grid;grid-template-columns:repeat(2, minmax(0,1fr));gap:10px;margin-top:12px;">' +
+              '<label style="display:flex;flex-direction:column;gap:6px;min-width:0;"><span style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.9px;">Target Agent</span><select id="promptJobsTarget" style="min-height:42px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:10px;color:var(--text);padding:0 12px;font-family:DM Mono,monospace;font-size:12px;"><option value="claude_code">Claude Code</option><option value="codex">Codex</option><option value="cowork">Cowork</option><option value="chatgpt">ChatGPT</option><option value="claude_chat">Claude Chat</option></select></label>' +
+              '<label style="display:flex;flex-direction:column;gap:6px;min-width:0;"><span style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.9px;">Priority</span><select id="promptJobsPriority" style="min-height:42px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:10px;color:var(--text);padding:0 12px;font-family:DM Mono,monospace;font-size:12px;"><option value="normal">Normal</option><option value="high">High</option><option value="urgent">Urgent</option></select></label>' +
+            '</div>' +
+            '<label style="display:flex;flex-direction:column;gap:6px;margin-top:10px;min-width:0;"><span style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.9px;">Prompt</span><textarea id="promptJobsPrompt" rows="6" placeholder="Dispatch prompt for a specific AI lane…" style="width:100%;resize:vertical;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:10px;color:var(--text);padding:12px;font-family:DM Mono,monospace;font-size:12px;line-height:1.55;"></textarea></label>' +
+            '<div style="display:flex;justify-content:flex-end;gap:8px;margin-top:12px;flex-wrap:wrap;">' +
+              '<button id="promptJobsCreateBtn" style="min-height:42px;padding:0 16px;background:var(--accent);border:none;color:#000;font-family:Barlow Condensed,sans-serif;font-size:14px;letter-spacing:0.75px;text-transform:uppercase;border-radius:10px;cursor:pointer;">Create Prompt Job</button>' +
+            '</div>' +
+          '</div>' +
+          '<div style="border:1px solid rgba(255,255,255,0.06);border-radius:12px;background:rgba(255,255,255,0.02);display:flex;flex-direction:column;min-height:0;overflow:hidden;">' +
+            '<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:13px 14px;border-bottom:1px solid rgba(255,255,255,0.05);">' +
+              '<div style="font-family:Barlow Condensed,sans-serif;font-size:15px;letter-spacing:1.1px;text-transform:uppercase;color:var(--text);">Recent Prompt Jobs</div>' +
+              '<div id="promptJobsCount" style="font-size:11px;color:var(--text-muted);font-family:DM Mono,monospace;">0 jobs</div>' +
+            '</div>' +
+            '<div id="promptJobsList" style="padding:12px;overflow:auto;display:flex;flex-direction:column;gap:10px;min-height:220px;"></div>' +
+          '</div>' +
+        '</div>' +
+        '<div style="display:flex;flex-direction:column;min-width:0;min-height:0;">' +
+          '<div style="border:1px solid rgba(255,255,255,0.06);border-radius:12px;background:rgba(255,255,255,0.02);display:flex;flex-direction:column;min-height:0;overflow:hidden;flex:1;">' +
+            '<div style="padding:13px 14px;border-bottom:1px solid rgba(255,255,255,0.05);font-family:Barlow Condensed,sans-serif;font-size:15px;letter-spacing:1.1px;text-transform:uppercase;color:var(--text);">Selected Job Detail</div>' +
+            '<div id="promptJobsDetail" style="padding:14px;overflow:auto;min-height:240px;"></div>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+
+    overlay.appendChild(modal);
+    document.body.appendChild(overlay);
+
+    var state = { jobs: [], selectedId: null };
+    var statusEl = modal.querySelector('#promptJobsStatus');
+    var listEl = modal.querySelector('#promptJobsList');
+    var detailEl = modal.querySelector('#promptJobsDetail');
+    var countEl = modal.querySelector('#promptJobsCount');
+    var close = function() { overlay.remove(); };
+    var setStatus = function(message, tone) {
+      if (!message) {
+        statusEl.style.display = 'none';
+        statusEl.textContent = '';
+        statusEl.style.background = '';
+        statusEl.style.border = '';
+        statusEl.style.color = '';
+        return;
+      }
+      statusEl.style.display = 'block';
+      statusEl.textContent = message;
+      if (tone === 'error') {
+        statusEl.style.background = 'rgba(248,81,73,0.12)';
+        statusEl.style.border = '1px solid rgba(248,81,73,0.25)';
+        statusEl.style.color = '#ffb4af';
+      } else {
+        statusEl.style.background = 'rgba(71,200,255,0.12)';
+        statusEl.style.border = '1px solid rgba(71,200,255,0.22)';
+        statusEl.style.color = '#9fe4ff';
+      }
+    };
+    var renderDetail = function() {
+      var selected = null;
+      state.jobs.forEach(function(item) { if (item.id === state.selectedId) selected = item; });
+      if (!selected) {
+        detailEl.innerHTML = '<div class="cc-empty"><div class="cc-empty-title">No prompt selected</div><div class="cc-empty-copy">Select a prompt job to inspect the full prompt body, result summary, and dispatch metadata.</div></div>';
+        return;
+      }
+      detailEl.innerHTML =
+        '<div class="cc-detail-head"><div><div class="cc-detail-title">' + ccEscape(promptJobShortTitle(selected.prompt)) + '</div><div class="cc-detail-copy">Private operator prompt for ' + ccEscape((CONTROL_AGENT_LABELS && CONTROL_AGENT_LABELS[selected.target_agent]) || selected.target_agent || 'unknown') + '.</div></div><span class="cc-status ' + ccEscape(selected.status || 'waiting') + '">' + ccEscape(ccPrettyStatus(selected.status || 'pending')) + '</span></div>' +
+        '<div class="cc-badge-row" style="margin-top:10px;">' +
+          '<span class="cc-pill">' + ccEscape(selected.id || 'unknown') + '</span>' +
+          '<span class="cc-pill">' + ccEscape(selected.priority || 'normal') + ' priority</span>' +
+          '<span class="cc-pill">Source: ' + ccEscape(selected.source_client || 'unknown') + '</span>' +
+        '</div>' +
+        '<div class="cc-detail-grid">' +
+          '<div class="cc-detail-card"><h4>Prompt</h4><p style="white-space:pre-wrap;word-break:break-word;">' + ccEscape(selected.prompt || '') + '</p></div>' +
+          '<div class="cc-detail-card"><h4>Dispatch State</h4><p>Created: ' + ccEscape(formatPromptJobWhen(selected.created_at)) + '<br>Updated: ' + ccEscape(formatPromptJobWhen(selected.updated_at)) + '<br>Claimed by: ' + ccEscape(selected.claimed_by || 'Unclaimed') + '</p></div>' +
+          '<div class="cc-detail-card"><h4>Result Summary</h4><p>' + ccEscape(selected.result_summary || 'No result summary yet.') + '</p></div>' +
+          '<div class="cc-detail-card"><h4>Artifacts / Errors</h4><p>' + ccEscape(selected.result_artifact || 'No result artifact yet.') + '<br>' + ccEscape(selected.error || 'No error recorded.') + '</p></div>' +
+        '</div>';
+    };
+    var renderList = function() {
+      countEl.textContent = state.jobs.length + ' job' + (state.jobs.length === 1 ? '' : 's');
+      if (!state.jobs.length) {
+        listEl.innerHTML = '<div class="cc-empty"><div class="cc-empty-title">No prompt jobs yet</div><div class="cc-empty-copy">Operator-created remote prompts will appear here after dispatch. Public Suggestions stay separate.</div></div>';
+        renderDetail();
+        return;
+      }
+      listEl.innerHTML = state.jobs.map(function(item) {
+        var selected = item.id === state.selectedId;
+        return '<article class="cc-task-row' + (selected ? ' selected' : '') + '" data-prompt-job-id="' + ccEscape(item.id) + '">' +
+          '<div class="cc-task-main">' +
+            '<div class="cc-task-head">' +
+              '<div class="cc-task-title">' + ccEscape(promptJobShortTitle(item.prompt)) + '</div>' +
+              '<span class="cc-status ' + ccEscape(item.status || 'waiting') + '">' + ccEscape(ccPrettyStatus(item.status || 'pending')) + '</span>' +
+            '</div>' +
+            '<div class="cc-task-preview">' + ccEscape(promptJobPreview(item.prompt)) + '</div>' +
+            '<div class="cc-task-meta">' +
+              '<span class="cc-task-id">' + ccEscape(item.id || 'unknown') + '</span>' +
+              '<span><span class="cc-label">Agent</span> ' + ccEscape((CONTROL_AGENT_LABELS && CONTROL_AGENT_LABELS[item.target_agent]) || item.target_agent || 'unknown') + '</span>' +
+              '<span><span class="cc-label">Priority</span> ' + ccEscape(item.priority || 'normal') + '</span>' +
+              '<span><span class="cc-label">Updated</span> ' + ccEscape(formatPromptJobWhen(item.updated_at || item.created_at)) + '</span>' +
+            '</div>' +
+          '</div>' +
+        '</article>';
+      }).join('');
+      renderDetail();
+    };
+    var loadJobs = async function(preferredId) {
+      setStatus('Loading operator prompt jobs…');
+      var response = await promptJobsRequest('GET', null, { limit: 30 });
+      if (!response || response.ok === false) {
+        setStatus((response && response.error) === 'auth_required' ? 'Sign in with an operator account to use remote prompt jobs.' : 'Could not load prompt jobs right now.', 'error');
+        state.jobs = [];
+        state.selectedId = null;
+        renderList();
+        return;
+      }
+      state.jobs = Array.isArray(response.items) ? response.items : [];
+      if (preferredId) state.selectedId = preferredId;
+      if (!state.selectedId && state.jobs[0]) state.selectedId = state.jobs[0].id;
+      if (state.selectedId && !state.jobs.some(function(item) { return item.id === state.selectedId; })) state.selectedId = state.jobs[0] ? state.jobs[0].id : null;
+      setStatus('');
+      renderList();
+    };
+
+    modal.querySelector('#promptJobsClose').addEventListener('click', close);
+    modal.querySelector('#promptJobsRefreshBtn').addEventListener('click', function() { loadJobs(state.selectedId); });
+    modal.querySelector('#promptJobsCreateBtn').addEventListener('click', async function() {
+      var target = modal.querySelector('#promptJobsTarget').value;
+      var priority = modal.querySelector('#promptJobsPriority').value;
+      var prompt = modal.querySelector('#promptJobsPrompt').value.trim();
+      if (!prompt) {
+        setStatus('Prompt text is required before dispatch.', 'error');
+        return;
+      }
+      setStatus('Creating prompt job…');
+      var response = await promptJobsRequest('POST', {
+        action: 'create',
+        target_agent: target,
+        prompt: prompt,
+        priority: priority,
+        source_client: 'website-operator'
+      });
+      if (!response || response.ok === false || !response.item) {
+        setStatus('Could not create prompt job. Check operator auth and backend wiring.', 'error');
+        return;
+      }
+      modal.querySelector('#promptJobsPrompt').value = '';
+      setStatus('Prompt job ' + response.item.id + ' created.');
+      showToast('Prompt job dispatched');
+      await loadJobs(response.item.id);
+    });
+    listEl.addEventListener('click', function(event) {
+      var row = event.target.closest('[data-prompt-job-id]');
+      if (!row) return;
+      state.selectedId = row.getAttribute('data-prompt-job-id');
+      renderList();
+    });
+    overlay.addEventListener('click', function(event) { if (event.target === overlay) close(); });
+    loadJobs();
   }
 
   function openGameSummary() {

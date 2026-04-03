@@ -10,6 +10,7 @@ from config import (
     AUTOMATION_SUGGESTIONS_FILE,
     AUTOMATION_SUGGESTIONS_INBOX_FILE,
     HANDOFF_LATEST_FILE,
+    PROMPT_JOBS_FILE,
     PROJECT_BATCHES_DIR,
     PROJECT_IMPLEMENTATION_DIR,
     SCHEMA_VERSION,
@@ -26,6 +27,16 @@ from parsers.automation import (
     update_work_status_file,
 )
 from parsers.handoff import parse_handoff_file
+from parsers.prompt_jobs import (
+    cancel_prompt_job as cancel_prompt_job_file,
+    claim_prompt_job as claim_prompt_job_file,
+    complete_prompt_job as complete_prompt_job_file,
+    create_prompt_job as create_prompt_job_file,
+    fail_prompt_job as fail_prompt_job_file,
+    get_prompt_job as get_prompt_job_file,
+    list_prompt_jobs as list_prompt_jobs_file,
+    read_prompt_jobs,
+)
 from parsers.suggestions import find_suggestion_by_id, parse_suggestions_file
 
 
@@ -102,7 +113,14 @@ def read_handoff(path: str = HANDOFF_LATEST_FILE) -> dict[str, Any]:
 
 def get_work_status(path: str = WORK_STATUS_FILE) -> dict[str, Any]:
     """Get current work status for all coding agents — what each is working on, branch, last commit, and blockers."""
-    return {"tool": "get_work_status", "item": read_work_status(path), "schema_version": SCHEMA_VERSION}
+    item = read_work_status(path)
+    return {
+        "ok": True,
+        "tool": "get_work_status",
+        "path": path,
+        "item": item,
+        "schema_version": SCHEMA_VERSION,
+    }
 
 
 def update_work_status(
@@ -116,17 +134,89 @@ def update_work_status(
 ) -> dict[str, Any]:
     """Update work status for a coding agent. Called after meaningful task completion."""
     item = update_work_status_file(agent, task, status, branch, summary, commit, path=path)
-    return {"tool": "update_work_status", "item": item, "schema_version": SCHEMA_VERSION}
+    return {
+        "ok": True,
+        "tool": "update_work_status",
+        "agent": agent,
+        "path": path,
+        "item": item,
+        "schema_version": SCHEMA_VERSION,
+    }
+
+
+def create_prompt_job(
+    target_agent: str,
+    prompt: str,
+    source_client: str,
+    priority: str = "normal",
+    path: str = PROMPT_JOBS_FILE,
+) -> dict[str, Any]:
+    item = create_prompt_job_file(target_agent, prompt, source_client, priority, path=path)
+    return {"ok": True, "tool": "create_prompt_job", "item": item, "path": path, "schema_version": SCHEMA_VERSION}
+
+
+def list_prompt_jobs(
+    path: str = PROMPT_JOBS_FILE,
+    status: str | None = None,
+    target_agent: str | None = None,
+    limit: int | None = None,
+) -> dict[str, Any]:
+    items = list_prompt_jobs_file(path=path, status=status, target_agent=target_agent, limit=limit)
+    return {"ok": True, "tool": "list_prompt_jobs", "items": items, "count": len(items), "path": path, "schema_version": SCHEMA_VERSION}
+
+
+def get_prompt_job(job_id: str, path: str = PROMPT_JOBS_FILE) -> dict[str, Any]:
+    item = get_prompt_job_file(job_id, path=path)
+    return {"ok": True, "tool": "get_prompt_job", "item": item, "found": bool(item), "path": path, "schema_version": SCHEMA_VERSION}
+
+
+def claim_prompt_job(job_id: str, claimed_by: str, path: str = PROMPT_JOBS_FILE) -> dict[str, Any]:
+    item = claim_prompt_job_file(job_id, claimed_by, path=path)
+    return {"ok": bool(item), "tool": "claim_prompt_job", "item": item, "found": bool(item), "path": path, "schema_version": SCHEMA_VERSION}
+
+
+def complete_prompt_job(
+    job_id: str,
+    claimed_by: str,
+    result_summary: str,
+    result_artifact: str | None = None,
+    path: str = PROMPT_JOBS_FILE,
+) -> dict[str, Any]:
+    item = complete_prompt_job_file(job_id, claimed_by, result_summary, result_artifact, path=path)
+    return {"ok": bool(item), "tool": "complete_prompt_job", "item": item, "found": bool(item), "path": path, "schema_version": SCHEMA_VERSION}
+
+
+def fail_prompt_job(
+    job_id: str,
+    claimed_by: str,
+    error: str,
+    result_summary: str | None = None,
+    path: str = PROMPT_JOBS_FILE,
+) -> dict[str, Any]:
+    item = fail_prompt_job_file(job_id, claimed_by, error, result_summary, path=path)
+    return {"ok": bool(item), "tool": "fail_prompt_job", "item": item, "found": bool(item), "path": path, "schema_version": SCHEMA_VERSION}
+
+
+def cancel_prompt_job(job_id: str, path: str = PROMPT_JOBS_FILE) -> dict[str, Any]:
+    item = cancel_prompt_job_file(job_id, path=path)
+    return {"ok": bool(item), "tool": "cancel_prompt_job", "item": item, "found": bool(item), "path": path, "schema_version": SCHEMA_VERSION}
 
 
 __all__ = [
     "get_automation_state",
     "get_handoff",
+    "get_prompt_job",
     "get_preview_status",
     "get_suggestion",
     "get_work_status",
+    "list_prompt_jobs",
     "list_automation_batches",
     "list_pending_suggestions",
+    "claim_prompt_job",
+    "complete_prompt_job",
+    "create_prompt_job",
+    "cancel_prompt_job",
+    "fail_prompt_job",
     "read_accepted_suggestions",
     "read_audit_state",
     "read_automation_state",
@@ -134,6 +224,7 @@ __all__ = [
     "read_batches",
     "read_implementation",
     "read_handoff",
+    "read_prompt_jobs",
     "read_suggestions",
     "read_suggestions_inbox",
     "read_work_status",

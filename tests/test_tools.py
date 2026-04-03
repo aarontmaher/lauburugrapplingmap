@@ -3,13 +3,20 @@ from __future__ import annotations
 import json
 
 from parsers import (
+    cancel_prompt_job,
+    claim_prompt_job,
+    complete_prompt_job,
+    create_prompt_job,
+    fail_prompt_job,
     get_automation_state,
     get_handoff,
+    get_prompt_job,
     get_preview_status,
     get_suggestion,
     get_work_status,
     list_automation_batches,
     list_pending_suggestions,
+    list_prompt_jobs,
     update_work_status,
 )
 
@@ -88,7 +95,10 @@ def test_preview_handoff_and_work_status_contracts(tmp_path):
     assert preview["item"]["now"]["title"] == "AUTOMATION NOW"
     assert handoff["tool"] == "get_handoff"
     assert handoff["item"]["date"] == "2026-04-02"
+    assert work_status["ok"] is True
     assert work_status["tool"] == "get_work_status"
+    assert work_status["path"] == str(work_status_path)
+    assert work_status["item"]["agents"]["claude_chat"]["status"] == "idle"
     assert work_status["item"]["agents"]["cowork"]["status"] == "idle"
 
 
@@ -105,6 +115,47 @@ def test_update_work_status_contract(tmp_path):
         path=str(path),
     )
 
+    assert result["ok"] is True
     assert result["tool"] == "update_work_status"
+    assert result["agent"] == "codex"
+    assert result["path"] == str(path)
     assert result["item"]["agents"]["codex"]["status"] == "done"
+    assert result["item"]["agents"]["codex"]["commit"] == "01b034a"
     assert result["item"]["agents"]["codex"]["last_commit"] == "01b034a"
+    assert result["item"]["updated_at"] == result["item"]["agents"]["codex"]["updated_at"]
+
+
+def test_prompt_job_contracts(tmp_path):
+    path = tmp_path / "PROMPT_JOBS.json"
+
+    created = create_prompt_job(
+        "claude_code",
+        "Review the latest control-centre mobile layout regression and report back with screenshots.",
+        "codex",
+        priority="high",
+        path=str(path),
+    )
+    listed = list_prompt_jobs(str(path))
+    fetched = get_prompt_job(created["item"]["id"], str(path))
+    claimed = claim_prompt_job(created["item"]["id"], "claude-code", str(path))
+    completed = complete_prompt_job(created["item"]["id"], "claude-code", "Looks good now", "artifact://report", str(path))
+    failed = fail_prompt_job(created["item"]["id"], "claude-code", "late failure", "retrying", str(path))
+    cancelled = cancel_prompt_job(created["item"]["id"], str(path))
+
+    assert created["tool"] == "create_prompt_job"
+    assert created["item"]["status"] == "pending"
+    assert created["item"]["priority"] == "high"
+    assert listed["tool"] == "list_prompt_jobs"
+    assert listed["count"] == 1
+    assert fetched["tool"] == "get_prompt_job"
+    assert fetched["found"] is True
+    assert claimed["tool"] == "claim_prompt_job"
+    assert claimed["item"]["claimed_by"] == "claude-code"
+    assert completed["tool"] == "complete_prompt_job"
+    assert completed["item"]["status"] == "completed"
+    assert completed["item"]["result_artifact"] == "artifact://report"
+    assert failed["tool"] == "fail_prompt_job"
+    assert failed["item"]["status"] == "failed"
+    assert failed["item"]["error"] == "late failure"
+    assert cancelled["tool"] == "cancel_prompt_job"
+    assert cancelled["item"]["status"] == "cancelled"

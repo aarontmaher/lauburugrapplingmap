@@ -23,6 +23,7 @@ PROJECT_BATCHES_DIR = os.path.join(PROJECT_STATE_DIR, "batches")
 PROJECT_IMPLEMENTATION_DIR = os.path.join(PROJECT_STATE_DIR, "implementation")
 PROJECT_HANDOFF_DIR = os.path.join(PROJECT_STATE_DIR, "suggestion-handoffs")
 PROJECT_HANDOFF_ARTIFACTS_DIR = os.path.join(PROJECT_STATE_DIR, "handoffs")
+PROMPT_JOBS_FILE = os.path.join(PROJECT_STATE_DIR, "PROMPT_JOBS.json")
 
 CHATGPT_ROOT = os.path.expanduser("~/Chat-gpt")
 CHATGPT_AUTOMATION_DIR = os.path.join(CHATGPT_ROOT, "automation")
@@ -62,6 +63,13 @@ TOOL_TIER_REQUIREMENTS = {
     "start_preview_run": 3,
     "advance_phase": 3,
     "update_work_status": 3,
+    "create_prompt_job": 3,
+    "list_prompt_jobs": 3,
+    "get_prompt_job": 3,
+    "claim_prompt_job": 3,
+    "complete_prompt_job": 3,
+    "fail_prompt_job": 3,
+    "cancel_prompt_job": 3,
     "approve_batch": 4,
 }
 

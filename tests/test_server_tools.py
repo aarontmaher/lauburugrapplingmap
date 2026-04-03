@@ -22,9 +22,11 @@ def _write_tokens(path):
 def test_server_registers_expected_fifteen_tools():
     tool_names = list(server.mcp._tool_manager._tools.keys())
 
-    assert len(tool_names) == 15
+    assert len(tool_names) == 22
     assert "get_work_status" in tool_names
     assert "update_work_status" in tool_names
+    assert "create_prompt_job" in tool_names
+    assert "list_prompt_jobs" in tool_names
     assert "approve_batch" in tool_names
 
 
@@ -124,6 +126,56 @@ def test_write_tools_accept_valid_operator_or_admin_and_append_audit_log(tmp_pat
 
     log_lines = audit_log_path.read_text(encoding="utf-8").strip().splitlines()
     assert len(log_lines) == 2
+
+
+def test_prompt_job_tools_require_operator_and_mutate_store(tmp_path):
+    tokens_path = tmp_path / "tokens.json"
+    audit_log_path = tmp_path / "audit_log.jsonl"
+    prompt_jobs_path = tmp_path / "PROMPT_JOBS.json"
+    _write_tokens(tokens_path)
+
+    denied = server.create_prompt_job_impl(
+        "claude_code",
+        "Review the latest branch.",
+        "codex",
+        "high",
+        tokens_path=str(tokens_path),
+        audit_log_path=str(audit_log_path),
+        prompt_jobs_path=str(prompt_jobs_path),
+    )
+    created = server.create_prompt_job_impl(
+        "claude_code",
+        "Review the latest branch.",
+        "codex",
+        "high",
+        authorization="Bearer gm_op_codex",
+        tokens_path=str(tokens_path),
+        audit_log_path=str(audit_log_path),
+        prompt_jobs_path=str(prompt_jobs_path),
+    )
+    listed = server.list_prompt_jobs_impl(
+        authorization="Bearer gm_op_codex",
+        tokens_path=str(tokens_path),
+        audit_log_path=str(audit_log_path),
+        prompt_jobs_path=str(prompt_jobs_path),
+    )
+    completed = server.complete_prompt_job_impl(
+        created["item"]["id"],
+        "codex",
+        "Finished review",
+        "artifact://report",
+        authorization="Bearer gm_op_codex",
+        tokens_path=str(tokens_path),
+        audit_log_path=str(audit_log_path),
+        prompt_jobs_path=str(prompt_jobs_path),
+    )
+
+    assert denied["ok"] is False
+    assert denied["error"] == "unauthorized"
+    assert created["ok"] is True
+    assert created["item"]["status"] == "pending"
+    assert listed["count"] == 1
+    assert completed["item"]["status"] == "completed"
 
 
 def test_get_work_status_returns_safe_template_when_file_missing(tmp_path):
