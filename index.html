@@ -329,8 +329,9 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
 .cc-agent-card:hover, .cc-suggestion-card:hover, .cc-queue-card:hover { border-color:rgba(255,255,255,0.15); background:rgba(255,255,255,0.035); transform:translateY(-1px); }
 .cc-agent-card.selected, .cc-suggestion-card.selected { border-color:rgba(232,255,71,0.42); box-shadow:0 0 0 1px rgba(232,255,71,0.18) inset; background:rgba(232,255,71,0.05); }
 .cc-agent-header, .cc-suggestion-head, .cc-queue-head, .cc-activity-head, .cc-detail-head { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; }
+.cc-agent-header > div, .cc-suggestion-head > div, .cc-queue-head > div, .cc-activity-head > div, .cc-detail-head > div { min-width:0; }
 .cc-agent-name, .cc-suggestion-title, .cc-detail-title { font-family:'Barlow Condensed',sans-serif; font-size:18px; color:var(--text); letter-spacing:0.32px; line-height:1.2; }
-.cc-agent-task, .cc-suggestion-body, .cc-detail-copy, .cc-empty-copy { font-size:13px; color:var(--text-dim); line-height:1.68; }
+.cc-agent-task, .cc-suggestion-body, .cc-detail-copy, .cc-empty-copy { font-size:13px; color:var(--text-dim); line-height:1.68; min-width:0; }
 .cc-agent-meta, .cc-inline-meta { display:flex; flex-wrap:wrap; gap:8px 13px; font-size:12px; color:var(--text-muted); margin-top:9px; }
 .cc-label { color:#6f7990; text-transform:uppercase; letter-spacing:1px; font-size:11px; }
 .cc-value-strong { color:var(--text); }
@@ -338,6 +339,17 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
 .cc-queue-grid { display:grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap:10px; }
 .cc-queue-count { font-family:'Bebas Neue',sans-serif; font-size:26px; color:var(--text); line-height:1; }
 .cc-queue-label { font-size:12px; color:var(--text-muted); text-transform:uppercase; letter-spacing:1.2px; margin-top:6px; }
+.cc-task-list { display:flex; flex-direction:column; gap:10px; margin-top:12px; grid-column:1 / -1; min-width:0; width:100%; }
+.cc-task-row { display:flex; align-items:flex-start; gap:12px; min-width:0; width:100%; max-width:100%; box-sizing:border-box; padding:12px 13px; border-radius:12px; border:1px solid rgba(255,255,255,0.06); background:rgba(255,255,255,0.02); cursor:pointer; transition:all 0.16s ease; }
+.cc-task-row:hover { border-color:rgba(255,255,255,0.15); background:rgba(255,255,255,0.035); transform:translateY(-1px); }
+.cc-task-row.selected { border-color:rgba(232,255,71,0.42); box-shadow:0 0 0 1px rgba(232,255,71,0.18) inset; background:rgba(232,255,71,0.05); }
+.cc-task-main { flex:1; min-width:0; }
+.cc-task-head { display:flex; align-items:flex-start; justify-content:space-between; gap:10px; min-width:0; }
+.cc-task-title { font-family:'Barlow Condensed',sans-serif; font-size:15px; color:var(--text); letter-spacing:0.35px; line-height:1.15; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.cc-task-preview { margin-top:5px; font-size:12px; color:var(--text-dim); line-height:1.35; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.cc-task-meta { display:flex; flex-wrap:wrap; gap:7px 12px; margin-top:7px; min-width:0; font-size:11px; color:var(--text-muted); }
+.cc-task-meta span { min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.cc-task-id { font-family:'DM Mono',monospace; font-size:10px; color:#7f8ba3; white-space:nowrap; }
 .cc-detail-grid { display:grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap:10px; margin-top:12px; }
 .cc-detail-card { border:1px solid rgba(255,255,255,0.06); border-radius:12px; padding:12px; background:rgba(255,255,255,0.02); }
 .cc-detail-card h4 { font-family:'Barlow Condensed',sans-serif; font-size:14px; letter-spacing:1.1px; text-transform:uppercase; color:var(--text-muted); margin-bottom:7px; }
@@ -529,6 +541,9 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
   #controlCentreView { overflow:auto; }
   .cc-queue-grid, .cc-detail-grid { grid-template-columns:1fr; }
   .cc-agent-card, .cc-suggestion-card, .cc-queue-card, .cc-activity-card { padding:14px; }
+  .cc-task-row { padding:13px; }
+  .cc-task-head { flex-direction:column; align-items:flex-start; }
+  .cc-task-title, .cc-task-preview, .cc-task-meta span { max-width:100%; }
   .cc-toolbar-btn { width:100%; min-height:44px; justify-content:center; }
   .cc-pill, .cc-status { min-height:30px; }
   .cc-agent-task, .cc-suggestion-body, .cc-detail-copy, .cc-activity-copy, .cc-detail-card p, .cc-detail-card li { font-size:13px; }
@@ -1292,6 +1307,26 @@ function ccPrettyStatus(value) {
   return String(value || 'idle').replace(/_/g, ' ');
 }
 
+function ccCompactText(value) {
+  return String(value || '').replace(/\s+/g, ' ').trim();
+}
+
+function ccTaskTitle(value) {
+  var text = ccCompactText(value);
+  if (!text || text.toLowerCase() === 'idle') return 'No active task';
+  var match = text.match(/^.*?[.!?](?:\s|$)/);
+  var firstClause = match ? match[0].trim() : text;
+  if (firstClause.length > 88) return firstClause.slice(0, 85) + '...';
+  return firstClause;
+}
+
+function ccTaskPreview(value) {
+  var text = ccCompactText(value);
+  if (!text || text.toLowerCase() === 'idle') return 'Waiting for a new assignment.';
+  if (text.length > 150) return text.slice(0, 147) + '...';
+  return text;
+}
+
 function ccNormalizeAgentKey(value) {
   var key = String(value || '').toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '');
   if (key === 'claudecode') key = 'claude_code';
@@ -1398,6 +1433,7 @@ function ccNormalizeAgents(workStatus, suggestions) {
     return {
       key: agent.key,
       name: agent.name,
+      taskId: src.task_id || src.job_id || src.id || ('JOB-' + agent.key.toUpperCase()),
       status: src.status || agent.status,
       task: src.task || agent.task,
       branch: src.branch || null,
@@ -3482,6 +3518,13 @@ function ccBuildSnapshot() {
     previewReadyCount: snapshot.automation.preview_ready_count || previewReady.length,
     verificationReadyCount: snapshot.automation.verification_ready_count || verifyReady.length
   };
+  snapshot.taskQueue = snapshot.agents.slice().sort(function(a, b) {
+    var order = { blocked: 0, in_progress: 1, waiting: 2, done: 3, idle: 4 };
+    var av = order.hasOwnProperty(a.status) ? order[a.status] : 5;
+    var bv = order.hasOwnProperty(b.status) ? order[b.status] : 5;
+    if (av !== bv) return av - bv;
+    return (Date.parse(b.updatedAt || 0) || 0) - (Date.parse(a.updatedAt || 0) || 0);
+  });
   return snapshot;
 }
 
@@ -3553,7 +3596,7 @@ function ccRenderSuggestionList(snapshot) {
 
 function ccRenderWorkQueue(snapshot) {
   var queue = snapshot.workQueue;
-  document.getElementById('ccWorkQueue').innerHTML = [
+  var counts = [
     { key: 'queued', label: 'Queued' },
     { key: 'in_progress', label: 'In Progress' },
     { key: 'blocked', label: 'Blocked' },
@@ -3562,6 +3605,24 @@ function ccRenderWorkQueue(snapshot) {
   ].map(function(item) {
     return '<div class="cc-queue-card"><div class="cc-queue-head"><div class="cc-queue-count">' + ccEscape(queue[item.key] || 0) + '</div></div><div class="cc-queue-label">' + ccEscape(item.label) + '</div></div>';
   }).join('');
+  var tasks = snapshot.taskQueue.map(function(item) {
+    var selected = CONTROL_CENTRE_UI.selectedType === 'agent' && CONTROL_CENTRE_UI.selectedId === item.key;
+    return '<article class="cc-task-row' + (selected ? ' selected' : '') + '" data-cc-task-agent="' + ccEscape(item.key) + '">' +
+      '<div class="cc-task-main">' +
+        '<div class="cc-task-head">' +
+          '<div class="cc-task-title">' + ccEscape(ccTaskTitle(item.task)) + '</div>' +
+          '<span class="cc-status ' + ccEscape(item.status || 'idle') + '">' + ccEscape(ccPrettyStatus(item.status || 'idle')) + '</span>' +
+        '</div>' +
+        '<div class="cc-task-preview">' + ccEscape(ccTaskPreview(item.task || item.summary)) + '</div>' +
+        '<div class="cc-task-meta">' +
+          '<span class="cc-task-id">' + ccEscape(item.taskId || ('JOB-' + item.key.toUpperCase())) + '</span>' +
+          '<span><span class="cc-label">Agent</span> ' + ccEscape(item.name) + '</span>' +
+          '<span><span class="cc-label">Updated</span> ' + ccEscape(ccFormatWhen(item.updatedAt)) + '</span>' +
+        '</div>' +
+      '</div>' +
+    '</article>';
+  }).join('');
+  document.getElementById('ccWorkQueue').innerHTML = counts + '<div class="cc-task-list">' + (tasks || '<div class="cc-empty"><div class="cc-empty-copy">No queued tasks yet.</div></div>') + '</div>';
 }
 
 function ccRenderPipeline(snapshot) {
@@ -3689,6 +3750,14 @@ document.getElementById('ccSuggestionList').addEventListener('click', function(e
   if (!card) return;
   CONTROL_CENTRE_UI.selectedType = 'suggestion';
   CONTROL_CENTRE_UI.selectedId = card.getAttribute('data-cc-suggestion');
+  window.renderControlCentre();
+});
+
+document.getElementById('ccWorkQueue').addEventListener('click', function(event) {
+  var card = event.target.closest('[data-cc-task-agent]');
+  if (!card) return;
+  CONTROL_CENTRE_UI.selectedType = 'agent';
+  CONTROL_CENTRE_UI.selectedId = card.getAttribute('data-cc-task-agent');
   window.renderControlCentre();
 });
 
