@@ -675,6 +675,7 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
     <kbd style="background:#1a1e28;border:1px solid #2a3040;border-radius:3px;padding:2px 6px;font-size:10px;color:var(--text-dim);">J</kbd><span>Sparring Journal</span>
     <kbd style="background:#1a1e28;border:1px solid #2a3040;border-radius:3px;padding:2px 6px;font-size:10px;color:var(--text-dim);">C</kbd><span>Coach Mode</span>
     <kbd style="background:#1a1e28;border:1px solid #2a3040;border-radius:3px;padding:2px 6px;font-size:10px;color:var(--text-dim);">G</kbd><span>Toggle Reference ↔ Network</span>
+    <kbd style="background:#1a1e28;border:1px solid #2a3040;border-radius:3px;padding:2px 6px;font-size:10px;color:var(--text-dim);">O</kbd><span>AI Ops Control Centre</span>
     <kbd style="background:#1a1e28;border:1px solid #2a3040;border-radius:3px;padding:2px 6px;font-size:10px;color:var(--text-dim);">?</kbd><span>Toggle this help panel</span>
   </div>
 </div>
@@ -5422,6 +5423,8 @@ document.addEventListener('keydown', e => {
   if (e.key === 'j' && !inInput) { document.getElementById('menuJournalBtn').click(); }
   // C: coach mode
   if (e.key === 'c' && !inInput) { document.getElementById('menuCoachBtn').click(); }
+  // O: AI Ops Control Centre
+  if (e.key === 'o' && !inInput) { var ob = document.getElementById('menuAIOpsBtn'); if (ob) ob.click(); }
   // ?: toggle help panel
   if (e.key === '?' && !inInput) {
     var hp = document.getElementById('kbdHelpPanel');
@@ -10796,7 +10799,7 @@ function openCoachPanel() {
     if (!document.getElementById('aiOpsDashboardStyles')) {
       var styleEl = document.createElement('style');
       styleEl.id = 'aiOpsDashboardStyles';
-      styleEl.textContent = '.ops-dashboard{position:fixed;top:0;left:0;right:0;bottom:0;background:var(--bg);z-index:8000;overflow-y:auto;font-family:"DM Mono",monospace;}'
+      styleEl.textContent = '.ops-dashboard{position:fixed;top:0;left:0;right:0;bottom:0;background:var(--bg);z-index:8000;overflow-y:auto;font-family:"DM Mono",monospace;overflow-wrap:break-word;word-break:break-word;}'
         + '.ops-grid{display:grid;grid-template-columns:280px 1fr 320px;gap:12px;padding:16px;max-width:1400px;margin:0 auto;}'
         + '.ops-card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:8px;padding:12px;}'
         + '.ops-agent-dot{width:8px;height:8px;border-radius:50%;display:inline-block;}'
@@ -10816,7 +10819,7 @@ function openCoachPanel() {
         + '@media(max-width:1024px){.ops-grid{grid-template-columns:1fr 1fr;}}'
         + '@media(max-width:768px){.ops-grid{grid-template-columns:1fr;}}'
         + '.ops-mobile-tabs{display:none;position:fixed;bottom:0;left:0;right:0;background:#0d0f14;border-top:1px solid rgba(255,255,255,0.08);z-index:8001;padding:4px 0 env(safe-area-inset-bottom);}'
-        + '.ops-mobile-tabs .ops-tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 0;border:none;background:none;color:#556;font-family:DM Mono,monospace;font-size:9px;cursor:pointer;}'
+        + '.ops-mobile-tabs .ops-tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 0;border:none;background:none;color:#556;font-family:DM Mono,monospace;font-size:10px;cursor:pointer;min-height:44px;}'
         + '.ops-mobile-tabs .ops-tab.active{color:var(--accent3);}'
         + '.ops-mobile-tabs .ops-tab-icon{font-size:16px;}'
         + '@media(max-width:768px){'
@@ -12495,7 +12498,7 @@ function openCoachPanel() {
     // ── Mobile Tab Bar ──
     var tabBar = document.createElement('div');
     tabBar.className = 'ops-mobile-tabs';
-    ['\uD83C\uDFE0 Home','\uD83D\uDCCB Suggest','\uD83E\uDD16 Agents','\uD83D\uDCCA Activity'].forEach(function(label, i) {
+    ['\u25C9 Home','\u25A3 Suggest','\u2B21 Agents','\u25CE Activity'].forEach(function(label, i) {
       var viewNames = ['home','suggestions','agents','activity'];
       var btn = document.createElement('button');
       btn.className = 'ops-tab' + (i === 0 ? ' active' : '');
