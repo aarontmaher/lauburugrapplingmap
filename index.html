@@ -421,6 +421,10 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
 
 /* ── CONTROL CENTRE ── */
 #controlCentreView { display:none; flex-direction:column; flex:1; min-height:0; background:linear-gradient(180deg, rgba(15,18,24,0.98) 0%, rgba(10,12,16,1) 100%); }
+/* CONTROL CENTRE: PRESENTATION / POLISH STYLES
+   Claude Code owns visual polish in the .cc-* CSS zone:
+   spacing, typography, icons, empty-state copy, keyboard-help wording, and other presentational-only tweaks.
+   Codex should avoid changing behavior here unless a structural logic change requires a paired visual hook. */
 .cc-shell { display:flex; flex-direction:column; gap:14px; flex:1; min-height:0; padding:14px; overflow:hidden; }
 .cc-topbar { display:flex; align-items:flex-start; justify-content:space-between; gap:18px; padding:16px 18px; background:linear-gradient(135deg, rgba(19,22,30,0.96), rgba(15,18,24,0.96)); border:1px solid rgba(255,255,255,0.08); border-radius:14px; box-shadow:0 12px 32px rgba(0,0,0,0.28); }
 .cc-topbar-copy { display:flex; flex-direction:column; gap:6px; min-width:0; }
@@ -969,6 +973,10 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
 
 <main role="main" style="display:flex;flex-direction:column;flex:1;min-height:0;overflow:hidden;">
 <!-- ══ CONTROL CENTRE ═════════════════════════════════════════════════════ -->
+<!-- CONTROL CENTRE: STRUCTURAL MARKUP / IA ZONE
+     Codex owns markup structure, visibility, account gating, menu IA, suggestion entry points,
+     and operator/public separation in this section.
+     Claude Code should limit changes here to polish-only text/icon/spacing work that does not alter logic. -->
 <div id="controlCentreView" style="display:none;flex-direction:column;flex:1;min-height:0;">
   <div class="cc-shell">
     <div class="cc-topbar">
@@ -1531,6 +1539,11 @@ const STATE = {
   whoopData: null,
   whoopConnection: null
 };
+// CONTROL CENTRE: STRUCTURAL LOGIC ZONE
+// Codex owns selection state, gating, menu/navigation rules, suggestion entry logic,
+// shared-state adapters, and structural rendering behavior below.
+// Claude Code should avoid changing this logic block except for tiny copy-only follow-ups
+// that are explicitly coordinated against the touched sections list.
 const CONTROL_CENTRE_UI = {
   selectedType: 'suggestion',
   selectedId: null,
