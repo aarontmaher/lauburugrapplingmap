@@ -1092,7 +1092,8 @@ const STATE = {
   chains: [],
   suggestions: [],
   suggestion_handoffs: [],
-  whoopData: null
+  whoopData: null,
+  workStatus: { agents: {}, task_queue: [], activity_log: [], updated_at: null }
 };
 
 function saveState() {
@@ -1112,7 +1113,8 @@ function saveState() {
     chains: STATE.chains || [],
     suggestions: STATE.suggestions || [],
     suggestion_handoffs: STATE.suggestion_handoffs || [],
-    whoopData: STATE.whoopData || null
+    whoopData: STATE.whoopData || null,
+    workStatus: STATE.workStatus || { agents: {}, task_queue: [], activity_log: [], updated_at: null }
   };
   UserStore.saveAppState(appState);
 }
@@ -1158,6 +1160,7 @@ function loadState() {
     STATE.suggestions = appState.suggestions || [];
     STATE.suggestion_handoffs = appState.suggestion_handoffs || [];
     STATE.whoopData = appState.whoopData || null;
+    STATE.workStatus = appState.workStatus || { agents: {}, task_queue: [], activity_log: [], updated_at: null };
   }
 }
 
@@ -5482,7 +5485,7 @@ document.addEventListener('keydown', e => {
 })();
 // Export progress
 document.getElementById('menuExportBtn').addEventListener('click', function() {
-  var data = { progress: STATE.progress, notes: STATE.notes, recentViewed: STATE.recentViewed || [], successLog: STATE.successLog || [], drillTime: STATE.drillTime || {}, sparringLog: STATE.sparringLog || [], chains: STATE.chains || [], suggestions: STATE.suggestions || [], suggestion_handoffs: STATE.suggestion_handoffs || [], whoopData: STATE.whoopData || null, exportedAt: new Date().toISOString() };
+  var data = { progress: STATE.progress, notes: STATE.notes, recentViewed: STATE.recentViewed || [], successLog: STATE.successLog || [], drillTime: STATE.drillTime || {}, sparringLog: STATE.sparringLog || [], chains: STATE.chains || [], suggestions: STATE.suggestions || [], suggestion_handoffs: STATE.suggestion_handoffs || [], whoopData: STATE.whoopData || null, workStatus: STATE.workStatus || { agents: {}, task_queue: [], activity_log: [], updated_at: null }, exportedAt: new Date().toISOString() };
   var blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
   var a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
@@ -5516,6 +5519,7 @@ document.getElementById('menuImportBtn').addEventListener('click', function() {
         if (data.suggestions) STATE.suggestions = data.suggestions;
         if (data.suggestion_handoffs) STATE.suggestion_handoffs = data.suggestion_handoffs;
         if (data.whoopData) STATE.whoopData = data.whoopData;
+        if (data.workStatus) STATE.workStatus = data.workStatus;
         saveState(); updateStats(); refreshAllViews();
         showToast('Progress imported successfully');
       } catch(e) { showToast('Could not read file — check format'); }
@@ -5537,6 +5541,7 @@ document.getElementById('menuResetBtn').addEventListener('click', function() {
   STATE.suggestions = [];
   STATE.suggestion_handoffs = [];
   STATE.whoopData = null;
+  STATE.workStatus = { agents: {}, task_queue: [], activity_log: [], updated_at: null };
   saveState(); updateStats(); refreshAllViews();
   updateWhoopReadinessCard();
   showToast('All progress has been reset');
@@ -10667,27 +10672,74 @@ function openCoachPanel() {
   var openSuggestionQueue = openSuggestionDashboard;
 
   // ═══════════════════════════════════════════════════════════════════════════
-  // AI Ops Dashboard — read-only operational overview
+  // AI Ops Control Centre — full operational control dashboard
   // ═══════════════════════════════════════════════════════════════════════════
+
+  // ── updateWorkStatus: merge updates into STATE.workStatus for an agent ──
+  function updateWorkStatus(agentKey, updates) {
+    if (!STATE.workStatus) STATE.workStatus = { agents: {}, task_queue: [], activity_log: [], updated_at: null };
+    if (!STATE.workStatus.agents[agentKey]) STATE.workStatus.agents[agentKey] = {};
+    Object.assign(STATE.workStatus.agents[agentKey], updates, { updated_at: new Date().toISOString() });
+    STATE.workStatus.updated_at = new Date().toISOString();
+    saveState();
+  }
+
+  // ── addActivityLog: push event to STATE.workStatus.activity_log (max 50) ──
+  function addActivityLog(message) {
+    if (!STATE.workStatus) STATE.workStatus = { agents: {}, task_queue: [], activity_log: [], updated_at: null };
+    if (!STATE.workStatus.activity_log) STATE.workStatus.activity_log = [];
+    STATE.workStatus.activity_log.unshift({ ts: new Date().toISOString(), message: message });
+    if (STATE.workStatus.activity_log.length > 50) STATE.workStatus.activity_log = STATE.workStatus.activity_log.slice(0, 50);
+    STATE.workStatus.updated_at = new Date().toISOString();
+    saveState();
+  }
+
+  // ── nextTaskId: generate sequential TASK-NN id ──
+  function nextTaskId() {
+    if (!STATE.workStatus) STATE.workStatus = { agents: {}, task_queue: [], activity_log: [], updated_at: null };
+    if (!STATE.workStatus.task_queue) STATE.workStatus.task_queue = [];
+    var maxNum = 0;
+    STATE.workStatus.task_queue.forEach(function(t) {
+      var m = (t.id || '').match(/^TASK-(\d+)$/);
+      if (m) { var n = parseInt(m[1], 10); if (n > maxNum) maxNum = n; }
+    });
+    return 'TASK-' + String(maxNum + 1).padStart(2, '0');
+  }
+
   function openAIOpsDashboard() {
     // ── Data Adapters (isolate from rendering for future MCP swap) ──
-    // TODO: Replace with MCP calls when server is ready
     function getWorkStatus() {
-      // Mock/local adapter — later: MCP get_work_status()
-      return window._workStatus || {
+      // Read from STATE.workStatus first, fall back to window._workStatus, then defaults
+      var defaults = {
         agents: {
-          claude_code: { task: null, status: 'idle', branch: 'main', last_commit: null, summary: null, updated_at: null },
-          codex: { task: null, status: 'idle', branch: null, last_commit: null, summary: null, updated_at: null },
-          cowork: { task: null, status: 'idle', branch: null, last_commit: null, summary: null, updated_at: null },
-          chatgpt: { task: null, status: 'idle', branch: null, last_commit: null, summary: null, updated_at: null },
-          claude_chat: { task: null, status: 'idle', branch: null, last_commit: null, summary: null, updated_at: null }
+          claude_code: { task: null, status: 'idle', branch: 'main', last_commit: null, summary: null, updated_at: null, blockers: null, priority: null, assigned_items: [] },
+          codex: { task: null, status: 'idle', branch: null, last_commit: null, summary: null, updated_at: null, blockers: null, priority: null, assigned_items: [] },
+          cowork: { task: null, status: 'idle', branch: null, last_commit: null, summary: null, updated_at: null, blockers: null, priority: null, assigned_items: [] },
+          chatgpt: { task: null, status: 'idle', branch: null, last_commit: null, summary: null, updated_at: null, blockers: null, priority: null, assigned_items: [] },
+          claude_chat: { task: null, status: 'idle', branch: null, last_commit: null, summary: null, updated_at: null, blockers: null, priority: null, assigned_items: [] }
         },
+        task_queue: [],
         updated_at: null
       };
+      var ws = STATE.workStatus && (Object.keys(STATE.workStatus.agents || {}).length > 0 || (STATE.workStatus.task_queue || []).length > 0)
+        ? STATE.workStatus
+        : (window._workStatus || null);
+      if (!ws) return defaults;
+      // Merge: ensure all default agent keys exist with extended schema
+      var merged = { agents: {}, task_queue: ws.task_queue || defaults.task_queue, updated_at: ws.updated_at || defaults.updated_at };
+      Object.keys(defaults.agents).forEach(function(k) {
+        merged.agents[k] = Object.assign({}, defaults.agents[k], ws.agents ? ws.agents[k] || {} : {});
+      });
+      // Include any extra agents from ws
+      if (ws.agents) {
+        Object.keys(ws.agents).forEach(function(k) {
+          if (!merged.agents[k]) merged.agents[k] = Object.assign({}, defaults.agents.codex, ws.agents[k]);
+        });
+      }
+      return merged;
     }
 
     function getAutomationSummary() {
-      // TODO: Replace with MCP get_automation_state()
       return window._automationState || {
         loop: 0, phase: 'idle', batch_count: 0, preview_ready: 0, verification_ready: 0, handoff_count: (STATE.suggestion_handoffs || []).length
       };
@@ -10702,14 +10754,35 @@ function openCoachPanel() {
     var workStatus = getWorkStatus();
     var autoSummary = getAutomationSummary();
     var selectedSuggestion = null;
+    var selectedAgent = null;
+    var selectedTask = null;
 
     // ── Status colors ──
-    var agentStatusColors = { in_progress: '#3fb950', done: '#58a6ff', blocked: '#f85149', idle: '#484f58' };
+    var agentStatusColors = { in_progress: '#3fb950', queued: '#d29922', done: '#58a6ff', blocked: '#f85149', idle: '#484f58' };
     var clsColors = { bug: '#f85149', feature_request: '#58a6ff', improvement: '#e8ff47', unclear: '#8b949e' };
     var clsLabels = { bug: 'Bug', feature_request: 'Feature', improvement: 'Improvement', unclear: 'Unclear' };
     var statusColors = { approved: '#3fb950', rejected: '#f85149', deferred: '#d29922', pending: '#8b949e' };
     var priorityColors = { urgent: '#f85149', high: '#e8903e', medium: '#58a6ff', low: '#8b949e' };
     var agentLabels = { claude_code: 'Claude Code', codex: 'Codex', cowork: 'Cowork', chatgpt: 'ChatGPT', claude_chat: 'Claude Chat' };
+    var agentKeys = ['claude_code', 'codex', 'cowork', 'chatgpt', 'claude_chat'];
+
+    // ── Waiting-on-me items ──
+    var waitingItems = [];
+    suggestions.forEach(function(s) {
+      if (s.approval_status === 'pending' && s.triage_recommendation === 'approve') {
+        waitingItems.push({ type: 'suggestion', id: s.id, text: s.normalized_summary || s.message_text || '', reason: 'Pending approval (recommended approve)' });
+      }
+    });
+    var taskQueue = (STATE.workStatus && STATE.workStatus.task_queue) ? STATE.workStatus.task_queue : [];
+    taskQueue.forEach(function(t) {
+      if (t.status === 'blocked' && t.blockers) {
+        var bl = (t.blockers || '').toLowerCase();
+        if (bl.indexOf('human') !== -1 || bl.indexOf('aaron') !== -1 || bl.indexOf('manual') !== -1) {
+          waitingItems.push({ type: 'task', id: t.id, text: t.title || '', reason: 'Blocked: ' + t.blockers });
+        }
+      }
+    });
+    var waitingCount = waitingItems.length;
 
     // ── Build overlay ──
     var overlay = document.createElement('div');
@@ -10717,13 +10790,13 @@ function openCoachPanel() {
     overlay.className = 'ops-dashboard';
     overlay.setAttribute('role', 'dialog');
     overlay.setAttribute('aria-modal', 'true');
-    overlay.setAttribute('aria-label', 'AI Ops Dashboard');
+    overlay.setAttribute('aria-label', 'AI Ops Control Centre');
 
     // ── CSS (inject once) ──
     if (!document.getElementById('aiOpsDashboardStyles')) {
       var styleEl = document.createElement('style');
       styleEl.id = 'aiOpsDashboardStyles';
-      styleEl.textContent = '.ops-dashboard{position:fixed;top:0;left:0;right:0;bottom:0;background:var(--bg);z-index:8000;overflow-y:auto;font-family:\"DM Mono\",monospace;}'
+      styleEl.textContent = '.ops-dashboard{position:fixed;top:0;left:0;right:0;bottom:0;background:var(--bg);z-index:8000;overflow-y:auto;font-family:"DM Mono",monospace;}'
         + '.ops-grid{display:grid;grid-template-columns:280px 1fr 320px;gap:12px;padding:16px;max-width:1400px;margin:0 auto;}'
         + '.ops-card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:8px;padding:12px;}'
         + '.ops-agent-dot{width:8px;height:8px;border-radius:50%;display:inline-block;}'
@@ -10735,8 +10808,11 @@ function openCoachPanel() {
         + '.ops-sug-item.ops-selected{background:rgba(167,139,250,0.12);border:1px solid rgba(167,139,250,0.3);}'
         + '.ops-detail-section{margin-bottom:10px;}'
         + '.ops-detail-label{font-size:9px;color:#556;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:2px;}'
-        + '.ops-feed{max-height:120px;overflow-y:auto;padding:8px 16px;max-width:1400px;margin:0 auto;}'
+        + '.ops-feed{max-height:160px;overflow-y:auto;padding:8px 16px;max-width:1400px;margin:0 auto;}'
         + '.ops-feed-item{display:flex;align-items:center;gap:8px;padding:3px 0;font-size:10px;color:#8892a4;}'
+        + '.ops-ctrl-btn{font-family:"DM Mono",monospace;font-size:9px;padding:2px 6px;border-radius:3px;cursor:pointer;border:1px solid rgba(255,255,255,0.08);background:rgba(255,255,255,0.02);color:#6a7280;transition:all 0.15s;}'
+        + '.ops-ctrl-btn:hover{background:rgba(255,255,255,0.08);color:#c4cdd8;}'
+        + '.ops-waiting-card{background:rgba(210,153,34,0.08);border:1px solid rgba(210,153,34,0.25);border-radius:8px;padding:10px 12px;margin-bottom:8px;}'
         + '@media(max-width:1024px){.ops-grid{grid-template-columns:1fr 1fr;}}'
         + '@media(max-width:768px){.ops-grid{grid-template-columns:1fr;}}';
       document.head.appendChild(styleEl);
@@ -10745,10 +10821,20 @@ function openCoachPanel() {
     // ── Header ──
     var header = document.createElement('div');
     header.className = 'ops-header';
+    var titleWrap = document.createElement('span');
+    titleWrap.style.cssText = 'display:flex;align-items:center;gap:8px;';
     var titleEl = document.createElement('span');
     titleEl.style.cssText = 'font-size:14px;color:var(--accent);letter-spacing:2px;text-transform:uppercase;font-weight:600;';
-    titleEl.textContent = 'AI Ops Dashboard';
-    header.appendChild(titleEl);
+    titleEl.textContent = 'AI Ops Control Centre';
+    titleWrap.appendChild(titleEl);
+    if (waitingCount > 0) {
+      var waitBadge = document.createElement('span');
+      waitBadge.style.cssText = 'background:#d29922;color:#000;font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;';
+      waitBadge.textContent = waitingCount;
+      waitBadge.title = waitingCount + ' item(s) waiting on you';
+      titleWrap.appendChild(waitBadge);
+    }
+    header.appendChild(titleWrap);
     var closeBtn = document.createElement('button');
     closeBtn.setAttribute('aria-label', 'Close AI Ops Dashboard');
     closeBtn.style.cssText = 'background:none;border:none;color:#8892a4;font-size:20px;cursor:pointer;padding:4px 8px;';
@@ -10762,7 +10848,7 @@ function openCoachPanel() {
     grid.className = 'ops-grid';
 
     // ────────────────────────────────────────────────────────────────────────
-    // Column 1: Agent Status
+    // Column 1: Agent Status + Waiting On Me
     // ────────────────────────────────────────────────────────────────────────
     var col1 = document.createElement('div');
     var col1Title = document.createElement('div');
@@ -10775,7 +10861,7 @@ function openCoachPanel() {
       var agent = agents[agentKey];
       var card = document.createElement('div');
       card.className = 'ops-card';
-      card.style.cssText += 'margin-bottom:8px;';
+      card.style.cssText += 'margin-bottom:8px;cursor:pointer;';
 
       // Header row with dot + name
       var cardHeader = document.createElement('div');
@@ -10810,15 +10896,299 @@ function openCoachPanel() {
         sumLine.textContent = 'Summary: ' + (agent.summary.length > 60 ? agent.summary.substring(0, 60) + '...' : agent.summary);
         card.appendChild(sumLine);
       }
+      if (agent.blockers) {
+        var blockerLine = document.createElement('div');
+        blockerLine.style.cssText = 'font-size:10px;color:#f85149;line-height:1.4;margin-top:2px;';
+        blockerLine.textContent = 'Blocker: ' + agent.blockers;
+        card.appendChild(blockerLine);
+      }
+
+      // ── Agent card control actions ──
+      var actionRow = document.createElement('div');
+      actionRow.style.cssText = 'display:flex;gap:3px;flex-wrap:wrap;margin-top:6px;padding-top:6px;border-top:1px solid rgba(255,255,255,0.04);';
+
+      function makeAgentBtn(label, color, onClick) {
+        var b = document.createElement('button');
+        b.className = 'ops-ctrl-btn';
+        b.textContent = label;
+        b.style.borderColor = color + '40';
+        b.addEventListener('mouseenter', function() { b.style.borderColor = color; b.style.color = color; });
+        b.addEventListener('mouseleave', function() { b.style.borderColor = color + '40'; b.style.color = '#6a7280'; });
+        b.addEventListener('click', function(e) { e.stopPropagation(); onClick(); });
+        return b;
+      }
+
+      // Assign button — opens inline input
+      actionRow.appendChild(makeAgentBtn('Assign', '#a78bfa', function() {
+        var existingInput = card.querySelector('.ops-assign-input');
+        if (existingInput) { existingInput.remove(); return; }
+        var inputWrap = document.createElement('div');
+        inputWrap.className = 'ops-assign-input';
+        inputWrap.style.cssText = 'display:flex;gap:4px;margin-top:4px;';
+        var inp = document.createElement('input');
+        inp.type = 'text';
+        inp.placeholder = 'Task name...';
+        inp.style.cssText = 'flex:1;background:rgba(0,0,0,0.3);border:1px solid rgba(167,139,250,0.3);border-radius:3px;color:#c4cdd8;font-family:"DM Mono",monospace;font-size:9px;padding:3px 6px;';
+        var goBtn = document.createElement('button');
+        goBtn.className = 'ops-ctrl-btn';
+        goBtn.textContent = 'Go';
+        goBtn.style.color = '#3fb950';
+        goBtn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          var taskName = inp.value.trim();
+          if (!taskName) return;
+          updateWorkStatus(agentKey, { task: taskName, status: 'queued' });
+          addActivityLog((agentLabels[agentKey] || agentKey) + ' assigned: ' + taskName);
+          openAIOpsDashboard();
+        });
+        inputWrap.appendChild(inp);
+        inputWrap.appendChild(goBtn);
+        card.appendChild(inputWrap);
+        inp.focus();
+      }));
+
+      // Status buttons
+      var statusBtns = [
+        { label: 'Queued', status: 'queued', color: '#d29922' },
+        { label: 'In Progress', status: 'in_progress', color: '#3fb950' },
+        { label: 'Blocked', status: 'blocked', color: '#f85149' },
+        { label: 'Done', status: 'done', color: '#58a6ff' }
+      ];
+      statusBtns.forEach(function(sb) {
+        actionRow.appendChild(makeAgentBtn(sb.label, sb.color, function() {
+          updateWorkStatus(agentKey, { status: sb.status });
+          addActivityLog((agentLabels[agentKey] || agentKey) + ' marked ' + sb.status);
+          openAIOpsDashboard();
+        }));
+      });
+
+      // Clear button
+      actionRow.appendChild(makeAgentBtn('Clear', '#8b949e', function() {
+        updateWorkStatus(agentKey, { task: null, status: 'idle', summary: null, blockers: null, priority: null });
+        addActivityLog((agentLabels[agentKey] || agentKey) + ' cleared');
+        openAIOpsDashboard();
+      }));
+
+      card.appendChild(actionRow);
+
+      // Click card to show agent detail
+      card.addEventListener('click', function() {
+        selectedAgent = agentKey;
+        selectedSuggestion = null;
+        selectedTask = null;
+        renderAgentDetailPanel(agentKey, agents[agentKey]);
+      });
 
       col1.appendChild(card);
     });
+
+    // ── Waiting On Me section ──
+    if (waitingItems.length > 0) {
+      var waitTitle = document.createElement('div');
+      waitTitle.className = 'ops-col-title';
+      waitTitle.style.cssText += 'margin-top:12px;color:#d29922;';
+      waitTitle.textContent = 'Waiting On Me (' + waitingItems.length + ')';
+      col1.appendChild(waitTitle);
+
+      var waitCard = document.createElement('div');
+      waitCard.className = 'ops-waiting-card';
+      waitingItems.forEach(function(wi) {
+        var wiRow = document.createElement('div');
+        wiRow.style.cssText = 'font-size:10px;color:#c4cdd8;line-height:1.6;padding:3px 0;border-bottom:1px solid rgba(210,153,34,0.1);';
+        var wiId = document.createElement('span');
+        wiId.style.cssText = 'color:#d29922;font-weight:600;';
+        wiId.textContent = wi.id + ' ';
+        wiRow.appendChild(wiId);
+        var wiText = document.createElement('span');
+        var displayWiText = wi.text.length > 35 ? wi.text.substring(0, 35) + '...' : wi.text;
+        wiText.textContent = displayWiText;
+        wiRow.appendChild(wiText);
+        var wiReason = document.createElement('div');
+        wiReason.style.cssText = 'font-size:9px;color:#d2992280;font-style:italic;';
+        wiReason.textContent = wi.reason;
+        wiRow.appendChild(wiReason);
+        waitCard.appendChild(wiRow);
+      });
+      col1.appendChild(waitCard);
+    }
+
     grid.appendChild(col1);
 
     // ────────────────────────────────────────────────────────────────────────
-    // Column 2: Suggestions & Pipeline
+    // Column 2: Task Queue (top) + Suggestions (bottom) + Pipeline
     // ────────────────────────────────────────────────────────────────────────
     var col2 = document.createElement('div');
+
+    // ── Task Queue Panel ──
+    var tqTitle = document.createElement('div');
+    tqTitle.className = 'ops-col-title';
+    tqTitle.style.cssText += 'display:flex;align-items:center;justify-content:space-between;';
+    var tqLabel = document.createElement('span');
+    tqLabel.textContent = 'Task Queue';
+    tqTitle.appendChild(tqLabel);
+
+    // Task queue card (declared early so createTaskBtn can reference it)
+    var tqCard = document.createElement('div');
+    tqCard.className = 'ops-card';
+    tqCard.style.cssText += 'margin-bottom:8px;padding:6px;max-height:260px;overflow-y:auto;';
+
+    // Create Task button
+    var createTaskBtn = document.createElement('button');
+    createTaskBtn.className = 'ops-ctrl-btn';
+    createTaskBtn.textContent = '+ Create Task';
+    createTaskBtn.style.cssText += 'color:#a78bfa;border-color:rgba(167,139,250,0.3);';
+    createTaskBtn.addEventListener('click', function() {
+      var formEl = document.getElementById('opsCreateTaskForm');
+      if (formEl) { formEl.remove(); return; }
+      var form = document.createElement('div');
+      form.id = 'opsCreateTaskForm';
+      form.className = 'ops-card';
+      form.style.cssText += 'margin-bottom:8px;display:flex;gap:4px;align-items:center;flex-wrap:wrap;';
+      var titleInp = document.createElement('input');
+      titleInp.type = 'text';
+      titleInp.placeholder = 'Task title...';
+      titleInp.style.cssText = 'flex:1;min-width:120px;background:rgba(0,0,0,0.3);border:1px solid rgba(167,139,250,0.3);border-radius:3px;color:#c4cdd8;font-family:"DM Mono",monospace;font-size:10px;padding:4px 8px;';
+      form.appendChild(titleInp);
+      var prioSel = document.createElement('select');
+      prioSel.style.cssText = 'background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.1);border-radius:3px;color:#c4cdd8;font-family:"DM Mono",monospace;font-size:9px;padding:3px 4px;';
+      ['medium','low','high','urgent'].forEach(function(p) {
+        var o = document.createElement('option');
+        o.value = p; o.textContent = p;
+        prioSel.appendChild(o);
+      });
+      form.appendChild(prioSel);
+      var addBtn = document.createElement('button');
+      addBtn.className = 'ops-ctrl-btn';
+      addBtn.textContent = 'Add';
+      addBtn.style.color = '#3fb950';
+      addBtn.addEventListener('click', function() {
+        var t = titleInp.value.trim();
+        if (!t) return;
+        if (!STATE.workStatus) STATE.workStatus = { agents: {}, task_queue: [], activity_log: [], updated_at: null };
+        if (!STATE.workStatus.task_queue) STATE.workStatus.task_queue = [];
+        var newTask = { id: nextTaskId(), title: t, status: 'unassigned', assigned_to: null, priority: prioSel.value, source: 'manual', created_at: new Date().toISOString(), blockers: null, linked_suggestions: [] };
+        STATE.workStatus.task_queue.push(newTask);
+        STATE.workStatus.updated_at = new Date().toISOString();
+        saveState();
+        addActivityLog('Task created: ' + newTask.id + ' \u2014 ' + t);
+        openAIOpsDashboard();
+      });
+      form.appendChild(addBtn);
+      // Insert form before tqCard
+      tqCard.parentNode.insertBefore(form, tqCard);
+      titleInp.focus();
+    });
+    tqTitle.appendChild(createTaskBtn);
+    col2.appendChild(tqTitle);
+
+    var allTasks = (STATE.workStatus && STATE.workStatus.task_queue) ? STATE.workStatus.task_queue : [];
+    var taskGroups = { unassigned: [], in_progress: [], blocked: [], done: [] };
+    allTasks.forEach(function(t) {
+      var s = t.status || 'unassigned';
+      if (s === 'queued') s = 'unassigned';
+      if (!taskGroups[s]) taskGroups[s] = [];
+      taskGroups[s].push(t);
+    });
+
+    var groupOrder = ['unassigned', 'in_progress', 'blocked', 'done'];
+    var groupLabels = { unassigned: 'Unassigned', in_progress: 'In Progress', blocked: 'Blocked', done: 'Done' };
+    var groupColors = { unassigned: '#8b949e', in_progress: '#3fb950', blocked: '#f85149', done: '#58a6ff' };
+    var hasAnyTasks = allTasks.length > 0;
+
+    if (!hasAnyTasks) {
+      var tqEmpty = document.createElement('div');
+      tqEmpty.style.cssText = 'font-size:11px;color:#556;text-align:center;padding:16px 0;';
+      tqEmpty.textContent = 'No tasks yet. Create one above.';
+      tqCard.appendChild(tqEmpty);
+    } else {
+      groupOrder.forEach(function(gKey) {
+        var tasks = taskGroups[gKey] || [];
+        if (tasks.length === 0) return;
+        var gHeader = document.createElement('div');
+        gHeader.style.cssText = 'font-size:9px;color:' + groupColors[gKey] + ';text-transform:uppercase;letter-spacing:0.5px;padding:4px 4px 2px;';
+        gHeader.textContent = groupLabels[gKey] + ' (' + tasks.length + ')';
+        tqCard.appendChild(gHeader);
+
+        tasks.forEach(function(task) {
+          var tRow = document.createElement('div');
+          tRow.style.cssText = 'display:flex;align-items:center;gap:4px;padding:4px 6px;border-bottom:1px solid rgba(255,255,255,0.03);cursor:pointer;border-radius:3px;';
+          tRow.addEventListener('mouseenter', function() { tRow.style.background = 'rgba(255,255,255,0.03)'; });
+          tRow.addEventListener('mouseleave', function() { tRow.style.background = 'transparent'; });
+
+          var tId = document.createElement('span');
+          tId.style.cssText = 'font-size:9px;color:#556;min-width:50px;';
+          tId.textContent = task.id;
+          tRow.appendChild(tId);
+
+          var tTitle = document.createElement('span');
+          tTitle.style.cssText = 'font-size:10px;color:#c4cdd8;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;';
+          tTitle.textContent = task.title || '';
+          tRow.appendChild(tTitle);
+
+          if (task.priority) {
+            var tPrio = document.createElement('span');
+            tPrio.className = 'ops-badge';
+            tPrio.style.background = priorityColors[task.priority] || '#8b949e';
+            tPrio.textContent = task.priority;
+            tRow.appendChild(tPrio);
+          }
+
+          if (task.assigned_to) {
+            var tAssign = document.createElement('span');
+            tAssign.style.cssText = 'font-size:9px;color:#a78bfa;';
+            tAssign.textContent = agentLabels[task.assigned_to] || task.assigned_to;
+            tRow.appendChild(tAssign);
+          }
+
+          // Route to AI dropdown for unassigned tasks
+          if (gKey === 'unassigned') {
+            var routeBtn = document.createElement('select');
+            routeBtn.style.cssText = 'background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.1);border-radius:3px;color:#8b949e;font-family:"DM Mono",monospace;font-size:8px;padding:1px 2px;cursor:pointer;';
+            var defOpt = document.createElement('option');
+            defOpt.value = '';
+            defOpt.textContent = 'Route...';
+            routeBtn.appendChild(defOpt);
+            agentKeys.forEach(function(ak) {
+              var o = document.createElement('option');
+              o.value = ak;
+              o.textContent = agentLabels[ak];
+              routeBtn.appendChild(o);
+            });
+            routeBtn.addEventListener('click', function(e) { e.stopPropagation(); });
+            routeBtn.addEventListener('change', function(e) {
+              e.stopPropagation();
+              var chosenAgent = routeBtn.value;
+              if (!chosenAgent) return;
+              task.assigned_to = chosenAgent;
+              task.status = 'in_progress';
+              // Add to agent's assigned_items
+              if (!STATE.workStatus.agents[chosenAgent]) STATE.workStatus.agents[chosenAgent] = {};
+              if (!STATE.workStatus.agents[chosenAgent].assigned_items) STATE.workStatus.agents[chosenAgent].assigned_items = [];
+              STATE.workStatus.agents[chosenAgent].assigned_items.push(task.id);
+              STATE.workStatus.updated_at = new Date().toISOString();
+              saveState();
+              addActivityLog(task.id + ' routed to ' + (agentLabels[chosenAgent] || chosenAgent));
+              openAIOpsDashboard();
+            });
+            tRow.appendChild(routeBtn);
+          }
+
+          // Click task row to show detail
+          tRow.addEventListener('click', function() {
+            selectedTask = task;
+            selectedAgent = null;
+            selectedSuggestion = null;
+            renderTaskDetailPanel(task);
+          });
+
+          tqCard.appendChild(tRow);
+        });
+      });
+    }
+
+    col2.appendChild(tqCard);
+
+    // ── Suggestions list ──
     var col2Title = document.createElement('div');
     col2Title.className = 'ops-col-title';
     col2Title.textContent = 'Suggestions & Pipeline';
@@ -10857,7 +11227,7 @@ function openCoachPanel() {
     // Recent/high-priority suggestions list (max 8)
     var sugList = document.createElement('div');
     sugList.className = 'ops-card';
-    sugList.style.cssText += 'margin-bottom:8px;padding:6px;max-height:400px;overflow-y:auto;';
+    sugList.style.cssText += 'margin-bottom:8px;padding:6px;max-height:300px;overflow-y:auto;';
     var displaySugs = suggestions.slice(0, 8);
     if (displaySugs.length === 0) {
       var emptyMsg = document.createElement('div');
@@ -10870,7 +11240,7 @@ function openCoachPanel() {
       item.className = 'ops-sug-item';
       item.dataset.sugId = sug.id;
 
-      // Top: classification badge + priority chip + title
+      // Top: classification badge + priority chip + title + assign button
       var topLine = document.createElement('div');
       topLine.style.cssText = 'display:flex;align-items:center;gap:4px;flex-wrap:wrap;';
 
@@ -10889,7 +11259,7 @@ function openCoachPanel() {
       var titleText = document.createElement('span');
       titleText.style.cssText = 'font-size:11px;color:#c4cdd8;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;';
       var displayText = sug.normalized_summary || sug.message_text || '';
-      titleText.textContent = displayText.length > 50 ? displayText.substring(0, 50) + '...' : displayText;
+      titleText.textContent = displayText.length > 40 ? displayText.substring(0, 40) + '...' : displayText;
       topLine.appendChild(titleText);
 
       // Photo indicator
@@ -10899,6 +11269,63 @@ function openCoachPanel() {
         photoInd.textContent = '\uD83D\uDCF7' + sug.attachments.length;
         topLine.appendChild(photoInd);
       }
+
+      // Check if suggestion is already assigned to an agent
+      var sugAssignedAgent = null;
+      if (STATE.workStatus && STATE.workStatus.task_queue) {
+        STATE.workStatus.task_queue.forEach(function(t) {
+          if (t.linked_suggestions && t.linked_suggestions.indexOf(sug.id) !== -1 && t.assigned_to) {
+            sugAssignedAgent = t.assigned_to;
+          }
+        });
+      }
+      if (sugAssignedAgent) {
+        var assignedTag = document.createElement('span');
+        assignedTag.style.cssText = 'font-size:8px;color:#a78bfa;background:rgba(167,139,250,0.1);padding:1px 4px;border-radius:2px;';
+        assignedTag.textContent = agentLabels[sugAssignedAgent] || sugAssignedAgent;
+        topLine.appendChild(assignedTag);
+      }
+
+      // "-> Assign" button on each suggestion
+      var assignSugBtn = document.createElement('button');
+      assignSugBtn.className = 'ops-ctrl-btn';
+      assignSugBtn.textContent = '\u2192 Assign';
+      assignSugBtn.style.cssText += 'font-size:8px;padding:1px 4px;';
+      assignSugBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        // Toggle dropdown
+        var existingDd = item.querySelector('.ops-assign-dd');
+        if (existingDd) { existingDd.remove(); return; }
+        var dd = document.createElement('div');
+        dd.className = 'ops-assign-dd';
+        dd.style.cssText = 'display:flex;gap:2px;flex-wrap:wrap;margin-top:4px;padding:4px;background:rgba(0,0,0,0.3);border-radius:4px;';
+        agentKeys.forEach(function(ak) {
+          var ab = document.createElement('button');
+          ab.className = 'ops-ctrl-btn';
+          ab.textContent = agentLabels[ak];
+          ab.style.cssText += 'font-size:8px;padding:1px 4px;';
+          ab.addEventListener('click', function(ev) {
+            ev.stopPropagation();
+            // Create task linked to this suggestion and assign to agent
+            if (!STATE.workStatus) STATE.workStatus = { agents: {}, task_queue: [], activity_log: [], updated_at: null };
+            if (!STATE.workStatus.task_queue) STATE.workStatus.task_queue = [];
+            var taskTitle = (sug.normalized_summary || sug.message_text || 'Suggestion').substring(0, 60);
+            var newTask = { id: nextTaskId(), title: taskTitle, status: 'in_progress', assigned_to: ak, priority: sug.triage_priority || 'medium', source: 'suggestion', created_at: new Date().toISOString(), blockers: null, linked_suggestions: [sug.id] };
+            STATE.workStatus.task_queue.push(newTask);
+            // Add to agent's assigned_items
+            if (!STATE.workStatus.agents[ak]) STATE.workStatus.agents[ak] = {};
+            if (!STATE.workStatus.agents[ak].assigned_items) STATE.workStatus.agents[ak].assigned_items = [];
+            STATE.workStatus.agents[ak].assigned_items.push(sug.id);
+            STATE.workStatus.updated_at = new Date().toISOString();
+            saveState();
+            addActivityLog(sug.id + ' routed to ' + (agentLabels[ak] || ak));
+            openAIOpsDashboard();
+          });
+          dd.appendChild(ab);
+        });
+        item.appendChild(dd);
+      });
+      topLine.appendChild(assignSugBtn);
 
       item.appendChild(topLine);
 
@@ -10927,13 +11354,14 @@ function openCoachPanel() {
       });
       item.appendChild(lcRow);
 
-      // Click to select
+      // Click to select suggestion
       item.addEventListener('click', function() {
         selectedSuggestion = sug;
-        // Deselect all
+        selectedAgent = null;
+        selectedTask = null;
         sugList.querySelectorAll('.ops-sug-item').forEach(function(el) { el.classList.remove('ops-selected'); });
         item.classList.add('ops-selected');
-        renderDetailPanel(sug);
+        renderSuggestionDetailPanel(sug);
       });
 
       sugList.appendChild(item);
@@ -10970,15 +11398,279 @@ function openCoachPanel() {
     detailPanel.style.cssText += 'min-height:200px;';
     var placeholder = document.createElement('div');
     placeholder.style.cssText = 'font-size:11px;color:#556;text-align:center;padding:40px 0;';
-    placeholder.textContent = 'Select a suggestion to view details';
+    placeholder.textContent = 'Select an agent, task, or suggestion';
     detailPanel.appendChild(placeholder);
     col3.appendChild(detailPanel);
     grid.appendChild(col3);
 
     overlay.appendChild(grid);
 
-    // ── Render detail for a selected suggestion ──
-    function renderDetailPanel(sug) {
+    // ── Render agent detail panel ──
+    function renderAgentDetailPanel(agentKey, agent) {
+      var panel = document.getElementById('opsDetailPanel');
+      if (!panel) return;
+      panel.innerHTML = '';
+
+      // Agent name + status
+      var nameRow = document.createElement('div');
+      nameRow.className = 'ops-detail-section';
+      nameRow.style.cssText += 'display:flex;align-items:center;gap:6px;';
+      var aDot = document.createElement('span');
+      aDot.className = 'ops-agent-dot';
+      aDot.style.background = agentStatusColors[agent.status] || agentStatusColors.idle;
+      nameRow.appendChild(aDot);
+      var aName = document.createElement('span');
+      aName.style.cssText = 'font-size:13px;color:#c4cdd8;font-weight:600;';
+      aName.textContent = agentLabels[agentKey] || agentKey;
+      nameRow.appendChild(aName);
+      var aStatus = document.createElement('span');
+      aStatus.className = 'ops-badge';
+      aStatus.style.background = agentStatusColors[agent.status] || agentStatusColors.idle;
+      aStatus.textContent = agent.status || 'idle';
+      nameRow.appendChild(aStatus);
+      panel.appendChild(nameRow);
+
+      // Full details
+      var detailItems = [
+        { label: 'Task', value: agent.task || '\u2014' },
+        { label: 'Branch', value: agent.branch || '\u2014' },
+        { label: 'Last Commit', value: agent.last_commit || '\u2014' },
+        { label: 'Priority', value: agent.priority || '\u2014' },
+        { label: 'Updated', value: agent.updated_at ? new Date(agent.updated_at).toLocaleString() : '\u2014' }
+      ];
+      var detGrid = document.createElement('div');
+      detGrid.style.cssText = 'display:grid;grid-template-columns:1fr 1fr;gap:3px 8px;font-size:10px;color:#8892a4;margin-bottom:8px;';
+      detailItems.forEach(function(di) {
+        var cell = document.createElement('div');
+        cell.style.cssText = 'line-height:1.5;';
+        var lbl = document.createElement('span');
+        lbl.style.cssText = 'color:#556;';
+        lbl.textContent = di.label + ': ';
+        cell.appendChild(lbl);
+        var val = document.createElement('span');
+        val.textContent = di.value;
+        cell.appendChild(val);
+        detGrid.appendChild(cell);
+      });
+      panel.appendChild(detGrid);
+
+      // Summary
+      if (agent.summary) {
+        var sumSec = document.createElement('div');
+        sumSec.className = 'ops-detail-section';
+        var sumLabel = document.createElement('div');
+        sumLabel.className = 'ops-detail-label';
+        sumLabel.textContent = 'Summary';
+        sumSec.appendChild(sumLabel);
+        var sumText = document.createElement('div');
+        sumText.style.cssText = 'font-size:10px;color:#c4cdd8;line-height:1.4;';
+        sumText.textContent = agent.summary;
+        sumSec.appendChild(sumText);
+        panel.appendChild(sumSec);
+      }
+
+      // Blockers
+      if (agent.blockers) {
+        var blkSec = document.createElement('div');
+        blkSec.className = 'ops-detail-section';
+        blkSec.style.cssText += 'background:rgba(248,81,73,0.08);border:1px solid rgba(248,81,73,0.2);border-radius:4px;padding:8px;';
+        var blkLabel = document.createElement('div');
+        blkLabel.className = 'ops-detail-label';
+        blkLabel.style.color = '#f85149';
+        blkLabel.textContent = 'Blockers';
+        blkSec.appendChild(blkLabel);
+        var blkText = document.createElement('div');
+        blkText.style.cssText = 'font-size:10px;color:#f85149;line-height:1.4;';
+        blkText.textContent = agent.blockers;
+        blkSec.appendChild(blkText);
+        panel.appendChild(blkSec);
+      }
+
+      // Assigned items
+      var assignedItems = agent.assigned_items || [];
+      if (assignedItems.length > 0) {
+        var aiSec = document.createElement('div');
+        aiSec.className = 'ops-detail-section';
+        var aiLabel = document.createElement('div');
+        aiLabel.className = 'ops-detail-label';
+        aiLabel.textContent = 'Assigned Items (' + assignedItems.length + ')';
+        aiSec.appendChild(aiLabel);
+        assignedItems.forEach(function(itemId) {
+          var aiItem = document.createElement('div');
+          aiItem.style.cssText = 'font-size:10px;color:#a78bfa;line-height:1.6;';
+          aiItem.textContent = itemId;
+          aiSec.appendChild(aiItem);
+        });
+        panel.appendChild(aiSec);
+      }
+
+      // Tasks assigned to this agent from queue
+      var agentTasks = allTasks.filter(function(t) { return t.assigned_to === agentKey; });
+      if (agentTasks.length > 0) {
+        var atSec = document.createElement('div');
+        atSec.className = 'ops-detail-section';
+        var atLabel = document.createElement('div');
+        atLabel.className = 'ops-detail-label';
+        atLabel.textContent = 'Queued Tasks (' + agentTasks.length + ')';
+        atSec.appendChild(atLabel);
+        agentTasks.forEach(function(t) {
+          var tLine = document.createElement('div');
+          tLine.style.cssText = 'font-size:10px;color:#c4cdd8;line-height:1.6;display:flex;gap:4px;align-items:center;';
+          var tIdEl = document.createElement('span');
+          tIdEl.style.cssText = 'color:#556;';
+          tIdEl.textContent = t.id;
+          tLine.appendChild(tIdEl);
+          var tTitleEl = document.createElement('span');
+          tTitleEl.textContent = t.title || '';
+          tLine.appendChild(tTitleEl);
+          var tStat = document.createElement('span');
+          tStat.className = 'ops-badge';
+          tStat.style.background = groupColors[t.status] || '#8b949e';
+          tStat.textContent = t.status;
+          tLine.appendChild(tStat);
+          atSec.appendChild(tLine);
+        });
+        panel.appendChild(atSec);
+      }
+    }
+
+    // ── Render task detail panel ──
+    function renderTaskDetailPanel(task) {
+      var panel = document.getElementById('opsDetailPanel');
+      if (!panel) return;
+      panel.innerHTML = '';
+
+      // Task header
+      var hRow = document.createElement('div');
+      hRow.className = 'ops-detail-section';
+      hRow.style.cssText += 'display:flex;align-items:center;gap:6px;flex-wrap:wrap;';
+      var tIdEl = document.createElement('span');
+      tIdEl.style.cssText = 'font-size:11px;color:#556;font-weight:600;';
+      tIdEl.textContent = task.id;
+      hRow.appendChild(tIdEl);
+      var tStatBadge = document.createElement('span');
+      tStatBadge.className = 'ops-badge';
+      tStatBadge.style.background = groupColors[task.status] || '#8b949e';
+      tStatBadge.textContent = task.status || 'unassigned';
+      hRow.appendChild(tStatBadge);
+      if (task.priority) {
+        var tPrioBadge = document.createElement('span');
+        tPrioBadge.className = 'ops-badge';
+        tPrioBadge.style.background = priorityColors[task.priority] || '#8b949e';
+        tPrioBadge.textContent = task.priority;
+        hRow.appendChild(tPrioBadge);
+      }
+      panel.appendChild(hRow);
+
+      // Title
+      var titleSec = document.createElement('div');
+      titleSec.className = 'ops-detail-section';
+      var titleLabel = document.createElement('div');
+      titleLabel.className = 'ops-detail-label';
+      titleLabel.textContent = 'Title';
+      titleSec.appendChild(titleLabel);
+      var titleVal = document.createElement('div');
+      titleVal.style.cssText = 'font-size:11px;color:#c4cdd8;line-height:1.4;';
+      titleVal.textContent = task.title || '';
+      titleSec.appendChild(titleVal);
+      panel.appendChild(titleSec);
+
+      // Assigned agent
+      var assignSec = document.createElement('div');
+      assignSec.className = 'ops-detail-section';
+      var assignLabel = document.createElement('div');
+      assignLabel.className = 'ops-detail-label';
+      assignLabel.textContent = 'Assigned To';
+      assignSec.appendChild(assignLabel);
+      var assignVal = document.createElement('div');
+      assignVal.style.cssText = 'font-size:11px;color:' + (task.assigned_to ? '#a78bfa' : '#556') + ';';
+      assignVal.textContent = task.assigned_to ? (agentLabels[task.assigned_to] || task.assigned_to) : 'Unassigned';
+      assignSec.appendChild(assignVal);
+      panel.appendChild(assignSec);
+
+      // Blockers
+      if (task.blockers) {
+        var blkSec = document.createElement('div');
+        blkSec.className = 'ops-detail-section';
+        blkSec.style.cssText += 'background:rgba(248,81,73,0.08);border:1px solid rgba(248,81,73,0.2);border-radius:4px;padding:8px;';
+        var blkLabel = document.createElement('div');
+        blkLabel.className = 'ops-detail-label';
+        blkLabel.style.color = '#f85149';
+        blkLabel.textContent = 'Blockers';
+        blkSec.appendChild(blkLabel);
+        var blkText = document.createElement('div');
+        blkText.style.cssText = 'font-size:10px;color:#f85149;line-height:1.4;';
+        blkText.textContent = task.blockers;
+        blkSec.appendChild(blkText);
+        panel.appendChild(blkSec);
+      }
+
+      // Linked suggestions
+      var linked = task.linked_suggestions || [];
+      if (linked.length > 0) {
+        var lsSec = document.createElement('div');
+        lsSec.className = 'ops-detail-section';
+        var lsLabel = document.createElement('div');
+        lsLabel.className = 'ops-detail-label';
+        lsLabel.textContent = 'Linked Suggestions';
+        lsSec.appendChild(lsLabel);
+        linked.forEach(function(sid) {
+          var lsItem = document.createElement('div');
+          lsItem.style.cssText = 'font-size:10px;color:#58a6ff;line-height:1.6;cursor:pointer;';
+          lsItem.textContent = sid;
+          lsItem.addEventListener('click', function() {
+            var s = suggestions.find(function(x) { return x.id === sid; });
+            if (s) renderSuggestionDetailPanel(s);
+          });
+          lsSec.appendChild(lsItem);
+        });
+        panel.appendChild(lsSec);
+      }
+
+      // Source + created
+      var metaSec = document.createElement('div');
+      metaSec.className = 'ops-detail-section';
+      metaSec.style.cssText += 'font-size:10px;color:#6a7280;';
+      metaSec.textContent = 'Source: ' + (task.source || 'manual') + ' | Created: ' + (task.created_at ? new Date(task.created_at).toLocaleString() : '\u2014');
+      panel.appendChild(metaSec);
+
+      // Status change buttons
+      var ctrlSec = document.createElement('div');
+      ctrlSec.className = 'ops-detail-section';
+      ctrlSec.style.cssText += 'display:flex;gap:4px;flex-wrap:wrap;padding-top:8px;border-top:1px solid rgba(255,255,255,0.04);';
+      var ctrlLabel = document.createElement('div');
+      ctrlLabel.className = 'ops-detail-label';
+      ctrlLabel.style.cssText += 'width:100%;';
+      ctrlLabel.textContent = 'Change Status';
+      ctrlSec.appendChild(ctrlLabel);
+      var taskStatuses = [
+        { label: 'Unassigned', status: 'unassigned', color: '#8b949e' },
+        { label: 'In Progress', status: 'in_progress', color: '#3fb950' },
+        { label: 'Blocked', status: 'blocked', color: '#f85149' },
+        { label: 'Done', status: 'done', color: '#58a6ff' }
+      ];
+      taskStatuses.forEach(function(ts) {
+        var btn = document.createElement('button');
+        btn.className = 'ops-ctrl-btn';
+        btn.textContent = ts.label;
+        btn.style.borderColor = ts.color + '40';
+        btn.addEventListener('mouseenter', function() { btn.style.borderColor = ts.color; btn.style.color = ts.color; });
+        btn.addEventListener('mouseleave', function() { btn.style.borderColor = ts.color + '40'; btn.style.color = '#6a7280'; });
+        btn.addEventListener('click', function() {
+          task.status = ts.status;
+          if (ts.status === 'unassigned') task.assigned_to = null;
+          STATE.workStatus.updated_at = new Date().toISOString();
+          saveState();
+          addActivityLog(task.id + ' marked ' + ts.status);
+          openAIOpsDashboard();
+        });
+        ctrlSec.appendChild(btn);
+      });
+      panel.appendChild(ctrlSec);
+    }
+
+    // ── Render suggestion detail panel ──
+    function renderSuggestionDetailPanel(sug) {
       var panel = document.getElementById('opsDetailPanel');
       if (!panel) return;
       panel.innerHTML = '';
@@ -11178,7 +11870,7 @@ function openCoachPanel() {
 
       // Link: Open in Review Dashboard
       var linkBtn = document.createElement('button');
-      linkBtn.style.cssText = 'background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.3);color:var(--accent3,#a78bfa);font-family:\"DM Mono\",monospace;font-size:10px;padding:6px 14px;border-radius:4px;cursor:pointer;margin-top:8px;';
+      linkBtn.style.cssText = 'background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.3);color:var(--accent3,#a78bfa);font-family:"DM Mono",monospace;font-size:10px;padding:6px 14px;border-radius:4px;cursor:pointer;margin-top:8px;';
       linkBtn.textContent = 'Open in Review Dashboard \u2192';
       linkBtn.addEventListener('click', function() {
         closeDashboard();
@@ -11187,7 +11879,10 @@ function openCoachPanel() {
       panel.appendChild(linkBtn);
     }
 
-    // ── Bottom: Activity Feed ──
+    // Keep backward compat: renderDetailPanel = renderSuggestionDetailPanel
+    var renderDetailPanel = renderSuggestionDetailPanel;
+
+    // ── Bottom: Activity Feed (combined: suggestion events + control actions) ──
     var feedSection = document.createElement('div');
     feedSection.className = 'ops-feed';
     var feedTitle = document.createElement('div');
@@ -11195,38 +11890,65 @@ function openCoachPanel() {
     feedTitle.textContent = 'Activity Feed';
     feedSection.appendChild(feedTitle);
 
+    // Merge suggestion events + activity_log events, sorted by time
+    var feedEvents = [];
+
+    // Activity log events from STATE.workStatus
+    var actLog = (STATE.workStatus && STATE.workStatus.activity_log) ? STATE.workStatus.activity_log : [];
+    actLog.forEach(function(ev) {
+      feedEvents.push({ ts: ev.ts, icon: '\u2699', color: '#a78bfa', text: ev.message, source: 'control' });
+    });
+
+    // Suggestion events
     var recentSugs = suggestions.slice().sort(function(a, b) {
       return new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime();
     }).slice(0, 10);
+    var typeIcons = { approved: '\u2713', rejected: '\u2717', deferred: '\u23F8', pending: '\u25CB' };
+    recentSugs.forEach(function(sug) {
+      var status = sug.approval_status || 'pending';
+      var descStatus = status === 'pending' ? 'Submitted' : status.charAt(0).toUpperCase() + status.slice(1);
+      var descText = sug.normalized_summary || sug.message_text || '';
+      feedEvents.push({
+        ts: sug.created_at || null,
+        icon: typeIcons[status] || '\u25CB',
+        color: statusColors[status] || '#8b949e',
+        text: descStatus + ': ' + (descText.length > 40 ? descText.substring(0, 40) + '...' : descText),
+        source: 'suggestion'
+      });
+    });
 
-    if (recentSugs.length === 0) {
+    // Sort by time descending
+    feedEvents.sort(function(a, b) {
+      return new Date(b.ts || 0).getTime() - new Date(a.ts || 0).getTime();
+    });
+
+    // Limit to 15
+    feedEvents = feedEvents.slice(0, 15);
+
+    if (feedEvents.length === 0) {
       var noFeed = document.createElement('div');
       noFeed.style.cssText = 'font-size:10px;color:#556;';
       noFeed.textContent = 'No recent activity.';
       feedSection.appendChild(noFeed);
     }
 
-    var typeIcons = { approved: '\u2713', rejected: '\u2717', deferred: '\u23F8', pending: '\u25CB' };
-    recentSugs.forEach(function(sug) {
+    feedEvents.forEach(function(ev) {
       var feedItem = document.createElement('div');
       feedItem.className = 'ops-feed-item';
 
       var feedTs = document.createElement('span');
       feedTs.style.cssText = 'color:#444;font-size:9px;min-width:50px;';
-      feedTs.textContent = sug.created_at ? timeAgo(new Date(sug.created_at).getTime()) : '\u2014';
+      feedTs.textContent = ev.ts ? timeAgo(new Date(ev.ts).getTime()) : '\u2014';
       feedItem.appendChild(feedTs);
 
       var feedIcon = document.createElement('span');
-      var status = sug.approval_status || 'pending';
-      feedIcon.style.cssText = 'color:' + (statusColors[status] || '#8b949e') + ';';
-      feedIcon.textContent = typeIcons[status] || '\u25CB';
+      feedIcon.style.cssText = 'color:' + ev.color + ';';
+      feedIcon.textContent = ev.icon;
       feedItem.appendChild(feedIcon);
 
       var feedDesc = document.createElement('span');
       feedDesc.style.cssText = 'flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;';
-      var descStatus = status === 'pending' ? 'Submitted' : status.charAt(0).toUpperCase() + status.slice(1);
-      var descText = sug.normalized_summary || sug.message_text || '';
-      feedDesc.textContent = descStatus + ': ' + (descText.length > 40 ? descText.substring(0, 40) + '...' : descText);
+      feedDesc.textContent = ev.text;
       feedItem.appendChild(feedDesc);
 
       feedSection.appendChild(feedItem);
@@ -11258,7 +11980,7 @@ function openCoachPanel() {
     removeFocusTrap = trapFocus(overlay);
 
     // Screen reader announce
-    srAnnounce('AI Ops Dashboard opened');
+    srAnnounce('AI Ops Control Centre opened');
 
     // Focus close button
     closeBtn.focus();
