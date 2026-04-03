@@ -898,7 +898,7 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
     </div>
     <button id="authBtn" style="background:var(--accent);border:none;color:#000;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:600;padding:6px 14px;border-radius:6px;cursor:pointer;letter-spacing:0.5px;display:none;">Create Account</button>
     <button id="authUserBtn" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:var(--text-dim);font-family:'Barlow Condensed',sans-serif;font-size:12px;padding:5px 12px;border-radius:6px;cursor:pointer;display:none;"></button>
-    <button id="suggestBtn" style="background:rgba(232,255,71,0.1);border:1px solid rgba(232,255,71,0.28);color:var(--accent);font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:600;padding:5px 12px;border-radius:6px;cursor:pointer;letter-spacing:0.5px;">Suggest</button>
+    <button id="suggestBtn" aria-label="Send tester feedback" style="background:rgba(232,255,71,0.1);border:1px solid rgba(232,255,71,0.28);color:var(--accent);font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:600;padding:5px 12px;border-radius:6px;cursor:pointer;letter-spacing:0.5px;">Send feedback</button>
     <button id="headerMenuToggle" style="background:none;border:1px solid rgba(255,255,255,0.1);color:#4a5568;font-family:'DM Mono',monospace;font-size:14px;padding:4px 10px;border-radius:4px;cursor:pointer;" title="Menu" aria-label="Open menu" aria-haspopup="true">&#8942;</button>
     <div id="headerMenu" style="display:none;position:absolute;right:0;top:calc(100% + 6px);background:rgba(14,16,21,0.97);border:1px solid rgba(255,255,255,0.08);border-radius:6px;padding:4px 0;z-index:50;-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);box-shadow:0 8px 32px rgba(0,0,0,0.5);min-width:160px;">
       <div style="font-size:9px;color:#556;letter-spacing:1px;text-transform:uppercase;padding:6px 14px 2px;">Browse</div>
@@ -920,7 +920,9 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
       <div style="height:1px;background:rgba(255,255,255,0.06);margin:4px 0;"></div>
       <div style="font-size:9px;color:#556;letter-spacing:1px;text-transform:uppercase;padding:6px 14px 2px;">Progress</div>
       <button id="menuGameSummaryBtn" style="display:block;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Game Summary</button>
-      <button id="menuSuggestionsBtn" style="display:block;width:100%;text-align:left;background:none;border:none;color:var(--accent);font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Send feedback</button>
+      <div style="height:1px;background:rgba(255,255,255,0.06);margin:4px 0;"></div>
+      <div style="font-size:9px;color:#556;letter-spacing:1px;text-transform:uppercase;padding:6px 14px 2px;">Feedback</div>
+      <button id="menuSuggestionsBtn" style="display:block;width:100%;text-align:left;background:none;border:none;color:var(--accent);font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Send tester feedback</button>
       <button id="menuPromptJobsBtn" style="display:none;width:100%;text-align:left;background:none;border:none;color:var(--accent);font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Remote Control</button>
       <button id="menuProgressBtn" style="display:block;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Dashboard</button>
       <button id="menuExportBtn" style="display:block;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Export</button>
@@ -953,7 +955,7 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
     <kbd style="background:#1a1e28;border:1px solid #2a3040;border-radius:3px;padding:2px 6px;font-size:10px;color:var(--text-dim);">W</kbd><span>Recently Watched</span>
     <kbd style="background:#1a1e28;border:1px solid #2a3040;border-radius:3px;padding:2px 6px;font-size:10px;color:var(--text-dim);">J</kbd><span>Sparring Journal</span>
     <kbd style="background:#1a1e28;border:1px solid #2a3040;border-radius:3px;padding:2px 6px;font-size:10px;color:var(--text-dim);">C</kbd><span>Coach Mode</span>
-    <kbd style="background:#1a1e28;border:1px solid #2a3040;border-radius:3px;padding:2px 6px;font-size:10px;color:var(--text-dim);">O</kbd><span>Open Control Centre</span>
+    <kbd id="kbdHelpControlCentreKey" style="background:#1a1e28;border:1px solid #2a3040;border-radius:3px;padding:2px 6px;font-size:10px;color:var(--text-dim);">O</kbd><span id="kbdHelpControlCentreLabel">Open Control Centre</span>
     <kbd style="background:#1a1e28;border:1px solid #2a3040;border-radius:3px;padding:2px 6px;font-size:10px;color:var(--text-dim);">G</kbd><span>Toggle Reference ↔ Network</span>
     <kbd style="background:#1a1e28;border:1px solid #2a3040;border-radius:3px;padding:2px 6px;font-size:10px;color:var(--text-dim);">?</kbd><span>Toggle this help panel</span>
   </div>
@@ -972,7 +974,7 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
     <div class="cc-topbar">
       <div class="cc-topbar-copy">
         <div class="cc-topbar-kicker">Five AI Coordination Layer</div>
-        <div class="cc-topbar-title">Mission Control</div>
+        <div class="cc-topbar-title">Control Centre</div>
         <div class="cc-topbar-sub">Single-screen oversight for all five AI lanes, the suggestion queue, automation state, handoffs, and the human approvals that unblock the workflow. The UI is adapter-driven and ready to swap local state for the MCP tools at <span class="cc-value-strong">mcp.lauburugrapplingmap.com/mcp</span>.</div>
       </div>
       <div class="cc-topbar-meta">
@@ -1105,6 +1107,7 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
     <div style="width:1px;height:22px;background:rgba(255,255,255,0.08);margin:0 4px;"></div>
     <button class="g3d-tb-btn" id="refCollapseAll">Collapse</button>
     <button class="g3d-tb-btn" id="refExpandAll">Expand</button>
+    <button class="g3d-tb-btn" id="refSuggestBtn" title="Send tester feedback">Feedback</button>
     <div id="refMediaBtns" style="display:contents;"></div>
     <button class="g3d-tb-btn" id="refKbdHint" style="color:#556;font-size:9px;" title="Keyboard shortcuts">? keys</button>
     <button class="belt-filter-chip" id="refBeltChip" style="display:none;" title="Click to remove belt filter">⬜ White Belt ×</button>
@@ -1146,6 +1149,7 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
     <button class="g3d-tb-btn" id="g3dRecenterBtn">Recenter</button>
     <button class="g3d-tb-btn" id="g3dMyMapBtn" title="Highlight your tracked positions">My Map</button>
     <button class="g3d-tb-btn" id="g3dFindPathBtn">Find Path</button>
+    <button class="g3d-tb-btn" id="g3dSuggestBtn" title="Send tester feedback">Feedback</button>
     <button class="g3d-tb-btn" id="g3dOptionsBtn">Settings</button>
     <div id="g3dMediaBtns" style="display:contents;"></div>
     <button class="belt-filter-chip" id="g3dBeltChip" style="display:none;" title="Click to remove belt filter">⬜ White Belt ×</button>
@@ -1294,12 +1298,54 @@ var AUTH_PROFILE = null;   // Optional profile with membership_status for operat
 function isGuest() { return AUTH_STATE === 'guest'; }
 function isMember() { return AUTH_STATE === 'member'; }
 function isOperatorRole(role) { return role === 'operator' || role === 'admin'; }
+function normalizeIdentity(value) {
+  return String(value || '').trim().toLowerCase();
+}
+function looksLikeAaronIdentity(value) {
+  var normalized = normalizeIdentity(value);
+  if (!normalized) return false;
+  if (normalized === 'aaron' || normalized === 'aaron maher' || normalized.indexOf('aaron maher') !== -1) return true;
+  if (normalized.indexOf('@') !== -1) {
+    var localPart = normalized.split('@')[0] || '';
+    if (localPart === 'aaron' || localPart.indexOf('aaron.maher') !== -1 || localPart.indexOf('aaronmaher') !== -1) return true;
+  }
+  return false;
+}
+function isAaronOperatorAccount() {
+  if (window.__GM_CONTROL_CENTRE_OWNER__ === true || window.__GM_OPERATOR_UI__ === true) return true;
+  if (!(AUTH_PROFILE && isOperatorRole(AUTH_PROFILE.membership_status))) return false;
+  return [
+    AUTH_PROFILE && AUTH_PROFILE.email,
+    AUTH_PROFILE && AUTH_PROFILE.display_name,
+    AUTH_USER && AUTH_USER.email,
+    AUTH_USER && AUTH_USER.displayName
+  ].some(looksLikeAaronIdentity);
+}
 function isOperatorUIEnabled() {
-  return window.__GM_OPERATOR_UI__ === true || !!(AUTH_PROFILE && isOperatorRole(AUTH_PROFILE.membership_status));
+  return isAaronOperatorAccount();
+}
+function updateControlCentreVisibility() {
+  var tab = document.querySelector('.view-tab[data-view="controlcentre"]');
+  var canAccess = isAaronOperatorAccount();
+  if (tab) tab.style.display = canAccess ? '' : 'none';
+  var ccKey = document.getElementById('kbdHelpControlCentreKey');
+  var ccLabel = document.getElementById('kbdHelpControlCentreLabel');
+  if (ccKey) ccKey.style.display = canAccess ? '' : 'none';
+  if (ccLabel) ccLabel.style.display = canAccess ? '' : 'none';
+  if (!canAccess && document.getElementById('controlCentreView').style.display !== 'none') {
+    document.getElementById('controlCentreView').style.display = 'none';
+    document.getElementById('referenceView').style.display = 'flex';
+    document.getElementById('graph3dView').style.display = 'none';
+    document.querySelectorAll('.view-tab').forEach(function(t) { t.classList.remove('active'); });
+    var referenceTab = document.querySelector('.view-tab[data-view="reference"]');
+    if (referenceTab) referenceTab.classList.add('active');
+    saveState();
+  }
 }
 function updatePrivateOperatorUI() {
   var btn = document.getElementById('menuPromptJobsBtn');
   if (btn) btn.style.display = isOperatorUIEnabled() ? 'block' : 'none';
+  updateControlCentreVisibility();
 }
 async function refreshAuthProfile() {
   if (!isMember() || !_supabase) {
@@ -4238,6 +4284,10 @@ document.getElementById('ccDetailPanel').addEventListener('click', function(even
 
 // ─── VIEW SWITCHING ───────────────────────────────────────────────────────────
 function switchToTab(view) {
+  if (view === 'controlcentre' && !isAaronOperatorAccount()) {
+    showToast('Control Centre is private to Aaron’s operator account');
+    view = 'reference';
+  }
   document.querySelectorAll('.view-tab').forEach(t => t.classList.remove('active'));
   const btn = document.querySelector('[data-view="'+view+'"]');
   if (btn) btn.classList.add('active');
@@ -4534,10 +4584,10 @@ function updateHomePanel() {
     feedbackEl.innerHTML =
       '<div style="border:1px solid rgba(232,255,71,0.16);background:rgba(232,255,71,0.05);border-radius:10px;padding:12px 14px;">' +
         '<div style="font-family:Barlow Condensed,sans-serif;font-size:10px;color:var(--accent);letter-spacing:1.1px;text-transform:uppercase;margin-bottom:5px;">Tester feedback</div>' +
-        '<div style="font-family:Barlow Condensed,sans-serif;font-size:13px;color:var(--text-dim);line-height:1.45;">See a bug, confusing label, or missing feature? Send feedback straight into the public Suggestions queue.</div>' +
+        '<div style="font-family:Barlow Condensed,sans-serif;font-size:13px;color:var(--text-dim);line-height:1.45;">See a bug, confusing label, or missing feature? Send tester feedback straight into the public Suggestions queue.</div>' +
         '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;">' +
           '<button id="refHomeFeedbackBtn" style="background:var(--accent);border:none;color:#000;font-family:Barlow Condensed,sans-serif;font-size:12px;font-weight:600;padding:7px 14px;border-radius:8px;cursor:pointer;letter-spacing:0.4px;">Send feedback</button>' +
-          '<span style="font-family:DM Mono,monospace;font-size:10px;color:#758198;align-self:center;">Visible for testers on desktop. Header button stays available everywhere.</span>' +
+          '<span style="font-family:DM Mono,monospace;font-size:10px;color:#758198;align-self:center;">Also available in the header, AI Coach, and the map toolbars.</span>' +
         '</div>' +
       '</div>';
     var feedbackBtn = document.getElementById('refHomeFeedbackBtn');
@@ -6664,7 +6714,7 @@ document.addEventListener('keydown', e => {
   // C: coach mode
   if (e.key === 'c' && !inInput) { document.getElementById('menuCoachBtn').click(); }
   // O: open Control Centre
-  if (e.key === 'o' && !inInput) { switchToTab('controlcentre'); }
+  if (e.key === 'o' && !inInput && isAaronOperatorAccount()) { switchToTab('controlcentre'); }
   // ?: toggle help panel
   if (e.key === '?' && !inInput) {
     var hp = document.getElementById('kbdHelpPanel');
@@ -8234,7 +8284,7 @@ if (typeof updateQuickAccess === 'function') updateQuickAccess();
     }
   }
   if (!deepLinked) {
-    if (STATE._resumeTab === 'controlcentre') {
+    if (STATE._resumeTab === 'controlcentre' && isAaronOperatorAccount()) {
       switchToTab('controlcentre');
     } else if (STATE._resumeTab === 'reference') {
       switchToTab('reference');
@@ -8854,6 +8904,7 @@ _log('[GrapplingMap] Debug API ready: window.__APP_DEBUG__');
 <div id="aiPanel" style="display:none;position:fixed;bottom:calc(60px + env(safe-area-inset-bottom));right:12px;width:320px;max-height:400px;background:rgba(14,16,21,0.98);border:1px solid rgba(255,255,255,0.08);border-radius:12px;z-index:1200;flex-direction:column;box-shadow:0 8px 32px rgba(0,0,0,0.5);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);overflow:hidden;">
   <div style="display:flex;align-items:center;padding:10px 14px 8px;border-bottom:1px solid rgba(255,255,255,0.04);flex-shrink:0;">
     <div style="flex:1;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:500;color:var(--accent3);letter-spacing:0.5px;">AI Coach</div>
+    <button id="aiFeedbackBtn" style="background:rgba(232,255,71,0.08);border:1px solid rgba(232,255,71,0.2);color:var(--accent);font-family:'Barlow Condensed',sans-serif;font-size:11px;padding:5px 10px;border-radius:8px;cursor:pointer;letter-spacing:0.4px;margin-right:6px;">Feedback</button>
     <button id="aiPanelClose" style="background:none;border:none;color:#556;font-size:14px;cursor:pointer;padding:0 4px;">×</button>
   </div>
   <div id="aiCoachModes" style="display:flex;gap:0;padding:0 14px;border-bottom:1px solid rgba(255,255,255,0.04);flex-shrink:0;">
@@ -9368,7 +9419,7 @@ function openSuggestionComposer(options) {
   modal.style.display = 'flex';
   modal.dataset.source = opts.source || 'website_feedback';
   if (opts.copy) copy.textContent = opts.copy;
-  else copy.textContent = 'Share a bug, confusing bit, idea, or anything a tester notices. This goes to the public Suggestions queue, not the private operator controls.';
+  else copy.textContent = 'Share a bug, confusing bit, idea, or feature request. This is public tester feedback and goes to the Suggestions queue, not the private operator controls.';
   input.value = opts.prefill || '';
   status.style.display = 'none';
   status.textContent = '';
@@ -9416,8 +9467,8 @@ function closeSuggestionComposer() {
     }
     var source = modal.dataset.source || 'website_feedback';
     var sug = captureSuggestion(text, { source: source });
-    setSuggestionStatus('Saved as ' + sug.id + '. Thanks — your feedback is now in the Suggestions queue.');
-    showToast('Feedback saved');
+    setSuggestionStatus('Saved as ' + sug.id + '. Thanks — your feedback is now in the public Suggestions queue for review.');
+    showToast('Feedback sent to Suggestions');
     submit.textContent = 'Send another';
     if (window._suggestionModalOnSuccess) {
       try { window._suggestionModalOnSuccess(sug); } catch (_err) {}
@@ -9430,6 +9481,18 @@ function closeSuggestionComposer() {
   document.getElementById('suggestionModalCancel').addEventListener('click', closeSuggestionComposer);
   document.getElementById('suggestBtn').addEventListener('click', function() {
     openSuggestionComposer({ source: 'website_header_feedback' });
+  });
+  document.getElementById('refSuggestBtn').addEventListener('click', function() {
+    openSuggestionComposer({ source: 'website_reference_feedback' });
+  });
+  document.getElementById('g3dSuggestBtn').addEventListener('click', function() {
+    openSuggestionComposer({ source: 'website_graph_feedback' });
+  });
+  document.getElementById('aiFeedbackBtn').addEventListener('click', function() {
+    openSuggestionComposer({
+      source: 'website_ai_header_feedback',
+      copy: 'Share a bug, confusing label, or missing feature you noticed while using AI Coach. This stays in the public Suggestions queue for tester follow-up.'
+    });
   });
   document.getElementById('menuSuggestionsBtn').addEventListener('click', function() {
     document.getElementById('headerMenu').style.display = 'none';
@@ -11477,9 +11540,9 @@ function openCoachPanel() {
 
   async function openPromptJobsManager() {
     if (!isMember()) { requireAuth('open Remote Control'); return; }
-    if (!isOperatorUIEnabled()) {
+    if (!isAaronOperatorAccount()) {
       var profile = await refreshAuthProfile();
-      if (!(profile && isOperatorRole(profile.membership_status)) && window.__GM_OPERATOR_UI__ !== true) {
+      if (!(profile && isOperatorRole(profile.membership_status) && isAaronOperatorAccount()) && window.__GM_CONTROL_CENTRE_OWNER__ !== true && window.__GM_OPERATOR_UI__ !== true) {
         showToast('Operator access required');
         return;
       }
