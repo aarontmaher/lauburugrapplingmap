@@ -10133,14 +10133,133 @@ function openCoachPanel() {
   // Suggestions queue (member-only)
   document.getElementById('menuSuggestionsBtn').addEventListener('click', function() {
     document.getElementById('headerMenu').style.display = 'none';
-    openSuggestionQueue();
+    openSuggestionDashboard();
   });
 
-  function openSuggestionQueue() {
+  // Duplicate detection helper
+  function findDuplicates(sug, allSugs) {
+    var dupes = [];
+    var norm = (sug.normalized_summary || '').toLowerCase().replace(/[^a-z0-9 ]/g, '');
+    var words = norm.split(/\s+/).filter(function(w) { return w.length > 3; });
+    if (words.length < 2) return dupes;
+
+    allSugs.forEach(function(other) {
+      if (other.id === sug.id) return;
+      var otherNorm = (other.normalized_summary || '').toLowerCase().replace(/[^a-z0-9 ]/g, '');
+      var otherWords = otherNorm.split(/\s+/).filter(function(w) { return w.length > 3; });
+      var overlap = words.filter(function(w) { return otherWords.indexOf(w) !== -1; }).length;
+      var ratio = overlap / Math.max(words.length, 1);
+      if (ratio >= 0.6 && sug.triage_area === other.triage_area) {
+        dupes.push(other.id);
+      } else if (ratio >= 0.8) {
+        dupes.push(other.id);
+      }
+    });
+    return dupes;
+  }
+
+  // Approve a single suggestion (shared by individual + bulk)
+  function approveSuggestion(sug) {
+    sug.status = 'approved';
+    sug.approval_status = 'approved';
+    if (!STATE.suggestion_handoffs) STATE.suggestion_handoffs = [];
+    STATE.suggestion_handoffs.push({
+      suggestion_id: sug.id,
+      approved_at: new Date().toISOString(),
+      approved_by: 'owner',
+      normalized_summary: sug.normalized_summary,
+      source_page: sug.page_or_surface,
+      original_message: sug.message_text,
+      classification: sug.classification,
+      severity_guess: sug.severity_guess,
+      attachments: sug.attachments ? sug.attachments.map(function(a) { return { name: a.name }; }) : [],
+      automation_status: 'pending_audit'
+    });
+  }
+
+  function openSuggestionDashboard() {
     var suggestions = (STATE.suggestions || []).slice().sort(triagePrioritySort);
+    var handoffs = STATE.suggestion_handoffs || [];
     var currentFilter = 'all';
     var currentPriorityFilter = 'all';
     var currentRecoFilter = 'all';
+    var activeQuickFilters = {}; // keys: 'pending','reco_approve','high_urgent','has_photos','approved_not_ingested'
+    var selectedIds = {}; // suggestion id -> true
+
+    // Remove any existing bulk bar
+    function removeBulkBar() {
+      var existing = document.getElementById('sugDashBulkBar');
+      if (existing) existing.remove();
+    }
+
+    // Render / refresh the bulk action bar
+    function renderBulkBar() {
+      removeBulkBar();
+      var ids = Object.keys(selectedIds).filter(function(id) { return selectedIds[id]; });
+      if (ids.length === 0) return;
+
+      var bar = document.createElement('div');
+      bar.id = 'sugDashBulkBar';
+      bar.style.cssText = 'position:fixed;bottom:0;left:0;right:0;z-index:9999;background:#1a1d23;border-top:1px solid rgba(167,139,250,0.3);display:flex;align-items:center;gap:8px;padding:8px 16px;font-family:DM Mono,monospace;font-size:11px;color:#c4cdd8;';
+
+      var countEl = document.createElement('span');
+      countEl.textContent = ids.length + ' selected';
+      countEl.style.cssText = 'color:var(--accent3);font-weight:bold;';
+      bar.appendChild(countEl);
+
+      function bulkBtn(label, color, action) {
+        var b = document.createElement('button');
+        b.textContent = label;
+        b.style.cssText = 'background:' + color + '22;border:1px solid ' + color + '60;color:' + color + ';font-family:DM Mono,monospace;font-size:10px;padding:4px 12px;border-radius:4px;cursor:pointer;';
+        b.addEventListener('click', action);
+        return b;
+      }
+
+      bar.appendChild(bulkBtn('\u2713 Approve All', '#3fb950', function() {
+        if (!confirm('Approve ' + ids.length + ' suggestions?')) return;
+        ids.forEach(function(id) {
+          var s = suggestions.find(function(x) { return x.id === id; });
+          if (s && s.approval_status !== 'approved') approveSuggestion(s);
+        });
+        saveState();
+        selectedIds = {};
+        removeBulkBar();
+        openSuggestionDashboard();
+      }));
+
+      bar.appendChild(bulkBtn('\u23F8 Defer All', '#d29922', function() {
+        if (!confirm('Defer ' + ids.length + ' suggestions?')) return;
+        ids.forEach(function(id) {
+          var s = suggestions.find(function(x) { return x.id === id; });
+          if (s) { s.status = 'deferred'; s.approval_status = 'deferred'; }
+        });
+        saveState();
+        selectedIds = {};
+        removeBulkBar();
+        openSuggestionDashboard();
+      }));
+
+      bar.appendChild(bulkBtn('\u2717 Reject All', '#f85149', function() {
+        if (!confirm('Reject ' + ids.length + ' suggestions?')) return;
+        ids.forEach(function(id) {
+          var s = suggestions.find(function(x) { return x.id === id; });
+          if (s) { s.status = 'rejected'; s.approval_status = 'rejected'; }
+        });
+        saveState();
+        selectedIds = {};
+        removeBulkBar();
+        openSuggestionDashboard();
+      }));
+
+      bar.appendChild(bulkBtn('Cancel', '#8b949e', function() {
+        selectedIds = {};
+        removeBulkBar();
+        // Uncheck all checkboxes
+        document.querySelectorAll('.sug-dash-cb').forEach(function(cb) { cb.checked = false; });
+      }));
+
+      document.body.appendChild(bar);
+    }
 
     function buildItems(filter, priorityFilter, recoFilter) {
       var filtered = suggestions;
@@ -10152,8 +10271,63 @@ function openCoachPanel() {
       if (priorityFilter !== 'all') filtered = filtered.filter(function(s) { return s.triage_priority === priorityFilter; });
       if (recoFilter !== 'all') filtered = filtered.filter(function(s) { return s.triage_recommendation === recoFilter; });
 
+      // Apply quick filters (AND logic)
+      if (activeQuickFilters.pending) filtered = filtered.filter(function(s) { return s.approval_status === 'pending'; });
+      if (activeQuickFilters.reco_approve) filtered = filtered.filter(function(s) { return s.triage_recommendation === 'approve'; });
+      if (activeQuickFilters.high_urgent) filtered = filtered.filter(function(s) { return s.triage_priority === 'high' || s.triage_priority === 'urgent'; });
+      if (activeQuickFilters.has_photos) filtered = filtered.filter(function(s) { return s.attachments && s.attachments.length > 0; });
+      if (activeQuickFilters.approved_not_ingested) filtered = filtered.filter(function(s) {
+        if (s.approval_status !== 'approved') return false;
+        var hasHandoff = handoffs.some(function(h) { return h.suggestion_id === s.id; });
+        return !hasHandoff;
+      });
+
       var items = [];
-      // Status filter row
+
+      // ── Stats overview bar ──
+      var pendingC = suggestions.filter(function(s) { return s.approval_status === 'pending'; }).length;
+      var suggestedC = suggestions.filter(function(s) { return s.triage_recommendation === 'approve'; }).length;
+      var urgentC = suggestions.filter(function(s) { return s.triage_priority === 'urgent'; }).length;
+      var approvedC = suggestions.filter(function(s) { return s.approval_status === 'approved'; }).length;
+      var deferredC = suggestions.filter(function(s) { return s.approval_status === 'deferred'; }).length;
+      var rejectedC = suggestions.filter(function(s) { return s.approval_status === 'rejected'; }).length;
+
+      items.push({
+        isHeader: true,
+        label: '',
+        render: function(row) {
+          row.style.cssText = 'display:flex;gap:2px;flex-wrap:wrap;padding:6px 4px;background:rgba(0,0,0,0.3);border-radius:6px;margin-bottom:4px;';
+          var stats = [
+            { label: 'Pending', count: pendingC, color: '#8b949e', filterVal: 'pending' },
+            { label: '\u2726 Suggested', count: suggestedC, color: '#58a6ff', filterVal: null },
+            { label: '\uD83D\uDD34 Urgent', count: urgentC, color: '#f85149', filterVal: null },
+            { label: '\u2713 Approved', count: approvedC, color: '#3fb950', filterVal: 'approved' },
+            { label: '\u23F8 Deferred', count: deferredC, color: '#d29922', filterVal: 'deferred' },
+            { label: '\u2717 Rejected', count: rejectedC, color: '#f85149', filterVal: 'rejected' }
+          ];
+          stats.forEach(function(st) {
+            var chip = document.createElement('button');
+            chip.style.cssText = 'background:transparent;border:none;color:' + st.color + ';font-family:DM Mono,monospace;font-size:10px;padding:2px 6px;cursor:pointer;white-space:nowrap;';
+            chip.textContent = st.label + ': ' + st.count;
+            chip.addEventListener('click', function() {
+              if (st.filterVal) {
+                currentFilter = st.filterVal;
+                openSuggestionDashboard();
+              }
+            });
+            row.appendChild(chip);
+            // separator
+            if (st !== stats[stats.length - 1]) {
+              var sep = document.createElement('span');
+              sep.style.cssText = 'color:#333;font-size:10px;padding:2px 0;';
+              sep.textContent = '|';
+              row.appendChild(sep);
+            }
+          });
+        }
+      });
+
+      // ── Status filter row ──
       items.push({
         isHeader: true,
         label: '',
@@ -10166,19 +10340,19 @@ function openCoachPanel() {
             btn.style.cssText = 'background:' + (active ? 'rgba(167,139,250,0.2)' : 'rgba(255,255,255,0.04)') + ';border:1px solid ' + (active ? 'rgba(167,139,250,0.4)' : 'rgba(255,255,255,0.08)') + ';color:' + (active ? 'var(--accent3)' : '#8892a4') + ';font-family:DM Mono,monospace;font-size:10px;padding:3px 10px;border-radius:4px;cursor:pointer;';
             btn.addEventListener('click', function() {
               currentFilter = f;
-              openSuggestionQueue();
+              openSuggestionDashboard();
             });
             row.appendChild(btn);
           });
         }
       });
 
-      // Triage filter row (priority + recommendation)
+      // ── Triage filter row (priority + recommendation) ──
       items.push({
         isHeader: true,
         label: '',
         render: function(row) {
-          row.style.cssText = 'display:flex;gap:4px;flex-wrap:wrap;padding:0 0 10px;';
+          row.style.cssText = 'display:flex;gap:4px;flex-wrap:wrap;padding:0 0 4px;';
           var pLabel = document.createElement('span');
           pLabel.style.cssText = 'font-family:DM Mono,monospace;font-size:9px;color:#556;padding:3px 0;';
           pLabel.textContent = 'Priority:';
@@ -10190,7 +10364,7 @@ function openCoachPanel() {
             btn.style.cssText = 'background:' + (active ? 'rgba(167,139,250,0.2)' : 'rgba(255,255,255,0.04)') + ';border:1px solid ' + (active ? 'rgba(167,139,250,0.4)' : 'rgba(255,255,255,0.08)') + ';color:' + (active ? 'var(--accent3)' : '#8892a4') + ';font-family:DM Mono,monospace;font-size:10px;padding:3px 8px;border-radius:4px;cursor:pointer;';
             btn.addEventListener('click', function() {
               currentPriorityFilter = p;
-              openSuggestionQueue();
+              openSuggestionDashboard();
             });
             row.appendChild(btn);
           });
@@ -10208,13 +10382,45 @@ function openCoachPanel() {
             btn.style.cssText = 'background:' + (active ? 'rgba(167,139,250,0.2)' : 'rgba(255,255,255,0.04)') + ';border:1px solid ' + (active ? 'rgba(167,139,250,0.4)' : 'rgba(255,255,255,0.08)') + ';color:' + (active ? 'var(--accent3)' : '#8892a4') + ';font-family:DM Mono,monospace;font-size:10px;padding:3px 8px;border-radius:4px;cursor:pointer;';
             btn.addEventListener('click', function() {
               currentRecoFilter = r;
-              openSuggestionQueue();
+              openSuggestionDashboard();
             });
             row.appendChild(btn);
           });
         }
       });
 
+      // ── Quick filters row ──
+      items.push({
+        isHeader: true,
+        label: '',
+        render: function(row) {
+          row.style.cssText = 'display:flex;gap:4px;flex-wrap:wrap;padding:0 0 10px;';
+          var qLabel = document.createElement('span');
+          qLabel.style.cssText = 'font-family:DM Mono,monospace;font-size:9px;color:#556;padding:3px 0;';
+          qLabel.textContent = 'Quick:';
+          row.appendChild(qLabel);
+          var quickOpts = [
+            { key: 'pending', label: 'Pending only' },
+            { key: 'reco_approve', label: 'Reco: approve' },
+            { key: 'high_urgent', label: 'High/Urgent' },
+            { key: 'has_photos', label: 'Has photos' },
+            { key: 'approved_not_ingested', label: 'Approved !ingested' }
+          ];
+          quickOpts.forEach(function(qf) {
+            var btn = document.createElement('button');
+            var active = !!activeQuickFilters[qf.key];
+            btn.textContent = qf.label;
+            btn.style.cssText = 'background:' + (active ? 'rgba(167,139,250,0.2)' : 'rgba(255,255,255,0.04)') + ';border:1px solid ' + (active ? 'rgba(167,139,250,0.4)' : 'rgba(255,255,255,0.08)') + ';color:' + (active ? 'var(--accent3)' : '#8892a4') + ';font-family:DM Mono,monospace;font-size:9px;padding:2px 7px;border-radius:4px;cursor:pointer;';
+            btn.addEventListener('click', function() {
+              activeQuickFilters[qf.key] = !activeQuickFilters[qf.key];
+              openSuggestionDashboard();
+            });
+            row.appendChild(btn);
+          });
+        }
+      });
+
+      // ── Per-suggestion cards ──
       filtered.forEach(function(sug) {
         var clsColors = {bug:'#f85149', feature_request:'#58a6ff', improvement:'#e8ff47', unclear:'#8b949e'};
         var clsLabels = {bug:'Bug', feature_request:'Feature', improvement:'Improvement', unclear:'Unclear'};
@@ -10226,11 +10432,34 @@ function openCoachPanel() {
         var recoColor = recoColors[sug.triage_recommendation] || '#8b949e';
         var prioColor = priorityColors[sug.triage_priority] || '#8b949e';
         var confDots = sug.triage_confidence === 'high' ? '\u2B24\u2B24\u2B24' : sug.triage_confidence === 'medium' ? '\u2B24\u2B24\u25CB' : '\u2B24\u25CB\u25CB';
+        var dupes = findDuplicates(sug, suggestions);
+        var sugHandoff = handoffs.find(function(h) { return h.suggestion_id === sug.id; });
 
         items.push({
           label: '',
           render: function(row) {
+            row.id = 'sug-card-' + sug.id;
             row.style.cssText = 'display:flex;flex-direction:column;gap:4px;padding:8px;border-bottom:1px solid rgba(255,255,255,0.04);';
+
+            // ── Checkbox + top row wrapper ──
+            var topWrapper = document.createElement('div');
+            topWrapper.style.cssText = 'display:flex;align-items:flex-start;gap:6px;';
+            var cb = document.createElement('input');
+            cb.type = 'checkbox';
+            cb.className = 'sug-dash-cb';
+            cb.checked = !!selectedIds[sug.id];
+            cb.style.cssText = 'margin-top:2px;cursor:pointer;accent-color:var(--accent3);';
+            cb.addEventListener('change', function(e) {
+              e.stopPropagation();
+              selectedIds[sug.id] = cb.checked;
+              if (!cb.checked) delete selectedIds[sug.id];
+              renderBulkBar();
+            });
+            topWrapper.appendChild(cb);
+
+            var topInner = document.createElement('div');
+            topInner.style.cssText = 'flex:1;display:flex;flex-direction:column;gap:4px;';
+
             // Top row: ID + timestamp + classification badge + status
             var topRow = document.createElement('div');
             topRow.style.cssText = 'display:flex;align-items:center;gap:6px;flex-wrap:wrap;';
@@ -10250,7 +10479,60 @@ function openCoachPanel() {
             statusChip.style.cssText = 'font-family:DM Mono,monospace;font-size:9px;padding:1px 6px;border-radius:3px;color:#fff;background:' + statusColor + ';margin-left:auto;';
             statusChip.textContent = sug.approval_status;
             topRow.appendChild(statusChip);
-            row.appendChild(topRow);
+            topInner.appendChild(topRow);
+
+            // ── Lifecycle indicator ──
+            var lcRow = document.createElement('div');
+            lcRow.style.cssText = 'display:flex;align-items:center;gap:0;font-family:DM Mono,monospace;font-size:8px;color:#556;';
+            var lcSteps = [
+              { label: 'submitted', done: true },
+              { label: 'triaged', done: !!sug.triage_created_at },
+              { label: 'approved', done: sug.approval_status === 'approved' },
+              { label: 'handoff', done: !!sugHandoff },
+              { label: 'ingested', done: !!sugHandoff }
+            ];
+            lcSteps.forEach(function(step, i) {
+              var stepEl = document.createElement('span');
+              stepEl.style.cssText = 'display:flex;flex-direction:column;align-items:center;gap:0;padding:0 3px;';
+              var dot = document.createElement('span');
+              dot.style.cssText = 'font-size:7px;color:' + (step.done ? '#3fb950' : '#444') + ';';
+              dot.textContent = step.done ? '\u25CF' : '\u25CB';
+              stepEl.appendChild(dot);
+              var lbl = document.createElement('span');
+              lbl.style.cssText = 'font-size:7px;color:#444;';
+              lbl.textContent = step.label;
+              stepEl.appendChild(lbl);
+              lcRow.appendChild(stepEl);
+              if (i < lcSteps.length - 1) {
+                var arrow = document.createElement('span');
+                arrow.style.cssText = 'color:#333;font-size:7px;padding:0 1px;margin-bottom:8px;';
+                arrow.textContent = '\u2192';
+                lcRow.appendChild(arrow);
+              }
+            });
+            topInner.appendChild(lcRow);
+
+            // ── Duplicate badge ──
+            if (dupes.length > 0) {
+              var dupeRow = document.createElement('div');
+              dupeRow.style.cssText = 'display:flex;align-items:center;gap:4px;flex-wrap:wrap;';
+              var dupeBadge = document.createElement('span');
+              dupeBadge.style.cssText = 'font-family:DM Mono,monospace;font-size:8px;padding:1px 5px;border-radius:3px;color:#fff;background:#c47e1a;';
+              dupeBadge.textContent = '\u26A0 Possible duplicate';
+              dupeRow.appendChild(dupeBadge);
+              dupes.forEach(function(dupeId) {
+                var link = document.createElement('span');
+                link.style.cssText = 'font-family:DM Mono,monospace;font-size:8px;color:#58a6ff;cursor:pointer;text-decoration:underline;';
+                link.textContent = dupeId;
+                link.addEventListener('click', function(e) {
+                  e.stopPropagation();
+                  var target = document.getElementById('sug-card-' + dupeId);
+                  if (target) target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                });
+                dupeRow.appendChild(link);
+              });
+              topInner.appendChild(dupeRow);
+            }
 
             // Triage row: recommendation + priority + confidence + area + effort + risk
             var triageRow = document.createElement('div');
@@ -10282,21 +10564,21 @@ function openCoachPanel() {
             riskChip.style.cssText = 'font-family:DM Mono,monospace;font-size:8px;padding:1px 5px;border-radius:3px;color:' + riskColor + ';background:rgba(255,255,255,0.04);';
             riskChip.textContent = 'risk:' + (sug.triage_risk || 'low');
             triageRow.appendChild(riskChip);
-            row.appendChild(triageRow);
+            topInner.appendChild(triageRow);
 
             // Triage reason
             if (sug.triage_reason) {
               var reasonEl = document.createElement('div');
               reasonEl.style.cssText = 'font-family:DM Mono,monospace;font-size:9px;color:#6a7280;font-style:italic;line-height:1.3;';
               reasonEl.textContent = sug.triage_reason;
-              row.appendChild(reasonEl);
+              topInner.appendChild(reasonEl);
             }
 
             // Message
             var msgEl = document.createElement('div');
             msgEl.style.cssText = 'font-family:DM Mono,monospace;font-size:11px;color:#c4cdd8;line-height:1.4;';
             msgEl.textContent = sug.message_text.length > 80 ? sug.message_text.substring(0, 80) + '...' : sug.message_text;
-            row.appendChild(msgEl);
+            topInner.appendChild(msgEl);
             // Attachment thumbnails
             if (sug.attachments && sug.attachments.length > 0) {
               var thumbRow = document.createElement('div');
@@ -10320,7 +10602,7 @@ function openCoachPanel() {
                 });
                 thumbRow.appendChild(thumb);
               });
-              row.appendChild(thumbRow);
+              topInner.appendChild(thumbRow);
             }
             // Action buttons
             var actRow = document.createElement('div');
@@ -10337,38 +10619,26 @@ function openCoachPanel() {
             }
             var approveLabel = sug.triage_recommendation === 'approve' ? '\u2726 Approve (suggested)' : 'Approve';
             actRow.appendChild(makeBtn(approveLabel, '#3fb950', function() {
-              sug.status = 'approved';
-              sug.approval_status = 'approved';
-              // Write handoff
-              if (!STATE.suggestion_handoffs) STATE.suggestion_handoffs = [];
-              STATE.suggestion_handoffs.push({
-                suggestion_id: sug.id,
-                approved_at: new Date().toISOString(),
-                approved_by: 'owner',
-                normalized_summary: sug.normalized_summary,
-                source_page: sug.page_or_surface,
-                original_message: sug.message_text,
-                classification: sug.classification,
-                severity_guess: sug.severity_guess,
-                attachments: sug.attachments ? sug.attachments.map(function(a) { return { name: a.name }; }) : [],
-                automation_status: 'pending_audit'
-              });
+              approveSuggestion(sug);
               saveState();
-              openSuggestionQueue();
+              openSuggestionDashboard();
             }));
             actRow.appendChild(makeBtn('Reject', '#f85149', function() {
               sug.status = 'rejected';
               sug.approval_status = 'rejected';
               saveState();
-              openSuggestionQueue();
+              openSuggestionDashboard();
             }));
             actRow.appendChild(makeBtn('Defer', '#d29922', function() {
               sug.status = 'deferred';
               sug.approval_status = 'deferred';
               saveState();
-              openSuggestionQueue();
+              openSuggestionDashboard();
             }));
-            row.appendChild(actRow);
+            topInner.appendChild(actRow);
+
+            topWrapper.appendChild(topInner);
+            row.appendChild(topWrapper);
           }
         });
       });
@@ -10382,8 +10652,9 @@ function openCoachPanel() {
 
     var items = buildItems(currentFilter, currentPriorityFilter, currentRecoFilter);
     var pendingCount = suggestions.filter(function(s) { return s.approval_status === 'pending'; }).length;
-    openListPanel('Suggestion Queue (' + suggestions.length + (pendingCount > 0 ? ', ' + pendingCount + ' pending' : '') + ')', items);
+    openListPanel('Suggestion Dashboard (' + suggestions.length + (pendingCount > 0 ? ', ' + pendingCount + ' pending' : '') + ')', items);
   }
+  var openSuggestionQueue = openSuggestionDashboard;
 
   function openGameSummary() {
     var prog = STATE.progress || {};
