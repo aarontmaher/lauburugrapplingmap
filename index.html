@@ -642,7 +642,7 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
       <div style="font-size:9px;color:#556;letter-spacing:1px;text-transform:uppercase;padding:6px 14px 2px;">Progress</div>
       <button id="menuGameSummaryBtn" style="display:block;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Game Summary</button>
       <button id="menuSuggestionsBtn" style="display:none;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Suggestions</button>
-      <button id="menuAIOpsBtn" style="display:none;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">AI Ops</button>
+      <button id="menuAIOpsBtn" style="display:none;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Control Centre</button>
       <button id="menuProgressBtn" style="display:block;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Dashboard</button>
       <button id="menuExportBtn" style="display:block;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Export</button>
       <button id="menuImportBtn" style="display:block;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Import</button>
@@ -655,6 +655,7 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
     </div>
   </div>
 </header>
+<!-- SECTION: Keyboard Help Panel [OWNER: claude_code — presentation] -->
 <!-- ── Keyboard shortcuts help panel ── -->
 <div id="kbdHelpPanel" role="dialog" aria-modal="true" aria-label="Keyboard shortcuts" style="display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(14,16,21,0.97);border:1px solid rgba(255,255,255,0.08);border-radius:10px;z-index:1000;font-family:'DM Mono',monospace;font-size:12px;color:#8892a4;padding:24px 28px;-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);box-shadow:0 12px 48px rgba(0,0,0,0.6);min-width:280px;">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
@@ -675,7 +676,7 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
     <kbd style="background:#1a1e28;border:1px solid #2a3040;border-radius:3px;padding:2px 6px;font-size:10px;color:var(--text-dim);">J</kbd><span>Sparring Journal</span>
     <kbd style="background:#1a1e28;border:1px solid #2a3040;border-radius:3px;padding:2px 6px;font-size:10px;color:var(--text-dim);">C</kbd><span>Coach Mode</span>
     <kbd style="background:#1a1e28;border:1px solid #2a3040;border-radius:3px;padding:2px 6px;font-size:10px;color:var(--text-dim);">G</kbd><span>Toggle Reference ↔ Network</span>
-    <kbd style="background:#1a1e28;border:1px solid #2a3040;border-radius:3px;padding:2px 6px;font-size:10px;color:var(--text-dim);">O</kbd><span>AI Ops Control Centre</span>
+    <kbd style="background:#1a1e28;border:1px solid #2a3040;border-radius:3px;padding:2px 6px;font-size:10px;color:var(--text-dim);">O</kbd><span>Control Centre</span>
     <kbd style="background:#1a1e28;border:1px solid #2a3040;border-radius:3px;padding:2px 6px;font-size:10px;color:var(--text-dim);">?</kbd><span>Toggle this help panel</span>
   </div>
 </div>
@@ -5423,7 +5424,7 @@ document.addEventListener('keydown', e => {
   if (e.key === 'j' && !inInput) { document.getElementById('menuJournalBtn').click(); }
   // C: coach mode
   if (e.key === 'c' && !inInput) { document.getElementById('menuCoachBtn').click(); }
-  // O: AI Ops Control Centre
+  // O: Control Centre
   if (e.key === 'o' && !inInput) { var ob = document.getElementById('menuAIOpsBtn'); if (ob) ob.click(); }
   // ?: toggle help panel
   if (e.key === '?' && !inInput) {
@@ -5480,7 +5481,7 @@ document.addEventListener('keydown', e => {
     // Show Suggestions button for members only
     var sugBtn = document.getElementById('menuSuggestionsBtn');
     if (sugBtn) sugBtn.style.display = (showing && typeof isMember === 'function' && isMember()) ? 'block' : 'none';
-    // Show AI Ops button for members only
+    // Show Control Centre button for members only
     var opsBtn = document.getElementById('menuAIOpsBtn');
     if (opsBtn) opsBtn.style.display = (showing && typeof isMember === 'function' && isMember()) ? 'block' : 'none';
   });
@@ -7948,6 +7949,7 @@ _log('[GrapplingMap] Debug API ready: window.__APP_DEBUG__');
   updateAuthUI();
 })();
 
+// SECTION: Suggestion Intake [OWNER: codex — structural logic, claude_code — copy/labels]
 // ─── SUGGESTION INTAKE ──────────────────────────────────────────────────────
 function classifySuggestion(text) {
   var t = text.toLowerCase();
@@ -8112,6 +8114,7 @@ function captureSuggestion(text, attachments) {
   return suggestion;
 }
 
+// SECTION: AI Coach Actions [OWNER: shared — claude_code: modes/copy, codex: routing]
 // ─── AI ACTIONS (local-only smart assistant) ────────────────────────────────
 var AIActions = {
   whatToDrill: function() {
@@ -8313,6 +8316,7 @@ var AIActions = {
   }
 };
 
+// SECTION: Suggestion Modal [OWNER: codex — structure, claude_code — copy/presentation]
 function openSuggestionModal(prefillText) {
   var pendingAttachments = [];
   var overlay = document.createElement('div');
@@ -8332,7 +8336,7 @@ function openSuggestionModal(prefillText) {
 
   var textarea = document.createElement('textarea');
   textarea.style.cssText = 'width:100%;min-height:100px;background:var(--bg);border:1px solid var(--border);border-radius:4px;color:var(--text);font-family:DM Mono,monospace;font-size:11px;padding:10px;resize:vertical;box-sizing:border-box;';
-  textarea.placeholder = 'Describe your suggestion, bug, or idea...';
+  textarea.placeholder = 'Describe a bug, idea, or improvement...';
   if (prefillText) textarea.value = prefillText;
   modal.appendChild(textarea);
 
@@ -8455,7 +8459,7 @@ function openSuggestionModal(prefillText) {
     if (!text) { showToast('Please describe your suggestion'); return; }
     var sug = captureSuggestion(text, pendingAttachments);
     var clsLabel = {bug:'\uD83D\uDD34 Bug', feature_request:'\uD83D\uDD35 Feature', improvement:'\uD83D\uDFE1 Improvement', unclear:'\u26AA Feedback'}[sug.classification] || 'Feedback';
-    renderResponse({ title: 'Suggestion captured \u2713', body: clsLabel + '\n' + sug.normalized_summary + (pendingAttachments.length > 0 ? '\n' + pendingAttachments.length + ' photo(s) attached' : '') + '\n\nSaved as ' + sug.id });
+    renderResponse({ title: 'Feedback received \u2713', body: clsLabel + '\n' + sug.normalized_summary + (pendingAttachments.length > 0 ? '\n' + pendingAttachments.length + ' photo(s) attached' : '') + '\n\nSaved as ' + sug.id });
     closeModal();
   });
 
@@ -10148,7 +10152,7 @@ function openCoachPanel() {
     openSuggestionDashboard();
   });
 
-  // AI Ops dashboard (member-only)
+  // Control Centre (member-only)
   document.getElementById('menuAIOpsBtn').addEventListener('click', function() {
     document.getElementById('headerMenu').style.display = 'none';
     openAIOpsDashboard();
@@ -10195,6 +10199,7 @@ function openCoachPanel() {
     });
   }
 
+  // SECTION: Suggestion Review Dashboard [OWNER: codex — logic/actions, claude_code — copy/empty-states]
   function openSuggestionDashboard() {
     var suggestions = (STATE.suggestions || []).slice().sort(triagePrioritySort);
     var handoffs = STATE.suggestion_handoffs || [];
@@ -10675,7 +10680,7 @@ function openCoachPanel() {
   var openSuggestionQueue = openSuggestionDashboard;
 
   // ═══════════════════════════════════════════════════════════════════════════
-  // AI Ops Control Centre — full operational control dashboard
+  // Control Centre — full operational control dashboard
   // ═══════════════════════════════════════════════════════════════════════════
 
   // ── updateWorkStatus: merge updates into STATE.workStatus for an agent ──
@@ -10709,6 +10714,7 @@ function openCoachPanel() {
     return 'TASK-' + String(maxNum + 1).padStart(2, '0');
   }
 
+  // SECTION: Control Centre [OWNER: codex — structural logic/gating, claude_code — CSS/polish/mobile]
   function openAIOpsDashboard() {
     // ── Data Adapters (isolate from rendering for future MCP swap) ──
     function getWorkStatus() {
@@ -10793,8 +10799,9 @@ function openCoachPanel() {
     overlay.className = 'ops-dashboard';
     overlay.setAttribute('role', 'dialog');
     overlay.setAttribute('aria-modal', 'true');
-    overlay.setAttribute('aria-label', 'AI Ops Control Centre');
+    overlay.setAttribute('aria-label', 'Control Centre');
 
+    // SECTION: Control Centre Styles [OWNER: claude_code — presentation only]
     // ── CSS (inject once) ──
     if (!document.getElementById('aiOpsDashboardStyles')) {
       var styleEl = document.createElement('style');
@@ -10850,7 +10857,7 @@ function openCoachPanel() {
     titleWrap.style.cssText = 'display:flex;align-items:center;gap:8px;';
     var titleEl = document.createElement('span');
     titleEl.style.cssText = 'font-size:14px;color:var(--accent);letter-spacing:2px;text-transform:uppercase;font-weight:600;';
-    titleEl.textContent = 'AI Ops Control Centre';
+    titleEl.textContent = 'Control Centre';
     titleWrap.appendChild(titleEl);
     if (waitingCount > 0) {
       var waitBadge = document.createElement('span');
@@ -10861,8 +10868,8 @@ function openCoachPanel() {
     }
     header.appendChild(titleWrap);
     var closeBtn = document.createElement('button');
-    closeBtn.setAttribute('aria-label', 'Close AI Ops Dashboard');
-    closeBtn.style.cssText = 'background:none;border:none;color:#8892a4;font-size:20px;cursor:pointer;padding:4px 8px;';
+    closeBtn.setAttribute('aria-label', 'Close');
+    closeBtn.style.cssText = 'background:none;border:none;color:#8892a4;font-size:20px;cursor:pointer;padding:4px 8px;min-width:24px;min-height:24px;display:flex;align-items:center;justify-content:center;';
     closeBtn.textContent = '\u00D7';
     closeBtn.addEventListener('click', closeDashboard);
     header.appendChild(closeBtn);
@@ -10911,19 +10918,19 @@ function openCoachPanel() {
       ];
       details.forEach(function(d) {
         var line = document.createElement('div');
-        line.style.cssText = 'font-size:10px;color:#6a7280;line-height:1.6;';
+        line.style.cssText = 'font-size:10px;color:#6a7280;line-height:1.6;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%;';
         line.textContent = d.label + ': ' + d.value;
         card.appendChild(line);
       });
       if (agent.summary) {
         var sumLine = document.createElement('div');
-        sumLine.style.cssText = 'font-size:10px;color:#556;line-height:1.4;margin-top:2px;font-style:italic;';
+        sumLine.style.cssText = 'font-size:10px;color:#556;line-height:1.4;margin-top:2px;font-style:italic;word-break:break-word;';
         sumLine.textContent = 'Summary: ' + (agent.summary.length > 60 ? agent.summary.substring(0, 60) + '...' : agent.summary);
         card.appendChild(sumLine);
       }
       if (agent.blockers) {
         var blockerLine = document.createElement('div');
-        blockerLine.style.cssText = 'font-size:10px;color:#f85149;line-height:1.4;margin-top:2px;';
+        blockerLine.style.cssText = 'font-size:10px;color:#f85149;line-height:1.4;margin-top:2px;word-break:break-word;';
         blockerLine.textContent = 'Blocker: ' + agent.blockers;
         card.appendChild(blockerLine);
       }
@@ -11257,7 +11264,7 @@ function openCoachPanel() {
     if (displaySugs.length === 0) {
       var emptyMsg = document.createElement('div');
       emptyMsg.style.cssText = 'font-size:11px;color:#556;text-align:center;padding:16px 0;';
-      emptyMsg.textContent = 'No suggestions yet.';
+      emptyMsg.textContent = 'No feedback yet. Suggestions from users and testers appear here.';
       sugList.appendChild(emptyMsg);
     }
     displaySugs.forEach(function(sug) {
@@ -11488,7 +11495,7 @@ function openCoachPanel() {
         sumLabel.textContent = 'Summary';
         sumSec.appendChild(sumLabel);
         var sumText = document.createElement('div');
-        sumText.style.cssText = 'font-size:10px;color:#c4cdd8;line-height:1.4;';
+        sumText.style.cssText = 'font-size:10px;color:#c4cdd8;line-height:1.4;word-break:break-word;';
         sumText.textContent = agent.summary;
         sumSec.appendChild(sumText);
         panel.appendChild(sumSec);
@@ -11951,10 +11958,10 @@ function openCoachPanel() {
     feedEvents = feedEvents.slice(0, 15);
 
     if (feedEvents.length === 0) {
-      var noFeed = document.createElement('div');
-      noFeed.style.cssText = 'font-size:10px;color:#556;';
-      noFeed.textContent = 'No recent activity.';
-      feedSection.appendChild(noFeed);
+      var emptyFeed = document.createElement('div');
+      emptyFeed.style.cssText = 'font-size:11px;color:#556;text-align:center;padding:16px 0;';
+      emptyFeed.textContent = 'No recent activity';
+      feedSection.appendChild(emptyFeed);
     }
 
     feedEvents.forEach(function(ev) {
@@ -12544,7 +12551,7 @@ function openCoachPanel() {
     removeFocusTrap = trapFocus(overlay);
 
     // Screen reader announce
-    srAnnounce('AI Ops Control Centre opened');
+    srAnnounce('Control Centre opened');
 
     // Focus close button
     closeBtn.focus();
@@ -12717,6 +12724,7 @@ function openCoachPanel() {
 
 // ── Guest Onboarding Tutorial ──────────────────────────────────────────
 (function() {
+  // SECTION: Tutorial System [OWNER: claude_code]
   var TUTORIAL_VERSION = 2;
   var TUTORIAL_STEPS = [
     {
