@@ -443,7 +443,9 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
 .cc-panel-meta { font-size:12px; color:var(--text-muted); line-height:1.45; }
 .cc-panel-body { padding:14px; overflow:auto; min-height:0; }
 .cc-panel-body.tight { padding:12px; }
+.cc-panel, .cc-panel-body, .cc-detail-card, .cc-empty-copy, .cc-detail-copy, .cc-activity-copy, .cc-agent-meta > span, .cc-inline-meta > span { overflow-wrap:anywhere; word-break:break-word; }
 .cc-pill { display:inline-flex; align-items:center; gap:6px; padding:7px 11px; border-radius:999px; border:1px solid rgba(255,255,255,0.08); background:rgba(255,255,255,0.03); font-size:12px; color:var(--text-dim); white-space:nowrap; }
+.cc-topbar-meta .cc-pill { max-width:100%; overflow:hidden; text-overflow:ellipsis; }
 .cc-badge-row { display:flex; flex-wrap:wrap; gap:6px; }
 .cc-status { display:inline-flex; align-items:center; gap:6px; padding:5px 10px; border-radius:999px; font-family:'Barlow Condensed',sans-serif; font-size:12px; letter-spacing:0.8px; text-transform:uppercase; }
 .cc-status::before { content:''; width:7px; height:7px; border-radius:50%; background:currentColor; }
@@ -495,6 +497,16 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
 .cc-task-meta { display:flex; flex-wrap:wrap; gap:7px 12px; margin-top:7px; min-width:0; font-size:11px; color:var(--text-muted); }
 .cc-task-meta span { min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .cc-task-id { font-family:'DM Mono',monospace; font-size:10px; color:#7f8ba3; white-space:nowrap; }
+.cc-assignment-banner { margin-top:10px; padding:10px 12px; border-radius:12px; border:1px solid rgba(232,255,71,0.18); background:rgba(232,255,71,0.08); display:flex; align-items:center; justify-content:space-between; gap:10px; }
+.cc-assignment-label { font-family:'Barlow Condensed',sans-serif; font-size:12px; letter-spacing:1px; text-transform:uppercase; color:#aab684; }
+.cc-assignment-value { font-family:'Barlow Condensed',sans-serif; font-size:18px; letter-spacing:0.4px; color:var(--text); }
+.cc-pipeline-grid { display:grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap:10px; }
+.cc-pipeline-progress { display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:8px; margin-top:12px; }
+.cc-pipeline-step { padding:10px 11px; border-radius:12px; border:1px solid rgba(255,255,255,0.06); background:rgba(255,255,255,0.02); min-width:0; }
+.cc-pipeline-step.active { border-color:rgba(232,255,71,0.28); background:rgba(232,255,71,0.07); box-shadow:0 0 0 1px rgba(232,255,71,0.1) inset; }
+.cc-pipeline-step.done { border-color:rgba(52,211,153,0.28); background:rgba(52,211,153,0.08); }
+.cc-pipeline-step-label { font-size:11px; letter-spacing:1px; text-transform:uppercase; color:var(--text-muted); }
+.cc-pipeline-step-value { font-family:'Barlow Condensed',sans-serif; font-size:14px; color:var(--text); margin-top:5px; line-height:1.35; }
 .cc-detail-grid { display:grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap:10px; margin-top:12px; }
 .cc-detail-card { border:1px solid rgba(255,255,255,0.06); border-radius:12px; padding:12px; background:rgba(255,255,255,0.02); }
 .cc-detail-card h4 { font-family:'Barlow Condensed',sans-serif; font-size:14px; letter-spacing:1.1px; text-transform:uppercase; color:var(--text-muted); margin-bottom:7px; }
@@ -686,7 +698,7 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
   .cc-col { min-height:auto; }
   .cc-panel-body { overflow:visible; }
   #controlCentreView { overflow:auto; }
-  .cc-queue-grid, .cc-detail-grid { grid-template-columns:1fr; }
+  .cc-queue-grid, .cc-detail-grid, .cc-pipeline-grid, .cc-pipeline-progress { grid-template-columns:1fr; }
   .cc-agent-card, .cc-suggestion-card, .cc-queue-card, .cc-activity-card { padding:14px; }
   .cc-task-row { padding:13px; }
   .cc-task-head { flex-direction:column; align-items:flex-start; }
@@ -698,6 +710,8 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
   .cc-topbar-kicker, .cc-mobile-nav-btn, .cc-env-pill { font-size:11px; }
   .cc-agent-meta, .cc-inline-meta, .cc-task-meta, .cc-task-id { font-size:11px; }
   .cc-agent-mono { font-size:10px; }
+  .cc-assignment-banner { align-items:flex-start; flex-direction:column; }
+  .cc-assignment-value { font-size:16px; }
 }
 
 /* Diagnostics panel */
@@ -938,6 +952,7 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
     <kbd style="background:#1a1e28;border:1px solid #2a3040;border-radius:3px;padding:2px 6px;font-size:10px;color:var(--text-dim);">W</kbd><span>Recently Watched</span>
     <kbd style="background:#1a1e28;border:1px solid #2a3040;border-radius:3px;padding:2px 6px;font-size:10px;color:var(--text-dim);">J</kbd><span>Sparring Journal</span>
     <kbd style="background:#1a1e28;border:1px solid #2a3040;border-radius:3px;padding:2px 6px;font-size:10px;color:var(--text-dim);">C</kbd><span>Coach Mode</span>
+    <kbd style="background:#1a1e28;border:1px solid #2a3040;border-radius:3px;padding:2px 6px;font-size:10px;color:var(--text-dim);">O</kbd><span>Open Control Centre</span>
     <kbd style="background:#1a1e28;border:1px solid #2a3040;border-radius:3px;padding:2px 6px;font-size:10px;color:var(--text-dim);">G</kbd><span>Toggle Reference ↔ Network</span>
     <kbd style="background:#1a1e28;border:1px solid #2a3040;border-radius:3px;padding:2px 6px;font-size:10px;color:var(--text-dim);">?</kbd><span>Toggle this help panel</span>
   </div>
@@ -4039,12 +4054,27 @@ function ccRenderWorkQueue(snapshot) {
 }
 
 function ccRenderPipeline(snapshot) {
+  var phase = String(snapshot.pipelineSummary.currentPhase || 'triage').toLowerCase();
+  var loopValue = snapshot.automation && snapshot.automation.loop != null ? snapshot.automation.loop : '—';
+  var phaseSteps = [
+    { key: 'triage', label: 'Triage', copy: 'Suggestions reviewed and routed' },
+    { key: 'implementation', label: 'Implementation', copy: 'Approved work moving through handoff and preview' },
+    { key: 'verification', label: 'Verification', copy: 'Preview results and checks being confirmed' }
+  ];
   document.getElementById('ccPipelineSummary').innerHTML =
-    '<div class="cc-detail-grid">' +
+    '<div class="cc-pipeline-grid">' +
+      '<div class="cc-detail-card"><h4>Loop</h4><p>' + ccEscape(loopValue) + '</p></div>' +
       '<div class="cc-detail-card"><h4>Current Phase</h4><p>' + ccEscape(snapshot.pipelineSummary.currentPhase) + '</p></div>' +
       '<div class="cc-detail-card"><h4>Handoff Count</h4><p>' + ccEscape(snapshot.pipelineSummary.handoffCount) + '</p></div>' +
-      '<div class="cc-detail-card"><h4>Preview Ready</h4><p>' + ccEscape(snapshot.pipelineSummary.previewReadyCount) + '</p></div>' +
-      '<div class="cc-detail-card"><h4>Verification Ready</h4><p>' + ccEscape(snapshot.pipelineSummary.verificationReadyCount) + '</p></div>' +
+      '<div class="cc-detail-card"><h4>Preview / Verify</h4><p>' + ccEscape(snapshot.pipelineSummary.previewReadyCount) + ' preview-ready<br>' + ccEscape(snapshot.pipelineSummary.verificationReadyCount) + ' verify-ready</p></div>' +
+    '</div>' +
+    '<div class="cc-pipeline-progress">' +
+      phaseSteps.map(function(step) {
+        var stateClass = step.key === phase ? ' active' : '';
+        if ((phase === 'implementation' || phase === 'verification') && step.key === 'triage') stateClass = ' done';
+        if (phase === 'verification' && step.key === 'implementation') stateClass = ' done';
+        return '<div class="cc-pipeline-step' + stateClass + '"><div class="cc-pipeline-step-label">' + ccEscape(step.label) + '</div><div class="cc-pipeline-step-value">' + ccEscape(step.copy) + '</div></div>';
+      }).join('') +
     '</div>' +
     '<div class="cc-footer-note" style="margin-top:10px;">Handoff summary: ' + ccEscape(snapshot.handoff.current_state || 'No handoff summary yet') + '.</div>';
 }
@@ -4100,6 +4130,7 @@ function ccRenderDetail(snapshot) {
   }
   meta.textContent = item.id;
   root.innerHTML = '<div class="cc-detail-head"><div><div class="cc-detail-title">' + ccEscape(item.title) + '</div><div class="cc-detail-copy">' + ccEscape(item.fullText) + '</div></div><span class="cc-status ' + ccEscape(item.approvalStatus === 'approved' ? 'done' : item.approvalStatus === 'pending' ? 'waiting' : item.approvalStatus) + '">' + ccEscape(ccPrettyStatus(item.approvalStatus)) + '</span></div>' +
+    '<div class="cc-assignment-banner"><div><div class="cc-assignment-label">Assigned To</div><div class="cc-assignment-value">' + ccEscape(CONTROL_AGENT_LABELS[item.assignedAI] || item.assignedAI) + '</div></div><span class="cc-status ' + ccEscape(item.lifecycleStage === 'blocked' ? 'blocked' : item.lifecycleStage === 'ready_for_preview' || item.lifecycleStage === 'verify_ready' ? 'ready' : item.lifecycleStage === 'in_progress' ? 'in_progress' : 'waiting') + '">' + ccEscape(ccPrettyStatus(item.lifecycleStage)) + '</span></div>' +
     '<div class="cc-badge-row" style="margin-top:10px;">' +
       ccBadge('triage: ' + item.recommendation) +
       ccBadge('priority: ' + item.priority) +
@@ -6610,6 +6641,8 @@ document.addEventListener('keydown', e => {
   if (e.key === 'j' && !inInput) { document.getElementById('menuJournalBtn').click(); }
   // C: coach mode
   if (e.key === 'c' && !inInput) { document.getElementById('menuCoachBtn').click(); }
+  // O: open Control Centre
+  if (e.key === 'o' && !inInput) { switchToTab('controlcentre'); }
   // ?: toggle help panel
   if (e.key === '?' && !inInput) {
     var hp = document.getElementById('kbdHelpPanel');
