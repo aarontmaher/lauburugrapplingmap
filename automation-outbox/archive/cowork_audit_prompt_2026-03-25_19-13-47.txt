@@ -1,6 +1,6 @@
 Read and align to PROJECT_STATE.md, DECISIONS.md, WORKFLOW_RULES.md, AUTOMATION_NEXT.md.
 
-GOAL: Audit the new compact AI Coach widget on the live site at aarontmaher.github.io/Chat-gpt/
+GOAL: Audit the new compact AI Coach widget on the live site at https://www.lauburugrapplingmap.com/
 
 LATEST CHANGE: AI Coach moved from full-width bottom sheet to compact 320px docked widget in bottom-right corner. Toggle button is 🤖 in bottom-right.
 

@@ -1,4 +1,4 @@
-Review the current GrapplingMap product at aarontmaher.github.io/Chat-gpt/ focusing on the new compact AI Coach widget.
+Review the current GrapplingMap product at https://www.lauburugrapplingmap.com/ focusing on the new compact AI Coach widget.
 
 LATEST CHANGE:
 The AI Coach panel was redesigned from a full-width bottom sheet to a compact docked widget in the bottom-right corner (320px wide, 400px max height). Toggle button is a small 🤖 square in bottom-right.

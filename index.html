@@ -17,6 +17,7 @@
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://www.lauburugrapplingmap.com/">
 <meta property="og:image" content="https://www.lauburugrapplingmap.com/icon-512.png">
+<link rel="canonical" href="https://www.lauburugrapplingmap.com/">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -81,6 +82,7 @@
 
   try {
     if (window.top === window.self && target !== window.location.href) {
+      try { window.stop(); } catch (stopError) {}
       window.location.replace(target);
     } else {
       showBlockedState();
@@ -121,6 +123,7 @@ button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); ou
 :focus:not(:focus-visible) { outline: none; }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; } }
 body { background: var(--bg); color: var(--text); font-family: 'DM Mono', monospace; margin: 0; height: 100vh; height: 100dvh; display: flex; flex-direction: column; overflow: hidden; padding: env(safe-area-inset-top) env(safe-area-inset-right) 0 env(safe-area-inset-left); -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; overscroll-behavior: none; }
+[data-origin-guard="redirecting"] body > *:not(#gmOriginGuard) { display: none !important; }
 [data-origin-guard="blocked"] body > *:not(#gmOriginGuard) { display: none !important; }
 .node-label, .node-content, #g3dDetailBody, .technique-breadcrumb { -webkit-user-select: text; user-select: text; }
 .sections, #g3dDetailBody { -webkit-overflow-scrolling: touch; scroll-behavior: smooth; }

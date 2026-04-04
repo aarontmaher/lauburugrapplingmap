@@ -1,12 +1,43 @@
 # GrapplingMap — CLAUDE.md
 # Single source of truth for all agents (Chat/Cowork/Code/Aaron/ChatGPT).
 # Update after every major decision or state change. Read at start of every session.
-# Last updated: 2026-03-20
+# Last updated: 2026-04-03
+---
+## CURRENT PROJECT GUIDANCE (AUTHORITATIVE)
+
+Use GrapplingMap MCP as the source of truth for shared project state.
+
+- Website: https://www.lauburugrapplingmap.com
+- MCP: https://mcp.lauburugrapplingmap.com/mcp
+- MCP is the canonical backend.
+- Website is the human-facing control centre.
+
+Before planning, auditing, or coordinating work, check in this order:
+
+1. `get_work_status`
+2. `list_pending_suggestions`
+3. `get_automation_state`
+4. `get_handoff`
+
+Behavior rules:
+
+- Prefer live MCP state over chat memory.
+- Distinguish live production behavior from repo-built but not yet deployed behavior.
+- Prioritize today’s shared-state changes.
+- Do not assume public cloud clients can write.
+- Keep website, MCP, custom-domain, and control-centre stability intact.
+- Prefer verified live-vs-repo checks over speculation.
+- Only treat write paths as available when authenticated and confirmed.
+
+Short version:
+
+Check MCP first, especially `get_work_status`. Use live state for coordination. Always say whether behavior is live or only in the repo.
+
 ---
 ## PROJECT
 | Item | Value |
 |------|-------|
-| Live site | https://aarontmaher.github.io/Chat-gpt/ |
+| Live site | https://www.lauburugrapplingmap.com/ |
 | Repo | git@github.com:aarontmaher/Chat-gpt.git |
 | Local path | /Users/aaronmaher/Chat-gpt/ |
 | Dev server | python3 -m http.server (check current port in watch-and-push.sh) |
