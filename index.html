@@ -927,8 +927,11 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
       <div style="height:1px;background:rgba(255,255,255,0.06);margin:4px 0;"></div>
       <div style="font-size:9px;color:#556;letter-spacing:1px;text-transform:uppercase;padding:6px 14px 2px;">Feedback</div>
       <button id="menuSuggestionsBtn" style="display:block;width:100%;text-align:left;background:none;border:none;color:var(--accent);font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Send tester feedback</button>
+      <div id="menuOperatorDivider" style="display:none;height:1px;background:rgba(255,255,255,0.06);margin:4px 0;"></div>
+      <div id="menuOperatorLabel" style="display:none;font-size:9px;color:#556;letter-spacing:1px;text-transform:uppercase;padding:6px 14px 2px;">Operator</div>
+      <button id="menuControlCentreBtn" style="display:none;width:100%;text-align:left;background:none;border:none;color:var(--accent);font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Control Centre</button>
       <button id="menuPromptJobsBtn" style="display:none;width:100%;text-align:left;background:none;border:none;color:var(--accent);font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Remote Control</button>
-      <button id="menuProgressBtn" style="display:block;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Dashboard</button>
+      <button id="menuProgressBtn" style="display:block;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Progress Dashboard</button>
       <button id="menuExportBtn" style="display:block;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Export</button>
       <button id="menuImportBtn" style="display:block;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Import</button>
       <button id="menuResetBtn" style="display:block;width:100%;text-align:left;background:none;border:none;color:#f85149;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Reset all</button>
@@ -959,7 +962,7 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
     <kbd style="background:#1a1e28;border:1px solid #2a3040;border-radius:3px;padding:2px 6px;font-size:10px;color:var(--text-dim);">W</kbd><span>Recently Watched</span>
     <kbd style="background:#1a1e28;border:1px solid #2a3040;border-radius:3px;padding:2px 6px;font-size:10px;color:var(--text-dim);">J</kbd><span>Sparring Journal</span>
     <kbd style="background:#1a1e28;border:1px solid #2a3040;border-radius:3px;padding:2px 6px;font-size:10px;color:var(--text-dim);">C</kbd><span>Coach Mode</span>
-    <kbd id="kbdHelpControlCentreKey" style="background:#1a1e28;border:1px solid #2a3040;border-radius:3px;padding:2px 6px;font-size:10px;color:var(--text-dim);">O</kbd><span id="kbdHelpControlCentreLabel">Open Control Centre</span>
+    <kbd id="kbdHelpControlCentreKey" style="display:none;background:#1a1e28;border:1px solid #2a3040;border-radius:3px;padding:2px 6px;font-size:10px;color:var(--text-dim);">O</kbd><span id="kbdHelpControlCentreLabel" style="display:none;">Open Control Centre</span>
     <kbd style="background:#1a1e28;border:1px solid #2a3040;border-radius:3px;padding:2px 6px;font-size:10px;color:var(--text-dim);">G</kbd><span>Toggle Reference ↔ Network</span>
     <kbd style="background:#1a1e28;border:1px solid #2a3040;border-radius:3px;padding:2px 6px;font-size:10px;color:var(--text-dim);">?</kbd><span>Toggle this help panel</span>
   </div>
@@ -968,7 +971,7 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
 <nav aria-label="Views"><div class="view-tabs" role="tablist">
   <button class="view-tab" data-view="reference" aria-label="Reference view" role="tab">Reference <span id="refDrillBadge" style="display:none;background:var(--blue);color:#000;font-size:8px;padding:1px 5px;border-radius:8px;vertical-align:super;margin-left:2px;font-weight:700;"></span></button>
   <button class="view-tab active" data-view="graph3d" aria-label="Position Map view" role="tab">Position Map</button>
-  <button class="view-tab" data-view="controlcentre" aria-label="Control Centre view" role="tab">Control Centre</button>
+  <button class="view-tab" data-view="controlcentre" aria-label="Control Centre view" role="tab" style="display:none;">Control Centre</button>
 </div></nav>
 
 <main role="main" style="display:flex;flex-direction:column;flex:1;min-height:0;overflow:hidden;">
@@ -1351,8 +1354,15 @@ function updateControlCentreVisibility() {
   }
 }
 function updatePrivateOperatorUI() {
+  var canAccess = isOperatorUIEnabled();
   var btn = document.getElementById('menuPromptJobsBtn');
-  if (btn) btn.style.display = isOperatorUIEnabled() ? 'block' : 'none';
+  if (btn) btn.style.display = canAccess ? 'block' : 'none';
+  var ccBtn = document.getElementById('menuControlCentreBtn');
+  if (ccBtn) ccBtn.style.display = canAccess ? 'block' : 'none';
+  var divider = document.getElementById('menuOperatorDivider');
+  if (divider) divider.style.display = canAccess ? '' : 'none';
+  var label = document.getElementById('menuOperatorLabel');
+  if (label) label.style.display = canAccess ? '' : 'none';
   updateControlCentreVisibility();
 }
 async function refreshAuthProfile() {
@@ -4298,7 +4308,7 @@ document.getElementById('ccDetailPanel').addEventListener('click', function(even
 // ─── VIEW SWITCHING ───────────────────────────────────────────────────────────
 function switchToTab(view) {
   if (view === 'controlcentre' && !isAaronOperatorAccount()) {
-    showToast('Control Centre is private to Aaron’s operator account');
+    showToast('Control Centre is private to Aaron’s account');
     view = 'reference';
   }
   document.querySelectorAll('.view-tab').forEach(t => t.classList.remove('active'));
@@ -6780,6 +6790,7 @@ document.addEventListener('keydown', e => {
     ev.stopPropagation();
     var showing = menu.style.display === 'none';
     menu.style.display = showing ? 'block' : 'none';
+    if (showing && typeof updatePrivateOperatorUI === 'function') updatePrivateOperatorUI();
     var promptBtn = document.getElementById('menuPromptJobsBtn');
     if (promptBtn) promptBtn.style.display = (showing && typeof isOperatorUIEnabled === 'function' && isOperatorUIEnabled()) ? 'block' : 'none';
   });
@@ -11417,6 +11428,11 @@ function openCoachPanel() {
     openGameSummary();
   });
 
+  document.getElementById('menuControlCentreBtn').addEventListener('click', function() {
+    document.getElementById('headerMenu').style.display = 'none';
+    switchToTab('controlcentre');
+  });
+
   document.getElementById('menuPromptJobsBtn').addEventListener('click', function() {
     document.getElementById('headerMenu').style.display = 'none';
     openPromptJobsManager();
@@ -11556,7 +11572,7 @@ function openCoachPanel() {
     if (!isAaronOperatorAccount()) {
       var profile = await refreshAuthProfile();
       if (!(profile && isOperatorRole(profile.membership_status) && isAaronOperatorAccount()) && window.__GM_CONTROL_CENTRE_OWNER__ !== true && window.__GM_OPERATOR_UI__ !== true) {
-        showToast('Operator access required');
+        showToast('Remote Control is private to Aaron’s account');
         return;
       }
     }
@@ -11699,7 +11715,7 @@ function openCoachPanel() {
       setStatus('Loading operator prompt jobs…');
       var response = await promptJobsRequest('GET', null, { limit: 30 });
       if (!response || response.ok === false) {
-        setStatus((response && response.error) === 'auth_required' ? 'Sign in with an operator account to use remote prompt jobs.' : 'Could not load prompt jobs right now.', 'error');
+        setStatus((response && response.error) === 'auth_required' ? 'Sign in with Aaron’s account to use Remote Control.' : 'Could not load prompt jobs right now.', 'error');
         state.jobs = [];
         state.selectedId = null;
         renderList();
@@ -11732,7 +11748,7 @@ function openCoachPanel() {
         source_client: 'website-operator'
       });
       if (!response || response.ok === false || !response.item) {
-        setStatus('Could not create prompt job. Check operator auth and backend wiring.', 'error');
+        setStatus('Could not create prompt job. Check Aaron-only access and backend wiring.', 'error');
         return;
       }
       modal.querySelector('#promptJobsPrompt').value = '';
