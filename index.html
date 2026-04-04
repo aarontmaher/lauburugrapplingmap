@@ -8616,12 +8616,27 @@ window.__APP_DEBUG__ = {
       coaching: window.GrapplingIntelligence.getDailyCoaching(),
       features: window.GrapplingIntelligence.deriveFeatures(),
       summary: window.GrapplingIntelligence.getInsightSummary(),
-      history_days: window.GrapplingIntelligence.getHistory().length
+      history_days: window.GrapplingIntelligence.getHistory().length,
+      pending: window.GrapplingIntelligence.getPendingCandidates().length,
+      challenged: window.GrapplingIntelligence.getChallengedInsights().length,
+      approved_rules: window.GrapplingIntelligence.getApprovedRules().length
     };
   },
   runInsightPipeline: function() {
     if (!window.GrapplingIntelligence) return { error: 'intelligence layer not loaded' };
     return window.GrapplingIntelligence.runPipeline();
+  },
+  importInsight: function(payload) {
+    if (!window.GrapplingIntelligence) return { error: 'intelligence layer not loaded' };
+    return window.GrapplingIntelligence.importInsight(payload);
+  },
+  reviewBridge: function() {
+    if (!window.GrapplingIntelligence) return { error: 'intelligence layer not loaded' };
+    return {
+      pending: window.GrapplingIntelligence.getPendingCandidates(),
+      challenged: window.GrapplingIntelligence.getChallengedInsights(),
+      approved_rules: window.GrapplingIntelligence.getApprovedRules()
+    };
   }
 };
 _log('[GrapplingMap] Debug API ready: window.__APP_DEBUG__');

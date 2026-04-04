@@ -30,6 +30,7 @@
     CANDIDATE: 'candidate',
     UNDER_REVIEW: 'under_review',
     CHALLENGED: 'challenged',
+    REVISED: 'revised',
     APPROVED: 'approved',
     REJECTED: 'rejected',
     SUPERSEDED: 'superseded'
@@ -58,8 +59,13 @@
       source_model: fields.source_model || 'whoop-intelligence-v1',
       source_flow: fields.source_flow || 'feature-analysis',
       what_would_increase_confidence: fields.what_would_increase_confidence || [],
-      review_history: fields.review_history || [],     // array of { date, action, reason }
+      review_history: fields.review_history || [],     // array of { date, action, by, reason }
+      reviewed_at: fields.reviewed_at || null,
+      reviewed_by: fields.reviewed_by || null,        // 'claude' | 'chatgpt' | 'operator' | model id
+      challenge_notes: fields.challenge_notes || [],   // array of { model, date, note }
+      revised_from: fields.revised_from || null,       // insight ID this was revised from
       superseded_by: fields.superseded_by || null,
+      supersedes: fields.supersedes || null,            // insight ID this supersedes
       tags: fields.tags || []
     };
   }
@@ -653,9 +659,10 @@
       total_insights: insights.length,
       by_status: {
         candidate: insights.filter(function (i) { return i.status === INSIGHT_STATUS.CANDIDATE; }).length,
+        revised: insights.filter(function (i) { return i.status === INSIGHT_STATUS.REVISED; }).length,
+        challenged: insights.filter(function (i) { return i.status === INSIGHT_STATUS.CHALLENGED; }).length,
         approved: insights.filter(function (i) { return i.status === INSIGHT_STATUS.APPROVED; }).length,
         rejected: insights.filter(function (i) { return i.status === INSIGHT_STATUS.REJECTED; }).length,
-        challenged: insights.filter(function (i) { return i.status === INSIGHT_STATUS.CHALLENGED; }).length,
         superseded: insights.filter(function (i) { return i.status === INSIGHT_STATUS.SUPERSEDED; }).length
       },
       by_classification: {
@@ -668,6 +675,261 @@
       approved_rules_count: rules.length,
       approved_rules: rules
     };
+  }
+
+  // ─── MODEL INSIGHT BRIDGE ───────────────────────────────────────────────────
+  // Automatic bridge: Claude/ChatGPT MCP analysis → structured candidates → review → website rules.
+  // No model output reaches the website without explicit approval.
+
+  var REQUIRED_IMPORT_FIELDS = ['title', 'rule', 'source_model'];
+
+  function validateModelInsight(payload) {
+    var errors = [];
+    REQUIRED_IMPORT_FIELDS.forEach(function (f) {
+      if (!payload[f]) errors.push('missing required field: ' + f);
+    });
+    if (payload.confidence != null && (payload.confidence < 0 || payload.confidence > 1)) {
+      errors.push('confidence must be 0.0–1.0');
+    }
+    if (payload.classification && !INSIGHT_CLASS[payload.classification] &&
+        Object.keys(INSIGHT_CLASS).map(function (k) { return INSIGHT_CLASS[k]; }).indexOf(payload.classification) === -1) {
+      errors.push('invalid classification: ' + payload.classification);
+    }
+    return errors;
+  }
+
+  /**
+   * importModelInsight(payload) — ingest a structured candidate from Claude/ChatGPT.
+   * Always enters as CANDIDATE. Never auto-approved.
+   * Returns { ok, insight, errors }.
+   */
+  function importModelInsight(payload) {
+    var errors = validateModelInsight(payload);
+    if (errors.length > 0) return { ok: false, errors: errors };
+
+    var insight = createInsight({
+      title: payload.title,
+      rule: payload.rule,
+      context: payload.context || '',
+      scope: payload.scope || 'personal',
+      classification: payload.classification || INSIGHT_CLASS.WORKING_HYPOTHESIS,
+      status: INSIGHT_STATUS.CANDIDATE,    // ALWAYS candidate on import
+      evidence_window: payload.evidence_window || null,
+      supporting_facts: Array.isArray(payload.supporting_facts) ? payload.supporting_facts : [],
+      counterpoints: Array.isArray(payload.counterpoints) ? payload.counterpoints :
+                     Array.isArray(payload.counterpoints_or_uncertainties) ? payload.counterpoints_or_uncertainties : [],
+      confidence: payload.confidence != null ? Math.max(0, Math.min(1, payload.confidence)) : 0.5,
+      approved_for_website: false,          // NEVER auto-approved
+      source_model: payload.source_model,
+      source_flow: payload.source_flow || 'model-bridge',
+      what_would_increase_confidence: Array.isArray(payload.what_would_increase_confidence) ? payload.what_would_increase_confidence : [],
+      revised_from: payload.revised_from || null,
+      supersedes: payload.supersedes || null,
+      tags: Array.isArray(payload.tags) ? payload.tags : []
+    });
+
+    var insights = loadInsights();
+
+    // If this supersedes another insight, mark that one
+    if (insight.supersedes) {
+      for (var i = 0; i < insights.length; i++) {
+        if (insights[i].id === insight.supersedes) {
+          insights[i].status = INSIGHT_STATUS.SUPERSEDED;
+          insights[i].superseded_by = insight.id;
+          insights[i].approved_for_website = false;
+          insights[i].updated_at = new Date().toISOString();
+          // Remove from approved rules
+          var rules = loadApprovedRules().filter(function (r) { return r.source_insight_id !== insights[i].id; });
+          saveApprovedRules(rules);
+          break;
+        }
+      }
+    }
+
+    insights.push(insight);
+    saveInsights(insights);
+    return { ok: true, insight: insight };
+  }
+
+  /**
+   * importModelInsightBatch(payloads) — ingest multiple candidates at once.
+   */
+  function importModelInsightBatch(payloads) {
+    if (!Array.isArray(payloads)) return { ok: false, errors: ['payloads must be an array'] };
+    var results = payloads.map(function (p) { return importModelInsight(p); });
+    return {
+      ok: results.every(function (r) { return r.ok; }),
+      imported: results.filter(function (r) { return r.ok; }).length,
+      failed: results.filter(function (r) { return !r.ok; }).length,
+      results: results
+    };
+  }
+
+  /**
+   * challengeInsight(id, challengerModel, notes) — a second model challenges a candidate.
+   * Records the challenge with provenance. Reduces confidence. Does NOT reject.
+   */
+  function challengeInsight(insightId, challengerModel, notes) {
+    var insights = loadInsights();
+    var found = null;
+    for (var i = 0; i < insights.length; i++) {
+      if (insights[i].id === insightId) { found = insights[i]; break; }
+    }
+    if (!found) return { ok: false, error: 'insight_not_found' };
+    if (found.status === INSIGHT_STATUS.APPROVED) return { ok: false, error: 'cannot_challenge_approved_insight' };
+
+    var now = new Date().toISOString();
+    found.status = INSIGHT_STATUS.CHALLENGED;
+    found.updated_at = now;
+    found.reviewed_at = now;
+    found.reviewed_by = challengerModel || 'unknown';
+    if (found.confidence > 0.15) found.confidence = Math.round((found.confidence - 0.15) * 100) / 100;
+    found.challenge_notes.push({
+      model: challengerModel || 'unknown',
+      date: now,
+      note: notes || 'Challenged without specific notes.'
+    });
+    found.counterpoints.push((challengerModel || 'Reviewer') + ': ' + (notes || 'Challenged.'));
+    found.review_history.push({ date: now, action: 'challenge', by: challengerModel || 'unknown', reason: notes || '' });
+
+    saveInsights(insights);
+    return { ok: true, insight: found };
+  }
+
+  /**
+   * reviseInsight(originalId, revisedPayload) — create a revised version that supersedes the original.
+   * The original is marked SUPERSEDED. The revision enters as REVISED (still needs approval).
+   */
+  function reviseInsight(originalId, revisedPayload) {
+    var insights = loadInsights();
+    var original = null;
+    for (var i = 0; i < insights.length; i++) {
+      if (insights[i].id === originalId) { original = insights[i]; break; }
+    }
+    if (!original) return { ok: false, error: 'original_not_found' };
+
+    // Merge original fields with revisions
+    var merged = {};
+    var keys = ['title', 'rule', 'context', 'scope', 'classification', 'evidence_window',
+                'supporting_facts', 'counterpoints', 'confidence', 'source_model', 'source_flow',
+                'what_would_increase_confidence', 'tags'];
+    keys.forEach(function (k) { merged[k] = revisedPayload[k] != null ? revisedPayload[k] : original[k]; });
+    merged.revised_from = originalId;
+    merged.supersedes = originalId;
+    merged.status = INSIGHT_STATUS.REVISED; // not candidate, not approved — revised
+
+    var result = importModelInsight(merged);
+    if (result.ok) {
+      // Override status to REVISED (importModelInsight sets CANDIDATE)
+      var newInsights = loadInsights();
+      for (var j = 0; j < newInsights.length; j++) {
+        if (newInsights[j].id === result.insight.id) {
+          newInsights[j].status = INSIGHT_STATUS.REVISED;
+          newInsights[j].review_history.push({
+            date: new Date().toISOString(),
+            action: 'revised',
+            by: revisedPayload.source_model || original.source_model || 'unknown',
+            reason: 'Revised from ' + originalId
+          });
+          result.insight = newInsights[j];
+          break;
+        }
+      }
+      saveInsights(newInsights);
+    }
+    return result;
+  }
+
+  /**
+   * approveForWebsite(id, approverReason, approvedBy) — explicit website approval.
+   * Only this function promotes an insight into the approved rules store.
+   */
+  function approveForWebsite(insightId, approverReason, approvedBy) {
+    var insights = loadInsights();
+    var found = null;
+    for (var i = 0; i < insights.length; i++) {
+      if (insights[i].id === insightId) { found = insights[i]; break; }
+    }
+    if (!found) return { ok: false, error: 'insight_not_found' };
+    if (found.status === INSIGHT_STATUS.REJECTED) return { ok: false, error: 'cannot_approve_rejected_insight' };
+
+    var now = new Date().toISOString();
+    found.status = INSIGHT_STATUS.APPROVED;
+    found.approved_for_website = true;
+    found.approval_reason = approverReason || 'Approved for website';
+    found.reviewed_at = now;
+    found.reviewed_by = approvedBy || 'operator';
+    found.updated_at = now;
+    found.review_history.push({ date: now, action: 'approve', by: approvedBy || 'operator', reason: approverReason || '' });
+
+    saveInsights(insights);
+
+    // Create or update approved rule
+    var rules = loadApprovedRules();
+    var rule = createApprovedRule(found);
+    var ruleIdx = -1;
+    for (var r = 0; r < rules.length; r++) {
+      if (rules[r].source_insight_id === found.id) { ruleIdx = r; break; }
+    }
+    if (ruleIdx >= 0) rules[ruleIdx] = rule; else rules.push(rule);
+    saveApprovedRules(rules);
+
+    return { ok: true, insight: found, rule: rule };
+  }
+
+  /**
+   * rejectInsight(id, reason, rejectedBy) — explicit rejection.
+   */
+  function rejectInsight(insightId, reason, rejectedBy) {
+    var insights = loadInsights();
+    var found = null;
+    for (var i = 0; i < insights.length; i++) {
+      if (insights[i].id === insightId) { found = insights[i]; break; }
+    }
+    if (!found) return { ok: false, error: 'insight_not_found' };
+
+    var now = new Date().toISOString();
+    found.status = INSIGHT_STATUS.REJECTED;
+    found.approved_for_website = false;
+    found.rejection_reason = reason || 'Rejected';
+    found.reviewed_at = now;
+    found.reviewed_by = rejectedBy || 'operator';
+    found.updated_at = now;
+    found.review_history.push({ date: now, action: 'reject', by: rejectedBy || 'operator', reason: reason || '' });
+
+    saveInsights(insights);
+
+    // Remove from approved rules if it was there
+    var rules = loadApprovedRules().filter(function (r) { return r.source_insight_id !== found.id; });
+    saveApprovedRules(rules);
+
+    return { ok: true, insight: found };
+  }
+
+  // ─── OPERATOR QUERY FUNCTIONS ──────────────────────────────────────────────
+
+  function getPendingCandidates() {
+    return loadInsights().filter(function (i) {
+      return i.status === INSIGHT_STATUS.CANDIDATE || i.status === INSIGHT_STATUS.REVISED;
+    });
+  }
+
+  function getChallengedInsights() {
+    return loadInsights().filter(function (i) { return i.status === INSIGHT_STATUS.CHALLENGED; });
+  }
+
+  function getInsightById(id) {
+    var insights = loadInsights();
+    for (var i = 0; i < insights.length; i++) {
+      if (insights[i].id === id) return insights[i];
+    }
+    return null;
+  }
+
+  function getInsightsByModel(modelName) {
+    return loadInsights().filter(function (i) {
+      return i.source_model && i.source_model.toLowerCase().indexOf(modelName.toLowerCase()) !== -1;
+    });
   }
 
   // ─── PUBLIC API ────────────────────────────────────────────────────────────
@@ -692,7 +954,23 @@
     // Insight store
     getInsights: loadInsights,
     getInsightSummary: getInsightSummary,
+    getInsightById: getInsightById,
+    getInsightsByModel: getInsightsByModel,
+
+    // Model insight bridge — the core automation path
+    importInsight: importModelInsight,
+    importInsightBatch: importModelInsightBatch,
+    challengeInsight: challengeInsight,
+    reviseInsight: reviseInsight,
+    approveForWebsite: approveForWebsite,
+    rejectInsight: rejectInsight,
+
+    // Legacy review (still works, wraps the above)
     reviewInsight: reviewInsight,
+
+    // Operator queries
+    getPendingCandidates: getPendingCandidates,
+    getChallengedInsights: getChallengedInsights,
 
     // Approved rules
     getApprovedRules: loadApprovedRules,
@@ -702,7 +980,8 @@
 
     // Debug / operator
     _generateCandidates: function () { return generateInsightCandidates(loadHistory()); },
-    _createInsight: createInsight
+    _createInsight: createInsight,
+    _validatePayload: validateModelInsight
   };
 
 })();
