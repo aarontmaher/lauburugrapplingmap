@@ -695,27 +695,32 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
   .cc-topbar-title { font-size:24px; }
   .cc-topbar-meta { justify-content:flex-start; }
   .cc-env-host { max-width:100%; font-size:11px; }
-  .cc-mobile-nav { display:flex; }
+  .cc-mobile-nav { display:flex; position:sticky; top:0; z-index:10; background:rgba(10,12,16,0.95); -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px); padding:8px 0; margin:-10px -10px 0; padding-left:10px; padding-right:10px; overflow-x:auto; -webkit-overflow-scrolling:touch; }
+  .cc-mobile-nav-btn { font-size:11px; white-space:nowrap; flex-shrink:0; }
+  .cc-mobile-nav-btn.cc-nav-active { color:var(--accent); border-color:rgba(232,255,71,0.32); background:rgba(232,255,71,0.08); }
   .cc-priority-strip { grid-template-columns:repeat(2, minmax(0, 1fr)); }
+  .cc-priority-card { min-height:auto; padding:10px 12px; }
+  .cc-priority-value { font-size:26px; }
   .cc-summary-grid { grid-template-columns:repeat(2, minmax(0, 1fr)); }
   .cc-grid { grid-template-columns:1fr; overflow:visible; flex:none; }
   .cc-col { min-height:auto; }
-  .cc-panel-body { overflow:visible; }
+  .cc-panel-body { overflow:auto; max-height:60vh; }
   #controlCentreView { overflow:auto; }
   .cc-queue-grid, .cc-detail-grid, .cc-pipeline-grid, .cc-pipeline-progress { grid-template-columns:1fr; }
-  .cc-agent-card, .cc-suggestion-card, .cc-queue-card, .cc-activity-card { padding:14px; }
-  .cc-task-row { padding:13px; }
+  .cc-agent-card, .cc-suggestion-card, .cc-queue-card, .cc-activity-card { padding:12px; }
+  .cc-task-row { padding:11px; }
   .cc-task-head { flex-direction:column; align-items:flex-start; }
   .cc-task-title, .cc-task-preview, .cc-task-meta span { max-width:100%; }
   .cc-toolbar-btn { width:100%; min-height:44px; justify-content:center; }
   .cc-pill, .cc-status { min-height:30px; }
   .cc-agent-task, .cc-suggestion-body, .cc-detail-copy, .cc-activity-copy, .cc-detail-card p, .cc-detail-card li { font-size:13px; }
   .cc-label, .cc-panel-meta, .cc-summary-label, .cc-queue-label, .cc-priority-label, .cc-activity-time { font-size:11px; }
-  .cc-topbar-kicker, .cc-mobile-nav-btn, .cc-env-pill { font-size:11px; }
+  .cc-topbar-kicker, .cc-env-pill { font-size:11px; }
   .cc-agent-meta, .cc-inline-meta, .cc-task-meta, .cc-task-id { font-size:11px; }
   .cc-agent-mono { font-size:10px; }
   .cc-assignment-banner { align-items:flex-start; flex-direction:column; }
   .cc-assignment-value { font-size:16px; }
+  .cc-topbar-sub { font-size:12px; }
 }
 
 /* Diagnostics panel */
@@ -1256,21 +1261,25 @@ var CONTROL_CENTRE_SHELL_HTML =
       '<div class="cc-topbar-copy">' +
         '<div class="cc-topbar-kicker">Control Centre</div>' +
         '<div class="cc-topbar-title">Control Centre</div>' +
-        '<div class="cc-topbar-sub">Single-screen oversight for all five AI lanes, the suggestion queue, automation state, handoffs, and the human approvals that unblock the workflow. The UI is adapter-driven and ready to swap local state for the MCP tools at <span class="cc-value-strong">mcp.lauburugrapplingmap.com/mcp</span>.</div>' +
+        '<div class="cc-topbar-sub">AI lanes, suggestion queue, automation pipeline, and remote dispatch. <span id="ccAutoRefreshIndicator" style="color:var(--green);font-size:11px;"></span></div>' +
       '</div>' +
       '<div class="cc-topbar-meta">' +
         '<span id="ccEnvironmentBadge" class="cc-pill cc-env-pill dev">Dev</span>' +
         '<span id="ccEnvironmentHost" class="cc-pill cc-env-host"></span>' +
         '<span class="cc-pill">Website: www.lauburugrapplingmap.com</span>' +
-        '<span class="cc-pill">Backend: get_work_status · list_pending_suggestions · get_automation_state · get_handoff</span>' +
+        '<span class="cc-pill">Backend: get_work_status \u00b7 list_pending_suggestions \u00b7 get_automation_state \u00b7 get_handoff</span>' +
         '<button id="ccRefreshBtn" class="cc-toolbar-btn">Refresh View</button>' +
+        '<button id="ccRemoteBtn" class="cc-toolbar-btn" style="border-color:rgba(232,255,71,0.22);color:var(--accent);">Remote Control</button>' +
       '</div>' +
     '</div>' +
     '<div class="cc-mobile-nav" id="ccMobileNav">' +
       '<button class="cc-mobile-nav-btn" data-cc-jump="ccPriorityStrip">Overview</button>' +
+      '<button class="cc-mobile-nav-btn" data-cc-jump="ccAgentPanel">Agents</button>' +
+      '<button class="cc-mobile-nav-btn" data-cc-jump="ccSuggestionList">Queue</button>' +
       '<button class="cc-mobile-nav-btn" data-cc-jump="ccTaskRoutingPanel">Tasks</button>' +
       '<button class="cc-mobile-nav-btn" data-cc-jump="ccDetailPanelSection">Detail</button>' +
       '<button class="cc-mobile-nav-btn" data-cc-jump="ccActivityPanel">Activity</button>' +
+      '<button class="cc-mobile-nav-btn" id="ccMobileRemoteBtn" style="border-color:rgba(232,255,71,0.22);color:var(--accent);">Remote</button>' +
     '</div>' +
     '<div id="ccPriorityStrip" class="cc-priority-strip"></div>' +
     '<div class="cc-grid">' +
@@ -1363,6 +1372,10 @@ function updateControlCentreVisibility() {
   var ccLabel = document.getElementById('kbdHelpControlCentreLabel');
   if (ccKey) ccKey.style.display = canAccess ? '' : 'none';
   if (ccLabel) ccLabel.style.display = canAccess ? '' : 'none';
+  var remoteKey = document.getElementById('kbdHelpRemoteKey');
+  var remoteLabel = document.getElementById('kbdHelpRemoteLabel');
+  if (remoteKey) remoteKey.style.display = canAccess ? '' : 'none';
+  if (remoteLabel) remoteLabel.style.display = canAccess ? '' : 'none';
   if (!canAccess && root && root.style.display !== 'none') {
     root.style.display = 'none';
     document.getElementById('referenceView').style.display = 'flex';
@@ -4270,12 +4283,38 @@ window.renderControlCentre = function() {
   ccRenderPipeline(snapshot);
   ccRenderDetail(snapshot);
   ccRenderActivity(snapshot);
+  var refreshIndicator = document.getElementById('ccAutoRefreshIndicator');
+  if (refreshIndicator) refreshIndicator.textContent = 'Auto-refresh active';
 };
+
+// Auto-refresh Control Centre every 30s while it is the active tab
+var _ccAutoRefreshTimer = null;
+function ccStartAutoRefresh() {
+  ccStopAutoRefresh();
+  _ccAutoRefreshTimer = setInterval(function() {
+    var ccView = document.getElementById('controlCentreView');
+    if (ccView && ccView.style.display !== 'none' && typeof window.renderControlCentre === 'function') {
+      window.renderControlCentre();
+    }
+  }, 30000);
+}
+function ccStopAutoRefresh() {
+  if (_ccAutoRefreshTimer) { clearInterval(_ccAutoRefreshTimer); _ccAutoRefreshTimer = null; }
+  var refreshIndicator = document.getElementById('ccAutoRefreshIndicator');
+  if (refreshIndicator) refreshIndicator.textContent = '';
+}
 
 function ccScrollToSection(targetId) {
   var target = document.getElementById(targetId);
   if (!target) return;
   target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  // Update mobile nav active state
+  var nav = document.getElementById('ccMobileNav');
+  if (nav) {
+    nav.querySelectorAll('.cc-mobile-nav-btn[data-cc-jump]').forEach(function(btn) {
+      btn.classList.toggle('cc-nav-active', btn.getAttribute('data-cc-jump') === targetId);
+    });
+  }
 }
 
 function ccMaybeRevealDetailOnMobile() {
@@ -4287,6 +4326,10 @@ document.getElementById('controlCentreView').addEventListener('click', function(
   if (!isAaronOperatorAccount()) return;
   if (event.target.closest('#ccRefreshBtn')) {
     window.renderControlCentre();
+    return;
+  }
+  if (event.target.closest('#ccRemoteBtn') || event.target.closest('#ccMobileRemoteBtn')) {
+    if (typeof window.openPromptJobsManager === 'function') window.openPromptJobsManager();
     return;
   }
   var jumpButton = event.target.closest('[data-cc-jump]');
@@ -4340,7 +4383,8 @@ function switchToTab(view) {
   document.getElementById('graph3dView').style.flexDirection = 'column';
   if (view === 'graph3d') { requestAnimationFrame(() => requestAnimationFrame(initGraph3D)); if(window._g3dResume) window._g3dResume(); setTimeout(function(){window.dispatchEvent(new Event('resize'));},100); }
   else { if(window._g3dPause) window._g3dPause(); }
-  if (view === 'controlcentre' && typeof window.renderControlCentre === 'function') window.renderControlCentre();
+  if (view === 'controlcentre' && typeof window.renderControlCentre === 'function') { window.renderControlCentre(); ccStartAutoRefresh(); }
+  else { ccStopAutoRefresh(); }
   // Blur any focused search input on tab switch
   var activeEl = document.activeElement;
   if (activeEl && (activeEl.id === 'refSearch' || activeEl.id === 'g3dSearch')) activeEl.blur();
@@ -6811,8 +6855,6 @@ document.addEventListener('keydown', e => {
     var showing = menu.style.display === 'none';
     menu.style.display = showing ? 'block' : 'none';
     if (showing && typeof updatePrivateOperatorUI === 'function') updatePrivateOperatorUI();
-    var promptBtn = document.getElementById('menuPromptJobsBtn');
-    if (promptBtn) promptBtn.style.display = (showing && typeof isOperatorUIEnabled === 'function' && isOperatorUIEnabled()) ? 'block' : 'none';
   });
   document.addEventListener('click', function() { menu.style.display = 'none'; });
 })();
@@ -11608,13 +11650,14 @@ function openCoachPanel() {
     }
 
     var overlay = document.createElement('div');
-    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.72);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;';
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.72);z-index:9999;display:flex;align-items:' + (window.innerWidth < 640 ? 'flex-end' : 'center') + ';justify-content:center;padding:' + (window.innerWidth < 640 ? '0' : '20px') + ';';
     overlay.setAttribute('role', 'dialog');
     overlay.setAttribute('aria-modal', 'true');
     overlay.setAttribute('aria-label', 'Remote control prompt jobs');
 
     var modal = document.createElement('div');
-    modal.style.cssText = 'background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;max-width:1080px;width:100%;max-height:86vh;overflow:hidden;box-shadow:0 20px 64px rgba(0,0,0,0.45);display:flex;flex-direction:column;gap:14px;';
+    var isMobile = window.innerWidth < 640;
+    modal.style.cssText = 'background:var(--surface);border:1px solid var(--border);border-radius:' + (isMobile ? '14px 14px 0 0' : '14px') + ';padding:' + (isMobile ? '14px 12px' : '20px') + ';max-width:1080px;width:100%;max-height:' + (isMobile ? '95vh' : '86vh') + ';overflow-y:auto;box-shadow:0 20px 64px rgba(0,0,0,0.45);display:flex;flex-direction:column;gap:' + (isMobile ? '10px' : '14px') + ';' + (isMobile ? 'margin-top:auto;' : '');
 
     var splitStyle = window.innerWidth < 920
       ? 'display:flex;flex-direction:column;gap:14px;min-height:0;'
@@ -11642,9 +11685,16 @@ function openCoachPanel() {
               '<label style="display:flex;flex-direction:column;gap:6px;min-width:0;"><span style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.9px;">Target Agent</span><select id="promptJobsTarget" style="min-height:42px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:10px;color:var(--text);padding:0 12px;font-family:DM Mono,monospace;font-size:12px;"><option value="claude_code">Claude Code</option><option value="codex">Codex</option><option value="cowork">Cowork</option><option value="chatgpt">ChatGPT</option><option value="claude_chat">Claude Chat</option></select></label>' +
               '<label style="display:flex;flex-direction:column;gap:6px;min-width:0;"><span style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.9px;">Priority</span><select id="promptJobsPriority" style="min-height:42px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:10px;color:var(--text);padding:0 12px;font-family:DM Mono,monospace;font-size:12px;"><option value="normal">Normal</option><option value="high">High</option><option value="urgent">Urgent</option></select></label>' +
             '</div>' +
-            '<label style="display:flex;flex-direction:column;gap:6px;margin-top:10px;min-width:0;"><span style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.9px;">Prompt</span><textarea id="promptJobsPrompt" rows="6" placeholder="Dispatch prompt for a specific AI lane…" style="width:100%;resize:vertical;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:10px;color:var(--text);padding:12px;font-family:DM Mono,monospace;font-size:12px;line-height:1.55;"></textarea></label>' +
-            '<div style="display:flex;justify-content:flex-end;gap:8px;margin-top:12px;flex-wrap:wrap;">' +
-              '<button id="promptJobsCreateBtn" style="min-height:42px;padding:0 16px;background:var(--accent);border:none;color:#000;font-family:Barlow Condensed,sans-serif;font-size:14px;letter-spacing:0.75px;text-transform:uppercase;border-radius:10px;cursor:pointer;">Create Prompt Job</button>' +
+            '<label style="display:flex;flex-direction:column;gap:6px;margin-top:10px;min-width:0;"><span style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.9px;">Prompt</span><textarea id="promptJobsPrompt" rows="' + (isMobile ? '3' : '6') + '" placeholder="Dispatch prompt for a specific AI lane…" style="width:100%;resize:vertical;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:10px;color:var(--text);padding:' + (isMobile ? '10px' : '12px') + ';font-family:DM Mono,monospace;font-size:' + (isMobile ? '13px' : '12px') + ';line-height:1.55;"></textarea></label>' +
+            '<div id="promptJobsQuickActions" style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;">' +
+              '<button class="pj-quick" data-pj-quick="Check in: report current status, blockers, and next steps." style="min-height:34px;padding:0 10px;background:rgba(71,200,255,0.08);border:1px solid rgba(71,200,255,0.22);color:var(--blue);font-family:DM Mono,monospace;font-size:10px;border-radius:8px;cursor:pointer;">Status check</button>' +
+              '<button class="pj-quick" data-pj-quick="Continue working on your current task. Pick up where you left off." style="min-height:34px;padding:0 10px;background:rgba(52,211,153,0.08);border:1px solid rgba(52,211,153,0.22);color:var(--green);font-family:DM Mono,monospace;font-size:10px;border-radius:8px;cursor:pointer;">Continue</button>' +
+              '<button class="pj-quick" data-pj-quick="Stop current work, commit progress, update MCP work status to idle, and report what was done." style="min-height:34px;padding:0 10px;background:rgba(255,124,112,0.08);border:1px solid rgba(255,124,112,0.22);color:#ff7c70;font-family:DM Mono,monospace;font-size:10px;border-radius:8px;cursor:pointer;">Wrap up</button>' +
+              '<button class="pj-quick" data-pj-quick="Run npm run ready and report the results." style="min-height:34px;padding:0 10px;background:rgba(167,139,250,0.08);border:1px solid rgba(167,139,250,0.22);color:var(--accent3);font-family:DM Mono,monospace;font-size:10px;border-radius:8px;cursor:pointer;">Run tests</button>' +
+            '</div>' +
+            '<div style="display:flex;justify-content:flex-end;gap:8px;margin-top:12px;flex-wrap:wrap;align-items:center;">' +
+              '<span style="font-size:10px;color:var(--text-muted);font-family:DM Mono,monospace;margin-right:auto;">\u2318+Enter to send</span>' +
+              '<button id="promptJobsCreateBtn" style="min-height:' + (isMobile ? '48px' : '42px') + ';padding:0 ' + (isMobile ? '20px' : '16px') + ';background:var(--accent);border:none;color:#000;font-family:Barlow Condensed,sans-serif;font-size:' + (isMobile ? '15px' : '14px') + ';letter-spacing:0.75px;text-transform:uppercase;border-radius:10px;cursor:pointer;' + (isMobile ? 'width:100%;' : '') + '">Create Prompt Job</button>' +
             '</div>' +
           '</div>' +
           '<div style="border:1px solid rgba(255,255,255,0.06);border-radius:12px;background:rgba(255,255,255,0.02);display:flex;flex-direction:column;min-height:0;overflow:hidden;">' +
@@ -11708,7 +11758,7 @@ function openCoachPanel() {
           '<span class="cc-pill">Source: ' + ccEscape(selected.source_client || 'unknown') + '</span>' +
         '</div>' +
         '<div class="cc-detail-grid">' +
-          '<div class="cc-detail-card"><h4>Prompt</h4><p style="white-space:pre-wrap;word-break:break-word;">' + ccEscape(selected.prompt || '') + '</p></div>' +
+          '<div class="cc-detail-card"><h4>Prompt <button data-pj-copy-prompt style="background:none;border:1px solid rgba(255,255,255,0.1);color:var(--text-dim);font-family:DM Mono,monospace;font-size:10px;padding:2px 8px;border-radius:6px;cursor:pointer;margin-left:8px;vertical-align:middle;">Copy</button></h4><p style="white-space:pre-wrap;word-break:break-word;">' + ccEscape(selected.prompt || '') + '</p></div>' +
           '<div class="cc-detail-card"><h4>Dispatch State</h4><p>Created: ' + ccEscape(formatPromptJobWhen(selected.created_at)) + '<br>Updated: ' + ccEscape(formatPromptJobWhen(selected.updated_at)) + '<br>Claimed by: ' + ccEscape(selected.claimed_by || 'Unclaimed') + '</p></div>' +
           '<div class="cc-detail-card"><h4>Result Summary</h4><p>' + ccEscape(selected.result_summary || 'No result summary yet.') + '</p></div>' +
           '<div class="cc-detail-card"><h4>Artifacts / Errors</h4><p>' + ccEscape(selected.result_artifact || 'No result artifact yet.') + '<br>' + ccEscape(selected.error || 'No error recorded.') + '</p></div>' +
@@ -11761,7 +11811,8 @@ function openCoachPanel() {
 
     modal.querySelector('#promptJobsClose').addEventListener('click', close);
     modal.querySelector('#promptJobsRefreshBtn').addEventListener('click', function() { loadJobs(state.selectedId); });
-    modal.querySelector('#promptJobsCreateBtn').addEventListener('click', async function() {
+    var createBtn = modal.querySelector('#promptJobsCreateBtn');
+    createBtn.addEventListener('click', async function() {
       var target = modal.querySelector('#promptJobsTarget').value;
       var priority = modal.querySelector('#promptJobsPriority').value;
       var prompt = modal.querySelector('#promptJobsPrompt').value.trim();
@@ -11769,6 +11820,9 @@ function openCoachPanel() {
         setStatus('Prompt text is required before dispatch.', 'error');
         return;
       }
+      createBtn.disabled = true;
+      createBtn.textContent = 'Dispatching…';
+      createBtn.style.opacity = '0.5';
       setStatus('Creating prompt job…');
       var response = await promptJobsRequest('POST', {
         action: 'create',
@@ -11777,22 +11831,55 @@ function openCoachPanel() {
         priority: priority,
         source_client: 'website-operator'
       });
+      createBtn.disabled = false;
+      createBtn.textContent = 'Create Prompt Job';
+      createBtn.style.opacity = '';
       if (!response || response.ok === false || !response.item) {
         setStatus('Could not create prompt job. Check Aaron-only access and backend wiring.', 'error');
         return;
       }
       modal.querySelector('#promptJobsPrompt').value = '';
-      setStatus('Prompt job ' + response.item.id + ' created.');
-      showToast('Prompt job dispatched');
+      setStatus('Dispatched to ' + ((CONTROL_AGENT_LABELS && CONTROL_AGENT_LABELS[target]) || target) + ': ' + response.item.id);
+      showToast('Prompt job dispatched to ' + ((CONTROL_AGENT_LABELS && CONTROL_AGENT_LABELS[target]) || target));
       await loadJobs(response.item.id);
     });
+    // Quick-action presets fill the prompt textarea
+    modal.querySelector('#promptJobsQuickActions').addEventListener('click', function(event) {
+      var btn = event.target.closest('[data-pj-quick]');
+      if (!btn) return;
+      var promptEl = modal.querySelector('#promptJobsPrompt');
+      promptEl.value = btn.getAttribute('data-pj-quick');
+      promptEl.focus();
+    });
+    // Cmd+Enter / Ctrl+Enter to submit prompt
+    modal.querySelector('#promptJobsPrompt').addEventListener('keydown', function(event) {
+      if (event.key === 'Enter' && (event.metaKey || event.ctrlKey)) {
+        event.preventDefault();
+        createBtn.click();
+      }
+    });
+    // Auto-focus the prompt textarea
+    setTimeout(function() { modal.querySelector('#promptJobsPrompt').focus(); }, 100);
     listEl.addEventListener('click', function(event) {
       var row = event.target.closest('[data-prompt-job-id]');
       if (!row) return;
       state.selectedId = row.getAttribute('data-prompt-job-id');
       renderList();
     });
+    detailEl.addEventListener('click', function(event) {
+      var copyBtn = event.target.closest('[data-pj-copy-prompt]');
+      if (!copyBtn) return;
+      var selected = null;
+      state.jobs.forEach(function(item) { if (item.id === state.selectedId) selected = item; });
+      if (selected && selected.prompt) {
+        navigator.clipboard.writeText(selected.prompt).then(function() {
+          copyBtn.textContent = 'Copied';
+          setTimeout(function() { copyBtn.textContent = 'Copy'; }, 1500);
+        });
+      }
+    });
     overlay.addEventListener('click', function(event) { if (event.target === overlay) close(); });
+    overlay.addEventListener('keydown', function(event) { if (event.key === 'Escape') close(); });
     loadJobs();
   }
 
