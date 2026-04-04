@@ -425,7 +425,7 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
    Claude Code owns visual polish in the .cc-* CSS zone:
    spacing, typography, icons, empty-state copy, keyboard-help wording, and other presentational-only tweaks.
    Codex should avoid changing behavior here unless a structural logic change requires a paired visual hook. */
-.cc-shell { display:flex; flex-direction:column; gap:10px; flex:1; min-height:0; padding:10px; overflow-y:auto; overflow-x:hidden; }
+.cc-shell { display:flex; flex-direction:column; gap:10px; padding:10px; overflow-y:auto; overflow-x:hidden; flex:1 1 0%; }
 .cc-topbar { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:10px 14px; background:rgba(17,20,28,0.96); border:1px solid rgba(255,255,255,0.07); border-radius:10px; }
 .cc-topbar-copy { display:flex; flex-direction:column; gap:2px; min-width:0; }
 .cc-topbar-kicker { display:none; }
@@ -439,9 +439,9 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
 .cc-mobile-nav { display:none; gap:6px; flex-wrap:nowrap; }
 .cc-mobile-nav-btn { min-height:34px; padding:0 10px; border-radius:999px; border:1px solid rgba(255,255,255,0.08); background:rgba(255,255,255,0.03); color:var(--text-dim); font-family:'Barlow Condensed',sans-serif; font-size:11px; letter-spacing:0.7px; text-transform:uppercase; cursor:pointer; }
 .cc-mobile-nav-btn:hover { color:var(--text); border-color:rgba(255,255,255,0.16); }
-.cc-grid { display:grid; grid-template-columns: 1.08fr 1.35fr 1.12fr; gap:10px; flex:1; min-height:0; }
-.cc-col { min-width:0; display:flex; flex-direction:column; gap:10px; min-height:0; }
-.cc-panel { background:rgba(15,18,24,0.96); border:1px solid rgba(255,255,255,0.07); border-radius:10px; min-height:0; display:flex; flex-direction:column; overflow:hidden; }
+.cc-grid { display:grid; grid-template-columns: 1.08fr 1.35fr 1.12fr; gap:10px; }
+.cc-col { min-width:0; display:flex; flex-direction:column; gap:10px; }
+.cc-panel { background:rgba(15,18,24,0.96); border:1px solid rgba(255,255,255,0.07); border-radius:10px; display:flex; flex-direction:column; overflow:hidden; }
 .cc-panel-header { display:flex; align-items:center; justify-content:space-between; gap:8px; padding:8px 12px; border-bottom:1px solid rgba(255,255,255,0.05); background:rgba(255,255,255,0.015); }
 .cc-panel-title { font-family:'Barlow Condensed',sans-serif; font-size:13px; letter-spacing:1.3px; text-transform:uppercase; color:var(--text); }
 .cc-panel-meta { font-size:11px; color:var(--text-muted); line-height:1.4; }
@@ -1988,30 +1988,68 @@ async function whoopRequest(endpoint, method, body) {
   }
 }
 
+// Prompt jobs: localStorage fallback when Supabase edge function is not deployed
+var _PROMPT_JOBS_STORAGE_KEY = 'gm_prompt_jobs';
+function _loadLocalPromptJobs() {
+  try { return JSON.parse(localStorage.getItem(_PROMPT_JOBS_STORAGE_KEY) || '[]'); } catch(e) { return []; }
+}
+function _saveLocalPromptJobs(jobs) {
+  try { localStorage.setItem(_PROMPT_JOBS_STORAGE_KEY, JSON.stringify(jobs)); } catch(e) {}
+}
 async function promptJobsRequest(method, body, query) {
+  // 1. Try external bridge
   if (window.__GM_PROMPT_JOBS_BRIDGE__ && typeof window.__GM_PROMPT_JOBS_BRIDGE__.request === 'function') {
     try { return await window.__GM_PROMPT_JOBS_BRIDGE__.request(method || 'GET', body || null, query || null); }
     catch(e) { return { ok: false, error: e && e.message ? e.message : 'prompt_jobs_bridge_failed' }; }
   }
+  // 2. Try Supabase edge function
   var headers = await UserStore._getAuthHeaders();
-  if (!headers) return { ok: false, error: 'auth_required' };
-  var url = new URL(SUPABASE_FUNCTIONS_URL + '/prompt-jobs');
-  if (query) {
-    Object.keys(query).forEach(function(key) {
-      if (query[key] !== null && query[key] !== undefined && query[key] !== '') url.searchParams.set(key, String(query[key]));
-    });
+  if (headers) {
+    var url = new URL(SUPABASE_FUNCTIONS_URL + '/prompt-jobs');
+    if (query) {
+      Object.keys(query).forEach(function(key) {
+        if (query[key] !== null && query[key] !== undefined && query[key] !== '') url.searchParams.set(key, String(query[key]));
+      });
+    }
+    var opts = { method: method || 'GET', headers: headers };
+    if ((method || 'GET') !== 'GET' && body != null) opts.body = JSON.stringify(body);
+    try {
+      var resp = await fetch(url.toString(), opts);
+      var payload = null;
+      try { payload = await resp.json(); } catch(e) { payload = null; }
+      if (resp.ok) return Object.assign({ ok: true }, payload || {});
+      // Don't fall through to local on auth errors
+      if (resp.status === 401 || resp.status === 403) return Object.assign({ ok: false, error: 'auth_required', status: resp.status }, payload || {});
+      // 404/500 = edge function not deployed — fall through to local
+    } catch(e) { /* network error — fall through to local */ }
   }
-  var opts = { method: method || 'GET', headers: headers };
-  if ((method || 'GET') !== 'GET' && body != null) opts.body = JSON.stringify(body);
-  try {
-    var resp = await fetch(url.toString(), opts);
-    var payload = null;
-    try { payload = await resp.json(); } catch(e) { payload = null; }
-    if (!resp.ok) return Object.assign({ ok: false, error: 'request_failed', status: resp.status }, payload || {});
-    return Object.assign({ ok: true }, payload || {});
-  } catch(e) {
-    return { ok: false, error: e && e.message ? e.message : 'request_failed' };
+  // 3. Local fallback — prompt jobs stored in localStorage
+  var jobs = _loadLocalPromptJobs();
+  if ((method || 'GET') === 'GET') {
+    var limit = (query && query.limit) ? parseInt(query.limit) : 30;
+    return { ok: true, items: jobs.slice(0, limit), source: 'local' };
   }
+  if (method === 'POST' && body && body.action === 'create') {
+    var job = {
+      id: 'PJ-' + Date.now() + '-' + Math.random().toString(36).slice(2, 6),
+      target_agent: body.target_agent || 'claude_code',
+      prompt: body.prompt || '',
+      priority: body.priority || 'normal',
+      status: 'pending',
+      source_client: body.source_client || 'website-operator',
+      claimed_by: null,
+      result_summary: null,
+      result_artifact: null,
+      error: null,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    };
+    jobs.unshift(job);
+    if (jobs.length > 50) jobs = jobs.slice(0, 50);
+    _saveLocalPromptJobs(jobs);
+    return { ok: true, item: job, source: 'local' };
+  }
+  return { ok: false, error: 'unsupported_local_operation' };
 }
 
 function promptJobShortTitle(prompt) {
@@ -4003,6 +4041,17 @@ function ccBuildActivity(snapshot) {
       });
     }
   });
+  // Include recent prompt jobs in activity
+  var promptJobs = _loadLocalPromptJobs ? _loadLocalPromptJobs() : [];
+  promptJobs.slice(0, 5).forEach(function(job) {
+    items.push({
+      ts: job.created_at || job.updated_at || '',
+      type: 'prompt dispatched',
+      title: job.target_agent ? (CONTROL_AGENT_LABELS[job.target_agent] || job.target_agent) : 'unknown',
+      body: (job.prompt || '').slice(0, 80) + ((job.prompt || '').length > 80 ? '…' : ''),
+      status: job.status || 'pending'
+    });
+  });
   return items.sort(function(a, b) {
     return (Date.parse(b.ts || 0) || 0) - (Date.parse(a.ts || 0) || 0);
   }).slice(0, 14);
@@ -4353,7 +4402,12 @@ function ccMaybeRevealDetailOnMobile() {
 document.getElementById('controlCentreView').addEventListener('click', function(event) {
   if (!isAaronOperatorAccount()) return;
   if (event.target.closest('#ccRefreshBtn')) {
+    var btn = event.target.closest('#ccRefreshBtn');
+    btn.textContent = 'Refreshing…';
+    btn.style.opacity = '0.5';
     window.renderControlCentre();
+    setTimeout(function() { btn.textContent = 'Refreshed'; btn.style.opacity = ''; }, 200);
+    setTimeout(function() { btn.textContent = 'Refresh View'; }, 1500);
     return;
   }
   if (event.target.closest('#ccRemoteBtn') || event.target.closest('#ccMobileRemoteBtn')) {
@@ -11674,6 +11728,7 @@ function openCoachPanel() {
     openListPanel('Suggestion Queue (' + suggestions.length + (pendingCount > 0 ? ', ' + pendingCount + ' pending' : '') + ')', items);
   }
 
+  window.openPromptJobsManager = openPromptJobsManager;
   async function openPromptJobsManager() {
     if (!isMember()) { requireAuth('open Remote Control'); return; }
     if (!isAaronOperatorAccount()) {
@@ -11840,7 +11895,8 @@ function openCoachPanel() {
       if (preferredId) state.selectedId = preferredId;
       if (!state.selectedId && state.jobs[0]) state.selectedId = state.jobs[0].id;
       if (state.selectedId && !state.jobs.some(function(item) { return item.id === state.selectedId; })) state.selectedId = state.jobs[0] ? state.jobs[0].id : null;
-      setStatus('');
+      if (response.source === 'local') setStatus('Using local storage — backend not connected yet.');
+      else setStatus('');
       renderList();
     };
 
