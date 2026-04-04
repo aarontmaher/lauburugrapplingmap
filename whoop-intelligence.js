@@ -62,6 +62,9 @@
       review_history: fields.review_history || [],     // array of { date, action, by, reason }
       reviewed_at: fields.reviewed_at || null,
       reviewed_by: fields.reviewed_by || null,        // 'claude' | 'chatgpt' | 'operator' | model id
+      evidence_fields_used: fields.evidence_fields_used || [],    // which data fields this insight relied on
+      evidence_fields_missing: fields.evidence_fields_missing || [], // fields that would strengthen this if available
+      data_provenance: fields.data_provenance || null,  // { sources: {}, days: N }
       challenge_notes: fields.challenge_notes || [],   // array of { model, date, note }
       revised_from: fields.revised_from || null,       // insight ID this was revised from
       superseded_by: fields.superseded_by || null,
@@ -128,18 +131,43 @@
     }
     var entry = {
       date: whoopData.date,
+      // Core metrics (always expected from basic WHOOP)
       recovery_score: whoopData.recovery_score != null ? whoopData.recovery_score : null,
       hrv_ms: whoopData.hrv_ms != null ? whoopData.hrv_ms : null,
       resting_hr: whoopData.resting_hr != null ? whoopData.resting_hr : null,
+      daily_strain: whoopData.daily_strain != null ? whoopData.daily_strain : null,
+      readiness_state: whoopData.readiness_state || 'unknown',
+      // Sleep — basic
       sleep_hours: whoopData.sleep_hours != null ? whoopData.sleep_hours : null,
       sleep_performance_pct: whoopData.sleep_performance_pct != null ? whoopData.sleep_performance_pct : null,
-      daily_strain: whoopData.daily_strain != null ? whoopData.daily_strain : null,
+      // Sleep — detailed (CSV/full-API when available)
+      sleep_efficiency_pct: whoopData.sleep_efficiency_pct != null ? whoopData.sleep_efficiency_pct : null,
+      sws_hours: whoopData.sws_hours != null ? whoopData.sws_hours : null,
+      rem_hours: whoopData.rem_hours != null ? whoopData.rem_hours : null,
+      light_hours: whoopData.light_hours != null ? whoopData.light_hours : null,
+      awake_hours: whoopData.awake_hours != null ? whoopData.awake_hours : null,
+      respiratory_rate: whoopData.respiratory_rate != null ? whoopData.respiratory_rate : null,
+      // Biometrics (when available)
+      spo2_pct: whoopData.spo2_pct != null ? whoopData.spo2_pct : null,
+      skin_temp_c: whoopData.skin_temp_c != null ? whoopData.skin_temp_c : null,
+      // Strain — detail
+      kilojoules: whoopData.kilojoules != null ? whoopData.kilojoules : null,
+      avg_hr: whoopData.avg_hr != null ? whoopData.avg_hr : null,
+      max_hr: whoopData.max_hr != null ? whoopData.max_hr : null,
       rolling_3_day_load: whoopData.rolling_3_day_load != null ? whoopData.rolling_3_day_load : null,
       rolling_7_day_load: whoopData.rolling_7_day_load != null ? whoopData.rolling_7_day_load : null,
-      readiness_state: whoopData.readiness_state || 'unknown',
-      // Grappling session metadata — to be filled when available
+      // Workouts — array of { sport_id, strain, duration_min, avg_hr, max_hr, kilojoules, hr_zones }
+      workouts: Array.isArray(whoopData.workouts) ? whoopData.workouts : null,
+      // Grappling session context (manual/structured input)
       grappling_session: whoopData.grappling_session || null,
-      // { type: 'bjj'|'wrestling'|'conditioning'|'walking', intensity: 'light'|'moderate'|'hard', duration_min, notes }
+      // { type: 'bjj'|'wrestling'|'conditioning'|'walking', intensity: 'light'|'moderate'|'hard',
+      //   duration_min, rounds, notes, techniques_practiced: [], sparring: boolean }
+      // Subjective context (manual input)
+      subjective: whoopData.subjective || null,
+      // { mood: 1-5, perceived_exertion: 1-10, notes: string }
+      // Provenance
+      data_source: whoopData.data_source || whoopData.source || 'unknown',
+      // 'whoop_api' | 'whoop_csv' | 'manual' | 'debug' | 'mcp'
       stored_at: new Date().toISOString()
     };
     if (idx >= 0) { history[idx] = entry; } else { history.push(entry); }
@@ -215,20 +243,99 @@
       if (s1 != null && s2 != null && s1 > strainMean && s2 > strainMean) backToBackHard = true;
     }
 
-    // Grappling session indicators
+    // Sleep detail features (when available)
+    var swsArr = history.map(function (d) { return d.sws_hours; }).filter(function (v) { return v != null; });
+    var remArr = history.map(function (d) { return d.rem_hours; }).filter(function (v) { return v != null; });
+    var effArr = history.map(function (d) { return d.sleep_efficiency_pct; }).filter(function (v) { return v != null; });
+    var hasSleepDetail = swsArr.length >= 3;
+    var swsMean = avg(swsArr);
+    var remMean = avg(remArr);
+    var effMean = avg(effArr);
+
+    // Sleep quality ratio: SWS+REM as proportion of total sleep
+    var todayDeepRatio = null;
+    if (today.sws_hours != null && today.rem_hours != null && today.sleep_hours != null && today.sleep_hours > 0) {
+      todayDeepRatio = (today.sws_hours + today.rem_hours) / today.sleep_hours;
+    }
+    var baselineDeepRatio = null;
+    if (swsMean != null && remMean != null && sleepMean != null && sleepMean > 0) {
+      baselineDeepRatio = (swsMean + remMean) / sleepMean;
+    }
+    var lowDeepSleepToday = todayDeepRatio != null && baselineDeepRatio != null
+      ? todayDeepRatio < baselineDeepRatio - 0.05  // 5% below baseline ratio
+      : false;
+
+    // Workout detail features
+    var todayWorkouts = today.workouts || [];
+    var hasWorkoutDetail = todayWorkouts.length > 0;
+    var grapplingWorkouts = todayWorkouts.filter(function (w) {
+      // WHOOP sport_id: 43=Wrestling, 44=Brazilian Jiu Jitsu, 84=Martial Arts
+      return w.sport_id === 43 || w.sport_id === 44 || w.sport_id === 84;
+    });
+    var hasGrapplingWorkout = grapplingWorkouts.length > 0;
+    var workoutTotalStrain = todayWorkouts.reduce(function (s, w) { return s + (w.strain || 0); }, 0);
+    var highHRWorkouts = todayWorkouts.filter(function (w) { return w.max_hr != null && w.max_hr > 180; });
+
+    // Grappling session context (manual/structured — richer than workout auto-detect)
     var hasGrapplingSession = today.grappling_session != null;
     var sessionType = hasGrapplingSession ? today.grappling_session.type : null;
     var sessionIntensity = hasGrapplingSession ? today.grappling_session.intensity : null;
+    var sessionSparring = hasGrapplingSession && today.grappling_session.sparring === true;
 
-    // Suggested training intensity based on recovery + context
+    // Subjective context
+    var hasSubjective = today.subjective != null;
+    var subjectiveMood = hasSubjective ? today.subjective.mood : null;
+    var subjectiveRPE = hasSubjective ? today.subjective.perceived_exertion : null;
+
+    // Suggested training intensity based on recovery + all available context
     var suggestedIntensity = 'moderate';
-    if (lowRecoveryDay || sleepDebtStreak) suggestedIntensity = 'light';
-    else if (today.recovery_score != null && today.recovery_score >= 67 && !backToBackHard) suggestedIntensity = 'hard';
+    var intensityReasons = [];
+    if (lowRecoveryDay) { suggestedIntensity = 'light'; intensityReasons.push('recovery below baseline'); }
+    if (sleepDebtStreak) { suggestedIntensity = 'light'; intensityReasons.push('3-day sleep debt'); }
+    if (lowDeepSleepToday) { intensityReasons.push('deep sleep (SWS+REM) ratio below baseline'); }
+    if (backToBackHard) { intensityReasons.push('back-to-back high-strain days'); if (suggestedIntensity !== 'light') suggestedIntensity = 'moderate'; }
+    if (today.recovery_score != null && today.recovery_score >= 67 && !backToBackHard && !sleepDebtStreak) {
+      suggestedIntensity = 'hard';
+      intensityReasons.push('recovery green and load manageable');
+    }
+    // Subjective override: high RPE + low mood → don't push
+    if (subjectiveRPE != null && subjectiveRPE >= 8 && subjectiveMood != null && subjectiveMood <= 2) {
+      if (suggestedIntensity === 'hard') suggestedIntensity = 'moderate';
+      intensityReasons.push('subjective: high exertion + low mood');
+    }
 
     // Suggested focus type
-    var suggestedFocus = 'technique'; // default: technical work
+    var suggestedFocus = 'technique';
     if (suggestedIntensity === 'hard') suggestedFocus = 'sparring';
     else if (suggestedIntensity === 'light') suggestedFocus = 'drilling';
+
+    // Data provenance tracking
+    var provenanceSources = {};
+    history.forEach(function (d) {
+      var src = d.data_source || 'unknown';
+      provenanceSources[src] = (provenanceSources[src] || 0) + 1;
+    });
+
+    // Evidence field availability — explicit tracking
+    var evidenceFields = {
+      // Always expected
+      recovery: recoveries.length,
+      hrv: hrvs.length,
+      strain: strains.length,
+      sleep_hours: sleepHours.length,
+      sleep_performance: sleepPerfs.length,
+      resting_hr: history.filter(function (d) { return d.resting_hr != null; }).length,
+      // Richer fields (may be 0 if not available)
+      sws: swsArr.length,
+      rem: remArr.length,
+      sleep_efficiency: effArr.length,
+      spo2: history.filter(function (d) { return d.spo2_pct != null; }).length,
+      skin_temp: history.filter(function (d) { return d.skin_temp_c != null; }).length,
+      respiratory_rate: history.filter(function (d) { return d.respiratory_rate != null; }).length,
+      workouts: history.filter(function (d) { return d.workouts != null; }).length,
+      grappling_sessions: history.filter(function (d) { return d.grappling_session != null; }).length,
+      subjective: history.filter(function (d) { return d.subjective != null; }).length
+    };
 
     return {
       date: today.date,
@@ -243,6 +350,14 @@
       today_resting_hr: today.resting_hr,
       today_readiness: today.readiness_state,
 
+      // Today's richer data (null when not available)
+      today_sws_hours: today.sws_hours || null,
+      today_rem_hours: today.rem_hours || null,
+      today_sleep_efficiency: today.sleep_efficiency_pct || null,
+      today_deep_sleep_ratio: todayDeepRatio != null ? Math.round(todayDeepRatio * 1000) / 1000 : null,
+      today_respiratory_rate: today.respiratory_rate || null,
+      today_spo2: today.spo2_pct || null,
+
       // Baselines
       baseline_recovery_mean: recoveryMean != null ? Math.round(recoveryMean * 10) / 10 : null,
       baseline_recovery_std: recoveryStd != null ? Math.round(recoveryStd * 10) / 10 : null,
@@ -250,6 +365,10 @@
       baseline_hrv_std: hrvStd != null ? Math.round(hrvStd * 10) / 10 : null,
       baseline_strain_mean: strainMean != null ? Math.round(strainMean * 10) / 10 : null,
       baseline_sleep_mean: sleepMean != null ? Math.round(sleepMean * 10) / 10 : null,
+      baseline_sws_mean: swsMean != null ? Math.round(swsMean * 100) / 100 : null,
+      baseline_rem_mean: remMean != null ? Math.round(remMean * 100) / 100 : null,
+      baseline_sleep_efficiency_mean: effMean != null ? Math.round(effMean * 10) / 10 : null,
+      baseline_deep_ratio: baselineDeepRatio != null ? Math.round(baselineDeepRatio * 1000) / 1000 : null,
 
       // Recent windows
       recent_3d_recovery: recent3Recovery != null ? Math.round(recent3Recovery * 10) / 10 : null,
@@ -265,22 +384,45 @@
       flag_high_strain_yesterday: highStrainYesterday,
       flag_sleep_debt_streak: sleepDebtStreak,
       flag_back_to_back_hard: backToBackHard,
+      flag_low_deep_sleep: lowDeepSleepToday,
 
-      // Grappling session (when available)
+      // Workout detail (when available)
+      has_workout_detail: hasWorkoutDetail,
+      has_grappling_workout: hasGrapplingWorkout,
+      workout_count: todayWorkouts.length,
+      workout_total_strain: workoutTotalStrain > 0 ? Math.round(workoutTotalStrain * 10) / 10 : null,
+      high_hr_workouts: highHRWorkouts.length,
+
+      // Grappling session context (when available)
       has_grappling_session: hasGrapplingSession,
       session_type: sessionType,
       session_intensity: sessionIntensity,
+      session_sparring: sessionSparring,
+
+      // Subjective (when available)
+      has_subjective: hasSubjective,
+      subjective_mood: subjectiveMood,
+      subjective_rpe: subjectiveRPE,
 
       // Recommendations
       suggested_intensity: suggestedIntensity,
       suggested_focus: suggestedFocus,
+      intensity_reasons: intensityReasons,
+
+      // Evidence audit — how many days have each field
+      evidence_fields: evidenceFields,
+      provenance: provenanceSources,
 
       // Missing data markers
       missing: {
         grappling_sessions: !hasGrapplingSession,
+        grappling_workout: !hasGrapplingWorkout,
         sleep_data: today.sleep_hours == null,
+        sleep_detail: today.sws_hours == null,
         strain_data: today.daily_strain == null,
         hrv_data: today.hrv_ms == null,
+        workout_detail: !hasWorkoutDetail,
+        subjective_data: !hasSubjective,
         insufficient_history: n < 7
       }
     };
@@ -300,6 +442,7 @@
       end: history[history.length - 1].date,
       days: history.length
     };
+    var ef = features.evidence_fields; // shorthand
 
     // --- Pattern 1: Low recovery correlated with sleep debt ---
     var lowRecDays = history.filter(function (d) {
@@ -329,10 +472,14 @@
           ? ['Some low-recovery days had adequate sleep — other factors (strain, stress) likely contribute.']
           : [],
         confidence: Math.min(0.85, 0.4 + sleepCorrelation * 0.45),
+        evidence_fields_used: ['recovery', 'sleep_hours'],
+        evidence_fields_missing: ef.sws === 0 ? ['sws', 'rem', 'sleep_efficiency'] : [],
+        data_provenance: { sources: features.provenance, days: history.length },
         what_would_increase_confidence: [
           'More data points (currently ' + lowRecDays.length + ' low-recovery days).',
-          'Grappling session intensity data to separate physical vs external stressors.'
-        ],
+          ef.sws === 0 ? 'Sleep stage data (SWS/REM) to distinguish shallow vs deep sleep deficit.' : null,
+          ef.grappling_sessions === 0 ? 'Grappling session intensity data to separate physical vs external stressors.' : null
+        ].filter(Boolean),
         tags: ['recovery', 'sleep']
       }));
     }
@@ -371,10 +518,14 @@
             ? ['Many high-strain days still had normal next-day HRV — individual recovery capacity varies.']
             : [],
           confidence: Math.min(0.8, 0.35 + strainHRVCorrelation * 0.45),
+          evidence_fields_used: ['daily_strain', 'hrv'],
+          evidence_fields_missing: ef.workouts === 0 ? ['workouts', 'hr_zones'] : [],
+          data_provenance: { sources: features.provenance, days: history.length },
           what_would_increase_confidence: [
-            'Session-type data: grappling vs conditioning may affect HRV differently.',
+            ef.workouts === 0 ? 'Workout detail: grappling vs conditioning may affect HRV differently.' : null,
+            ef.grappling_sessions === 0 ? 'Grappling session context for strain interpretation.' : null,
             'Longer time window to establish consistency.'
-          ],
+          ].filter(Boolean),
           tags: ['strain', 'hrv', 'recovery']
         }));
       }
@@ -412,10 +563,14 @@
           ? ['Recovery after hard pairs is near baseline — may indicate good conditioning.']
           : ['Small sample size limits confidence.'],
         confidence: Math.min(0.7, 0.3 + consecutiveHardPairs.length * 0.1),
+        evidence_fields_used: ['daily_strain', 'recovery'],
+        evidence_fields_missing: ef.grappling_sessions === 0 ? ['grappling_sessions', 'workouts'] : [],
+        data_provenance: { sources: features.provenance, days: history.length },
         what_would_increase_confidence: [
           'More back-to-back pairs (currently ' + consecutiveHardPairs.length + ').',
-          'Grappling session data to confirm "hard" means grappling, not just high-strain cardio.'
-        ],
+          ef.grappling_sessions === 0 ? 'Grappling session data to confirm "hard" means grappling, not just high-strain cardio.' : null,
+          ef.workouts === 0 ? 'Workout-level detail to distinguish session types.' : null
+        ].filter(Boolean),
         tags: ['strain', 'recovery', 'load-management']
       }));
     }
@@ -445,9 +600,103 @@
           ],
           counterpoints: [],
           confidence: 0.9,
-          what_would_increase_confidence: [],
+          evidence_fields_used: ['sleep_performance'],
+          evidence_fields_missing: ef.sws === 0 ? ['sws', 'rem'] : [],
+          data_provenance: { sources: features.provenance, days: history.length },
+          what_would_increase_confidence: ef.sws === 0
+            ? ['Sleep stage data (SWS/REM) would reveal whether the trend is driven by deep sleep changes.']
+            : [],
           tags: ['sleep', 'trend']
         }));
+      }
+    }
+
+    // --- Pattern 5: Deep sleep quality and recovery (only when sleep detail available) ---
+    if (ef.sws >= 7 && ef.rem >= 7) {
+      var daysWithSleepAndRecovery = history.filter(function (d) {
+        return d.sws_hours != null && d.rem_hours != null && d.sleep_hours != null && d.sleep_hours > 0 && d.recovery_score != null;
+      });
+      if (daysWithSleepAndRecovery.length >= 7) {
+        var deepRatios = daysWithSleepAndRecovery.map(function (d) {
+          return { ratio: (d.sws_hours + d.rem_hours) / d.sleep_hours, recovery: d.recovery_score };
+        });
+        var medianRatio = deepRatios.map(function (d) { return d.ratio; }).sort()[Math.floor(deepRatios.length / 2)];
+        var aboveMedian = deepRatios.filter(function (d) { return d.ratio >= medianRatio; });
+        var belowMedian = deepRatios.filter(function (d) { return d.ratio < medianRatio; });
+        var avgRecAbove = avg(aboveMedian.map(function (d) { return d.recovery; }));
+        var avgRecBelow = avg(belowMedian.map(function (d) { return d.recovery; }));
+        var recoveryGap = avgRecAbove - avgRecBelow;
+
+        if (Math.abs(recoveryGap) > 5) {
+          candidates.push(createInsight({
+            title: 'Deep sleep ratio and recovery',
+            rule: recoveryGap > 0
+              ? 'Nights with higher deep sleep ratio (SWS+REM) are associated with ' + Math.round(recoveryGap) + '% higher next-day recovery.'
+              : 'Deep sleep ratio does not clearly predict recovery — other factors dominate.',
+            context: 'Sleep quality and recovery',
+            classification: recoveryGap > 0 && recoveryGap > 8 ? INSIGHT_CLASS.OBSERVED_PATTERN : INSIGHT_CLASS.WORKING_HYPOTHESIS,
+            evidence_window: evidenceWindow,
+            supporting_facts: [
+              daysWithSleepAndRecovery.length + ' days with full sleep stage + recovery data.',
+              'Above-median deep ratio: avg recovery ' + Math.round(avgRecAbove) + '%.',
+              'Below-median deep ratio: avg recovery ' + Math.round(avgRecBelow) + '%.',
+              'Median deep sleep ratio: ' + Math.round(medianRatio * 100) + '%.'
+            ],
+            counterpoints: recoveryGap <= 8
+              ? ['Gap is small (' + Math.round(recoveryGap) + '%) — may not be practically significant.']
+              : [],
+            confidence: Math.min(0.8, 0.35 + Math.abs(recoveryGap) / 30),
+            evidence_fields_used: ['sws', 'rem', 'sleep_hours', 'recovery'],
+            evidence_fields_missing: ef.respiratory_rate === 0 ? ['respiratory_rate'] : [],
+            data_provenance: { sources: features.provenance, days: history.length },
+            what_would_increase_confidence: [
+              'Respiratory rate data to cross-validate sleep quality assessment.',
+              ef.grappling_sessions === 0 ? 'Grappling session data to control for training intensity effects.' : null
+            ].filter(Boolean),
+            tags: ['sleep', 'recovery', 'sleep-stages']
+          }));
+        }
+      }
+    }
+
+    // --- Pattern 6: Grappling workout strain vs general conditioning (when workout detail available) ---
+    if (ef.workouts >= 7) {
+      var daysWithWorkouts = history.filter(function (d) { return d.workouts != null && d.workouts.length > 0; });
+      var grapplingDays = daysWithWorkouts.filter(function (d) {
+        return d.workouts.some(function (w) { return w.sport_id === 43 || w.sport_id === 44 || w.sport_id === 84; });
+      });
+      var nonGrapplingDays = daysWithWorkouts.filter(function (d) {
+        return !d.workouts.some(function (w) { return w.sport_id === 43 || w.sport_id === 44 || w.sport_id === 84; });
+      });
+      if (grapplingDays.length >= 3 && nonGrapplingDays.length >= 3) {
+        var avgGrapplingStrain = avg(grapplingDays.map(function (d) { return d.daily_strain; }).filter(Boolean));
+        var avgNonGrapplingStrain = avg(nonGrapplingDays.map(function (d) { return d.daily_strain; }).filter(Boolean));
+        if (avgGrapplingStrain != null && avgNonGrapplingStrain != null) {
+          var strainDiff = avgGrapplingStrain - avgNonGrapplingStrain;
+          candidates.push(createInsight({
+            title: 'Grappling vs non-grappling strain comparison',
+            rule: Math.abs(strainDiff) > 1
+              ? 'Grappling days average ' + Math.round(Math.abs(strainDiff) * 10) / 10 + ' ' + (strainDiff > 0 ? 'higher' : 'lower') + ' strain than non-grappling training days.'
+              : 'Grappling and non-grappling days produce similar strain levels.',
+            context: 'Training load characterization',
+            classification: INSIGHT_CLASS.FACT,
+            evidence_window: evidenceWindow,
+            supporting_facts: [
+              grapplingDays.length + ' grappling days, ' + nonGrapplingDays.length + ' non-grappling days.',
+              'Avg grappling strain: ' + Math.round(avgGrapplingStrain * 10) / 10 + '.',
+              'Avg non-grappling strain: ' + Math.round(avgNonGrapplingStrain * 10) / 10 + '.'
+            ],
+            counterpoints: [],
+            confidence: 0.85,
+            evidence_fields_used: ['workouts', 'daily_strain'],
+            evidence_fields_missing: ef.grappling_sessions === 0 ? ['grappling_sessions'] : [],
+            data_provenance: { sources: features.provenance, days: history.length },
+            what_would_increase_confidence: [
+              ef.grappling_sessions === 0 ? 'Manual grappling session context (sparring vs drilling, rounds).' : null
+            ].filter(Boolean),
+            tags: ['strain', 'grappling', 'workout-type']
+          }));
+        }
       }
     }
 
@@ -609,18 +858,27 @@
     }
 
     // Build training recommendation from features
-    var training = { intensity: 'moderate', focus: 'technique', reason: 'Default — no WHOOP data available.' };
+    var training = { intensity: 'moderate', focus: 'technique', reason: 'Default — no WHOOP data available.', reasons: [] };
     if (features) {
       training.intensity = features.suggested_intensity;
       training.focus = features.suggested_focus;
+      training.reasons = features.intensity_reasons || [];
 
       var reasons = [];
       if (features.flag_low_recovery) reasons.push('Recovery is below your personal baseline.');
       if (features.flag_sleep_debt_streak) reasons.push('Sleep has been below average for 3+ days.');
+      if (features.flag_low_deep_sleep) reasons.push('Deep sleep ratio was below your baseline.');
       if (features.flag_back_to_back_hard) reasons.push('Two consecutive high-strain days — allow recovery.');
       if (features.flag_hrv_below_baseline) reasons.push('HRV is suppressed below your baseline.');
+      if (features.has_subjective && features.subjective_rpe != null && features.subjective_rpe >= 8) {
+        reasons.push('Subjective exertion was high recently.');
+      }
       if (features.today_recovery >= 67 && !features.flag_back_to_back_hard) {
         reasons.push('Recovery is green and load is manageable.');
+      }
+      // Context caveat when grappling data is absent
+      if (features.missing.grappling_sessions && features.missing.grappling_workout) {
+        reasons.push('Note: no grappling session context — intensity suggestion is based on WHOOP metrics only.');
       }
       training.reason = reasons.length > 0 ? reasons.join(' ') : 'Based on current recovery and strain balance.';
     }
@@ -647,7 +905,13 @@
       data_quality: {
         days_of_history: history.length,
         has_today: features ? true : false,
-        missing: features ? features.missing : { grappling_sessions: true, sleep_data: true, strain_data: true, hrv_data: true, insufficient_history: true }
+        evidence_fields: features ? features.evidence_fields : null,
+        provenance: features ? features.provenance : null,
+        missing: features ? features.missing : {
+          grappling_sessions: true, grappling_workout: true, sleep_data: true,
+          sleep_detail: true, strain_data: true, hrv_data: true,
+          workout_detail: true, subjective_data: true, insufficient_history: true
+        }
       }
     };
   }
@@ -722,6 +986,9 @@
       approved_for_website: false,          // NEVER auto-approved
       source_model: payload.source_model,
       source_flow: payload.source_flow || 'model-bridge',
+      evidence_fields_used: Array.isArray(payload.evidence_fields_used) ? payload.evidence_fields_used : [],
+      evidence_fields_missing: Array.isArray(payload.evidence_fields_missing) ? payload.evidence_fields_missing : [],
+      data_provenance: payload.data_provenance || null,
       what_would_increase_confidence: Array.isArray(payload.what_would_increase_confidence) ? payload.what_would_increase_confidence : [],
       revised_from: payload.revised_from || null,
       supersedes: payload.supersedes || null,
