@@ -99,6 +99,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600&family=Bebas+Neue&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="whoop-intelligence.js"></script>
 <style>
 :root {
   --bg: #0a0c10;
@@ -2060,6 +2061,11 @@ async function refreshWhoopFromBackend() {
   });
   showToast('WHOOP refreshed for ' + normalized.date);
   updateGreeting();
+  // Feed into intelligence layer
+  if (window.GrapplingIntelligence) {
+    window.GrapplingIntelligence.appendDay(normalized);
+    window.GrapplingIntelligence.runPipeline();
+  }
   return { ok: true, item: normalized };
 }
 
@@ -2152,6 +2158,11 @@ function syncWhoopData(data) {
   saveState();
   updateWhoopReadinessCard();
   updateWhoopMenuLabel();
+  // Feed into intelligence layer
+  if (window.GrapplingIntelligence) {
+    window.GrapplingIntelligence.appendDay(normalized);
+    window.GrapplingIntelligence.runPipeline();
+  }
   showToast('WHOOP data synced for ' + normalized.date);
   return true;
 }
@@ -8502,6 +8513,15 @@ performance.mark('app-ready');
 // Set print date for @media print header
 document.body.setAttribute('data-print-date', new Date().toLocaleDateString());
 
+// ─── WHOOP Intelligence Layer boot ──────────────────────────────────────────
+// Seed intelligence history from any stored WHOOP data on page load.
+(function() {
+  if (!window.GrapplingIntelligence) return;
+  if (STATE.whoopData && STATE.whoopData.date) {
+    window.GrapplingIntelligence.appendDay(STATE.whoopData);
+  }
+})();
+
 // ─── WEB VITALS (lightweight, no library) ─────────────────────────────────────
 (function() {
   var wv = window._webVitals = { lcp: null, cls: 0, fcp: null };
@@ -8589,6 +8609,19 @@ window.__APP_DEBUG__ = {
       if (boBtn) { boBtn.click(); return 'built-out toggled'; }
     }
     return 'filter not found: ' + name;
+  },
+  getIntelligence: function() {
+    if (!window.GrapplingIntelligence) return { error: 'intelligence layer not loaded' };
+    return {
+      coaching: window.GrapplingIntelligence.getDailyCoaching(),
+      features: window.GrapplingIntelligence.deriveFeatures(),
+      summary: window.GrapplingIntelligence.getInsightSummary(),
+      history_days: window.GrapplingIntelligence.getHistory().length
+    };
+  },
+  runInsightPipeline: function() {
+    if (!window.GrapplingIntelligence) return { error: 'intelligence layer not loaded' };
+    return window.GrapplingIntelligence.runPipeline();
   }
 };
 _log('[GrapplingMap] Debug API ready: window.__APP_DEBUG__');
@@ -9968,9 +10001,23 @@ var AIActions = {
       }
     }
 
-    // WHOOP readiness awareness
+    // WHOOP readiness + intelligence layer coaching
     var whoopLine = '';
-    if (STATE.whoopData && isWhoopDataRecent(STATE.whoopData)) {
+    var coaching = window.GrapplingIntelligence ? window.GrapplingIntelligence.getDailyCoaching() : null;
+    if (coaching && coaching.data_quality.has_today) {
+      var r = coaching.readiness;
+      var t = coaching.training;
+      if (r.level === 'low') whoopLine = '<br><span style="color:' + r.color + '">\u26a0\ufe0f ' + r.label + ' (' + coaching.readiness.level + ')</span> \u2014 ' + t.reason;
+      else if (r.level === 'moderate') whoopLine = '<br><span style="color:' + r.color + '">' + r.label + '</span> \u2014 ' + t.reason;
+      else if (r.level === 'high') whoopLine = '<br><span style="color:' + r.color + '">\u2705 ' + r.label + '</span> \u2014 ' + t.reason;
+      // Add intensity/focus recommendation
+      whoopLine += '<br><span style="font-size:12px;color:var(--text-dim);">Suggested: <strong>' + t.intensity + '</strong> intensity, focus on <strong>' + t.focus + '</strong>.</span>';
+      // Surface applicable approved rules
+      if (coaching.applicable_rules.length > 0) {
+        whoopLine += '<br><span style="font-size:11px;color:var(--text-muted);">Insight: ' + coaching.applicable_rules[0].rule + '</span>';
+      }
+    } else if (STATE.whoopData && isWhoopDataRecent(STATE.whoopData)) {
+      // Fallback: basic readiness if intelligence layer has no history
       var _wr = STATE.whoopData.recovery_score;
       var _ws = computeReadiness(_wr);
       if (_ws === 'low') whoopLine = '<br>\u26a0\ufe0f Recovery is low (' + _wr + '%) \u2014 consider lighter training today.';
