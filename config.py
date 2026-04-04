@@ -14,6 +14,7 @@ AUTOMATION_NEXT_FILE = os.path.join(PROJECT_ROOT, "AUTOMATION_NEXT.md")
 HANDOFF_LATEST_FILE = os.path.join(PROJECT_ROOT, "HANDOFF_LATEST.md")
 TOKENS_FILE = os.path.join(PROJECT_ROOT, "tokens.json")
 WHOOP_TOKENS_FILE = os.path.expanduser("~/whoop-integration/whoop_tokens.json")
+WHOOP_SQLITE_FILE = os.path.expanduser("~/whoop-integration/data/whoop.sqlite3")
 
 PROJECT_AUTOMATION_DIR = os.path.join(PROJECT_ROOT, "automation")
 PROJECT_STATE_DIR = os.path.join(PROJECT_AUTOMATION_DIR, "state")
