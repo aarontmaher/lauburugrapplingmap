@@ -9428,7 +9428,7 @@ function captureSuggestion(text) {
   if (!STATE.suggestions) STATE.suggestions = [];
   STATE.suggestions.unshift(suggestion);
   saveState();
-  if (typeof srAnnounce === 'function') srAnnounce('Suggestion captured');
+  if (typeof srAnnounce === 'function') srAnnounce('Feedback captured');
   return suggestion;
 }
 
