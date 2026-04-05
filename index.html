@@ -4253,7 +4253,7 @@ function ccRenderSummaryCards(snapshot) {
 function ccRenderSuggestionList(snapshot) {
   var root = document.getElementById('ccSuggestionList');
   if (!snapshot.suggestions.length) {
-    root.innerHTML = '<div class="cc-empty"><div class="cc-empty-title">No suggestions yet</div><div class="cc-empty-copy">The queue is empty. Existing suggestion intake still works, and new items will show up here automatically.</div></div>';
+    root.innerHTML = '<div class="cc-empty"><div class="cc-empty-title">Queue is clear</div><div class="cc-empty-copy">No pending suggestions. New items from tester feedback and audits will appear here.</div></div>';
     return;
   }
   root.innerHTML = '<div class="cc-suggestion-list">' + snapshot.suggestions.map(function(item) {
@@ -4407,7 +4407,7 @@ function ccRenderActivity(snapshot) {
   var root = document.getElementById('ccActivityFeed');
   var items = Array.isArray(snapshot.activity) ? snapshot.activity : [];
   if (!items.length) {
-    root.innerHTML = '<div class="cc-empty"><div class="cc-empty-title">No recent activity</div><div class="cc-empty-copy">Activity will appear here as suggestions move, handoffs get created, and AI statuses change.</div></div>';
+    root.innerHTML = '<div class="cc-empty"><div class="cc-empty-title">No recent activity</div><div class="cc-empty-copy">Dispatched prompts, agent updates, and suggestion changes will appear here.</div></div>';
     return;
   }
   root.innerHTML = '<div class="cc-activity-list">' + items.map(function(item) {
@@ -7114,32 +7114,53 @@ function openWhoopManager() {
 
   function renderPanel(model) {
     var state = getWhoopUiState();
-    var statusTone = model.connected ? '#34d399' : state.debugDataOnly ? '#d29922' : '#8892a4';
-    var primaryLabel = model.connected ? 'Refresh WHOOP' : 'Connect WHOOP';
+    var ad = model.auth_detail || {};
+    var needsReauth = ad.reauth_required || ad.sync_blocked;
+    var statusTone = needsReauth ? '#ff7c70' : model.connected ? '#34d399' : state.debugDataOnly ? '#d29922' : '#8892a4';
+    var statusLabel = needsReauth ? 'REAUTH NEEDED' : model.connected ? 'CONNECTED' : state.debugDataOnly ? 'DEBUG' : 'NOT CONNECTED';
+    var primaryLabel = needsReauth ? 'Reconnect WHOOP' : model.connected ? 'Refresh data' : 'Connect WHOOP';
     var primaryDisabled = !!model.primaryDisabled;
-    var helper = model.connected
-      ? 'WHOOP is connected. Pull the latest daily performance object whenever you need a fresh sync.'
-      : (isMember() ? 'Connect your WHOOP account to sync recovery automatically after auth.' : 'Sign in to connect WHOOP and keep recovery data synced automatically.');
+    var helper = needsReauth
+      ? 'WHOOP authorization has expired. Reconnect to resume live sync.'
+      : model.connected
+        ? 'Recovery, strain, and sleep sync automatically. Refresh to pull the latest data now.'
+        : (isMember() ? 'Connect your WHOOP account to sync recovery data automatically.' : 'Sign in to connect WHOOP.');
     var lastSync = state.lastSyncAt ? ccFormatWhen(state.lastSyncAt) : (model.last_sync_at ? ccFormatWhen(model.last_sync_at) : 'never');
     var latestDate = state.latestDate || model.latest_date || 'none';
+
+    // Today's data summary (if available)
+    var todaySummary = '';
+    if (model.connected && STATE.whoopData && isWhoopDataRecent(STATE.whoopData)) {
+      var wd = STATE.whoopData;
+      var recColor = wd.recovery_score >= 67 ? '#34d399' : wd.recovery_score >= 34 ? '#f0c040' : '#f85149';
+      todaySummary =
+        '<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:8px;">' +
+          '<div style="border:1px solid rgba(255,255,255,0.05);border-radius:8px;padding:8px;background:rgba(255,255,255,0.015);text-align:center;"><div style="font-family:DM Mono,monospace;font-size:9px;color:#667;">Recovery</div><div style="font-family:Bebas Neue,sans-serif;font-size:22px;color:' + recColor + ';margin-top:2px;">' + (wd.recovery_score != null ? wd.recovery_score + '%' : '—') + '</div></div>' +
+          '<div style="border:1px solid rgba(255,255,255,0.05);border-radius:8px;padding:8px;background:rgba(255,255,255,0.015);text-align:center;"><div style="font-family:DM Mono,monospace;font-size:9px;color:#667;">HRV</div><div style="font-family:Bebas Neue,sans-serif;font-size:22px;color:var(--text);margin-top:2px;">' + (wd.hrv_ms != null ? wd.hrv_ms + '<span style="font-size:11px;color:var(--text-dim);">ms</span>' : '—') + '</div></div>' +
+          '<div style="border:1px solid rgba(255,255,255,0.05);border-radius:8px;padding:8px;background:rgba(255,255,255,0.015);text-align:center;"><div style="font-family:DM Mono,monospace;font-size:9px;color:#667;">Strain</div><div style="font-family:Bebas Neue,sans-serif;font-size:22px;color:var(--text);margin-top:2px;">' + (wd.daily_strain != null ? wd.daily_strain : '—') + '</div></div>' +
+        '</div>';
+    }
+
     body.innerHTML =
-      '<div style="border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:14px;background:rgba(255,255,255,0.02);">' +
-        '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;">' +
-          '<div>' +
-            '<div style="font-family:Barlow Condensed,sans-serif;font-size:16px;letter-spacing:0.5px;color:var(--text);">' + (model.connected ? 'WHOOP connected' : (state.debugDataOnly ? 'Debug WHOOP data loaded' : 'WHOOP not connected')) + '</div>' +
-            '<div style="font-family:DM Mono,monospace;font-size:11px;color:' + statusTone + ';margin-top:4px;">' + (model.statusText || helper) + '</div>' +
+      '<div style="border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:12px;background:rgba(255,255,255,0.02);">' +
+        '<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;">' +
+          '<div style="display:flex;align-items:center;gap:8px;">' +
+            '<span style="width:8px;height:8px;border-radius:50%;background:' + statusTone + ';flex-shrink:0;"></span>' +
+            '<span style="font-family:Barlow Condensed,sans-serif;font-size:15px;letter-spacing:0.4px;color:var(--text);">' + (needsReauth ? 'WHOOP needs reauthorization' : model.connected ? 'WHOOP connected' : 'WHOOP not connected') + '</span>' +
           '</div>' +
-          '<span style="font-family:DM Mono,monospace;font-size:10px;color:' + statusTone + ';border:1px solid rgba(255,255,255,0.08);padding:4px 8px;border-radius:999px;white-space:nowrap;">' + (model.connected ? 'CONNECTED' : (state.debugDataOnly ? 'DEBUG' : 'DISCONNECTED')) + '</span>' +
+          '<span style="font-family:DM Mono,monospace;font-size:9px;color:' + statusTone + ';border:1px solid rgba(255,255,255,0.08);padding:3px 7px;border-radius:999px;white-space:nowrap;">' + statusLabel + '</span>' +
         '</div>' +
-        '<div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:12px;">' +
-          '<div style="border:1px solid rgba(255,255,255,0.05);border-radius:8px;padding:10px;background:rgba(255,255,255,0.015);"><div style="font-family:DM Mono,monospace;font-size:10px;color:#667;">Last sync</div><div style="font-family:Barlow Condensed,sans-serif;font-size:16px;color:var(--text);margin-top:4px;">' + lastSync + '</div></div>' +
-          '<div style="border:1px solid rgba(255,255,255,0.05);border-radius:8px;padding:10px;background:rgba(255,255,255,0.015);"><div style="font-family:DM Mono,monospace;font-size:10px;color:#667;">Latest day</div><div style="font-family:Barlow Condensed,sans-serif;font-size:16px;color:var(--text);margin-top:4px;">' + latestDate + '</div></div>' +
+        '<div style="font-family:DM Mono,monospace;font-size:10px;color:' + statusTone + ';margin-top:6px;">' + (model.statusText || helper) + '</div>' +
+        '<div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:10px;">' +
+          '<div style="border:1px solid rgba(255,255,255,0.05);border-radius:8px;padding:8px;background:rgba(255,255,255,0.015);"><div style="font-family:DM Mono,monospace;font-size:9px;color:#667;">Last sync</div><div style="font-family:Barlow Condensed,sans-serif;font-size:15px;color:var(--text);margin-top:3px;">' + lastSync + '</div></div>' +
+          '<div style="border:1px solid rgba(255,255,255,0.05);border-radius:8px;padding:8px;background:rgba(255,255,255,0.015);"><div style="font-family:DM Mono,monospace;font-size:9px;color:#667;">Latest day</div><div style="font-family:Barlow Condensed,sans-serif;font-size:15px;color:var(--text);margin-top:3px;">' + latestDate + '</div></div>' +
         '</div>' +
+        todaySummary +
       '</div>' +
-      '<div style="font-family:DM Mono,monospace;font-size:11px;color:var(--text-dim);line-height:1.55;">' + helper + '</div>' +
+      '<div style="font-family:DM Mono,monospace;font-size:10px;color:var(--text-dim);line-height:1.5;">' + helper + '</div>' +
       '<div style="display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;">' +
         (isMember()
-          ? '<button id="whoopPrimaryBtn" ' + (primaryDisabled ? 'disabled ' : '') + 'style="background:var(--accent);color:#000;border:none;font-family:DM Mono,monospace;font-size:11px;font-weight:600;padding:8px 14px;border-radius:6px;cursor:' + (primaryDisabled ? 'default' : 'pointer') + ';opacity:' + (primaryDisabled ? '0.55' : '1') + ';">' + primaryLabel + '</button>'
+          ? '<button id="whoopPrimaryBtn" ' + (primaryDisabled ? 'disabled ' : '') + 'style="background:' + (needsReauth ? '#ff7c70' : 'var(--accent)') + ';color:#000;border:none;font-family:DM Mono,monospace;font-size:11px;font-weight:600;padding:8px 14px;border-radius:6px;cursor:' + (primaryDisabled ? 'default' : 'pointer') + ';opacity:' + (primaryDisabled ? '0.55' : '1') + ';">' + primaryLabel + '</button>'
           : '<button id="whoopAuthBtn" style="background:var(--accent);color:#000;border:none;font-family:DM Mono,monospace;font-size:11px;font-weight:600;padding:8px 14px;border-radius:6px;cursor:pointer;">Sign in to connect</button>') +
       '</div>' +
       debugFallbackHtml();
@@ -7195,6 +7216,7 @@ function openWhoopManager() {
         connected: status.connected,
         last_sync_at: status.last_sync_at,
         latest_date: status.latest_date,
+        auth_detail: status.auth_detail || {},
         statusText: status.status_text || (status.connected
           ? ('Connected' + (status.last_sync_at ? ' \u00b7 last sync ' + ccFormatWhen(status.last_sync_at) : ''))
           : 'Connect WHOOP to pull recovery automatically after auth.')
