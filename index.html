@@ -2414,6 +2414,46 @@ function syncAppleHealthData(data) {
 
 window._syncAppleHealth = function(data) { return syncAppleHealthData(data); };
 
+// ─── HEALTH CONNECT NORMALIZATION ────────────────────────────────
+// Health Connect export field mapping → shared app schema
+function normalizeHealthConnectDailyForApp(item) {
+  if (!item || !item.date) return null;
+  // Health Connect may have recovery-like data; use similar mapping to Apple Health
+  var hrv = item.hrv_ms != null ? item.hrv_ms : (item.hrv != null ? item.hrv : null);
+  var activeKcal = item.active_energy_kcal != null ? item.active_energy_kcal : null;
+  var strainProxy = activeKcal != null ? Math.min(activeKcal / 100, 21) : null;
+  return {
+    date: item.date,
+    recovery_score: item.recovery_score != null ? item.recovery_score : null,
+    hrv_ms: hrv,
+    resting_hr: item.resting_hr != null ? item.resting_hr : (item.resting_heart_rate != null ? item.resting_heart_rate : null),
+    sleep_hours: item.sleep_hours != null ? item.sleep_hours : null,
+    sleep_performance_pct: null,
+    daily_strain: strainProxy,
+    readiness_state: 'unknown',
+    synced_at: new Date().toISOString(),
+    source: 'health_connect',
+    raw_daily: item
+  };
+}
+
+function syncHealthConnectData(data) {
+  if (!data || !data.date) { showToast('Health Connect sync: missing date field'); return false; }
+  var normalized = normalizeHealthConnectDailyForApp(data);
+  if (!normalized) { showToast('Health Connect sync: normalization failed'); return false; }
+  STATE.healthConnectData = normalized;
+  saveState();
+  if (window.GrapplingIntelligence) {
+    window.GrapplingIntelligence.appendDay(normalized);
+    window.GrapplingIntelligence.runPipeline();
+  }
+  if (typeof updateAITrainingCard === 'function') updateAITrainingCard();
+  showToast('Health Connect data synced for ' + normalized.date);
+  return true;
+}
+
+window._syncHealthConnect = function(data) { return syncHealthConnectData(data); };
+
 // ─── HEALTH PROVIDER LAYER ─────────────────────────────────────
 // Provider-aware resolution: which providers are connected, which
 // metric comes from where, what data is available for this user.
@@ -2430,7 +2470,8 @@ window.HealthProvider = {
   PROVIDER_LABELS: {
     whoop: 'WHOOP',
     polar: 'Polar',
-    apple_health: 'Apple Health'
+    apple_health: 'Apple Health',
+    health_connect: 'Health Connect'
   },
 
   // Which providers have data loaded for the current user
@@ -2439,6 +2480,7 @@ window.HealthProvider = {
     if (STATE.whoopData) out.push('whoop');
     if (STATE.polarData) out.push('polar');
     if (STATE.appleHealthData) out.push('apple_health');
+    if (STATE.healthConnectData) out.push('health_connect');
     return out;
   },
 
@@ -2457,12 +2499,13 @@ window.HealthProvider = {
     if (provider === 'whoop') return STATE.whoopData;
     if (provider === 'polar') return STATE.polarData;
     if (provider === 'apple_health') return STATE.appleHealthData;
+    if (provider === 'health_connect') return STATE.healthConnectData;
     return null;
   },
 
   // Best available normalized health data for this user (richest first)
   getLatestHealthData: function() {
-    var order = ['whoop', 'polar', 'apple_health'];
+    var order = ['whoop', 'polar', 'apple_health', 'health_connect'];
     for (var i = 0; i < order.length; i++) {
       var d = this._dataFor(order[i]);
       if (d && d.date) {
@@ -7464,6 +7507,19 @@ function openHealthMetricsManager() {
       '</div>'
     );
 
+    // ── Health Connect section (any user) ───────────────────
+    var hcData = STATE.healthConnectData && isWhoopDataRecent(STATE.healthConnectData) ? STATE.healthConnectData : null;
+    sections.push(
+      '<div style="border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:12px;">' +
+        '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px;">' +
+          '<span style="font-family:Barlow Condensed,sans-serif;font-size:14px;letter-spacing:0.4px;color:var(--text);">Health Connect</span>' +
+          '<span style="font-family:DM Mono,monospace;font-size:9px;color:' + (hcData ? '#34d399' : '#8892a4') + ';border:1px solid rgba(255,255,255,0.08);padding:2px 6px;border-radius:999px;">' + (hcData ? 'DATA LOADED' : 'NOT CONNECTED') + '</span>' +
+        '</div>' +
+        (hcData ? dataSummaryHtml(hcData) : '<div style="font-family:DM Mono,monospace;font-size:10px;color:var(--text-muted);">Import a Health Connect export to enable health-based recommendations.</div>') +
+        importBlockHtml('healthConnectImportJson', '{"date":"2026-04-05","recovery_score":70,"hrv_ms":50,"resting_hr":60,"sleep_hours":7.0,"active_energy_kcal":400}') +
+      '</div>'
+    );
+
     // ── No-source state ────────────────────────────────────
     if (connected.length === 0) {
       sections.push(
@@ -7517,6 +7573,15 @@ function openHealthMetricsManager() {
       var raw = document.getElementById('appleImportJson').value.trim();
       if (!raw) return showToast('Paste JSON first');
       try { if (syncAppleHealthData(JSON.parse(raw))) { closeModal(); } }
+      catch(e) { showToast('Invalid JSON'); }
+    });
+
+    // Health Connect JSON import
+    var healthConnectImportBtn = document.getElementById('healthConnectImportJsonBtn');
+    if (healthConnectImportBtn) healthConnectImportBtn.addEventListener('click', function() {
+      var raw = document.getElementById('healthConnectImportJson').value.trim();
+      if (!raw) return showToast('Paste JSON first');
+      try { if (syncHealthConnectData(JSON.parse(raw))) { closeModal(); } }
       catch(e) { showToast('Invalid JSON'); }
     });
   }
@@ -10426,7 +10491,7 @@ var AIActions = {
     if (!health || !health.connected) {
       return {
         title: 'No health data connected',
-        body: 'Connect WHOOP, Polar, or Apple Health to get training recommendations based on your recovery and readiness.\n\nOpen Health Metrics from the menu to connect a provider.'
+        body: 'Connect WHOOP, Polar, Apple Health, or Health Connect to get training recommendations based on your recovery and readiness.\n\nOpen Health Metrics from the menu to connect a provider.'
       };
     }
 
@@ -10621,7 +10686,7 @@ var AIActions = {
 
     var msg = healthLine
       ? 'Ask about your health metrics or training readiness.'
-      : 'Connect a health source (WHOOP, Polar, Apple Health) to get readiness guidance.';
+      : 'Connect a health source (WHOOP, Polar, Apple Health, Health Connect) to get readiness guidance.';
 
     greetingEl.innerHTML = '<div style="font-family:DM Mono,monospace;font-size:11px;color:var(--text-dim);line-height:1.6;">' + msg + healthLine + '</div>';
     greetingEl.style.display = '';
