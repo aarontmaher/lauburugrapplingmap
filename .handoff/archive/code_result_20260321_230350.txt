@@ -1,0 +1,1 @@
+LOOP-FIX-01 | DONE | removed auto-capture, added PROMPT-ID loop guard, clipboard-only capture | errors: none

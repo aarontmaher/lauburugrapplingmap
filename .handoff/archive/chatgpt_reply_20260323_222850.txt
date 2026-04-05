@@ -1,0 +1,22 @@
+PROMPT-ID: POSITION-MEMORY-IMPROVEMENT-02
+TYPE: CODE
+SCOPE: live-footage understanding + grappling placement memory only
+
+GOAL:
+Continue improving the grappling placement memory with the latest corrections and chains from this session.
+
+TASKS:
+1. Review any new video placements since last memory update
+2. Tighten perspective/heading distinction rules
+3. Update grappling-placement-memory.json and .md if needed
+4. Signal completion via old KM bridge
+
+IMPORTANT:
+- Do not touch grappling.opml
+- Do not touch website/app code
+- Memory improvement only
+
+PASTE BACK EXACTLY:
+POSITION-MEMORY-IMPROVEMENT-02 | DONE | learned: <summary> | files: <list> | next-best: <list> | memory-sync: <yes/no> | stopping-point: <yes/no> | issues: <list or none>
+
+-chatgpt chat & claude code chat

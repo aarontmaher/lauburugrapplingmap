@@ -1,0 +1,67 @@
+Checked.
+
+This batch completed successfully.
+
+What just finished
+
+AI Batch 3 is done.
+
+What Code built
+
+Code installed and initialized the Supabase CLI, then added the first real Edge Functions/API foundation:
+
+Edge Functions created
+	•	supabase/functions/profile/index.ts
+	•	supabase/functions/progress/index.ts
+	•	supabase/functions/success-log/index.ts
+
+These are the first read-style endpoints from your API contract.
+
+Database setup added
+	•	supabase/migrations/20260325_001_create_tables.sql
+
+That migration includes the first schema for things like:
+	•	profiles
+	•	progress
+	•	success log
+	•	related user data tables
+
+Repo state
+
+Commit made:
+	•	815f980 — AI Batch 3: Supabase Edge Functions + SQL migration
+
+Audit automation
+
+Code also refreshed the audit trigger:
+	•	automation-outbox/audit_trigger.json
+	•	set:
+	•	audit_needed: true
+	•	commit: 815f980
+	•	new summary for this AI batch
+
+So your KM audit automation should now be triggerable again.
+
+Closeout
+	•	mark_done.sh ran successfully
+	•	terminal is back at ❯
+	•	nothing is actively running
+
+Important practical note
+
+What Code built is:
+	•	repo structure
+	•	Edge Function code
+	•	SQL migration file
+
+What still likely needs to happen next:
+	•	run/apply the SQL migration in Supabase
+	•	deploy the functions properly if not already deployed
+	•	then continue the AI/API lane
+
+Bottom line
+	•	AI Batch 3 completed
+	•	Supabase Edge Functions scaffold is now in the repo
+	•	SQL migration file is now in the repo
+	•	audit trigger was refreshed
+	•	terminal is idle and clean

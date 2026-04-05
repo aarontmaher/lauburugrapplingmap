@@ -1,0 +1,56 @@
+Checked.
+
+The batch finished cleanly, and terminal is idle.
+
+What just completed
+
+1. AI Coach compact/docked batch
+	•	AI-COACH-DOCKED-COMPACT-01 | DONE
+	•	AI Coach changed from a full-width bottom sheet to a:
+	•	compact 320px widget
+	•	bottom-right docked
+	•	400px max height
+	•	small toggle button
+	•	Desktop:
+	•	docked bottom-right
+	•	Mobile:
+	•	near-full-width expansion
+
+2. Audit outbox refresh
+	•	AUDIT-OUTBOX-REFRESH-AFTER-AI-COACH-01 | DONE
+	•	refreshed:
+	•	automation-outbox/chat_audit_prompt.txt
+	•	automation-outbox/cowork_audit_prompt.txt
+	•	trigger updated:
+	•	audit_needed: true
+	•	commit: f49f0f5
+	•	summary now targets the compact AI Coach widget audit
+
+Prompt focus now
+
+The audit prompts were rewritten to focus on:
+	•	compact AI Coach layout
+	•	whether it feels too small / too hidden / too intrusive
+	•	overlap with graph/reference content
+	•	desktop vs mobile behavior
+	•	guest vs member value
+	•	keep/revert judgment on compact layout
+
+Commit / repo state
+	•	commit shown in trigger:
+	•	f49f0f5
+	•	mark_done.sh succeeded
+	•	terminal returned to ❯
+
+Validation
+	•	10/12 pass
+	•	same note in terminal:
+	•	same pre-existing failures
+	•	no new blocking issue reported
+
+Bottom line
+	•	AI Coach compact widget is done
+	•	audit prompts are refreshed
+	•	KM audit trigger is set
+	•	terminal is clean
+	•	next step is to run your WATCH-AUDIT-TRIGGER macro if you want the audit automation to fire now

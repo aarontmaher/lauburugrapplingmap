@@ -1,0 +1,161 @@
+CONTENT-READINESS-01 is done and published.
+
+What finished:
+	•	Content Readiness dashboard added in the menu
+	•	per-section breakdown added:
+	•	positions
+	•	techniques
+	•	videos
+	•	video coverage %
+	•	transitions
+	•	missing video report added, showing up to 30 techniques without instructional video
+	•	content gap visibility added:
+	•	techniques with no video or sub-content
+	•	totals summary added:
+	•	positions
+	•	techniques
+	•	videos
+	•	transitions
+	•	visual comparison bars added for section video coverage
+	•	dashboard uses real SECTIONS data, including child Instructional video nodes
+	•	uses the existing list panel system for consistency
+	•	no content was invented
+	•	menu item “Content Readiness” added
+
+Result:
+	•	publish: yes
+	•	commit: f89aeac
+	•	live-review-ready: yes
+	•	blockers: none
+	•	tests: local verification passed with bootHealthy=true, 4 sections, 1910 items, 0 errors
+
+My read:
+	•	This is a good batch.
+	•	It’s actually useful, not filler.
+	•	The in-app readiness dashboard makes sense.
+	•	I agree with Code that live-footage folder readiness should stay a separate script/tool, not be jammed into the app UI.
+
+Next prompt:
+
+PROMPT-ID: CONTENT-READINESS-02
+TYPE: CODE
+SCOPE: content-readiness tooling and admin/reporting only, excluding protected content edits
+MODE: autonomous safe batch with publish at end if clean
+
+SOURCE OF TRUTH POLICY:
+grappling.opml remains the content source of truth.
+Do not change grappling.opml content in this pass.
+Do not change technique content, canonical naming, transitions, or OPML structure.
+Do not do content migration or grappling-knowledge decisions.
+Focus only on content-readiness tooling, admin/reporting surfaces, and lightweight verification/export features that make the future content phase easier and safer without editing protected content.
+
+GOAL:
+Implement the next 10 highest-value content-readiness improvements after CONTENT-READINESS-01, prioritizing reporting quality, actionability, and exportability for future content work.
+
+DO THESE 10 IMPROVEMENTS IN THIS PASS:
+	1.	Improve the Content Readiness dashboard so it is easier to scan and compare sections at a glance.
+	2.	Improve the missing-video reporting so it is more actionable and easier to use.
+	3.	Add a “low content density” or similar readiness surface using only current real data.
+	4.	Add a clearer “content completeness by section” view using current real data only.
+	5.	Add a lightweight export of readiness/report data in a practical machine-readable format if feasible.
+	6.	Add a lightweight human-readable export/report summary if feasible.
+	7.	Improve readiness/admin panel hierarchy and consistency so it feels intentional rather than utility-like.
+	8.	Add safer visibility into techniques/positions that are most likely next content priorities, using only current real structural/data signals.
+	9.	Add the next-best safe reporting or verification feature with real content-phase value if one of the above is already effectively done.
+	10.	If useful and lightweight, add a safe link or bridge from readiness surfaces into the relevant study context without changing content.
+
+DETAIL REQUIREMENTS:
+
+READINESS DASHBOARD
+	•	Improve scanability and usefulness.
+	•	Prefer comparison and prioritization value over raw stats clutter.
+	•	Keep it grounded in real current data only.
+
+MISSING VIDEO / GAPS
+	•	Make the reporting more actionable.
+	•	Help identify where content work would likely have the most value.
+	•	Do not invent content quality, difficulty, or meaning.
+
+LOW CONTENT DENSITY / COMPLETENESS
+	•	Use only current real structure/data.
+	•	Keep labels honest and product/admin-friendly.
+	•	Avoid debug-heavy wording if a clearer term exists.
+
+EXPORTS / REPORTS
+	•	If feasible, add a practical export/report flow.
+	•	Keep it lightweight and useful for later content work.
+	•	Prefer simple JSON/text/CSV-style outputs over complex systems.
+
+ADMIN / PANEL CONSISTENCY
+	•	Keep readiness surfaces consistent with the app’s panel system.
+	•	Make them easier to read without turning them into analytics clutter.
+
+PRIORITY SIGNALS
+	•	If surfacing “next likely content priorities,” base that only on existing neutral signals such as:
+	•	missing video
+	•	low density
+	•	section imbalance
+	•	no sub-content
+	•	Do not invent strategic grappling judgments.
+
+SAFE LINKS INTO CONTEXT
+	•	If useful and low-risk, allow readiness items to jump into the relevant position/technique context.
+	•	Keep this lightweight and frontend-only.
+
+EXPLICITLY OUT OF SCOPE:
+	•	no grappling.opml edits
+	•	no content migration or restructuring
+	•	no canonical renaming
+	•	no transition/destination decisions
+	•	no grappling content creation
+	•	no speculative live-folder cleanup
+	•	no backend/auth/sync server architecture
+	•	no native app packaging
+
+RULES:
+Work only on safe content-readiness tooling and admin/reporting.
+Do not touch grappling.opml content.
+Do not change content structure.
+Do not invent grappling content.
+Do not change canonical names or transitions in source data.
+Preserve current functionality unless directly improving readiness/reporting.
+Rebuild and verify locally before finishing.
+If the batch is clean and safe, publish it at the end.
+If publish is not safe, stop before publish and report why.
+Prefer meaningful readiness improvements over filler.
+Critically evaluate each item before implementing it; if it is weak, outdated, or not actually useful, skip it and use the effort on the next-best safe item.
+
+TESTING / VALIDATION:
+Verify the current app still works.
+Verify the new readiness/admin/reporting surfaces do not break current views.
+Verify reported counts and summaries are based on real current data.
+Verify any exports/reports behave safely.
+Verify any context-jump actions restore the intended context if implemented.
+If one pre-existing headless WebGL failure remains, report it clearly without masking anything.
+
+FINAL OUTPUT:
+CONTENT-READINESS-02 | DONE
+automatic:
+	•	<completed item 1>
+	•	<completed item 2>
+	•	<completed item 3>
+	•	<completed item 4>
+	•	<completed item 5>
+	•	<completed item 6>
+	•	<completed item 7>
+	•	<completed item 8>
+	•	<completed item 9>
+	•	<completed item 10>
+remaining:
+	•	
+
+tests:
+	•	<what passed / what changed>
+publish:
+	•	attempted: yes/no
+	•	pushed: yes/no
+	•	commit: 
+	•	live-review-ready: yes/no
+	•	blockers: 
+notes:
+	•	

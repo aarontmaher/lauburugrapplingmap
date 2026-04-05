@@ -1,0 +1,58 @@
+Checked.
+
+Current terminal state is idle.
+
+What just completed:
+
+AI Batch 4
+	•	app is now wired to the real Supabase APIs
+	•	UserStore now talks to the backend instead of only localStorage for key reads/sync
+	•	audit trigger was refreshed after the meaningful update
+
+AI Batch 5
+	•	notes API was added:
+	•	supabase/functions/notes/index.ts
+	•	the notes Edge Function was deployed successfully
+	•	app notes now sync to the backend for members
+	•	first-login migration was added:
+	•	local progress
+	•	local notes
+	•	local success log
+are pushed to the cloud on first member login
+	•	cloud → local sync on login now includes:
+	•	progress
+	•	notes
+
+Files/commits shown
+	•	supabase/functions/notes/index.ts
+	•	index.html
+
+Commit made:
+	•	a092bb9 — AI Batch 5: Notes API + first-login migration
+
+Code’s conclusion
+
+Code explicitly says:
+	•	the next theoretical batch would be the recommendations endpoint
+	•	but since:
+	•	the AI Coach panel already does local recommendations
+	•	aggregate/community patterns need more users
+	•	this is a natural stopping point for the API lane
+
+Closeout
+	•	mark_done.sh ran successfully
+	•	terminal returned to ❯
+	•	nothing is actively running now
+
+Bottom line
+
+What’s now done in the AI/API lane:
+	•	real API wiring for core user-facing data
+	•	progress sync
+	•	success-log sync
+	•	notes sync
+	•	first-login local→cloud migration
+
+Current status:
+	•	AI/API lane reached a natural stopping point
+	•	terminal is clean and idle

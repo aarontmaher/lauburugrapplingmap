@@ -1,0 +1,151 @@
+APP-FEATURES-02 is done and published.
+
+What finished:
+	•	Recent techniques now opens as a proper bottom-sheet panel with clickable items
+	•	Drilling list now opens as a proper bottom-sheet panel with clickable items
+	•	last-practiced timestamps are tracked and shown with time-ago metadata
+	•	export/import/reset now use non-blocking toast feedback instead of alert dialogs
+	•	list panels now feel like real product features instead of debug utilities
+	•	mobile bottom-sheet treatment got safer/polished padding and presentation
+
+Result:
+	•	tests: 11/12 pass
+	•	remaining fail: same pre-existing headless WebGL / 3D canvas issue
+	•	publish: yes
+	•	commit: c97c391
+	•	live-review-ready: yes
+
+This was a worthwhile batch. The bottom-sheet conversion, time-ago metadata, and toast feedback are real product improvements.
+
+Next prompt:
+
+PROMPT-ID: APP-FEATURES-03
+TYPE: CODE
+SCOPE: product features and lightweight architecture only, excluding protected content areas
+MODE: autonomous safe batch with publish at end if clean
+
+SOURCE OF TRUTH POLICY:
+grappling.opml remains the content source of truth.
+Do not change grappling.opml in this pass.
+Do not change technique content, canonical naming, transitions, or OPML structure.
+Do not do content migration or grappling-knowledge decisions.
+Focus on product features and safe architecture that improve the app/website experience without touching protected content areas.
+
+GOAL:
+Implement the next 10 highest-value non-content product improvements after APP-FEATURES-02, prioritizing features with real repeated-use training value.
+
+DO THESE 10 IMPROVEMENTS IN THIS PASS:
+	1.	Improve the Recently viewed panel so it is more useful than a simple list, with better scanability and recency cues.
+	2.	Improve the Drilling list so it feels more like a practical training-mode surface.
+	3.	Add lightweight per-technique recency metadata where useful, using only safe local data already being tracked.
+	4.	Improve position-level progress visibility where it adds value without clutter.
+	5.	Add a clearer “My Drills” quick-access path for mobile/PWA use.
+	6.	Improve restore/resume continuity so reopening returns more cleanly to the last study state.
+	7.	Improve export/import/reset feedback and safety further if there are still rough edges.
+	8.	Improve the menu so it feels more like a product menu and less like a utility list.
+	9.	Add lightweight training-day usability improvements for mobile/PWA users.
+	10.	If a simple low-maintenance “What’s new” surface is not worthwhile, replace that slot with the next best safe repeated-use product feature instead of forcing it.
+
+DETAIL REQUIREMENTS:
+
+RECENTLY VIEWED
+	•	Improve scanability and usefulness.
+	•	Prefer a compact product-like surface.
+	•	Use existing recent/recency data where possible.
+
+DRILLING / MY DRILLS
+	•	Make the drilling surface more practical for repeated use.
+	•	Prefer a useful flat training view over a complex subsystem.
+	•	Do not require OPML/content changes.
+
+RECENCY / PRACTICE METADATA
+	•	Use safe local-only metadata such as last opened, last practiced, or simple recency cues.
+	•	Do not invent false training history.
+	•	Keep it explainable and low-risk.
+
+POSITION PROGRESS
+	•	If existing progress bars can be made more readable or useful without clutter, do it.
+	•	Keep them accurate enough to motivate without pretending to be richer than the data supports.
+
+MOBILE / PWA TRAINING USE
+	•	Prioritize between-round usability on phone:
+	•	fewer taps
+	•	quick access
+	•	better drill-state visibility
+	•	cleaner return to what matters
+
+EXPORT / IMPORT / RESET
+	•	Treat user data as valuable.
+	•	Improve product feel, safety, and clarity around these actions.
+
+MENU
+	•	Improve grouping, labels, and hierarchy if useful.
+	•	Keep it compact and product-like.
+
+WHAT’S NEW SLOT
+	•	Only implement a simple “What’s new” surface if it is truly low-maintenance and worthwhile.
+	•	Otherwise spend that effort on a better repeated-use feature.
+
+EXPLICITLY OUT OF SCOPE:
+	•	no grappling.opml edits
+	•	no content migration or restructuring
+	•	no canonical renaming
+	•	no transition/destination decisions
+	•	no grappling content creation
+	•	no backend/auth/sync server architecture
+	•	no native app packaging
+	•	no large analytics system
+	•	no content-phase decisions
+
+RULES:
+Work only on safe product features and lightweight architecture.
+Do not touch grappling.opml.
+Do not change content structure.
+Do not invent grappling content.
+Do not change canonical names or transitions in source data.
+Preserve current functionality unless directly improving it.
+Rebuild and verify locally before finishing.
+If the batch is clean and safe, publish it at the end.
+If publish is not safe, stop before publish and report why.
+Prefer meaningful product improvements over filler.
+Critically evaluate any prior suggestion before implementing it; if it is weak, outdated, or not actually good for the product, skip it and use the effort on the next-best safe feature.
+
+TESTING / VALIDATION:
+Verify Reference still selects/expands correctly.
+Verify Network panel behavior still works.
+Verify media/video behavior still works.
+Verify filters still work.
+Verify cross-view actions still work.
+Verify progress data survives reload correctly.
+Verify export/import/reset flows behave safely.
+Verify Recently viewed / Drilling / resume features do not break current views.
+Verify mobile/PWA usability where relevant.
+Update tests only where behavior intentionally changed.
+If one pre-existing headless WebGL failure remains, report it clearly without masking anything.
+
+FINAL OUTPUT:
+APP-FEATURES-03 | DONE
+automatic:
+	•	<completed item 1>
+	•	<completed item 2>
+	•	<completed item 3>
+	•	<completed item 4>
+	•	<completed item 5>
+	•	<completed item 6>
+	•	<completed item 7>
+	•	<completed item 8>
+	•	<completed item 9>
+	•	<completed item 10>
+remaining:
+	•	
+
+tests:
+	•	<what passed / what changed>
+publish:
+	•	attempted: yes/no
+	•	pushed: yes/no
+	•	commit: 
+	•	live-review-ready: yes/no
+	•	blockers: 
+notes:
+	•	

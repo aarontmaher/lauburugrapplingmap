@@ -1,0 +1,37 @@
+Checked.
+
+This completed successfully.
+
+What finished:
+	•	PRODUCT-DIRECTION-P3-POPUP-01 | DONE
+	•	latest commit:
+	•	ef7cb89
+	•	it says pushed in the result/mark_done summary
+
+What was done:
+	•	Start Here was converted from inline content into a centered modal popup
+	•	popup has:
+	•	dismiss
+	•	local dismissal memory
+	•	reopen link/button on the home panel
+	•	Blue belt skeleton was also included in the same pushed commit
+
+Validation:
+	•	11/12 passed
+	•	same old pre-existing failing 3D graph smoke test
+
+Current terminal state:
+	•	mark_done.sh succeeded
+	•	terminal is back at ❯
+	•	nothing is actively running now
+
+So the current real state is:
+	•	P3 popup change is done
+	•	Blue belt skeleton is pushed
+	•	automation is idle
+	•	next likely lanes are:
+	•	Blue belt Wrestling picks from you
+	•	or Batch I UX wins
+
+Also, your earlier instinct was right:
+	•	the Start Here content is now a popup/modal in the center of the screen, not inline anymore.

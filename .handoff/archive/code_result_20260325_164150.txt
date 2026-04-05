@@ -1,0 +1,1 @@
+AI FOUNDATION BATCHES 1-2 + LAYERS | DONE | local AI actions + rich responses + 3-layer architecture | ffaed76 | Batch 3 needs Supabase Edge Functions

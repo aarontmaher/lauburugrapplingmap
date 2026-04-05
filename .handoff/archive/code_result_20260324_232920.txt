@@ -1,0 +1,1 @@
+ACCOUNTS-FIX-01 | DONE | error display fixed | likely wrong key format — Aaron needs to check Supabase dashboard for eyJ anon key

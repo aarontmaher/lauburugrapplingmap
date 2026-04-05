@@ -1,0 +1,41 @@
+That will show whether the folders actually exist on disk.
+
+If you added another new folder after that
+
+Run the sync againMost likely because you’re looking at a different folder/path from the one Code scaffolded.
+
+What terminal confirmed:
+	•	Octopus Guard was scaffolded
+	•	created path:
+	•	~/GrapplingMap/live-footage/guard/octopus-guard/
+	•	the tool created the inner scaffold under that branch
+
+So if your Finder window still shows an empty Guard Player, the usual reasons are:
+	1.	you’re in a different Guard Player folder
+	2.	you’re in an older manually created branch
+	3.	Finder/iCloud hasn’t refreshed the view yet
+	4.	you created a new folder after the scaffold run, and that new one hasn’t been synced yet
+
+The important detail is:
+	•	the scaffold was created for the branch:
+	•	guard/octopus-guard
+	•	so the inner folders should be under:
+	•	.../live-footage/guard/octopus-guard/Guard Player/
+
+Not every folder named Guard Player on your Mac.
+
+What to check
+
+In Finder, go specifically to:
+
+~/GrapplingMap/live-footage/guard/octopus-guard/
+
+and open:
+	•	Passer
+	•	Guard Player
+
+Those should contain the scaffold folders.
+
+Fastest way to verify in Terminal
+
+Run:

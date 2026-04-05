@@ -1,0 +1,95 @@
+Checked.
+
+The automation is not currently running.
+
+What terminal shows:
+	•	Code finished the last website/app batch cleanly
+	•	it committed:
+	•	6e207c2 for SITE-SESSION-09
+	•	35a6cc7 for SITE-SESSION-10
+	•	it explicitly said:
+	•	“All remaining items in the queue need Aaron’s direction. True stopping point.”
+	•	it then successfully ran:
+	•	mark_done.sh
+	•	and returned to the normal prompt:
+	•	❯
+
+So the current state is:
+	•	latest work was completed
+	•	it was committed
+	•	it hit a true stopping point
+	•	nothing is actively running now
+
+Important product changes completed in this terminal slice:
+	•	quick access bar added in Reference
+	•	graph detail headings now auto-expand when they have ≤ 8 techniques
+	•	checks still at 11/12 passed, with the same pre-existing failing test
+	•	automation ended normally, not because it broke
+
+One small code note from what’s visible:
+	•	the chevron line uses _autoExpand before the var _autoExpand = ... line appears in the snippet
+	•	because var is hoisted, it won’t crash, but it may still be worth checking if the initial chevron state is behaving exactly as intended
+
+Bottom line:
+	•	terminal is clean
+	•	automation is idle
+	•	this was a normal stop, not a failure
+
+Next step depends on you:
+	•	give direction on the remaining queued items
+	•	or start a new approved batch
+
+Next prompt to continue from this stopping point:
+
+PROMPT-ID: AUTOMATION-NEXT-REVIEW-02
+TYPE: CODE
+SCOPE: workflow + approved next-batch selection only
+
+GOAL:
+Resume automation from the current true stopping point by identifying the next approved worthwhile batch.
+
+BEFORE STARTING:
+	1.	Read and align to:
+
+	•	PROJECT_STATE.md
+	•	DECISIONS.md
+	•	WORKFLOW_RULES.md
+	•	HANDOFF_LATEST.md
+	•	MEMORY_UPDATES.md
+	•	SYSTEM_OPTIMIZATION.md
+	•	AUTOMATION_SUGGESTIONS.md
+	•	AUTOMATION_NOW.md
+	•	AUTOMATION_NEXT.md
+
+	2.	Summarize briefly:
+
+	•	source of truth
+	•	current default priority
+	•	what was just completed
+	•	what remaining items still need Aaron direction
+	•	what already-approved work can continue now
+
+TASK:
+	1.	Separate remaining items into:
+
+	•	approved / safe to continue
+	•	needs Aaron direction
+
+	2.	Build the next real batch only from approved worthwhile items
+	3.	If no approved next batch exists, stop cleanly and say exactly what needs Aaron review
+
+RULES:
+	•	Use the locked old Keyboard Maestro bridge automation format
+	•	Plain text only
+	•	Do not touch grappling.opml
+	•	Do not alter grappling taxonomy/content structure
+	•	Do not modify live-footage folder organization
+	•	Keep changes safe and frontend/product only
+	•	Do not prompt upload unless true stopping point
+
+PASTE BACK EXACTLY:
+AUTOMATION-NEXT-REVIEW-02 | DONE | approved-next:  | needs-review:  | next-action: <continue/stop> | issues: 
+
+If next-action: continue, immediately start the next approved batch in the same automation flow.
+
+-chatgpt chat & claude code chat

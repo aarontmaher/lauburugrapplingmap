@@ -1,0 +1,152 @@
+APP-FEATURES-05 is done and published.
+
+What finished:
+	•	Video Library is now grouped by section with section headers
+	•	Progress Dashboard now has visual per-section progress bars
+	•	Gap Finder now shows technique counts per untouched position
+	•	Random Drill now shows section context in the toast
+	•	Random Drill now updates last-practiced when used
+	•	list panel infrastructure now supports section-header rows
+	•	meta text alignment in list panels was tightened
+
+Result:
+	•	publish: yes
+	•	commit: d1be5e4
+	•	live-review-ready: yes
+	•	blockers: none
+
+My read:
+	•	Good batch.
+	•	The grouped Video Library and progress bars are worthwhile.
+	•	Skipping items 8–10 instead of forcing filler was the right decision.
+
+Next prompt:
+
+PROMPT-ID: APP-FEATURES-06
+TYPE: CODE
+SCOPE: product features and lightweight architecture only, excluding protected content areas
+MODE: autonomous safe batch with publish at end if clean
+
+SOURCE OF TRUTH POLICY:
+grappling.opml remains the content source of truth.
+Do not change grappling.opml in this pass.
+Do not change technique content, canonical naming, transitions, or OPML structure.
+Do not do content migration or grappling-knowledge decisions.
+Focus on product features and safe architecture that improve the app/website experience without touching protected content areas.
+
+GOAL:
+Implement the next 10 highest-value non-content product improvements after APP-FEATURES-05, prioritizing repeated-use training value, session usability, and reducing friction between deciding what to study and actually studying it.
+
+DO THESE 10 IMPROVEMENTS IN THIS PASS:
+	1.	Improve My Drills so it works more like a practical session surface, not just a panel list.
+	2.	Improve Recent techniques so it better supports resuming study quickly.
+	3.	Add better quick actions from Video Library / My Drills / Recent into the relevant study context.
+	4.	Add stronger visual hierarchy and consistency across all feature panels so they feel like one coherent product system.
+	5.	Improve recency/practice metadata presentation so it is easier to scan and compare.
+	6.	Improve Gap Finder so it better suggests what to explore next without inventing content metadata.
+	7.	Improve Progress Dashboard so it is easier to interpret at a glance on both desktop and mobile.
+	8.	Improve mobile/PWA training-day usability across these feature panels with fewer taps and clearer actions.
+	9.	Improve state continuity so reopening the app restores the last meaningful feature surface and context where safe.
+	10.	Add the next-best safe repeated-use feature with real training value if one of the above is already effectively done.
+
+DETAIL REQUIREMENTS:
+
+MY DRILLS
+	•	Make it better for actual between-round use.
+	•	Prioritize scanability, quick return, and useful actions.
+	•	Keep it lightweight and product-like.
+
+RECENT
+	•	Make it easier to resume what the user was last studying.
+	•	Prefer compact, high-value cues over clutter.
+
+QUICK ACTIONS
+	•	If safe, allow direct jump-in actions from feature panels into the relevant technique/position context.
+	•	Keep actions simple and mobile-friendly.
+
+PANEL SYSTEM
+	•	Recent, My Drills, Video Library, Progress, Explore More, and related panels should feel like one coherent system.
+	•	Improve hierarchy, spacing, grouping, headers, and action consistency where safe.
+
+RECENCY / PRACTICE METADATA
+	•	Use existing local-only data more clearly.
+	•	Keep it honest and low-risk.
+
+GAP FINDER
+	•	Make it more actionable for deciding what to explore next.
+	•	Do not invent difficulty or content quality metadata.
+
+PROGRESS DASHBOARD
+	•	Improve readability and comparison value without turning it into analytics clutter.
+	•	Keep it compact and motivating.
+
+MOBILE / PWA
+	•	Prioritize fewer taps, clearer actions, and between-round usability.
+	•	Make feature panels more usable on phone without cluttering the main UI.
+
+STATE CONTINUITY
+	•	Restore the last meaningful feature context where useful and safe.
+	•	Prioritize real usability over saving every tiny state.
+
+EXPLICITLY OUT OF SCOPE:
+	•	no grappling.opml edits
+	•	no content migration or restructuring
+	•	no canonical renaming
+	•	no transition/destination decisions
+	•	no grappling content creation
+	•	no backend/auth/sync server architecture
+	•	no native app packaging
+	•	no large analytics system
+	•	no content-phase decisions
+
+RULES:
+Work only on safe product features and lightweight architecture.
+Do not touch grappling.opml.
+Do not change content structure.
+Do not invent grappling content.
+Do not change canonical names or transitions in source data.
+Preserve current functionality unless directly improving it.
+Rebuild and verify locally before finishing.
+If the batch is clean and safe, publish it at the end.
+If publish is not safe, stop before publish and report why.
+Prefer meaningful product improvements over filler.
+Critically evaluate any suggested item before implementing it; if it is weak, outdated, or not actually good for the product, skip it and use the effort on the next-best safe feature.
+
+TESTING / VALIDATION:
+Verify Reference still selects/expands correctly.
+Verify Network panel behavior still works.
+Verify media/video behavior still works.
+Verify filters still work.
+Verify cross-view actions still work.
+Verify progress data survives reload correctly.
+Verify new feature panels do not break current views.
+Verify mobile/PWA usability where relevant.
+Update tests only where behavior intentionally changed.
+If one pre-existing headless WebGL failure remains, report it clearly without masking anything.
+
+FINAL OUTPUT:
+APP-FEATURES-06 | DONE
+automatic:
+	•	<completed item 1>
+	•	<completed item 2>
+	•	<completed item 3>
+	•	<completed item 4>
+	•	<completed item 5>
+	•	<completed item 6>
+	•	<completed item 7>
+	•	<completed item 8>
+	•	<completed item 9>
+	•	<completed item 10>
+remaining:
+	•	
+
+tests:
+	•	<what passed / what changed>
+publish:
+	•	attempted: yes/no
+	•	pushed: yes/no
+	•	commit: 
+	•	live-review-ready: yes/no
+	•	blockers: 
+notes:
+	•	

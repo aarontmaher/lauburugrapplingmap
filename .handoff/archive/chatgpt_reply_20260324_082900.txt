@@ -1,0 +1,86 @@
+Checked.
+
+Current terminal state:
+	•	AUTOMATION-NEXT-REVIEW-02 finished successfully
+	•	Code concluded:
+	•	Rank 3 (game map overlay) already works via My Game filter
+	•	Rank 5 (successful-game dashboard) was just built and shipped
+	•	It committed:
+	•	327ed36 — SITE-SESSION-11: Successful-game dashboard + next-move suggestions
+
+What was added in this batch:
+	•	a new Your game section in Progress
+	•	top successful techniques from successLog
+	•	simple next moves to build suggestions from graph edges
+	•	click-through from those items back into reference content
+
+Validation:
+	•	11/12 passed
+	•	same pre-existing failing graph smoke test
+
+Final automation result:
+	•	next-action: stop
+	•	because Code says the remaining ranked items now need Aaron’s direction
+
+Specifically still needing your direction:
+	•	P1 actionable home screen
+	•	P2 start training button
+	•	and the rest of P3–P9
+
+Then it:
+	•	removed stale run.lock
+	•	ran mark_done.sh
+	•	saved the result to last_code_result.txt
+
+So this was a normal true stopping point, not a failure.
+Right now:
+	•	terminal is back at ❯
+	•	nothing is running
+
+Most important takeaway:
+	•	the app now has successful-game dashboard + next-move suggestions
+	•	the automation has basically exhausted the code-decidable ranked items
+	•	the next lane depends on your product direction choices
+
+Best next prompt to send:
+
+PROMPT-ID: PRODUCT-DIRECTION-REVIEW-01
+TYPE: CODE
+SCOPE: workflow + approved next-batch selection only
+
+GOAL:
+Prepare the next automation lane from the remaining items that need Aaron’s direction.
+
+BEFORE STARTING:
+	1.	Read and align to:
+
+	•	PROJECT_STATE.md
+	•	DECISIONS.md
+	•	WORKFLOW_RULES.md
+	•	HANDOFF_LATEST.md
+	•	MEMORY_UPDATES.md
+	•	SYSTEM_OPTIMIZATION.md
+	•	AUTOMATION_SUGGESTIONS.md
+	•	AUTOMATION_NEXT.md
+
+TASK:
+	1.	List the remaining items that need Aaron direction
+	2.	For each one, give:
+
+	•	what it means in practice
+	•	why it matters
+	•	effort level
+	•	whether it should be next, later, or rejected
+
+	3.	Keep it concise and decision-friendly so Aaron can choose the next lane
+
+IMPORTANT:
+	•	Do not implement anything in this prompt
+	•	Do not touch grappling.opml
+	•	Do not touch website/app code
+	•	Review/decision prep only
+
+PASTE BACK EXACTLY:
+PRODUCT-DIRECTION-REVIEW-01 | DONE | options:  | recommended-next:  | issues: 
+
+-chatgpt chat & claude code chat

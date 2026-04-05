@@ -1,0 +1,155 @@
+VISUAL-FIX-BATCH-01 is done and published.
+
+What finished:
+	•	_zoomedNodeId error fixed
+	•	3D node labels now render correctly
+	•	bottom bar now scrolls on mobile instead of clipping
+	•	legend hides on mobile when the detail panel opens, then restores on close
+	•	loading text now auto-fades after 8 seconds
+	•	Reference onboarding now auto-fades after 5 seconds
+	•	mobile touch targets increased:
+	•	TRACK/video pills: 36px min height
+	•	note button: 36x36px
+	•	node toggles: 28px minimum
+	•	ghost structural rows suppressed:
+	•	about 184 duplicate schema-named empty children removed
+
+Result:
+	•	local verification: bootHealthy=true
+	•	items: 1726 (down from 1910 because ghost rows were removed)
+	•	JS errors: 0
+	•	publish: yes
+	•	commit: 223c0cc
+	•	live-review-ready: yes
+
+Also confirmed:
+	•	Code re-triggered the handoff signal
+	•	the automation is ready for the next prompt
+
+Next prompt:
+
+PROMPT-ID: VISUAL-FIX-BATCH-02
+TYPE: CODE
+SCOPE: safe frontend fixes from real visual review only
+MODE: autonomous safe batch with publish at end if clean
+
+SOURCE OF TRUTH POLICY:
+grappling.opml remains the content source of truth.
+Do not change grappling.opml in this pass.
+Do not change technique content, canonical naming, transitions, or OPML structure.
+Focus only on the next highest-value safe fixes confirmed by real rendered/interaction review.
+
+GOAL:
+Implement the next 10 highest-value safe visual/usability improvements after VISUAL-FIX-BATCH-01, without touching protected content areas.
+
+DO THESE 10 IMPROVEMENTS IN THIS PASS:
+	1.	Improve first-load landing presentation so the product feels less empty and more immediately valuable.
+	2.	Improve the Reference first-use experience now that the onboarding tooltip auto-fades.
+	3.	Improve the Network first-use experience so the graph is understandable at a glance after load.
+	4.	Improve default 3D label behavior so the graph is more readable without becoming cluttered.
+	5.	Improve selected-node/detail presentation in Network so the learning state feels clearer and more premium.
+	6.	Improve current-location/context clarity in Reference when a user is deep in the tree.
+	7.	Improve current-location/context clarity in Network when a user has a selected node/detail state.
+	8.	Improve mobile/narrow-screen bottom action ergonomics now that overflow is scrollable.
+	9.	Improve panel/legend/detail visual hierarchy on desktop and mobile where they still compete.
+	10.	Add the next-best safe visual improvement with real product value if one of the above is already effectively done.
+
+DETAIL REQUIREMENTS:
+
+LANDING / FIRST IMPRESSION
+	•	Reduce the “empty shell” feeling on first load.
+	•	Prefer safe product-facing improvements such as:
+	•	better default state
+	•	better visible context
+	•	stronger value communication
+	•	Do not invent content.
+
+REFERENCE FIRST-USE EXPERIENCE
+	•	The fading tooltip should not be the only onboarding clue.
+	•	Improve the experience so users know how to begin without needing a lingering overlay.
+	•	Keep it subtle and uncluttered.
+
+NETWORK FIRST-USE EXPERIENCE
+	•	Improve understandability of the graph on first glance.
+	•	Since labels now work again, use them intelligently rather than aggressively.
+	•	Help users orient quickly without overloading the scene.
+
+3D LABELS / NODE READABILITY
+	•	Build on the _zoomedNodeId fix.
+	•	Improve readability in a restrained way:
+	•	selected / hovered / important-node labels
+	•	smart visibility
+	•	avoid clutter
+	•	Prefer real product value over flashy behavior.
+
+SELECTED DETAIL / CONTEXT
+	•	Make selected study context feel clearer in both Reference and Network.
+	•	Prefer subtle context lines, breadcrumbs, headers, or local cues over heavy UI.
+
+MOBILE / NARROW-WIDTH USABILITY
+	•	Now that bottom actions scroll, improve the ergonomics and clarity of that interaction if needed.
+	•	Keep it simple, usable, and thumb-friendly.
+
+PANEL / LEGEND / DETAIL HIERARCHY
+	•	Reduce visual competition between overlapping informational elements.
+	•	The detail panel should feel primary when active.
+
+EXPLICITLY OUT OF SCOPE:
+	•	no grappling.opml edits
+	•	no content migration or restructuring
+	•	no canonical renaming
+	•	no transition/destination decisions
+	•	no backend/auth/sync architecture
+	•	no native app packaging
+	•	no content-phase decisions
+
+RULES:
+Work only on safe frontend/product improvements.
+Do not touch grappling.opml.
+Do not change content structure.
+Do not invent grappling content.
+Do not change canonical names or transitions in source data.
+Preserve current functionality unless directly improving it.
+Rebuild and verify locally before finishing.
+If the batch is clean and safe, publish it at the end.
+If publish is not safe, stop before publish and report why.
+Critically evaluate each item; if something is weak, outdated, or not actually useful, skip it and use the effort on the next-best safe visual fix.
+
+TESTING / VALIDATION:
+Verify Network renders and labels correctly.
+Verify Reference tree still renders correctly after ghost-row suppression.
+Verify first-load experience is improved.
+Verify mobile/narrow-screen behavior remains usable.
+Verify bottom actions remain reachable.
+Verify detail/legend/panel hierarchy is improved.
+Verify there are still 0 JS errors.
+If one pre-existing headless WebGL failure remains, report it clearly without masking anything.
+
+FINAL OUTPUT:
+VISUAL-FIX-BATCH-02 | DONE
+automatic:
+	•	<completed item 1>
+	•	<completed item 2>
+	•	<completed item 3>
+	•	<completed item 4>
+	•	<completed item 5>
+	•	<completed item 6>
+	•	<completed item 7>
+	•	<completed item 8>
+	•	<completed item 9>
+	•	<completed item 10>
+remaining:
+	•	
+
+tests:
+	•	<what passed / what changed>
+publish:
+	•	attempted: yes/no
+	•	pushed: yes/no
+	•	commit: 
+	•	live-review-ready: yes/no
+	•	blockers: 
+notes:
+	•	<brief summary of the highest-impact visual/usability improvements>
+
+-chatgpt chat

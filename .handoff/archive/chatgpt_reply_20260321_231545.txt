@@ -1,0 +1,11 @@
+Yes — that 60-second wait is intentional.
+
+It’s there so:
+	1.	Code finishes
+	2.	ChatGPT app sends check terminal
+	3.	I have time to reply
+	4.	then capture_chatgpt_reply.sh --auto reads my latest reply from the app
+
+So the correct test is a full-cycle test and then wait about a minute.
+
+Paste this to Claude Code:

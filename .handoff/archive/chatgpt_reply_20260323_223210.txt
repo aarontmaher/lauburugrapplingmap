@@ -1,0 +1,120 @@
+It’s not fully fixed.
+
+What happened in terminal:
+	•	POSITION-MEMORY-IMPROVEMENT-01 finished
+	•	then WEBSITE-IMPROVEMENT-ITERATION-LABEL-CLICK-01 finished
+	•	Code made the label improvement:
+	•	labels already couldn’t steal clicks
+	•	it added collision-based fading so overlapping labels dim visually
+	•	validation was okay:
+	•	11/12 passed
+	•	1 pre-existing failure
+
+But the automation handoff failed at the continuation step:
+	•	Code tried to write the next prompt to:
+	•	~/Chat-gpt/.handoff/last_chatgpt_reply.txt
+	•	that failed because:
+	•	run.lock already existed
+	•	it waited 30s
+	•	then aborted writing the next prompt
+
+After that, Code did this:
+	•	removed run.lock
+	•	called mark_done.sh
+	•	created done.signal
+	•	saved result to last_code_result.txt
+
+So the bridge got a done signal, but it did not get the next continuation prompt written first.
+
+That means:
+
+What is working
+	•	batch execution
+	•	result line
+	•	done signaling via old KM bridge
+
+What is broken
+	•	for a non-stopping batch, Code must:
+	1.	write next prompt
+	2.	then mark done
+	•	here it only did step 2 after the write failed
+
+So KM may wake up, but there may be no fresh next prompt available for it to paste.
+
+Bottom line
+
+This run shows:
+	•	automation execution worked
+	•	automation continuation did not fully work
+
+Because:
+	•	stopping-point: no
+	•	but the next prompt was not successfully written
+
+Best fix
+
+Code needs to treat this as a hard rule:
+	•	if stopping-point: no
+	•	and writing last_chatgpt_reply.txt fails
+	•	then it should not signal done yet
+	•	or it should retry until the next prompt is safely written
+
+Use this next:
+
+PROMPT-ID: KM-BRIDGE-CONTINUATION-FIX-01
+TYPE: CODE
+SCOPE: automation bridge behavior only
+
+GOAL:
+Fix the old KM bridge continuation logic so non-stopping batches do not signal done unless the next continuation prompt has been written successfully.
+
+PROBLEM:
+In the latest run:
+	•	stopping-point was no
+	•	Code tried to write the next prompt to ~/Chat-gpt/.handoff/last_chatgpt_reply.txt
+	•	write failed because run.lock existed
+	•	then Code removed the lock and called mark_done.sh anyway
+
+This means the done signal was created without guaranteeing that the next continuation prompt was available for KM to send.
+
+NEW HARD RULE:
+For non-stopping batches:
+	1.	write the next continuation prompt successfully first
+	2.	only after the prompt is safely written, call mark_done.sh
+	3.	if prompt write fails, do not signal done yet
+	4.	retry or clearly report failure instead of half-completing the handoff
+
+TRUE STOPPING POINT:
+	•	unchanged
+	•	no continuation prompt needed
+	•	mark_done.sh only
+
+TASKS:
+	1.	Fix the non-stopping continuation order
+	2.	Handle stale run.lock safely
+	3.	Ensure KM never gets a done signal for continuation unless the next prompt is actually ready
+	4.	Keep using the old KM bridge only
+
+IMPORTANT:
+	•	Do not touch grappling.opml
+	•	Do not touch website/app code
+	•	Bridge behavior only
+
+PASTE BACK EXACTLY:
+KM-BRIDGE-CONTINUATION-FIX-01 | DONE | fixed:  | lock-handling:  | issues: 
+
+-chatgpt chat & claude code chat
+
+And because that last run did not safely queue continuation, this is the next prompt you should send manually:
+
+PROMPT-ID: POSITION-MEMORY-IMPROVEMENT-02
+TYPE: CODE
+SCOPE: live-footage understanding + grappling placement memory only
+
+GOAL:
+Continue improving Claude Code’s grappling position/chain understanding from the newly learned patterns.
+
+TASK:
+Build on the latest memory updates:
+	•	defender defence/offence distinction
+	•	same-technique-both-perspectives

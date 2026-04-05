@@ -1,0 +1,42 @@
+Checked.
+
+It finished cleanly.
+
+What just completed
+	•	Belt filter was extended to the Position Map / 3D graph
+	•	commit:
+	•	4f1ec9f — Belt filter extended to Position Map / 3D graph
+
+What that means
+
+The cumulative belt syllabus filter now applies to:
+	•	Reference
+	•	Position Map / 3D graph
+
+So the logic is now aligned across both views.
+
+Validation
+	•	11/12 pass
+	•	same old failing test:
+	•	3D graph smoke / canvas load
+	•	no new issue reported
+
+Final result line
+	•	BELT-SYLLABUS-CUMULATIVE-FILTERS-02 | DONE
+	•	next batch:
+	•	test on live site
+	•	stopping-point:
+	•	yes
+	•	because it needs live testing
+
+Closeout
+	•	mark_done.sh succeeded
+	•	terminal returned to ❯
+	•	nothing is actively running
+
+Bottom line
+	•	Reference belt filtering = done
+	•	Graph belt filtering = now also done
+	•	both are now synchronized
+	•	terminal is idle
+	•	next step is to test it live

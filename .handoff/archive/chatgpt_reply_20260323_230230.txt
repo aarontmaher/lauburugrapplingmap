@@ -1,0 +1,21 @@
+PROMPT-ID: AUTOMATION-QUEUE-EXECUTE-D
+TYPE: CODE
+SCOPE: safe frontend/product improvements only
+
+GOAL:
+Execute Batch D from AUTOMATION_NEXT.md: section header counts, rename Network tab, rename graph settings labels.
+
+RULES:
+- Do not touch grappling.opml
+- Do not alter grappling taxonomy/content structure
+- Do not modify live-footage folder organization
+- Keep changes safe and frontend/product only
+- Validate locally before stopping
+- Use the locked old KM bridge automation format
+- If non-stopping, use continue_automation.sh
+- While working, keep AUTOMATION_NEXT.md organized
+
+PASTE BACK EXACTLY:
+AUTOMATION-QUEUE-EXECUTE-D | DONE | batch: <summary> | files: <list> | validation: <result> | next-best: <list> | memory-sync: <yes/no> | stopping-point: <yes/no> | issues: <list or none>
+
+-chatgpt chat & claude code chat

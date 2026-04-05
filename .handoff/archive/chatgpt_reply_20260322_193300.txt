@@ -1,0 +1,120 @@
+PHONE-APP-MODE-01 is done and published.
+
+What finished:
+	•	PWA/app install support added
+	•	service worker added for offline caching of core assets
+	•	iOS and Android mobile web app meta tags added
+	•	safe-area insets added for notch/home-indicator phones
+	•	100dvh mobile sizing added
+	•	touch feedback improved on buttons/pills
+	•	mobile header made more compact/app-like
+	•	touch targets increased
+	•	site now supports Add to Home Screen and standalone app-like launch
+
+Result:
+	•	tests: 11/12 pass
+	•	remaining fail: same pre-existing headless WebGL / 3D canvas issue
+	•	publish: yes
+	•	commit: f9406f0
+	•	live-review-ready: yes
+
+This is a meaningful shift: the site now behaves much more like a phone app, not just a website.
+
+Raw next prompt for Code:
+
+PROMPT-ID: PHONE-APP-MODE-02
+TYPE: CODE
+SCOPE: app mobile UX / PWA / app-like experience only
+MODE: autonomous safe batch with publish at end if clean
+
+SOURCE OF TRUTH POLICY:
+grappling.opml remains the content source of truth.
+Do not change grappling.opml in this pass.
+Do not change technique content, canonical naming, transitions, or OPML structure.
+Focus only on improving the phone-app style experience from the existing website/product.
+
+GOAL:
+Build on PHONE-APP-MODE-01 by improving the installed/mobile-app experience, touch usability, and app-like polish without touching protected content areas.
+
+CURRENT CONTEXT:
+PHONE-APP-MODE-01 already added:
+	•	manifest.json
+	•	sw.js
+	•	standalone/mobile web app meta tags
+	•	safe-area support
+	•	mobile touch feedback
+	•	compact app-like mobile header
+	•	larger touch targets
+	•	offline caching of core assets
+
+THIS BATCH PRIORITY:
+	1.	Improve installed-app feel on iPhone/Android
+	2.	Improve touch ergonomics and bottom-sheet/mobile panel behavior
+	3.	Improve mobile navigation clarity and app-like polish
+	4.	Improve offline/app-state resilience where safe
+	5.	Preserve all current working desktop behavior unless directly improving shared UX
+
+GOOD CANDIDATES FOR THIS PASS:
+	•	improve bottom-sheet/mobile detail panel feel and spacing
+	•	improve drag handle polish and discoverability
+	•	improve mobile tab/nav and bottom-bar ergonomics
+	•	improve app-like transitions and state continuity where safe
+	•	add better install polish if safe
+	•	improve offline fallback messaging if useful
+	•	improve narrow-screen hierarchy and context cues
+	•	improve mobile video/modal usability
+	•	improve touch-friendly spacing/grouping of actions
+	•	improve mobile scrolling behavior and fixed-position stability
+	•	improve app-like startup/loading feel where safe
+
+EXPLICITLY OUT OF SCOPE:
+	•	no grappling.opml edits
+	•	no content migration or restructuring
+	•	no canonical renaming
+	•	no transition/destination decisions
+	•	no native Swift/Kotlin/React Native app
+	•	no backend/auth/sync architecture
+	•	no content-phase decisions
+
+RULES:
+Work only on safe frontend/product improvements.
+Do not touch grappling.opml.
+Do not change content structure.
+Do not invent grappling content.
+Do not change canonical names or transitions in source data.
+Preserve current functionality unless directly improving it.
+Rebuild and verify locally before finishing.
+If the batch is clean and safe, publish it at the end.
+If publish is not safe, stop before publish and report why.
+
+TESTING / VALIDATION:
+Verify Reference still selects/expands correctly.
+Verify Network panel behavior still works.
+Verify media/video behavior still works.
+Verify filters still work.
+Verify cross-view actions still work.
+Verify mobile/tight viewport behavior specifically.
+Verify touch targets and bottom bars are usable.
+Verify PWA/install changes do not break the current app.
+Update tests only where behavior intentionally changed.
+If one pre-existing headless WebGL failure remains, report it clearly without masking anything.
+
+FINAL OUTPUT:
+PHONE-APP-MODE-02 | DONE
+automatic:
+	•	<completed item 1>
+	•	<completed item 2>
+	•	<completed item 3>
+remaining:
+	•	
+
+tests:
+	•	<what passed / what changed>
+publish:
+	•	attempted: yes/no
+	•	pushed: yes/no
+	•	commit: 
+	•	live-review-ready: yes/no
+	•	blockers: 
+notes:
+	•	

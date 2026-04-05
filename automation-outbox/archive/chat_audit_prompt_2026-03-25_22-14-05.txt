@@ -1,0 +1,14 @@
+Review the current GrapplingMap at aarontmaher.github.io/Chat-gpt/
+
+NEW FEATURES TO TEST:
+1. AI Coach now has typed chat input (text field + send)
+2. Belt selection now filters Reference view (cumulative: White=12 positions, Blue=White+9, etc.)
+3. "Filter to syllabus" button in belt dropdown
+4. Weekly training summary in AI Coach ("This week" button)
+
+KEY QUESTIONS:
+- Does the typed AI chat feel natural?
+- Does belt filtering work correctly (cumulative)?
+- Is the compact AI Coach widget usable with the new input?
+- Does this make the product feel more like a training partner?
+- Top 5 improvements. Keep/revert judgments. Bugs found.

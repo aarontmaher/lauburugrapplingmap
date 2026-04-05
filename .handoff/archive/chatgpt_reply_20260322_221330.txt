@@ -1,0 +1,120 @@
+LIVE-FOLDER-AUDIT-FIX-01 is done.
+
+What finished:
+	•	root cause found: an empty-text OPML child node was creating a false expected path
+	•	path normalization fixed with trailing-slash stripping
+	•	empty-slug nodes are now skipped in the audit walk
+	•	expected vs actual path comparison is now consistent
+	•	audit rerun is now clean:
+	•	expected: 1767
+	•	actual: 1767
+	•	missing: 0
+	•	unexpected: 0
+	•	human-readable report regenerated:
+	•	~/GrapplingMap/live-footage/audit-report.txt
+	•	machine-readable report regenerated:
+	•	~/GrapplingMap/live-footage/audit-report.json
+
+Result:
+	•	changed files:
+	•	~/GrapplingMap/tools/audit_live_folders.py
+	•	regenerated audit reports
+	•	scaffold changes: none
+	•	blockers: none
+
+My read:
+	•	This is the right outcome.
+	•	The scaffold and the audit tool now both look trustworthy.
+	•	I would not spend more time on live-footage structure cleanup now.
+
+Next prompt:
+
+PROMPT-ID: CONTENT-PHASE-PREP-01
+TYPE: CODE
+SCOPE: content-phase preparation tooling only, excluding protected content edits
+MODE: autonomous safe batch with publish at end if clean
+
+SOURCE OF TRUTH POLICY:
+grappling.opml remains the content source of truth.
+Do not change grappling.opml content in this pass.
+Do not change technique content, canonical naming, transitions, or OPML structure.
+Do not do content migration or grappling-knowledge decisions.
+Focus only on tooling, reporting, and workflow support that make the future content phase faster, safer, and easier.
+
+GOAL:
+Implement the next 10 highest-value non-content improvements that prepare the project for adding real content later, now that the app, readiness tooling, and live-footage scaffold are all in a strong state.
+
+DO THESE 10 IMPROVEMENTS IN THIS PASS:
+	1.	Add a practical content-priority report based on existing real signals such as missing video, low density, and section imbalance.
+	2.	Add a practical live-footage readiness report that is easy to use during future clip ingestion.
+	3.	Add a safe export/report bundle that combines readiness + live-footage audit outputs into one place.
+	4.	Add clearer reporting for “best next content targets” using only real structural/data signals.
+	5.	Add lightweight admin/documentation surfaces or files that explain the current content workflow clearly.
+	6.	Add a safe verification step or script for future clip drops so new files can be checked against the scaffold.
+	7.	Add a safe naming/path validation helper for future live-footage additions if useful.
+	8.	Improve the readability/usability of the current reporting outputs where they are still rough.
+	9.	Add the next-best safe content-phase preparation improvement with real value if one of the above is already effectively done.
+	10.	Keep everything conservative, read-only by default, and easy to trust.
+
+DETAIL REQUIREMENTS:
+	•	Use only real current data/signals.
+	•	Do not invent content priorities beyond neutral structural signals.
+	•	Prefer useful tooling and workflow support over abstract admin features.
+	•	If a feature belongs better as a script/report than an in-app UI surface, prefer the script/report.
+	•	Keep everything lightweight and maintainable.
+
+EXPLICITLY OUT OF SCOPE:
+	•	no grappling.opml edits
+	•	no content migration or restructuring
+	•	no canonical renaming
+	•	no transition/destination decisions
+	•	no grappling content creation
+	•	no speculative live-folder moves
+	•	no backend/auth/sync architecture
+	•	no native app packaging
+
+RULES:
+Work only on safe content-phase preparation tooling and reporting.
+Do not touch grappling.opml content.
+Do not change content structure.
+Do not invent grappling content.
+Preserve current scaffold and app behavior.
+If something is ambiguous, report it rather than forcing it.
+Prefer meaningful preparation improvements over filler.
+
+TESTING / VALIDATION:
+	•	verify current app still works
+	•	verify current readiness tooling still works
+	•	verify live-footage audit still reports CLEAN
+	•	verify any new scripts/reports run successfully
+	•	verify no scaffold changes occur
+	•	verify outputs are practical and easy to review
+
+FINAL OUTPUT:
+CONTENT-PHASE-PREP-01 | DONE
+automatic:
+	•	<completed item 1>
+	•	<completed item 2>
+	•	<completed item 3>
+	•	<completed item 4>
+	•	<completed item 5>
+	•	<completed item 6>
+	•	<completed item 7>
+	•	<completed item 8>
+	•	<completed item 9>
+	•	<completed item 10>
+remaining:
+	•	
+
+changed files:
+	•	<file/report/script list>
+tests:
+	•	<what passed / what changed>
+publish:
+	•	attempted: yes/no
+	•	pushed: yes/no
+	•	commit: 
+	•	live-review-ready: yes/no
+	•	blockers: 
+notes:
+	•	

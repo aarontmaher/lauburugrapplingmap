@@ -1,0 +1,77 @@
+PROMPT-ID: WEBSITE-AUTO-LOOP-10
+TYPE: CODE
+SCOPE: app UI / UX polish only
+MODE: autonomous safe batch with publish at end if clean
+
+SOURCE OF TRUTH POLICY:
+	•	grappling.opml remains the content source of truth
+	•	Do not change grappling.opml in this pass
+	•	Do not change technique content, canonical naming, transitions, or OPML structure
+	•	Focus only on website/app behavior and presentation
+
+GOAL:
+Continue the safe autonomous website-improvement loop by implementing the next highest-value frontend/product improvements without touching protected content areas.
+
+CURRENT STRATEGY:
+	•	preserve all working behavior from loops 01–09
+	•	keep improving premium feel, clarity, and instructional usability
+	•	prefer grouped frontend polish by area
+	•	avoid anything requiring grappling/content decisions
+
+THIS BATCH PRIORITY:
+	1.	Improve selected technique/detail emphasis in both Reference and Network
+	2.	Improve consistency of action pills/buttons across views
+	3.	Improve empty/zero/loading state polish where still generic
+	4.	Improve context/orientation cues without adding clutter
+	5.	Fix any remaining small safe interaction friction discovered during this pass
+
+DETAIL GOALS:
+	•	make selected detail feel more like the primary lesson state
+	•	keep Reference and Network action styling consistent
+	•	make product states feel intentional and premium
+	•	improve clarity of current location/context at a glance
+	•	keep changes subtle, frontend-only, and low-risk
+
+RULES:
+	•	Work only on safe frontend/product improvements
+	•	Do not touch grappling.opml
+	•	Do not change content structure
+	•	Do not invent grappling content
+	•	Do not change canonical names or transitions in source data
+	•	Preserve current functionality unless directly improving it
+	•	Rebuild and verify locally before finishing
+	•	If the batch is clean and safe, publish it at the end
+	•	If publish is not safe, stop before publish and report why
+
+TESTING / VALIDATION
+	•	verify Reference still selects/expands correctly
+	•	verify Network panel behavior still works
+	•	verify media behavior still works
+	•	verify filters still work
+	•	verify cross-view actions still work
+	•	update tests only where behavior intentionally changed
+	•	if one pre-existing headless WebGL failure remains, report it clearly without masking anything
+
+FINAL OUTPUT:
+PASTE BACK EXACTLY:
+
+WEBSITE-AUTO-LOOP-10 | DONE
+automatic:
+	•	<completed item 1>
+	•	<completed item 2>
+	•	<completed item 3>
+remaining:
+	•	
+
+tests:
+	•	<what passed / what changed>
+publish:
+	•	attempted: yes/no
+	•	pushed: yes/no
+	•	commit: 
+	•	live-review-ready: yes/no
+	•	blockers: 
+notes:
+	•	
+
+-chatgpt chat

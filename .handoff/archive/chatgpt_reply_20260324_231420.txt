@@ -1,0 +1,83 @@
+Checked.
+
+Both lanes finished cleanly.
+
+Accounts lane
+
+ACCOUNTS-BATCH-02-GUEST-GATING-UI | DONE
+
+What got built:
+	•	auth buttons in header:
+	•	Login
+	•	Create Account
+	•	signup/login modal shell
+	•	guest/member feature gating
+	•	guests now see:
+	•	limited preview depth
+	•	gated for guests:
+	•	progress tracking
+	•	success logging
+	•	notes
+	•	the gating uses the new access model shell
+
+Validation:
+	•	11/12 passed
+	•	same pre-existing failing 3D graph smoke test
+
+Commit:
+	•	bd7bc5b
+
+Syllabus lane
+
+BELT-SYLLABUS-BLUE-PASSING-01 | DONE
+
+What got added:
+	•	Blue belt Passing now has 7 areas
+	•	deeper versions of:
+	•	supine passing
+	•	seated passing
+	•	knee shield passing
+	•	closed guard opening
+	•	plus new areas:
+	•	half guard passing
+	•	butterfly passing
+	•	under-the-legs passing
+	•	J-point chain is explicitly included under supine passing depth
+
+Open pick still needed:
+	•	under-the-legs pass needs your selection
+	•	all other slots are allowed as:
+	•	any from mapped content
+
+Commit:
+	•	ca70327
+
+Closeout
+	•	mark_done.sh succeeded
+	•	terminal is back at ❯
+	•	nothing is actively running now
+
+Current state
+
+You now have:
+	•	accounts Batch 2 done
+	•	Blue belt Passing done
+	•	terminal is idle and clean
+
+Best next pair
+
+From this state, I’d recommend:
+
+Product/accounts lane
+	•	Accounts Batch 3 only if you’re ready with Supabase credentials
+	•	otherwise next product lane can go back to graph/personalization/paywall-preview polish
+
+Syllabus lane
+	•	Blue belt Dominant Positions
+or
+	•	Blue belt Wrestling
+
+Most natural syllabus next step is probably:
+	•	Blue belt Dominant Positions
+
+If you want, I’ll give you the next two KM-ready prompts from exactly this state.

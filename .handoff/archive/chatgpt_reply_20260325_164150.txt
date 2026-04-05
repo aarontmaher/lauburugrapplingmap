@@ -1,0 +1,47 @@
+Checked.
+
+It finished cleanly.
+
+What Code just did
+
+AUDIT-OUTBOX-REFRESH-AND-TRIGGER-01 | DONE
+
+Files refreshed:
+	•	automation-outbox/chat_audit_prompt.txt
+	•	automation-outbox/cowork_audit_prompt.txt
+	•	automation-outbox/audit_trigger.json
+
+Trigger state
+
+The trigger is now set to:
+	•	audit_needed: true
+	•	commit: b467006
+	•	both prompts marked ready
+
+Summary written into trigger:
+	•	mobile graph fixes
+	•	cross-device testing rule
+	•	automation batches I–K shipped
+	•	belt UI
+	•	auth working
+	•	game intelligence features live
+
+Closeout
+	•	mark_done.sh succeeded
+	•	terminal returned to ❯
+	•	nothing is actively running now
+
+Bottom line
+
+The outbox is ready for KM.
+
+Your next step is:
+	•	manually run WATCH-AUDIT-TRIGGER
+to test the full flow end to end.
+
+If you want, after you run it, tell me exactly what happened:
+	•	Chat got the prompt
+	•	Cowork got the prompt
+	•	archive worked
+	•	trigger reset
+and I’ll help fix whichever step fails.

@@ -1,0 +1,17 @@
+PROMPT-ID: WEBSITE-BATCH-G-01
+TYPE: CODE
+SCOPE: safe frontend/product improvements only
+
+GOAL:
+Implement Batch G: rename "Offensive transitions" display, add "Unexplored" filter, add "Want to learn" bookmark state.
+
+RULES:
+- Do not touch grappling.opml
+- Do not alter taxonomy structure
+- Keep changes safe and frontend-only
+- Validate locally before stopping
+
+PASTE BACK EXACTLY:
+WEBSITE-BATCH-G-01 | DONE | batch: <summary> | files: <list> | validation: <result> | next-best: <list> | memory-sync: <yes/no> | stopping-point: <yes/no> | issues: <list or none>
+
+-chatgpt chat & claude code chat

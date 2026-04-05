@@ -1,0 +1,15 @@
+DESKTOP-CLEANUP-PAUSE-01 has not finished yet.
+
+Current terminal state:
+	•	the prompt is in Claude
+	•	there is no final DONE block yet
+	•	current status is: Cogitating…
+	•	no final pause confirmation has been emitted yet
+
+So:
+	•	prompt delivery worked
+	•	execution has started
+	•	result is not finished yet
+
+Next prompt:
+wait for this run to finish, then check terminal again and I’ll give the next prompt immediately.

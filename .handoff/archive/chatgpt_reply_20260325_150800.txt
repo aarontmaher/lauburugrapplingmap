@@ -1,0 +1,36 @@
+Checked.
+
+MOBILE-GRAPH-FIXES-01 finished successfully.
+
+What got done:
+	•	Pinch-to-zoom was added on mobile for the 3D graph
+	•	Tap detection was improved so single taps should work more reliably
+	•	Max zoom-out was increased
+	•	wheel clamp changed from 2200 to 3500
+	•	mobile pinch zoom also uses the higher limit
+
+Key code changes shown in terminal:
+	•	added two-finger pinch zoom
+	•	raised drag threshold from 3px to 8px
+	•	so slight movement is less likely to cancel a tap
+	•	lowered touch opacity threshold from 0.25 to 0.02
+	•	so dimmed nodes are easier to tap
+	•	path mode touch handling was preserved
+
+Validation:
+	•	11/12 passed
+	•	same old failing test:
+	•	3D graph smoke / canvas load
+
+Commit:
+	•	b467006 — Fix mobile graph: pinch-to-zoom + better tap detection
+
+Closeout:
+	•	mark_done.sh ran successfully
+	•	terminal returned to ❯
+	•	nothing is actively running now
+
+Bottom line:
+	•	the mobile graph fixes are now implemented
+	•	next step is exactly what Code said:
+	•	test on phone

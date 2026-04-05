@@ -1,0 +1,1 @@
+VISUAL-FIX-BATCH-01 | DONE | published: 223c0cc | _zoomedNodeId fix, ghost rows, legend, touch targets, 0 errors | errors: none

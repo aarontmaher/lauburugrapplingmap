@@ -1,0 +1,86 @@
+Checked.
+
+Current terminal state is clean, and the batch finished normally.
+
+What just completed:
+	•	PRODUCT-DIRECTION-BATCH-P2-START-TRAINING-01
+	•	commit: a5614ce
+	•	result:
+	•	Prominent “Start Training” button on the home screen
+	•	large yellow CTA when drills exist
+	•	secondary training buttons still visible
+	•	validation:
+	•	11/12 pass
+	•	same pre-existing failing 3D graph smoke test
+
+Automation state:
+	•	memory-sync: no
+	•	stopping-point: yes
+	•	mark_done.sh succeeded
+	•	terminal is back at ❯
+
+So right now:
+	•	P2 is shipped
+	•	automation is idle
+	•	this was a true stopping point, not a failure
+
+What Code says is left:
+	•	P7 position descriptions
+	•	P9 live footage in app
+	•	both still need your direction/content
+
+Ignore:
+	•	Auto-update failed is still just Claude Code’s self-update noise
+
+Most relevant current status:
+	•	P2 Start Training is done
+	•	P3 Start Here is done
+	•	actionable home screen is done
+	•	next lane now depends on your choice between P7 and P9
+
+Ready-to-send next prompt if you want to move into that decision lane:
+
+PROMPT-ID: PRODUCT-DIRECTION-REVIEW-03
+TYPE: CODE
+SCOPE: workflow + product direction review only
+
+GOAL:
+Prepare the next product-direction lane now that P2 Start Training has shipped.
+
+BEFORE STARTING:
+	1.	Read and align to:
+
+	•	PROJECT_STATE.md
+	•	DECISIONS.md
+	•	WORKFLOW_RULES.md
+	•	HANDOFF_LATEST.md
+	•	MEMORY_UPDATES.md
+	•	SYSTEM_OPTIMIZATION.md
+	•	AUTOMATION_SUGGESTIONS.md
+	•	AUTOMATION_NEXT.md
+
+TASK:
+	1.	Review the remaining direction-heavy items:
+
+	•	P7 position descriptions
+	•	P9 live footage in app
+
+	2.	For each one, give:
+
+	•	what it means in practice
+	•	why it matters
+	•	who it helps most
+	•	effort level
+	•	whether it should be next, later, or rejected
+
+	3.	Keep it concise and decision-friendly
+
+IMPORTANT:
+	•	Do not implement anything in this prompt
+	•	Do not touch grappling.opml
+	•	Do not touch website/app code
+
+PASTE BACK EXACTLY:
+PRODUCT-DIRECTION-REVIEW-03 | DONE | options:  | recommended-next:  | issues: 
+
+-chatgpt chat & claude code chat

@@ -1,0 +1,23 @@
+Not yet.
+
+From the terminal snippet, Code is still in the middle of fixes:
+	•	it was patching the undefined drilling subtitle bug,
+	•	working on the belt filter scope issue,
+	•	adding the AI Coach fallback message,
+	•	then ran npm run check,
+	•	but there is no ... | DONE ... line, no commit summary, and no mark_done.sh closeout in the selected part.
+
+So Claude Chat is not ready for its next prompt if you want that prompt to reflect these latest fixes. Wait until Code returns a proper done line or at least a clean commit/closeout.
+
+On CapCut auto upload: the closest thing is CapCut’s cloud / Space workflow, not “auto upload everything from your phone by default.” The documented flow is basically:
+	•	on mobile, upload media or a project to CapCut Space / cloud,
+	•	on desktop, log into the same CapCut account,
+	•	the cloud projects appear in the Cloud or Space area and sync across devices. CapCut’s own pages say cloud projects “automatically sync and appear in the workspace,” and one guide specifically says on mobile you can use the menu and choose “Upload to space”, then access it on PC with the same account.  ￼
+
+A couple of practical notes:
+	•	CapCut’s cloud storage is not unlimited; one current CapCut page says up to 1 GB free cloud storage on that offering, so huge 4K footage may hit limits fast.  ￼
+	•	CapCut also has a file sync concept for some external storage sources in its online workflow, including Google Drive, where files can be automatically transferred on a schedule, but that is described for CapCut Online/cloud workflows, not as a blanket “all phone footage auto uploads to desktop.”  ￼
+
+So the practical answer is:
+	•	Chat prompt: wait, not ready yet.
+	•	CapCut auto upload: use Upload to Space / Cloud, then open the same account on Mac. It’s more like cloud sync of selected media/projects than a universal always-on auto-backup. For very large 4K training footage, storage limits and upload time are the big constraints.  ￼

@@ -1,0 +1,71 @@
+Use this next website/app automation improvement prompt:
+
+PROMPT-ID: WEBSITE-IMPROVEMENT-ITERATION-16
+TYPE: CODE
+SCOPE: safe frontend/product improvements only
+
+GOAL:
+Run the next worthwhile website/app improvement batch.
+
+BEFORE STARTING:
+	1.	Read and align to:
+
+	•	PROJECT_STATE.md
+	•	DECISIONS.md
+	•	WORKFLOW_RULES.md
+	•	HANDOFF_LATEST.md
+	•	MEMORY_UPDATES.md
+	•	SYSTEM_OPTIMIZATION.md
+
+	2.	Summarize briefly:
+
+	•	source of truth
+	•	current default priority
+	•	locked decisions relevant to this batch
+	•	current next best action
+
+PRIORITY FOR THIS BATCH:
+Improve the technique detail experience so the app feels more useful as a study tool.
+
+TARGET IMPROVEMENTS:
+	1.	Add a cleaner technique detail card in Reference/Network detail views
+	•	clearer title
+	•	sequence/notes area
+	•	related connections section
+	•	better spacing and hierarchy
+	2.	Improve section collapse/expand usability
+	•	make collapsing as easy as expanding
+	•	keep the behavior obvious on mobile and desktop
+	3.	Add lightweight visual feedback for connection/technique clicks
+	•	subtle active/pressed state
+	•	no heavy redesign
+	•	keep it clean and fast
+
+RULES:
+	•	Prioritize website/app improvements first
+	•	Do not touch grappling.opml
+	•	Do not alter grappling taxonomy/content structure
+	•	Do not modify live-footage folder organization
+	•	Keep changes safe and frontend/product only
+	•	Implement only the clearly worthwhile subset
+	•	Validate locally before stopping
+	•	Do not prompt upload unless true stopping point
+	•	If a manual task arrives, defer this automation task to the queue and run the manual task now
+	•	Queue the next automation prompt using the handoff file workflow
+
+VALIDATION:
+	1.	Confirm the detail card is clearer and more usable
+	2.	Confirm collapse/expand behavior is improved
+	3.	Confirm click feedback works without regressions
+	4.	Confirm no runtime errors
+	5.	Run the strongest relevant local validation available
+
+PASTE BACK EXACTLY:
+WEBSITE-IMPROVEMENT-ITERATION-16 | DONE | batch:  | files:  | validation:  | next-best:  | memory-sync: <yes/no> | stopping-point: <yes/no> | issues: 
+
+If stopping-point: no:
+	•	write the next prompt to ~/.handoff/next_automation_prompt.txt
+	•	create the .prompt_ready flag
+	•	print NEXT_AUTOMATION_PROMPT_START / END markers to stdout for visibility only
+
+-chatgpt chat & claude code chat

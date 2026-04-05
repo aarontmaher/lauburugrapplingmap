@@ -1,0 +1,63 @@
+Checked.
+
+Latest completed work from terminal:
+
+1. CW20 schema naming decision was applied
+
+You said:
+	•	match schema
+
+Code then:
+	•	reverted the user-friendly heading renames
+	•	restored exact schema/OPML display names:
+	•	Offensive transitions
+	•	Setups / Entries
+	•	Defence / Escapes
+	•	Defence
+
+Commit:
+	•	ff0616b — CW20: Revert display name overrides to match locked schema
+
+2. Purple belt syllabus was created
+
+Code then built:
+	•	PURPLE_BELT_SYLLABUS.md
+
+It says:
+	•	Purple belt = Systems and chains
+	•	built on White + Blue belt foundations
+	•	6 sections
+	•	principles include:
+	•	systems-level understanding
+	•	if/then chains
+	•	No-Gi only
+	•	tied to actual map positions
+	•	technique selections from your mapped content only
+
+Commit:
+	•	0f85063 — Purple belt syllabus: systems and chains (6 sections)
+
+3. Closeout
+	•	mark_done.sh ran successfully
+	•	terminal returned to ❯
+	•	nothing is actively running now
+
+Important current state
+
+So right now:
+	•	CW20 is done
+	•	Purple belt syllabus is now started/created
+	•	terminal is idle
+	•	latest closeout summary says:
+	•	CW20 schema revert + Purple belt syllabus | ff0616b + 0f85063 | pushed ...
+
+Bottom line
+
+What happened since last check:
+	•	schema naming was reverted to match the locked schema
+	•	Purple belt syllabus file was created and committed
+	•	terminal is now clean and waiting
+
+The next likely lane is:
+	•	continue Purple belt section filling
+	•	or go back to accounts Batch 4 / post-auth polish

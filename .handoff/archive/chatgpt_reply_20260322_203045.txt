@@ -1,0 +1,22 @@
+CROSS-BROWSER-PARITY-01 is done and published.
+
+What finished:
+	•	Safari/iOS blur support fixed with -webkit-backdrop-filter
+	•	font smoothing added for better Chrome/Safari text rendering
+	•	focus fallback improved for older Safari
+	•	iOS text auto-zoom prevention added
+	•	scroll container behavior improved
+	•	button appearance normalized across browsers
+	•	flex overflow fixed with min-width: 0
+	•	long labels now break safely on narrow screens
+	•	inline video iframes now keep rounded corners
+	•	cross-browser focus ring behavior improved
+
+Result:
+	•	tests: 11/12 pass
+	•	remaining fail: same pre-existing headless WebGL / 3D canvas issue
+	•	publish: yes
+	•	commit: fd1b87f
+	•	live-review-ready: yes
+
+It also wrote the DONE result through the bridge writer successfully.

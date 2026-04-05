@@ -1,0 +1,76 @@
+Right now the automation is already at the correct stop point — Claude is idle and waiting for a real next objective.
+
+The next honest automation batch is only one of these:
+	•	add instructional video URLs
+	•	add live clips
+	•	validate a new clip drop
+	•	make a specific canonical/content decision
+
+If you want to resume it now with a real objective, paste this plain prompt into Claude Code:
+
+PROMPT-ID: CONTENT-WORK-START-01
+TYPE: CODE
+SCOPE: begin real content work from current reports
+MODE: conservative guided content-support pass
+
+SOURCE OF TRUTH POLICY:
+grappling.opml remains the source of truth.
+Do not invent content.
+Do not guess URLs.
+Do not make speculative canonical decisions.
+Use only the existing reports and current source data.
+
+GOAL:
+Begin the real content phase in the safest practical way by preparing the exact first content targets Aaron should work on next, using the current reports and source data only.
+
+TASKS:
+	1.	Read:
+
+	•	~/GrapplingMap/reports/start-here.txt
+	•	~/GrapplingMap/reports/start-here.json
+	•	~/GrapplingMap/reports/content-report.txt
+	•	~/GrapplingMap/reports/content-report.json
+
+	2.	Produce the best immediate first content-work queue.
+	3.	Give the top 20 targets in priority order.
+	4.	Split them into:
+
+	•	instructional video targets
+	•	live clip targets
+
+	5.	For each target, include:
+
+	•	section
+	•	position
+	•	technique
+	•	why it is high priority from current real data
+	•	relevant scaffold path if available
+
+	6.	Keep the output concise and actionable.
+	7.	Do not edit grappling.opml in this pass.
+	8.	Do not change website/app code.
+	9.	Do not change live-footage scaffold.
+	10.	Output a practical first-work queue Aaron can act on immediately.
+
+FINAL OUTPUT:
+CONTENT-WORK-START-01 | DONE
+automatic:
+	•	<completed item 1>
+	•	<completed item 2>
+	•	<completed item 3>
+	•	<completed item 4>
+	•	<completed item 5>
+	•	<completed item 6>
+	•	<completed item 7>
+	•	<completed item 8>
+	•	<completed item 9>
+	•	<completed item 10>
+instructional priorities:
+	•	
+
+live clip priorities:
+	•	
+
+-chatgpt chat
+
+If what you actually want is clip validation instead, say “validate clip drop” and I’ll give the exact prompt for that.

@@ -1,0 +1,1 @@
+PASTE-MACRO-AUDIT-01 | DONE | added --clipboard mode to paste_to_code.sh, updated KM docs with 3-action macro | errors: none

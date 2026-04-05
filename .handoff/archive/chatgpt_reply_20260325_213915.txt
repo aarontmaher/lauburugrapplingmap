@@ -1,0 +1,6 @@
+Checked.
+
+This one finished cleanly, and the terminal is idle.
+
+What Code just did:
+	•	found the root cause

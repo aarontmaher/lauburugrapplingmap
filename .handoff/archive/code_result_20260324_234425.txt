@@ -1,0 +1,1 @@
+BATCH-I + REDIRECT-FIX | DONE | mobile auto-rotate off + recenter + text buttons + auth redirect fix | de1a2ee | Aaron needs to update Supabase Site URL

@@ -1,0 +1,79 @@
+OPML-STRUCTURE-FIX-01 is done and published.
+
+What finished:
+	•	removed 184 empty ghost-heading artifacts from grappling.opml
+	•	fixed Crab ride order:
+	•	from Defensive, Initiative
+	•	to Initiative, Defensive
+	•	re-ran the audit and it is now clean
+	•	rebuilt the site successfully
+	•	verified:
+	•	bootHealthy=true
+	•	1726 items
+	•	0 JS errors
+
+Publish/result:
+	•	commit: f8c7f49
+	•	live-review-ready: yes
+	•	blockers: none
+
+Important note:
+	•	the frontend item count stayed the same because the UI was already suppressing those ghost rows
+	•	this fix cleaned the source OPML itself, which is the right long-term fix
+
+My read:
+	•	this was the correct source-of-truth cleanup
+	•	the OPML is now structurally clean based on the audited issues
+	•	I would not do another blind OPML cleanup batch immediately
+
+Next prompt:
+
+PROMPT-ID: OPML-STRUCTURE-PAUSE-01
+TYPE: CODE
+SCOPE: stop condition confirmation only
+MODE: no implementation
+
+GOAL:
+Remain paused on OPML structure work unless Aaron gives a new concrete OPML/content objective.
+
+TASKS:
+	1.	Do not perform any more OPML structure cleanup.
+	2.	Preserve the current cleaned grappling.opml state.
+	3.	Do not invent another OPML audit or fix batch.
+	4.	Wait for a specific next objective such as:
+
+	•	adding instructional video URLs
+	•	adding live clips
+	•	fixing a newly identified specific source-order/content issue
+	•	validating a new clip drop
+	•	starting a new concrete non-content objective
+
+	5.	Do not touch grappling.opml again unless explicitly asked.
+	6.	Do not change content structure.
+	7.	Do not change website/app code.
+	8.	Keep the repo unchanged.
+	9.	Output only the pause confirmation.
+	10.	Stay conservative.
+
+FINAL OUTPUT:
+OPML-STRUCTURE-PAUSE-01 | DONE
+automatic:
+	•	OPML structure cleanup remains paused
+	•	no new source edits were made
+	•	waiting for a real next objective
+remaining:
+	•	actual content work or specific new source issue
+changed files:
+	•	none
+tests:
+	•	none
+publish:
+	•	attempted: no
+	•	pushed: no
+	•	commit: none
+	•	live-review-ready: yes
+	•	blockers: none
+notes:
+	•	OPML is currently structurally clean based on the completed audit/fix pass
+
+-chatgpt chat

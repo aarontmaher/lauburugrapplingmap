@@ -1,0 +1,86 @@
+PROMPT-ID: WEBSITE-AUTO-LOOP-13
+TYPE: CODE
+SCOPE: app UI / UX polish only
+MODE: autonomous safe batch with publish at end if clean
+
+SOURCE OF TRUTH POLICY:
+	•	grappling.opml remains the content source of truth
+	•	Do not change grappling.opml in this pass
+	•	Do not change technique content, canonical naming, transitions, or OPML structure
+	•	Focus only on website/app behavior and presentation
+
+GOAL:
+Continue the safe autonomous website-improvement loop by implementing the next highest-value frontend/product improvements without touching protected content areas.
+
+CURRENT STRATEGY:
+	•	preserve all working behavior from loops 01–12
+	•	keep improving premium feel, clarity, and instructional usability
+	•	prefer grouped frontend polish by area
+	•	avoid anything requiring grappling/content decisions
+
+THIS BATCH PRIORITY:
+	1.	Improve current-location/context clarity in both Reference and Network
+	2.	Improve consistency and scanability of action pills/buttons across views
+	3.	Improve empty/zero/loading state polish where still generic
+	4.	Improve selected-detail hierarchy and “main lesson state” emphasis
+	5.	Fix any remaining small safe interaction friction discovered during this pass
+
+DETAIL GOALS:
+	•	make current context easier to understand at a glance
+	•	keep Reference and Network visually aligned as one product
+	•	make actions feel consistent and intentional
+	•	improve product-like feel of empty/loading states
+	•	keep changes subtle, premium, frontend-only, and low-risk
+
+GOOD CANDIDATES FOR THIS PASS:
+	•	lightweight context line or orientation aid in selected detail views
+	•	stronger grouping of technique title, notes, and media actions
+	•	more consistent styling/spacing for action pills across Reference and Network
+	•	cleaner zero-state wording/presentation where still generic
+	•	subtle improvements to current-selection visibility without adding clutter
+	•	small polish to cross-view actions and their placement if safe
+
+RULES:
+	•	Work only on safe frontend/product improvements
+	•	Do not touch grappling.opml
+	•	Do not change content structure
+	•	Do not invent grappling content
+	•	Do not change canonical names or transitions in source data
+	•	Preserve current functionality unless directly improving it
+	•	Rebuild and verify locally before finishing
+	•	If the batch is clean and safe, publish it at the end
+	•	If publish is not safe, stop before publish and report why
+
+TESTING / VALIDATION
+	•	verify Reference still selects/expands correctly
+	•	verify Network panel behavior still works
+	•	verify media behavior still works
+	•	verify filters still work
+	•	verify cross-view actions still work
+	•	verify Track All and progress pills still behave correctly
+	•	update tests only where behavior intentionally changed
+	•	if one pre-existing headless WebGL failure remains, report it clearly without masking anything
+
+FINAL OUTPUT:
+PASTE BACK EXACTLY:
+
+WEBSITE-AUTO-LOOP-13 | DONE
+automatic:
+	•	<completed item 1>
+	•	<completed item 2>
+	•	<completed item 3>
+remaining:
+	•	
+
+tests:
+	•	<what passed / what changed>
+publish:
+	•	attempted: yes/no
+	•	pushed: yes/no
+	•	commit: 
+	•	live-review-ready: yes/no
+	•	blockers: 
+notes:
+	•	
+
+-chatgpt chat

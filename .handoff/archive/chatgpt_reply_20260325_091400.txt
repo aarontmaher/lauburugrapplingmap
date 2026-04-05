@@ -1,0 +1,71 @@
+Not directly from inside Cowork itself.
+
+Cowork can generate the Claude Chat prompt, but it cannot reliably paste it into Claude Chat unless you add that step through your KM automation.
+
+So the right setup is:
+	•	Cowork writes the finished Claude Chat prompt to a known file
+	•	KM detects that file/update
+	•	KM focuses Claude Chat
+	•	KM pastes the prompt
+	•	then Claude Chat runs
+
+Best practical setup
+
+Have Cowork always save the prompt to one fixed file, for example:
+	•	~/Chat-gpt/automation-outbox/claude_chat_prompt.txt
+
+Then Keyboard Maestro does:
+	1.	watch that file
+	2.	if updated, bring Claude Chat to front
+	3.	paste file contents
+	4.	hit Enter
+	5.	optionally archive/clear the file afterward
+
+That’s the cleanest way to make Cowork “auto paste” to Claude Chat without pretending Cowork itself can control another app session.
+
+What to tell Cowork
+
+Send Cowork this:
+
+Read and align to:
+	•	PROJECT_STATE.md
+	•	DECISIONS.md
+	•	WORKFLOW_RULES.md
+	•	HANDOFF_LATEST.md
+	•	MEMORY_UPDATES.md
+	•	SYSTEM_OPTIMIZATION.md
+	•	AUTOMATION_SUGGESTIONS.md
+	•	AUTOMATION_NEXT.md
+
+GOAL:
+Generate the next Claude Chat prompt and write it to a repo-readable outbox file for Keyboard Maestro to automatically paste into Claude Chat.
+
+IMPORTANT:
+Do not stop after showing me the prompt in chat.
+Write the finished prompt into:
+	•	~/Chat-gpt/automation-outbox/claude_chat_prompt.txt
+
+TASK:
+	1.	Review the current project state.
+	2.	Generate one clean Claude Chat prompt for the current task/state.
+	3.	Write only the final prompt text into:
+
+	•	~/Chat-gpt/automation-outbox/claude_chat_prompt.txt
+
+	4.	Overwrite the file with the newest prompt each time.
+	5.	Do not add commentary before or after the prompt in the file.
+
+OUTPUT:
+Return only:
+COWORK-CLAUDE-OUTBOX-01 | DONE | file: ~/Chat-gpt/automation-outbox/claude_chat_prompt.txt | prompt: written | issues: 
+
+-chatgpt chat & claude code chat
+
+What KM should do
+
+Your KM macro should:
+	•	watch or periodically check:
+	•	~/Chat-gpt/automation-outbox/claude_chat_prompt.txt
+	•	if file changed and is not empty:
+	•	activate Claude Chat window
+	•	click message

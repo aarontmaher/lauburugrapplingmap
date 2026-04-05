@@ -1,0 +1,144 @@
+WEB-AND-MOBILE-APP-LOOP-04B is done and published.
+
+What actually changed:
+	•	Network stat line now stays visible even when connections are 0
+	•	selected technique action bar now has subtle grouped background
+	•	OT rows now get a link-like hover underline
+
+Result:
+	•	tests: 11/12 pass
+	•	remaining fail: same pre-existing headless WebGL / 3D canvas issue
+	•	publish: yes
+	•	commit: b69f344
+	•	live-review-ready: yes
+
+Most important takeaway:
+Code is probably right here — safe frontend polish is now in real diminishing returns. 7 of the 10 requested items were already effectively done, and only 3 meaningful new improvements remained.
+
+So I would not send another “polish the UI” batch right now.
+
+The better next move is to pivot into product features that do not touch OPML/content structure. That keeps improving the app without wasting cycles on tiny cosmetic tweaks.
+
+Next prompt:
+
+PROMPT-ID: APP-FEATURES-01
+TYPE: CODE
+SCOPE: product features and lightweight architecture only, excluding protected content areas
+MODE: autonomous safe batch with publish at end if clean
+
+SOURCE OF TRUTH POLICY:
+grappling.opml remains the content source of truth.
+Do not change grappling.opml in this pass.
+Do not change technique content, canonical naming, transitions, or OPML structure.
+Do not do content migration or grappling-knowledge decisions.
+Focus on product features and safe architecture that improve the app/website experience without touching protected content areas.
+
+GOAL:
+Implement the next 10 highest-value non-content product improvements now that frontend polish is near completion.
+
+DO THESE 10 IMPROVEMENTS IN THIS PASS:
+	1.	Add a lightweight “Recently viewed” area or memory so users can quickly reopen what they were last studying.
+	2.	Add a simple “Resume where you left off” behavior on app reopen or reload where safe.
+	3.	Add export of progress/notes/tracking data from localStorage in a user-friendly way.
+	4.	Add import/restore of progress/notes/tracking data in a safe user-friendly way.
+	5.	Add a simple “Reset progress” action in a safe place with confirmation.
+	6.	Add a flat “My Drills” or “Drilling List” view for items marked Drilling, without changing content structure.
+	7.	Add lightweight session-planning support for drilling items if feasible without large architecture changes.
+	8.	Add better progress visibility at the position level if a safe frontend-only version is feasible from existing progress data.
+	9.	Add app-state continuity improvements such as remembering the current tab, selection, and view state more robustly.
+	10.	Add a small “What’s new” or update-notice mechanism if a safe low-maintenance version is feasible without backend work.
+
+DETAIL REQUIREMENTS:
+
+RECENTLY VIEWED / RESUME
+	•	Make it easy for repeat users to jump back into study.
+	•	Use existing app state where possible.
+	•	Keep the UI compact and product-like.
+
+EXPORT / IMPORT / RESET
+	•	Treat user progress as valuable data.
+	•	Make backup/restore/reset actions safe and clear.
+	•	Require confirmation for destructive actions.
+	•	Do not overcomplicate the UI.
+
+MY DRILLS / DRILLING LIST
+	•	Give users a practical repeated-use training view.
+	•	Prefer a flat practical list over a complex new subsystem.
+	•	Do not require OPML/content changes.
+
+POSITION-LEVEL PROGRESS
+	•	If feasible from existing data, surface lightweight progress at the position level.
+	•	Keep it accurate enough to be useful and motivating.
+	•	Do not invent content metadata.
+
+APP-STATE CONTINUITY
+	•	Improve reopen/reload continuity.
+	•	Prioritize:
+	•	current tab
+	•	selected item/node
+	•	relevant panel state
+	•	recent view context
+
+WHAT’S NEW
+	•	Only implement this if it can be done in a simple, low-maintenance way without backend or manual release burden.
+
+EXPLICITLY OUT OF SCOPE:
+	•	no grappling.opml edits
+	•	no content migration or restructuring
+	•	no canonical renaming
+	•	no transition/destination decisions
+	•	no grappling content creation
+	•	no backend/auth/sync server architecture
+	•	no native Swift/Kotlin/React Native packaging in this pass
+	•	no complex analytics system in this pass
+
+RULES:
+Work only on safe product features and lightweight architecture.
+Do not touch grappling.opml.
+Do not change content structure.
+Do not invent grappling content.
+Do not change canonical names or transitions in source data.
+Preserve current functionality unless directly improving it.
+Rebuild and verify locally before finishing.
+If the batch is clean and safe, publish it at the end.
+If publish is not safe, stop before publish and report why.
+Prefer a few meaningful feature improvements over clever but fragile systems.
+
+TESTING / VALIDATION:
+Verify Reference still selects/expands correctly.
+Verify Network panel behavior still works.
+Verify media/video behavior still works.
+Verify filters still work.
+Verify cross-view actions still work.
+Verify progress data survives reload correctly.
+Verify export/import/reset flows behave safely.
+Verify Drilling list or recent/resume features do not break current views.
+Update tests only where behavior intentionally changed.
+If one pre-existing headless WebGL failure remains, report it clearly without masking anything.
+
+FINAL OUTPUT:
+APP-FEATURES-01 | DONE
+automatic:
+	•	<completed item 1>
+	•	<completed item 2>
+	•	<completed item 3>
+	•	<completed item 4>
+	•	<completed item 5>
+	•	<completed item 6>
+	•	<completed item 7>
+	•	<completed item 8>
+	•	<completed item 9>
+	•	<completed item 10>
+remaining:
+	•	
+
+tests:
+	•	<what passed / what changed>
+publish:
+	•	attempted: yes/no
+	•	pushed: yes/no
+	•	commit: 
+	•	live-review-ready: yes/no
+	•	blockers: 
+notes:
+	•	

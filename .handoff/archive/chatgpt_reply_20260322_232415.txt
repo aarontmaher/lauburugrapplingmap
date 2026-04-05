@@ -1,0 +1,134 @@
+
+
+tests:
+	•	<what passed / what changed>
+publish:
+	•	attempted: no/yes
+	•	pushed: no/yes
+	•	commit: 
+	•	live-review-ready: yes/no
+	•	blockers: 
+notes:
+	•	<brief summary of whether the product now looks genuinely solid and what, if anything, still clearly needs work>
+
+-chatgpt chatVISUAL-FIX-BATCH-02 is done and published.
+
+What finished:
+	•	3D labels are easier to read at rest:
+	•	default alpha increased from 0.55 to 0.7
+	•	perspective suffixes are stripped from displayed labels:
+	•	e.g. “Outside tie” instead of “Outside tie (You)”
+	•	Network detail panel now gets a section-color top border accent when open
+	•	legend was toned down:
+	•	lower opacity
+	•	tighter padding
+	•	smoother opacity transition
+
+Result:
+	•	local verification: bootHealthy=true
+	•	items: 1726
+	•	JS errors: 0
+	•	publish: yes
+	•	commit: 85464eb
+	•	live-review-ready: yes
+
+My read:
+	•	Good batch.
+	•	The label readability change was worth doing.
+	•	But Code is probably right that visual polish is now at diminishing returns.
+	•	I would not do another blind visual-fix batch next.
+
+Best next move:
+switch from more polish to a verification/review batch so you can confirm what still actually matters on desktop and phone.
+
+Next prompt:
+
+PROMPT-ID: VISUAL-VERIFY-PACK-01
+TYPE: CODE
+SCOPE: screenshot/verification pack only
+MODE: no implementation unless a critical regression is discovered
+
+SOURCE OF TRUTH POLICY:
+grappling.opml remains the content source of truth.
+Do not change grappling.opml in this pass.
+Do not change technique content, canonical naming, transitions, or OPML structure.
+Do not do a new implementation batch in this pass unless you discover a critical regression that clearly must be fixed immediately.
+
+GOAL:
+Prepare a clean visual verification pack for the current product state so the next decisions are based on real rendered output, not more speculative polish work.
+
+DO THESE 10 TASKS IN THIS PASS:
+	1.	Capture the current desktop landing/default state.
+	2.	Capture Reference view with a position expanded and a technique/detail state visible.
+	3.	Capture Network view in default loaded state.
+	4.	Capture Network view with a selected node and detail panel open.
+	5.	Capture the current mobile/narrow-width Reference view.
+	6.	Capture the current mobile/narrow-width Network view.
+	7.	Capture one of the feature panels in use, such as My Drills / Video Library / Progress / Content Readiness.
+	8.	Capture one real empty/loading/onboarding state that still exists.
+	9.	Summarize the top 10 remaining visible/product issues only if they are still clearly relevant after all recent fixes.
+	10.	Produce a paste-ready review brief for external visual review.
+
+DETAIL REQUIREMENTS:
+	•	This is a review pack, not a new polish pass.
+	•	Use the real current product state.
+	•	Do not re-flag issues that are already fixed.
+	•	If the current state looks genuinely solid, say so.
+	•	If there are only a few remaining issues, report only those rather than forcing 10 weak ones.
+	•	If a critical regression is found during this pass, fix only that regression and report it clearly.
+
+SCREENSHOT SET:
+	•	desktop landing/default
+	•	desktop Reference with meaningful content visible
+	•	desktop Network default
+	•	desktop Network selected/detail open
+	•	mobile Reference
+	•	mobile Network
+	•	one feature panel
+	•	one onboarding/loading/empty state if still relevant
+
+PASTE-READY REVIEW BRIEF:
+	•	include live URL
+	•	summarize recent major fixes
+	•	list only the top remaining relevant visible issues
+	•	ask for the next best 10-item batch only if justified by the visuals
+
+EXPLICITLY OUT OF SCOPE:
+	•	no grappling.opml edits
+	•	no content migration or restructuring
+	•	no canonical renaming
+	•	no transition/destination decisions
+	•	no broad new polish batch
+	•	no backend/auth/sync architecture
+	•	no native app packaging
+
+RULES:
+Work only on visual verification and review-pack preparation.
+Do not touch grappling.opml.
+Do not change content structure.
+Do not invent grappling content.
+Preserve current functionality unless a critical regression clearly requires a fix.
+Prefer honesty over manufacturing more work.
+
+TESTING / VALIDATION:
+Verify desktop Reference and Network still render correctly.
+Verify mobile/narrow-width states still work.
+Verify labels still render correctly in Network.
+Verify there are still 0 JS errors.
+Verify screenshots reflect the real current state.
+
+FINAL OUTPUT:
+VISUAL-VERIFY-PACK-01 | DONE
+automatic:
+	•	<completed item 1>
+	•	<completed item 2>
+	•	<completed item 3>
+	•	<completed item 4>
+	•	<completed item 5>
+	•	<completed item 6>
+	•	<completed item 7>
+	•	<completed item 8>
+	•	<completed item 9>
+	•	<completed item 10>
+remaining:
+	•	

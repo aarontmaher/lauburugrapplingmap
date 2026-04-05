@@ -1,0 +1,45 @@
+Checked.
+
+Latest terminal result is:
+	•	FINAL-TARGETED-BATCH-01 | DONE
+	•	published commit: 23e5f13
+
+What finished:
+	•	schema headings no longer get Track/progress pills
+	•	headings like Offence, Setups / Entries
+	•	perspective rows like You
+	•	no longer appear individually trackable
+	•	verified specifically on:
+	•	Wrestling > Hand fighting > Outside tie (You) > You
+	•	referenceReveal Lookup typo fixed to:
+	•	Reference Reveal Lookup
+	•	legend overlap was confirmed already fixed in an earlier batch
+	•	Drill Timer text was confirmed already fixed
+	•	★ tooltip was confirmed already present
+	•	case mismatches were confirmed already fixed
+
+What remains:
+	•	6 NO_DEST warnings
+	•	Code classifies those as content decisions, not app bugs:
+	•	Anaconda
+	•	Crucifix
+	•	seatbelt variants
+	•	Grounded head inside single leg
+
+Verification:
+	•	bootHealthy=true
+	•	1726 items
+	•	0 errors
+	•	0 direct pills on schema headings
+
+Also confirmed:
+	•	write_code_result.sh succeeded
+	•	done.signal was created
+	•	Claude is back at the prompt
+	•	no active batch is running
+
+So where you’re up to now:
+	•	app/frontend is in strong shape
+	•	source cleanup is done
+	•	the last real functional audit bug is fixed
+	•	remaining work is now mostly content decisions / content additions, not app bugs

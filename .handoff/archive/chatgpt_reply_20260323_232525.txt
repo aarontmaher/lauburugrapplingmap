@@ -1,0 +1,69 @@
+Not necessarily frequently enough unless the batch reaches a real stopping point.
+
+Based on the workflow you locked in, Code should be:
+	•	working locally during active batches
+	•	committing/pushing at true stopping points
+	•	not pushing after every small sub-fix
+
+So check terminal is still useful because it tells you whether work is only:
+	•	partially edited locally
+or
+	•	actually committed and pushed
+
+From what we saw recently:
+	•	some batches did commit and push at true stops
+	•	but Batch G is currently partial and unfinished, so that kind of work is likely only local right now
+
+So the answer is:
+	•	Yes, Code is updating the repo at real stopping points
+	•	No, it is not necessarily updating it continuously enough that you can assume GitHub always reflects the latest progress
+
+Best rule of thumb:
+	•	if terminal shows a commit hash + push to main, the repo is up to date for that cycle
+	•	if terminal only shows edits / update lines / “Running Batch …”, then it may still just be local
+
+If you want Code to report this more clearly every time, send this:
+
+PROMPT-ID: REPO-UPDATE-STATUS-RULE-01
+TYPE: CODE
+SCOPE: workflow/reporting only
+
+GOAL:
+Make repo update status explicit at the end of every website/app automation batch.
+
+NEW RULE:
+At the end of every batch, Claude Code must clearly report repo status as one of:
+	1.	LOCAL ONLY
+
+	•	changes exist locally only
+	•	not committed/pushed yet
+
+	2.	COMMITTED LOCAL
+
+	•	committed locally
+	•	not pushed yet
+
+	3.	PUSHED
+
+	•	committed and pushed to remote
+
+REQUIRED OUTPUT:
+Append exactly one repo-status field to every final batch result line:
+
+repo-status: <LOCAL ONLY / COMMITTED LOCAL / PUSHED>
+
+If PUSHED, also include:
+	•	commit: 
+
+IMPORTANT:
+	•	Do not change commit/push timing rules
+	•	This is reporting clarity only
+	•	Do not touch grappling.opml
+	•	Do not touch website/app code
+
+PASTE BACK EXACTLY:
+REPO-UPDATE-STATUS-RULE-01 | DONE | updated:  | rule:  | issues: 
+
+-chatgpt chat & claude code chat
+
+And because you asked about being able to use check terminal, yes — that’s still the right habit, especially while batches can be partially applied locally before a true stopping point.

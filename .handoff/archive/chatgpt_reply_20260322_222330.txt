@@ -1,0 +1,59 @@
+Yes, but it should do it conservatively.
+
+Best approach is not “clean everything automatically.”
+Best approach is:
+	1.	audit Desktop first
+	2.	group files into obvious categories
+	3.	identify safe moves vs ambiguous items
+	4.	only move the clearly safe stuff
+	5.	leave uncertain items for review
+
+That avoids Claude Code dumping important files into the wrong folders.
+
+Best rule set:
+	•	safe to move:
+	•	screenshots
+	•	obvious downloads/installers
+	•	duplicate exports
+	•	temp files
+	•	clearly named folders/files by category
+	•	do not auto-move:
+	•	project files
+	•	anything recently modified and ambiguous
+	•	files with vague names
+	•	active work folders
+	•	anything code-related unless clearly categorized
+
+Use this plain prompt in Claude Code:
+
+PROMPT-ID: DESKTOP-CLEANUP-AUDIT-01
+TYPE: CODE
+SCOPE: Desktop organization audit first, conservative cleanup second only if clearly safe
+MODE: cautious file-management pass
+
+GOAL:
+Audit my Desktop and clean it up conservatively without moving or deleting anything important.
+
+TASKS:
+	1.	Inspect everything on the Desktop.
+	2.	Categorize items into:
+	•	clearly safe to organize
+	•	clearly safe to trash
+	•	ambiguous / leave alone
+	3.	Create a cleanup plan first.
+	4.	Only after that, move the clearly safe items into sensible folders on the Desktop, such as:
+	•	Screenshots
+	•	Exports
+	•	Installers
+	•	Documents
+	•	Archives
+	•	Media
+	•	Temp
+	5.	Do not delete anything unless it is extremely obvious junk and duplicated, and even then prefer moving to a Desktop folder called _Review or _Trash-Review instead of deleting.
+	6.	Do not move active project folders or anything ambiguous.
+	7.	Preserve filenames.
+	8.	At the end, report exactly what was moved and what was left alone.
+
+IMPORTANT RULES:
+	•	Be conservative.
+	•	If unsure, do not move

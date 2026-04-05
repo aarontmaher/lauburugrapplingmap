@@ -1,0 +1,1 @@
+AUTOMATION-AUDIT-01 | DONE | rewrote: send_check_terminal.sh, KEYBOARD_MAESTRO_SETUP.md | updated: bridge_cycle.sh | active path: ChatGPT app | obsolete: Chrome/browser removed | errors: none

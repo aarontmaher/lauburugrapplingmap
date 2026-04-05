@@ -1,0 +1,1 @@
+CONTENT-READINESS-02 | DONE | published: 4cf029a | clickable gaps, position density, JSON export | errors: none

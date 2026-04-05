@@ -1,0 +1,13 @@
+LIVE-FOLDER-SUBHEADINGS-VERIFY-01 is done.
+
+What finished:
+	•	found 105 missing subheading/technique folders
+	•	created all 105
+	•	preserved all existing real files
+	•	made no deletions or moves
+	•	regenerated:
+	•	~/GrapplingMap/live-footage/audit-report.txt
+	•	~/GrapplingMap/live-footage/audit-report.json
+
+Final verification:
+	•	full OPML-derived expected: `1688

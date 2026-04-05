@@ -1,0 +1,26 @@
+WEBSITE-AUTO-LOOP-08 is done and published.
+
+What finished:
+	•	inline video player polished:
+	•	max width 480px
+	•	rounded corners
+	•	shadow/depth
+	•	Note button now matches the pill style
+	•	Track All button now matches the pill style
+	•	selected technique now auto-expands children on label click
+	•	breadcrumb got more breathing room
+	•	position stats bar styling improved
+	•	selected/deselected tree items now transition smoothly
+
+Result:
+	•	tests: 11/12 pass
+	•	remaining fail: same pre-existing headless WebGL / 3D canvas issue
+	•	publish: yes
+	•	commit: ed8c912
+	•	live-review-ready: yes
+
+Code also successfully wrote the real DONE result through the bridge writer:
+	•	last_code_result.txt updated
+	•	done.signal created
+
+Next prompt for Code

@@ -1,0 +1,1 @@
+LABEL-VISIBILITY-01 | DONE | center-weighted labels + vertical nudging + render priority

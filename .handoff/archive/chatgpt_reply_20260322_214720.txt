@@ -1,0 +1,127 @@
+POST-HOTFIX-VERIFY-01 is done and published.
+
+What finished:
+	•	real root cause found:
+	•	listPanel event-listener code was running before the listPanel HTML existed in the DOM
+	•	that crash stopped all later JS execution
+	•	which is why both Reference and Network appeared blank
+	•	fix applied:
+	•	listPanel event listeners now wait until the DOM elements exist before attaching
+	•	secondary hardening:
+	•	added a null guard around early g3dCanvas parent access during graph init
+	•	verification:
+	•	fresh load now shows 4 sections and 1910 tree items
+	•	0 JS errors in local verification
+	•	previous defensive timeout fallback is still in place as extra protection
+
+Result:
+	•	publish: yes
+	•	commit: d9c6ef8
+	•	live-review-ready: yes
+	•	blockers: none
+
+My read:
+	•	this is a good fix
+	•	better than the first defensive hotfix, because this one identifies and fixes the actual root cause
+	•	keeping the earlier fallback as a backup layer is also sensible
+
+Next prompt:
+
+PROMPT-ID: STABILITY-AND-CLEANUP-01
+TYPE: CODE
+SCOPE: safe stability, regression prevention, and cleanup only
+MODE: autonomous safe batch with publish at end if clean
+
+SOURCE OF TRUTH POLICY:
+grappling.opml remains the content source of truth.
+Do not change grappling.opml in this pass.
+Do not change technique content, canonical naming, transitions, or OPML structure.
+Do not do content migration or grappling-knowledge decisions.
+Focus only on stability hardening, regression prevention, and safe cleanup after the blank-app regression fix.
+
+GOAL:
+Implement the next 10 highest-value safe stability improvements after the blank-app regression fix, with emphasis on preventing similar boot/init failures and cleaning up fragile code paths without touching protected content areas.
+
+DO THESE 10 IMPROVEMENTS IN THIS PASS:
+	1.	Audit the app for any other event listeners or DOM references that may run before their elements exist.
+	2.	Replace any remaining fragile boot-time DOM assumptions with safe low-risk initialization guards.
+	3.	Reduce duplicate or overlapping boot fallbacks if a cleaner safe final boot path is now possible.
+	4.	Add lightweight regression protection so a failed boot/init path is easier to detect during testing.
+	5.	Improve app boot resilience for fresh load, reload, deep link, and resume state.
+	6.	Improve graph boot resilience so Network cannot silently fail from null/init timing issues.
+	7.	Improve list panel / modal / feature panel initialization consistency so newer UI surfaces do not create DOM-order bugs.
+	8.	Improve error surfacing in a low-maintenance product-friendly way if another critical init failure occurs.
+	9.	Clean up any safe low-risk technical debt directly introduced by the recent hotfixes and feature additions.
+	10.	Add the next-best safe regression-prevention improvement with real user value if one of the above items is already effectively done.
+
+DETAIL REQUIREMENTS:
+
+BOOT / INIT SAFETY
+	•	Audit boot-time code paths carefully.
+	•	Focus on:
+	•	DOM ordering assumptions
+	•	element lookup timing
+	•	hash/deep-link restore timing
+	•	resume/localStorage restore timing
+	•	graph init timing
+	•	newer feature-panel initialization timing
+	•	Prefer small safe fixes over broad rewrites.
+
+REGRESSION PREVENTION
+	•	Add protection against future silent blank-shell failures where safe.
+	•	If helpful, add lightweight test coverage or boot checks that catch “shell loads but content never mounts.”
+
+GRAPH / PANEL INIT
+	•	Make sure Network, list panels, modals, and other recently added product surfaces initialize safely.
+	•	Do not overengineer.
+
+ERROR SURFACING
+	•	If an initialization failure still happens, the user should not be left with an unexplained blank app.
+	•	Keep any user-facing fallback lightweight and product-appropriate.
+
+CLEANUP
+	•	If the earlier defensive fallback can now be narrowed safely after root cause confirmation, do so.
+	•	But do not remove protection unless the replacement is clearly safer.
+
+EXPLICITLY OUT OF SCOPE:
+	•	no grappling.opml edits
+	•	no content migration or restructuring
+	•	no canonical renaming
+	•	no transition/destination decisions
+	•	no new major product features
+	•	no live-folder work in this pass
+	•	no backend/auth/sync architecture
+	•	no native app packaging
+
+RULES:
+Work only on safe stability, regression prevention, and light cleanup.
+Do not touch grappling.opml.
+Do not change content structure.
+Do not invent grappling content.
+Preserve current functionality unless directly improving reliability.
+Rebuild and verify locally before finishing.
+If the batch is clean and safe, publish it at the end.
+If publish is not safe, stop before publish and report why.
+Prefer precise fixes over broad speculative refactors.
+
+TESTING / VALIDATION:
+Verify Reference renders on fresh load.
+Verify Network renders on fresh load.
+Verify reload works.
+Verify deep-link load works.
+Verify resume/localStorage restore works.
+Verify list panels and newer feature panels initialize safely.
+Verify no silent blank shell remains.
+Verify existing features still work after boot.
+If one pre-existing headless WebGL failure remains, report it clearly without masking anything.
+
+FINAL OUTPUT:
+STABILITY-AND-CLEANUP-01 | DONE
+automatic:
+	•	<completed item 1>
+	•	<completed item 2>
+	•	<completed item 3>
+	•	<completed item 4>
+	•	<completed item 5>
+	•	<completed item 6>
+	•	<completed

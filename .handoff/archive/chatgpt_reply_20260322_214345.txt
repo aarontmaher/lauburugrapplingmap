@@ -1,0 +1,116 @@
+CRITICAL-BLANK-APP-HOTFIX-01 is done and published.
+
+What finished:
+	•	added a safety fallback that rebuilds Reference sections if the DOM is still empty after boot
+	•	added a safety fallback that re-triggers graph init if Network view is active but nothing rendered
+	•	published defensive hotfix to prevent the app staying blank from bad hash/localStorage/timing states
+
+Result:
+	•	publish: yes
+	•	commit: ae73e23
+	•	live-review-ready: yes
+	•	blockers: none
+	•	tests: Code relied on prior 11/12 baseline and verified the data/init path rather than reporting a fresh full pass
+
+My read:
+	•	This was the right move.
+	•	The fix is defensive rather than a fully proven root-cause elimination, but for a live regression that is acceptable.
+	•	Before more feature work, the next batch should verify the blank-state issue is actually resolved and tighten the boot path if needed.
+
+Important:
+	•	hard refresh the site and test both tabs
+	•	if it still looks blank, clear the URL hash and site storage for this site
+
+Next prompt:
+
+PROMPT-ID: POST-HOTFIX-VERIFY-01
+TYPE: CODE
+SCOPE: boot/render verification and hardening only
+MODE: targeted verification batch with publish at end if clean
+
+SOURCE OF TRUTH POLICY:
+grappling.opml remains the content source of truth.
+Do not change grappling.opml in this pass.
+Do not change technique content, canonical naming, transitions, or OPML structure.
+Focus only on verifying the blank-app hotfix, tightening the boot/render path, and removing any remaining fragile initialization behavior.
+
+GOAL:
+Verify that the blank Reference/Network regression is truly fixed on fresh load, reload, hash/deep-link load, and resume-state load. If any remaining fragile boot/init behavior exists, harden it safely.
+
+DO THESE 10 IMPROVEMENTS IN THIS PASS:
+	1.	Verify fresh-load boot behavior for Reference and Network on the live/current code.
+	2.	Verify reload behavior with no hash.
+	3.	Verify deep-link load behavior with hash-based context.
+	4.	Verify resume/localStorage load behavior.
+	5.	Verify Reference content cannot silently remain blank after boot.
+	6.	Verify Network graph cannot silently remain blank after boot.
+	7.	Tighten any fragile boot sequencing if still needed.
+	8.	Add lightweight boot diagnostics or safer fallback handling only if they improve resilience without user clutter.
+	9.	Remove or refine any hotfix behavior that is too broad if a more precise safe solution is now clear.
+	10.	Publish the safest verified boot/render state.
+
+DETAIL REQUIREMENTS:
+	•	Reproduce and test the major entry paths:
+	•	fresh visit
+	•	reload
+	•	deep link
+	•	restored session/resume
+	•	switching between Reference and Network after load
+	•	If the current safety timeout approach is sufficient and safe, keep it.
+	•	If a more precise root-cause fix is now clear, prefer that over broad fallback behavior, but only if it is low-risk.
+	•	Do not drift into unrelated feature work in this batch.
+	•	Do not do speculative refactors.
+
+EXPLICITLY OUT OF SCOPE:
+	•	no grappling.opml edits
+	•	no content migration or restructuring
+	•	no canonical renaming
+	•	no transition/destination decisions
+	•	no new product features
+	•	no live-folder work in this pass
+	•	no backend/auth/sync architecture
+	•	no native app packaging
+
+RULES:
+Work only on boot/render verification and safe initialization hardening.
+Do not touch grappling.opml.
+Do not change content structure.
+Do not invent grappling content.
+Preserve current functionality unless directly improving reliability.
+Rebuild and verify locally before finishing.
+If the batch is clean and safe, publish it at the end.
+If publish is not safe, stop before publish and report why.
+
+TESTING / VALIDATION:
+Verify Reference renders on fresh load.
+Verify Network renders on fresh load.
+Verify hash/deep-link restore works.
+Verify resume/localStorage restore works.
+Verify no silent blank shell remains.
+Verify existing features still work after boot.
+If one pre-existing headless WebGL failure remains, report it clearly without masking anything.
+
+FINAL OUTPUT:
+POST-HOTFIX-VERIFY-01 | DONE
+automatic:
+	•	<completed item 1>
+	•	<completed item 2>
+	•	<completed item 3>
+	•	<completed item 4>
+	•	<completed item 5>
+	•	<completed item 6>
+	•	<completed item 7>
+	•	<completed item 8>
+	•	<completed item 9>
+	•	<completed item 10>
+remaining:
+	•	
+
+tests:
+	•	<what passed / what changed>
+publish:
+	•	attempted: yes/no
+	•	pushed: yes/no
+	•	commit: 
+	•	live-review-ready: yes/no
+	•	blockers: <list or

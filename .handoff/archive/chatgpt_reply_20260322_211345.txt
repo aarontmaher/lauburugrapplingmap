@@ -1,0 +1,150 @@
+APP-FEATURES-03 is done and published.
+
+What finished:
+	•	blue drill count badge added next to “My Drills” in the menu
+	•	Drilling list now sorts by last-practiced first, then alphabetical
+	•	drills with no practice timestamp now show “not yet practiced”
+	•	keyboard shortcut D opens My Drills instantly
+	•	keyboard shortcut R opens Recent techniques instantly
+	•	help panel updated with D and R shortcuts
+	•	Recent/Drilling list panels now close with Escape
+	•	tab state now saves immediately on switch for cleaner resume
+	•	practice metadata persists across sessions
+	•	menu label cleaned from “My Drilling list” to “My Drills”
+
+Result:
+	•	tests: background run was inconclusive, but Code notes prior commits were consistently 11/12 pass
+	•	publish: yes
+	•	commit: 7b16495
+	•	live-review-ready: yes
+	•	blockers: none
+
+This was a good batch. The D/R shortcuts, drill badge, and recency sorting are real training-use improvements.
+
+Next prompt:
+
+PROMPT-ID: APP-FEATURES-04
+TYPE: CODE
+SCOPE: product features and lightweight architecture only, excluding protected content areas
+MODE: autonomous safe batch with publish at end if clean
+
+SOURCE OF TRUTH POLICY:
+grappling.opml remains the content source of truth.
+Do not change grappling.opml in this pass.
+Do not change technique content, canonical naming, transitions, or OPML structure.
+Do not do content migration or grappling-knowledge decisions.
+Focus on product features and safe architecture that improve the app/website experience without touching protected content areas.
+
+GOAL:
+Implement the next 10 highest-value non-content product improvements after APP-FEATURES-03, prioritizing repeated-use training value and quick between-round usability.
+
+DO THESE 10 IMPROVEMENTS IN THIS PASS:
+	1.	Improve the My Drills panel so it is more useful as a real between-round training surface, not just a list.
+	2.	Improve the Recent techniques panel so it is more scannable and useful for resuming study.
+	3.	Add better visual grouping and hierarchy inside Recent/My Drills panels.
+	4.	Add lightweight quick actions inside those panels where safe, such as opening directly into the relevant technique context.
+	5.	Improve recency/practice metadata presentation so it is easier to scan at a glance.
+	6.	Improve position-level progress visibility if a better safe frontend-only version is feasible from existing data.
+	7.	Improve mobile/PWA quick-access to My Drills and Recent without adding clutter.
+	8.	Improve restore/resume behavior further so reopening the app returns more smoothly to the user’s last meaningful study state.
+	9.	Improve feedback and polish around user-data actions (export/import/reset) if there are still rough edges.
+	10.	Add the next-best safe repeated-use feature with real training value if one of the above items is already effectively done.
+
+DETAIL REQUIREMENTS:
+
+MY DRILLS PANEL
+	•	Make it more useful for real training use between rounds.
+	•	Prefer scanability, quick return, and low-friction interaction over feature bloat.
+	•	Keep it lightweight and product-like.
+
+RECENT TECHNIQUES PANEL
+	•	Improve readability, grouping, and usefulness.
+	•	Help users quickly resume what they were recently studying.
+
+QUICK ACTIONS
+	•	If safe, add small high-value actions within Recent/My Drills panels.
+	•	Do not add clutter or require content-structure changes.
+
+RECENCY / PRACTICE METADATA
+	•	Present existing local-only metadata more clearly.
+	•	Keep it honest and low-risk; do not invent false practice history.
+
+POSITION-LEVEL PROGRESS
+	•	If the current position progress can be made more readable or useful without clutter, improve it.
+	•	Keep it subtle and accurate enough to motivate.
+
+MOBILE / PWA QUICK ACCESS
+	•	Prioritize fewer taps and clearer training-day usability on phone.
+	•	Improve quick-access affordances without turning the UI into clutter.
+
+RESUME / CONTINUITY
+	•	Improve return-to-context behavior where meaningful.
+	•	Prioritize last meaningful study context, not just raw tab state.
+
+EXPORT / IMPORT / RESET
+	•	Keep these safe and polished.
+	•	Improve product feel only if there are still obvious rough edges.
+
+EXPLICITLY OUT OF SCOPE:
+	•	no grappling.opml edits
+	•	no content migration or restructuring
+	•	no canonical renaming
+	•	no transition/destination decisions
+	•	no grappling content creation
+	•	no backend/auth/sync server architecture
+	•	no native app packaging
+	•	no large analytics system
+	•	no content-phase decisions
+
+RULES:
+Work only on safe product features and lightweight architecture.
+Do not touch grappling.opml.
+Do not change content structure.
+Do not invent grappling content.
+Do not change canonical names or transitions in source data.
+Preserve current functionality unless directly improving it.
+Rebuild and verify locally before finishing.
+If the batch is clean and safe, publish it at the end.
+If publish is not safe, stop before publish and report why.
+Prefer meaningful product improvements over filler.
+Critically evaluate any prior suggestion before implementing it; if it is weak, outdated, or not actually good for the product, skip it and use the effort on the next-best safe feature.
+
+TESTING / VALIDATION:
+Verify Reference still selects/expands correctly.
+Verify Network panel behavior still works.
+Verify media/video behavior still works.
+Verify filters still work.
+Verify cross-view actions still work.
+Verify progress data survives reload correctly.
+Verify export/import/reset flows behave safely.
+Verify Recently viewed / Drilling / resume features do not break current views.
+Verify mobile/PWA usability where relevant.
+Update tests only where behavior intentionally changed.
+If one pre-existing headless WebGL failure remains, report it clearly without masking anything.
+
+FINAL OUTPUT:
+APP-FEATURES-04 | DONE
+automatic:
+	•	<completed item 1>
+	•	<completed item 2>
+	•	<completed item 3>
+	•	<completed item 4>
+	•	<completed item 5>
+	•	<completed item 6>
+	•	<completed item 7>
+	•	<completed item 8>
+	•	<completed item 9>
+	•	<completed item 10>
+remaining:
+	•	
+
+tests:
+	•	<what passed / what changed>
+publish:
+	•	attempted: yes/no
+	•	pushed: yes/no
+	•	commit: 
+	•	live-review-ready: yes/no
+	•	blockers: 
+notes:
+	•	

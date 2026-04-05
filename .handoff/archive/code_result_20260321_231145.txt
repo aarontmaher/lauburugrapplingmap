@@ -1,0 +1,1 @@
+AUTO-CAPTURE-BUTTON-01 | DONE | accessibility tree auto-capture working, no clipboard/selection needed | errors: none

@@ -1,0 +1,123 @@
+OPML-STRUCTURE-AUDIT-01 is done.
+
+What Code found:
+	•	total issues: 185
+	•	184 ghost headings
+	•	empty schema-named children duplicating their parent heading
+	•	e.g. Offence > Offence with no real content
+	•	1 real perspective-order bug
+	•	Crab ride is [Defensive, Initiative]
+	•	should be [Initiative, Defensive]
+
+What Code also confirmed:
+	•	no broader heading-order violations
+	•	no wrong heading sets by category
+	•	no other schema drift beyond Crab ride order
+	•	no ambiguous cases needing human review
+
+Reports created:
+	•	~/GrapplingMap/reports/opml-audit.txt
+	•	~/GrapplingMap/reports/opml-audit.json
+
+Important interpretation:
+	•	the 184 ghost headings are safe source-structure cleanup candidates
+	•	the frontend already suppresses them visually, but they are still in the OPML
+	•	the Crab ride order is a real source-order bug
+
+Also confirmed:
+	•	write_code_result.sh succeeded
+	•	done.signal was created
+	•	Claude is back at the prompt and idle
+
+My read:
+	•	this is a strong audit result
+	•	it found exactly the kind of safe fixable issues you’d want:
+	•	remove empty duplicate structural junk
+	•	fix one real ordering bug
+	•	I think the next step should be the actual OPML fix pass
+
+Next prompt:
+
+PROMPT-ID: OPML-STRUCTURE-FIX-01
+TYPE: CODE
+SCOPE: safe grappling.opml structure fix pass only
+MODE: targeted source-of-truth cleanup
+
+SOURCE OF TRUTH POLICY:
+grappling.opml is the source of truth.
+This pass may edit grappling.opml, but only for the specific safe fixes already confirmed by OPML-STRUCTURE-AUDIT-01.
+Do not change technique meaning, canonical naming, transitions, or any structure beyond the audited safe fixes.
+Do not do speculative cleanup.
+
+GOAL:
+Apply the safe OPML structure fixes identified by the audit:
+	1.	remove the 184 empty ghost-heading artifacts
+	2.	fix Crab ride perspective order from Defensive/Initiative to Initiative/Defensive
+
+DO THESE 10 THINGS IN THIS PASS:
+	1.	Re-read the audit outputs before making changes.
+	2.	Remove only the 184 empty duplicate schema-named ghost-heading children that were audited.
+	3.	Verify each removed ghost heading is truly empty and only duplicates its parent schema heading.
+	4.	Do not remove any node that contains real content, media, notes, or meaningful children.
+	5.	Fix the canonical Crab ride node so the perspective order is:
+	•	Initiative
+	•	Defensive
+	6.	Do not rename headings or change any wording.
+	7.	Do not touch any other perspective orders unless they were explicitly identified by the audit.
+	8.	Save the corrected grappling.opml.
+	9.	Re-run the OPML structure audit after the fix.
+	10.	Report the final post-fix counts clearly.
+
+DETAIL REQUIREMENTS:
+	•	Ghost-heading removal must be conservative:
+	•	remove only empty duplicate structural artifacts
+	•	skip anything that is not unquestionably safe
+	•	Crab ride fix must be as narrow as possible:
+	•	only reorder the two perspective children
+	•	do not alter descendants or content under them
+	•	After edits, verify:
+	•	ghost headings are gone
+	•	Crab ride order is corrected
+	•	no new structural issues were introduced
+
+EXPLICITLY OUT OF SCOPE:
+	•	no speculative OPML cleanup beyond the 184 ghost headings and Crab ride order
+	•	no canonical renaming
+	•	no transition/destination decisions
+	•	no content creation
+	•	no website/app UI changes
+	•	no live-footage scaffold changes
+	•	no broader restructuring pass
+
+RULES:
+Work only on the audited safe OPML fixes.
+Do not invent additional cleanup work.
+If any supposedly safe item turns out not to be safe, skip that specific item and report it.
+Prefer item-level skips over broad failure.
+
+TESTING / VALIDATION:
+	•	re-run OPML-STRUCTURE-AUDIT-01 logic after the fix
+	•	verify ghost-heading count drops from 184 to 0
+	•	verify Crab ride order becomes [Initiative, Defensive]
+	•	verify no other structure counts regress
+	•	verify reports are regenerated
+	•	verify the resulting OPML is still parseable
+
+FINAL OUTPUT:
+OPML-STRUCTURE-FIX-01 | DONE
+automatic:
+	•	<completed item 1>
+	•	<completed item 2>
+	•	<completed item 3>
+	•	<completed item 4>
+	•	<completed item 5>
+	•	<completed item 6>
+	•	<completed item 7>
+	•	<completed item 8>
+	•	<completed item 9>
+	•	<completed item 10>
+remaining:
+	•	
+
+post-fix counts:
+	•	

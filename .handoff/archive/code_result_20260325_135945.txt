@@ -1,0 +1,1 @@
+MOBILE-GRAPH-FIXES | DONE | pinch zoom + tap fix + max zoom out | b467006 | pushed | test on phone

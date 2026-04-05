@@ -1,0 +1,30 @@
+WEBSITE-AUTO-MULTIPASS-01 is done.
+
+What finished:
+	•	Pass 1: accessibility
+	•	focus-visible improvements
+	•	reduced-motion support
+	•	ARIA labels / tab semantics
+	•	Pass 2: responsive/mobile
+	•	full-width mobile tabs
+	•	responsive video modal
+	•	bottom-sheet drag handle
+	•	larger touch targets
+	•	tighter breadcrumb/logo on narrow screens
+	•	Pass 3: product QA
+	•	inline play button pill-shape consistency
+
+Published commits:
+	•	e4d370e
+	•	c60d6cf
+	•	5cc7008
+
+Tests:
+	•	11/12 pass
+	•	remaining fail is the same pre-existing headless WebGL / 3D canvas issue
+
+Code’s conclusion:
+	•	frontend-only work is now in genuine diminishing returns
+	•	next meaningful improvements are likely content-driven rather than more UI polish
+
+It also wrote the final DONE result through the bridge writer and created done.signal successfully.

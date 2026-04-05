@@ -1,0 +1,1 @@
+PHONE-APP-MODE-03 + TERMINAL-SEND-FIX-01 | DONE | published: 1f382d5 | PNG icons, manifest, submit fix | errors: none

@@ -1,0 +1,30 @@
+WEBSITE-AUTO-LOOP-18 is done and published.
+
+What finished:
+	•	header totals now count only real techniques
+	•	section headers now show counts:
+	•	positions
+	•	techniques
+	•	position rows have stronger separation
+	•	Notes rows now have clearer purple styling and ✎ icon
+	•	OT rows now have clearer orange styling and → prefix
+	•	hover state now has a subtle left accent border
+	•	progress pill is now keyboard accessible:
+	•	role=button
+	•	aria-label
+	•	tabindex
+	•	Enter/Space support
+	•	note button and Track All got ARIA labels
+
+Result:
+	•	tests: 11/12 pass
+	•	remaining fail: same pre-existing headless WebGL / 3D canvas issue
+	•	publish: yes
+	•	commit: 5345552
+	•	live-review-ready: yes
+
+Code’s own note:
+	•	the tree hierarchy is now much clearer:
+positions > headings > techniques > OT > Notes
+
+Next batch should be another 10-item set.

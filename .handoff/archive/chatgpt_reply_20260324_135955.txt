@@ -1,0 +1,131 @@
+Yes — but the reliable version is:
+	•	repo update happens
+	•	that writes a trigger file / flag
+	•	Cowork sees the trigger
+	•	Cowork starts a new suggestion pass
+	•	Cowork also tells Claude Chat to generate a new suggestion block
+	•	Cowork merges both into the inbox file Code can read
+
+What I would not rely on is Cowork magically reaching into Claude Chat unless your automation bridge explicitly supports it. The robust setup is a shared trigger + shared files + your existing automation bridge.
+
+Also, from terminal right now:
+	•	the White belt file was updated with:
+	•	any go-behind
+	•	any back take
+	•	promotion rule
+	•	but there is no final DONE line
+	•	terminal is back at ❯
+	•	so that last syllabus edit did not close out cleanly
+	•	nothing is actively running right now
+
+So first, this new automation rule should be added as workflow, not assumed to already exist.
+
+Use this with Claude Code:
+
+PROMPT-ID: SUGGESTION-RESTART-ON-REPO-UPDATE-01
+TYPE: CODE
+SCOPE: workflow/shared suggestion automation only
+
+GOAL:
+Set up the workflow so that after any repo update, the suggestion-finding process restarts automatically through Cowork and Claude Chat, with results saved where Code can read them.
+
+DESIRED WORKFLOW:
+	1.	Any meaningful repo update completes
+	2.	A trigger is written into a shared repo-readable location
+	3.	Cowork sees that trigger and starts a new suggestion pass
+	4.	Cowork also triggers/requests a fresh Claude Chat suggestion pass
+	5.	Cowork merges:
+
+	•	Cowork suggestions
+	•	Claude Chat suggestions
+into the shared inbox file Code can read
+
+	6.	Claude Code later ingests the inbox into:
+
+	•	AUTOMATION_SUGGESTIONS.md
+	•	AUTOMATION_REVIEW_READY.md
+	•	AUTOMATION_NEXT.md
+
+IMPORTANT CONSTRAINT:
+Do not assume Cowork can magically control Claude Chat unless the existing automation bridge supports it.
+If direct triggering is not available, design the best practical bridge using:
+	•	a shared trigger file
+	•	repo-readable inbox files
+	•	the existing automation process
+
+CREATE / MAINTAIN IF NEEDED:
+	•	AUTOMATION_SUGGESTIONS_TRIGGER.md or .txt
+	•	AUTOMATION_SUGGESTIONS_INBOX.md
+	•	any small workflow file that marks:
+	•	last repo update
+	•	suggestion pass needed
+	•	suggestion pass completed
+
+REQUIREMENTS:
+	1.	After any repo update, the system should mark that a new suggestion pass is needed
+	2.	Cowork should be the first suggestion runner
+	3.	Claude Chat should also be triggered/requested as part of that cycle if the bridge allows it
+	4.	Suggestions must be saved in a repo-readable file Code can later ingest
+	5.	Do not auto-approve suggestions
+	6.	Keep this compatible with the locked old KM bridge automation format
+
+OUTPUT:
+	1.	Explain the exact workflow
+	2.	State whether direct Cowork → Claude Chat triggering is actually possible in the current setup
+	3.	If not fully possible, give the best practical version that still restarts the process after repo updates
+	4.	Update workflow/shared files accordingly
+
+IMPORTANT:
+	•	Do not touch grappling.opml
+	•	Do not touch website/app code
+	•	Workflow automation only
+
+PASTE BACK EXACTLY:
+SUGGESTION-RESTART-ON-REPO-UPDATE-01 | DONE | direct-trigger: <yes/no> | workflow:  | files:  | issues: 
+
+-chatgpt chat & claude code chat
+
+And if you want the Cowork-side prompt too, use this:
+
+Read and align to:
+	•	PROJECT_STATE.md
+	•	DECISIONS.md
+	•	WORKFLOW_RULES.md
+	•	HANDOFF_LATEST.md
+	•	MEMORY_UPDATES.md
+	•	SYSTEM_OPTIMIZATION.md
+	•	AUTOMATION_SUGGESTIONS.md
+	•	AUTOMATION_SUGGESTIONS_INBOX.md
+	•	AUTOMATION_NEXT.md
+	•	AUTOMATION_SUGGESTIONS_TRIGGER.md if it exists
+
+GOAL:
+Whenever a repo update has triggered a new suggestion cycle, restart the suggestion process.
+
+TASK:
+	1.	Check whether a new repo update requires a fresh suggestion pass
+	2.	If yes:
+
+	•	generate fresh Cowork suggestions
+	•	request/trigger a fresh Claude Chat suggestion block if the workflow supports it
+	•	merge both into the repo-readable inbox file
+	•	mark the suggestion pass complete
+
+	3.	If no new repo update is pending, do nothing
+
+RULES:
+	•	Suggestions are inputs only, not approvals
+	•	Save suggestions into the repo-readable inbox file, not just the Cowork session folder
+	•	Keep source labels clear:
+	•	Cowork
+	•	Claude Chat
+	•	Keep all new items pending
+	•	Deduplicate lightly only
+
+OUTPUT:
+Return only:
+COWORK-SUGGESTION-RESTART-01 | DONE | trigger: <seen/not seen> | added:  | issues: 
+
+-chatgpt chat & claude code chat
+
+And because the terminal shows the last White Belt edit didn’t close with a proper result line, after this workflow step you should also cleanly finish that batch.

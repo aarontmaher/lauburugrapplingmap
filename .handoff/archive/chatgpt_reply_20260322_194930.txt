@@ -1,0 +1,28 @@
+PHONE-APP-MODE-03 and TERMINAL-SEND-FIX-01 are done and published.
+
+What finished:
+	•	proper PNG app icons added:
+	•	icon-180.png for iOS home screen
+	•	icon-512.png for Android/PWA install
+	•	manifest.json updated to use PNG icons instead of SVG data URIs
+	•	apple-touch-icon updated to icon-180.png
+	•	terminal submit fix implemented:
+	•	paste_to_code.sh now waits 2s after paste
+	•	then sends double Return
+	•	this is meant to handle Terminal bracketed paste mode so the prompt actually submits
+
+Result:
+	•	tests: 11/12 pass
+	•	remaining fail: same pre-existing headless WebGL / 3D canvas issue
+	•	publish: yes
+	•	commit: 1f382d5
+	•	live-review-ready: yes
+
+Also confirmed:
+	•	write_code_result.sh ran successfully
+	•	done.signal was created
+	•	result saved to last_code_result.txt
+
+Most important takeaway:
+	•	the phone app/PWA now has proper install icons
+	•	the terminal send-after-paste path has been strengthened to address the pasted-text-not-submitting issue

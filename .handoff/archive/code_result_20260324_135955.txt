@@ -1,0 +1,1 @@
+SUGGESTION-RESTART-ON-REPO-UPDATE-01 | DONE | trigger + inbox files created | workflow rule added | direct cross-agent triggering not possible

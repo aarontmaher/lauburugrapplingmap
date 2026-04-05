@@ -1,0 +1,22 @@
+Checked.
+
+Latest terminal state shows:
+	•	BRIDGE-FULL-AUTO-TEST-02 | DONE completed successfully
+	•	Code printed the final DONE block
+	•	then ran:	•	Result written successfully to:
+	•	last_code_result.txt
+	•	done.signal was created successfully
+
+After that:
+	•	Claude is sitting idle at the prompt
+	•	status line shows:
+	•	“bypass permissions on”
+	•	there is no visible evidence yet in terminal that the return prompt got pasted back into Claude Code after this signal
+
+So the current read is:
+	•	real DONE writer: working
+	•	done.signal creation: working
+	•	Claude is waiting at prompt
+	•	full return-leg success is not visible in terminal from this cycle yet
+
+This was a clean trigger-side test, but from the visible terminal output alone, I cannot confirm that the auto-captured reply made it back into Claude Code on this particular run.

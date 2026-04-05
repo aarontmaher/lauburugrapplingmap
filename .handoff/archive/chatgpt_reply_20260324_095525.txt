@@ -1,0 +1,105 @@
+Checked.
+
+The latest batch completed successfully and the automation is currently idle.
+
+What terminal shows:
+	•	PRODUCT-DIRECTION-BATCH-P3-START-HERE-01 finished cleanly
+	•	it added the Beginner “Start Here” card to the home panel for new users
+	•	approved P3 content was built as search chips across:
+	•	Wrestling
+	•	Passing
+	•	Dominant Positions
+	•	Guard
+	•	validation was:
+	•	11/12 pass
+	•	same pre-existing failing smoke test
+	•	it committed:
+	•	ef9ffa3
+	•	it reported:
+	•	memory-sync: no
+	•	stopping-point: yes
+	•	mark_done.sh succeeded
+	•	terminal is back at ❯
+
+So the current state is:
+	•	P3 Start Here card is shipped
+	•	the run worked normally
+	•	this was a true stopping point
+	•	nothing is actively running now
+
+What Code says is still left for your direction:
+	•	P2 Start Training button timing
+	•	P7 position descriptions
+	•	P9 live footage in app
+
+Ignore:
+	•	Auto-update failed is still just Claude Code self-update noise, not your project
+
+Best next move, based on terminal:
+	•	decide whether you want P2 Start Training as the next lane
+	•	or P9 Live footage in app
+	•	P7 is probably later
+
+Since you wanted the app to feel more active, my recommendation is:
+	•	P2 next
+	•	P9 later
+	•	P7 later
+
+Ready-to-send next prompt:
+
+PROMPT-ID: PRODUCT-DIRECTION-BATCH-P2-START-TRAINING-01
+TYPE: CODE
+SCOPE: safe frontend/product improvements only
+
+GOAL:
+Build the approved P2 Start Training lane as the next active-use upgrade.
+
+BEFORE STARTING:
+	1.	Read and align to:
+
+	•	PROJECT_STATE.md
+	•	DECISIONS.md
+	•	WORKFLOW_RULES.md
+	•	HANDOFF_LATEST.md
+	•	MEMORY_UPDATES.md
+	•	SYSTEM_OPTIMIZATION.md
+	•	AUTOMATION_SUGGESTIONS.md
+	•	AUTOMATION_NEXT.md
+
+	2.	Summarize briefly:
+
+	•	source of truth
+	•	current default priority
+	•	what was just completed
+	•	why P2 is the next best active-use batch
+
+IMPLEMENT THIS BATCH:
+Create a clearer, more prominent Start Training entry/use flow using already shipped training-related features.
+
+INTENT:
+	•	make active use easier than passive browsing
+	•	make the app feel more like a training partner
+	•	surface training actions clearly from the home/main experience
+
+USE EXISTING FEATURES WHERE POSSIBLE:
+	•	Random Drill
+	•	Drill Timer
+	•	Drill Circuit
+	•	My Drills
+
+PRODUCT GOAL:
+One obvious “Start Training” path that feels like the main active-use entry point, not something buried in menus.
+
+RULES:
+	•	Do not touch grappling.opml
+	•	Do not alter grappling taxonomy/content structure
+	•	Do not modify live-footage folder organization
+	•	Keep changes safe and frontend/product only
+	•	Validate locally before stopping
+	•	Use the locked old KM bridge automation format
+	•	Do not prompt upload unless true stopping point
+
+PASTE BACK EXACTLY:
+PRODUCT-DIRECTION-BATCH-P2-START-TRAINING-01 | DONE | batch:  | files:  | validation:  | next-best:  | memory-sync: <yes/no> | stopping-point: <yes/no> | issues: 
+
+-chatgpt chat & claude code chat

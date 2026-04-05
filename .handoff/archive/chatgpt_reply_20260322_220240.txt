@@ -1,0 +1,122 @@
+LIVE-FOLDER-AUDIT-SCRIPT-01 is done.
+
+What finished:
+	•	audit script built and working
+	•	expected structure from OPML: 1768 folders
+	•	actual live-footage structure: 2978 folders + 2 trash/inbox containers
+	•	missing folders: 146
+	•	unexpected folders: 1356
+	•	human-readable report generated:
+	•	~/GrapplingMap/live-footage/audit-report.txt
+	•	machine-readable report generated:
+	•	~/GrapplingMap/live-footage/audit-report.json
+	•	metadata/non-structural files are ignored
+	•	script is read-only by default
+	•	--recommend mode produces dry-run cleanup recommendations
+
+Important interpretation from Code:
+	•	the 146 missing folders are newer OPML-derived structure not yet scaffolded
+	•	the 1356 unexpected folders are mostly old pre-restructure scaffold folders
+	•	Code did not move/delete anything, which was the right decision
+
+My read:
+	•	good batch
+	•	this is exactly the right precursor before any live-folder cleanup
+	•	next step should be a controlled dry-run cleanup planner, not an automatic destructive apply
+
+Next prompt:
+
+PROMPT-ID: LIVE-FOLDER-CLEANUP-PLAN-01
+TYPE: CODE
+SCOPE: live-footage cleanup planning only
+MODE: autonomous safe planning pass, no destructive changes
+
+SOURCE OF TRUTH POLICY:
+grappling.opml remains the content source of truth.
+Do not change grappling.opml in this pass.
+Do not change technique content, canonical naming, transitions, or OPML structure.
+Do not move, rename, or delete live-footage folders in this pass.
+Focus only on turning the audit results into a safe cleanup plan.
+
+GOAL:
+Create a precise, reviewable cleanup plan for the live-footage structure based on the audit results, without making any destructive or organizational changes yet.
+
+CONTEXT:
+LIVE-FOLDER-AUDIT-SCRIPT-01 found:
+	•	1768 expected folders
+	•	146 missing folders
+	•	1356 unexpected folders
+The unexpected folders are believed to mostly come from the older scaffold structure before OPML restructuring.
+Before any apply/fix step, generate a clean plan that classifies what is clearly safe vs ambiguous.
+
+DO THESE 10 IMPROVEMENTS IN THIS PASS:
+	1.	Classify the 146 missing folders into clear creation recommendations.
+	2.	Classify the 1356 unexpected folders into likely old-scaffold leftovers vs anything ambiguous.
+	3.	Separate clearly safe cleanup candidates from uncertain cases.
+	4.	Produce a human-readable cleanup plan report.
+	5.	Produce a machine-readable cleanup plan report (JSON).
+	6.	Add a clear summary of how many items appear safe to create.
+	7.	Add a clear summary of how many items appear safe to review/trash later.
+	8.	Flag any ambiguous or potentially risky items explicitly.
+	9.	If useful, generate a dry-run command/example for the later fix step, but do not execute it.
+	10.	Keep the whole pass non-destructive and review-oriented.
+
+DETAIL REQUIREMENTS:
+	•	Do not move, rename, delete, or create folders in this pass.
+	•	Use the audit outputs already generated where possible.
+	•	Prefer conservative classification over aggressive assumptions.
+	•	Distinguish:
+	•	safe creates
+	•	likely old-scaffold leftovers
+	•	ambiguous cases needing review
+	•	Make the reports easy for Aaron to review before any later apply step.
+
+EXPLICITLY OUT OF SCOPE:
+	•	no grappling.opml edits
+	•	no live-footage folder moves
+	•	no live-footage deletions
+	•	no speculative renaming
+	•	no website/app UI changes
+	•	no automatic cleanup apply in this pass
+
+RULES:
+Work only on safe cleanup planning and reporting.
+Do not touch grappling.opml.
+Do not change content structure.
+Do not invent grappling content.
+Preserve current files and folders.
+If an item is ambiguous, report it rather than deciding for it.
+Prefer a clean review plan over aggressive cleanup logic.
+
+TESTING / VALIDATION:
+	•	verify the planning step runs successfully from the current audit outputs
+	•	verify it creates both human-readable and machine-readable planning outputs
+	•	verify it does not modify the live-footage structure
+	•	verify ambiguous items are clearly separated from safe candidates
+	•	verify the final summary is easy to review
+
+FINAL OUTPUT:
+LIVE-FOLDER-CLEANUP-PLAN-01 | DONE
+automatic:
+	•	<completed item 1>
+	•	<completed item 2>
+	•	<completed item 3>
+	•	<completed item 4>
+	•	<completed item 5>
+	•	<completed item 6>
+	•	<completed item 7>
+	•	<completed item 8>
+	•	<completed item 9>
+	•	<completed item 10>
+remaining:
+	•	
+
+changed files:
+	•	<file/report list>
+plan outputs:
+	•	
+
+notes:
+	•	<brief summary of what looks safe to create, what looks like old scaffold leftovers, and what still needs human review>
+
+-chatgpt chat

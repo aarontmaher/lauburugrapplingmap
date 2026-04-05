@@ -1,0 +1,74 @@
+Checked.
+
+What terminal shows:
+	•	Claude Chat’s audit is finished
+	•	it produced a full human-centered audit with:
+	•	top 5 best next improvements
+	•	top 5 quick wins
+	•	top 5 things to avoid
+	•	terminal is back at:
+	•	❯
+	•	so nothing is currently running
+
+Main takeaways from that audit:
+	•	strongest next improvements:
+	1.	actionable home screen
+	2.	fix misleading total count
+	3.	inline video indicators
+	4.	surface drill tools on home screen
+	5.	make schema headings visually distinct
+	•	strongest quick wins:
+	•	fix “0 Total”
+	•	video icons/dots
+	•	stronger heading styling
+	•	hide empty headings
+	•	hide Content Readiness / Diagnostics
+	•	strong “avoid” list:
+	•	no cross-device sync yet
+	•	no AI-generated recommendations
+	•	no curriculum builder
+	•	no social features
+	•	no more shortcut bloat
+
+So the audit worked normally.
+It’s just finished and idle now.
+
+Best next step is to get Code to add the worthwhile items into the automation suggestion/review pipeline instead of implementing them blindly.
+
+Use this next:
+
+PROMPT-ID: AUTOMATION-SUGGESTIONS-APPEND-CLAUDE-AUDIT-01
+TYPE: CODE
+SCOPE: workflow/shared suggestion handling only
+
+GOAL:
+Take the completed Claude Chat human-centered audit and append the worthwhile suggestions into the automation suggestion system without auto-approving them.
+
+TASK:
+	1.	Read the latest Claude Chat audit from the current terminal/session context.
+	2.	Append only the worthwhile product suggestions into:
+
+	•	AUTOMATION_SUGGESTIONS.md
+
+	3.	Keep them as suggestions only, not approved implementation items.
+	4.	Classify them by:
+
+	•	Source: Claude Chat
+	•	Safety
+	•	Effort
+	•	Scope
+	•	Status: pending
+
+	5.	Also record the “things to avoid” section in a clearly separate rejected/avoid section if AUTOMATION_SUGGESTIONS.md supports that.
+
+IMPORTANT:
+	•	Do not implement the suggestions yet
+	•	Do not move them into accepted automatically
+	•	Do not touch grappling.opml
+	•	Do not touch website/app code
+	•	Suggestion capture only
+
+PASTE BACK EXACTLY:
+AUTOMATION-SUGGESTIONS-APPEND-CLAUDE-AUDIT-01 | DONE | added:  | avoided:  | issues: 
+
+-chatgpt chat & claude code chat

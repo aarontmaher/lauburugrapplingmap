@@ -1,0 +1,13 @@
+I can’t see a newer terminal result in the latest visible output.
+
+The last confirmed state from the terminal context is still:
+	•	LIVE-FOLDER-DUAL-SOURCE-PAUSE-01 | DONE
+	•	dual-source scaffold sync is set up
+	•	Octopus Guard was scaffolded
+	•	Claude is back at the prompt
+	•	no active batch is running
+
+I do not have a visible FINAL-FRONTEND-MICROFIX-01 result yet from the terminal content shown here.
+
+So right now:
+	•	no new `… | DONE

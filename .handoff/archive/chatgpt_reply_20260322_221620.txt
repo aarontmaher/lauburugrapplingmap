@@ -1,0 +1,150 @@
+CONTENT-PHASE-PREP-01 is done.
+
+What finished:
+	•	new content-phase report tool created:
+	•	~/GrapplingMap/tools/content_report.py
+	•	generated reports created:
+	•	~/GrapplingMap/reports/content-report.txt
+	•	~/GrapplingMap/reports/content-report.json
+	•	workflow guide created:
+	•	~/GrapplingMap/CONTENT-WORKFLOW.md
+	•	clip validation support added with –validate
+	•	naming/path checks added for future live-footage drops
+	•	all tooling is read-only and conservative by default
+
+Key findings from Code:
+	•	1844 techniques total
+	•	96 with video
+	•	1748 missing video
+	•	overall video coverage: 5.2%
+	•	Dominant Positions is the highest-priority section for future content work
+	•	the content-phase tooling is now basically ready
+
+Result:
+	•	publish: no
+	•	commit: none
+	•	live-review-ready: n/a
+	•	blockers: none
+
+My read:
+	•	Good batch.
+	•	This is the right stopping point for preparation tooling.
+	•	The next best move is not more random tooling — it is a content-operation support batch that makes future video/clip ingestion and priority picking easier and safer.
+
+Next prompt:
+
+PROMPT-ID: CONTENT-OPS-01
+TYPE: CODE
+SCOPE: content-operations support tooling only, excluding protected content edits
+MODE: autonomous safe batch, no content edits
+
+SOURCE OF TRUTH POLICY:
+grappling.opml remains the content source of truth.
+Do not change grappling.opml content in this pass.
+Do not change technique content, canonical naming, transitions, or OPML structure.
+Do not do content migration or grappling-knowledge decisions.
+Focus only on tooling, reports, and workflow support that make future video and live-footage operations easier, safer, and faster.
+
+GOAL:
+Implement the next 10 highest-value non-content operations improvements now that the content-phase preparation tools exist.
+
+DO THESE 10 IMPROVEMENTS IN THIS PASS:
+	1.	Improve the content report so priority targets are easier to scan and act on.
+	2.	Add clearer section-level priority summaries using only real current data.
+	3.	Add a practical “next 20 best content targets” report using neutral structural signals only.
+	4.	Improve missing-video reporting so it is easier to use during content work.
+	5.	Add a safer clip-drop validation workflow that is easier to run repeatedly.
+	6.	Add a practical report for live-footage folders that exist but still have no real clips.
+	7.	Add a practical report for techniques with instructional video but no live-footage scaffold content yet, if feasible from current data.
+	8.	Improve export/report bundle organization so Aaron can quickly find the important outputs.
+	9.	Improve the workflow guide so repeated future use is easier and clearer.
+	10.	Add the next-best safe operations feature with real content-phase value if one of the above is already effectively done.
+
+DETAIL REQUIREMENTS:
+
+PRIORITY REPORTING
+	•	Keep it grounded in real current data only.
+	•	Use neutral signals such as:
+	•	missing video
+	•	low coverage sections
+	•	low density
+	•	no live footage yet
+	•	Do not invent strategic grappling judgments.
+
+NEXT TARGETS
+	•	Make the next targets report practical, concise, and easy to act on.
+	•	Prefer ranked summaries over giant dumps.
+
+CLIP VALIDATION
+	•	Make repeated clip-ingestion checks easier and safer.
+	•	Keep validation read-only by default.
+	•	Prefer practical workflow support over elaborate engineering.
+
+LIVE-FOOTAGE READINESS
+	•	Use current scaffold and current file presence only.
+	•	Do not move, rename, or delete folders in this pass.
+
+REPORT BUNDLE
+	•	Organize outputs clearly.
+	•	Make it obvious which files Aaron should look at first.
+
+WORKFLOW GUIDE
+	•	Improve clarity and repeatability for future content work.
+	•	Keep it short, practical, and trustworthy.
+
+EXPLICITLY OUT OF SCOPE:
+	•	no grappling.opml edits
+	•	no content migration or restructuring
+	•	no canonical renaming
+	•	no transition/destination decisions
+	•	no grappling content creation
+	•	no speculative live-folder moves
+	•	no website/app UI changes unless strictly needed for operations support
+	•	no backend/auth/sync architecture
+	•	no native app packaging
+
+RULES:
+Work only on safe content-operations support tooling and reporting.
+Do not touch grappling.opml content.
+Do not change content structure.
+Do not invent grappling content.
+Preserve current scaffold and app behavior.
+If something is ambiguous, report it rather than forcing it.
+Prefer meaningful operational improvements over filler.
+
+TESTING / VALIDATION:
+	•	verify current app still works
+	•	verify current readiness tooling still works
+	•	verify live-footage audit still reports CLEAN
+	•	verify any new scripts/reports run successfully
+	•	verify no scaffold changes occur
+	•	verify outputs are practical and easy to review
+
+FINAL OUTPUT:
+CONTENT-OPS-01 | DONE
+automatic:
+	•	<completed item 1>
+	•	<completed item 2>
+	•	<completed item 3>
+	•	<completed item 4>
+	•	<completed item 5>
+	•	<completed item 6>
+	•	<completed item 7>
+	•	<completed item 8>
+	•	<completed item 9>
+	•	<completed item 10>
+remaining:
+	•	
+
+changed files:
+	•	<file/report/script list>
+tests:
+	•	<what passed / what changed>
+publish:
+	•	attempted: yes/no
+	•	pushed: yes/no
+	•	commit: 
+	•	live-review-ready: yes/no
+	•	blockers: 
+notes:
+	•	

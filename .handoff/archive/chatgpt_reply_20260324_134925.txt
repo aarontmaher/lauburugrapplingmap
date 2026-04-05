@@ -1,0 +1,40 @@
+Checked.
+
+BELT-SYLLABUS-WHITE-03 did complete successfully.
+
+What happened in terminal:
+	•	WHITE_BELT_SYLLABUS.md was updated
+	•	Arm drag was added under all 3 hand-fighting positions:
+	•	Wrist Control
+	•	Collar Tie
+	•	Underhook
+	•	Wrestling / Standing is now:
+	•	3 positions × 4 attacks
+	•	Arm drag
+	•	Sweep single
+	•	Double leg
+	•	Front headlock
+	•	the section summary was updated from:
+	•	3 core attacks from each
+to:
+	•	4 core attacks from each
+	•	status row was updated to:
+	•	filled — 3 positions × 4 attacks
+
+The result line says:
+	•	BELT-SYLLABUS-WHITE-03 | DONE | updated: WHITE_BELT_SYLLABUS.md | wrestling: 3 positions × 4 attacks (arm drag, sweep single, double leg, front headlock) | next-step: fill White belt Passing | issues: none
+
+Then:
+	•	mark_done.sh succeeded
+	•	terminal is back at ❯
+	•	nothing is actively running now
+
+So the current state is:
+	•	White belt Wrestling / Standing is done
+	•	next step is White belt Passing
+
+The next thing you need to decide is:
+	•	the 3 core passes for:
+	•	supine passing
+	•	seated passing
+	•	knee shield half guard passing

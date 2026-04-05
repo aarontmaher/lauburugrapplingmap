@@ -1,0 +1,47 @@
+2. Keep these apps open
+	•	Claude Code in Terminal
+	•	ChatGPT app on this exact conversation
+
+3. Give Code a prompt
+
+Paste a safe website-only prompt into Claude Code, like the latest WEBSITE-AUTO-LOOP-* prompt.
+
+4. Let Code finish
+
+When Code prints its final ... | DONE block, it should:
+	•	write the result through write_code_result.sh
+	•	create done.signal
+
+5. The loop should then run automatically
+
+Expected flow:
+	1.	DETECT-CODE-DONE notices done.signal
+	2.	SEND-CHECK-TERMINAL-APP sends check terminal
+	3.	I read the terminal and reply
+	4.	PASTE-TO-CODE auto-captures my reply and pastes it back into Claude Code
+	5.	Claude starts the next prompt
+
+If you want to start it manually right now
+
+The simplest way is:
+	1.	paste a new safe Code prompt into Claude Code
+	2.	press Enter
+	3.	leave the ChatGPT app open on this chat
+	4.	let the macros handle the rest
+
+If the loop seems stuck
+
+Clear the bridge state in Terminal:Then start a fresh Code prompt again.
+
+Best first prompt to start with
+
+Use the next safe website batch prompt, not an automation/debug prompt. That way the loop is doing real useful work immediately.To start the loop from your current setup:
+
+1. Make sure the 3 KM macros are enabled
+
+You should have:
+	•	DETECT-CODE-DONE
+	•	SEND-CHECK-TERMINAL-APP
+	•	PASTE-TO-CODE
+
+And PASTE-TO-CODE should now run this exact command:

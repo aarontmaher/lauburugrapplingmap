@@ -1,0 +1,36 @@
+SOURCE-CLEANUP-BATCH-01 is done and published.
+
+What finished:
+	•	renamed Hand fighting (NEW) → Hand fighting in grappling.opml
+	•	fixed 12 OT case mismatches so destination names match canonical positions exactly:
+	•	Side control → Side Control
+	•	Back control → Back Control
+	•	rebuilt the site successfully
+	•	verified:
+	•	bootHealthy=true
+	•	1726 items
+	•	0 errors
+
+What remains:
+	•	6 NO_DEST warnings are still present, but Code says they are real content decisions, not simple bugs:
+	•	Anaconda
+	•	Crucifix
+	•	seatbelt variants
+	•	Grounded head inside single leg
+	•	those need a decision about whether they should become canonical positions
+
+Publish/result:
+	•	auto-committed and pushed as: 4ce1dfe
+	•	live-review-ready: yes
+	•	blockers: none
+
+My read:
+	•	this was the right batch
+	•	the stale audit items were filtered correctly
+	•	the remaining issues are now genuinely content-phase decisions, not frontend/source hygiene bugs
+
+So where we’re up to now:
+	•	app/frontend: strong
+	•	OPML structure: clean
+	•	source cleanup: done
+	•	remaining work: actual content decisions and additions

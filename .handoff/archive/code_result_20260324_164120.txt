@@ -1,0 +1,1 @@
+ACCOUNTS-PLAN | DONE | Firebase recommended | 6 batches planned | blocked on Aaron creating Firebase project

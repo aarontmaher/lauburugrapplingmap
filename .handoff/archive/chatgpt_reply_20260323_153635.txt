@@ -1,0 +1,26 @@
+Checked.
+
+Latest terminal result:
+	•	LIVE-FOLDER-SUBHEADINGS-01 | DONE
+	•	created the missing live-footage subheading scaffold
+	•	final audit is clean:
+	•	expected: 1583
+	•	actual: 1583
+	•	missing: 0
+	•	unexpected: 0
+	•	reports regenerated:
+	•	~/GrapplingMap/live-footage/audit-report.txt
+	•	~/GrapplingMap/live-footage/audit-report.json
+
+What Code actually did:
+	•	created the missing subheading/technique folders
+	•	moved old orphan scaffold folders to _TRASH
+	•	removed 2 duplicate ghost folders
+	•	manually added 1 remaining missing folder
+	•	final scaffold now matches OPML completely
+
+And yes — you can make this automatic.
+
+The right way is not “whenever any random folder appears, invent subfolders under it.”
+The right way is:
+	•	when you add a new valid live-footage folder/path

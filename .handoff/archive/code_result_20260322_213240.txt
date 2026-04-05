@@ -1,0 +1,1 @@
+LIVE-FOLDER-STRUCTURE-FIX-01 | DONE | audit only, no changes | structure correct, 1488 placeholders, no video files yet | errors: none

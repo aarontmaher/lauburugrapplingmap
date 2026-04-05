@@ -1446,8 +1446,8 @@ async function refreshAuthProfile() {
     updatePrivateOperatorUI();
     return null;
   }
-  var profile = await UserStore._apiGet('profile');
-  AUTH_PROFILE = profile && !profile.error ? profile : null;
+  // Profile API endpoint doesn't exist - skip API call
+  AUTH_PROFILE = null; // Could derive from Supabase auth user if needed
   updatePrivateOperatorUI();
   return AUTH_PROFILE;
 }
@@ -1518,77 +1518,31 @@ const UserStore = {
   // ─── Progress (localStorage + API sync for members) ───────────
   saveProgress: function(progress) {
     this.save('grapplingProgress', progress);
-    // Async API sync for members (fire-and-forget)
-    if (isMember() && _supabase) {
-      Object.entries(progress).forEach(function(kv) {
-        UserStore._apiPost('progress', { technique_key: kv[0], status: kv[1] });
-      });
-    }
+    // API sync disabled - progress API endpoint doesn't exist
   },
   loadProgress: function() { return this.loadJSON('grapplingProgress', {}); },
 
   // Async: load from API and merge into local (called after login)
   syncProgressFromAPI: async function() {
-    var data = await this._apiGet('progress');
-    if (data && data.items) {
-      var local = this.loadProgress();
-      data.items.forEach(function(item) { local[item.technique_key] = item.status; });
-      this.save('grapplingProgress', local);
-      return local;
-    }
+    // Progress API endpoint doesn't exist - skip API call
     return null;
   },
 
   saveNotes: function(notes) {
     this.save('grapplingNotes', notes);
-    // Async API sync for members
-    if (isMember() && _supabase) {
-      Object.entries(notes).forEach(function(kv) {
-        UserStore._apiPost('notes', { technique_key: kv[0], note_text: kv[1] });
-      });
-    }
+    // API sync disabled - notes API endpoint doesn't exist
   },
   loadNotes: function() { return this.loadJSON('grapplingNotes', {}); },
 
   syncNotesFromAPI: async function() {
-    var data = await this._apiGet('notes');
-    if (data && data.items) {
-      var local = this.loadNotes();
-      data.items.forEach(function(item) { if (item.note_text) local[item.technique_key] = item.note_text; });
-      this.save('grapplingNotes', local);
-      return local;
-    }
+    // Notes API endpoint doesn't exist - skip API call
     return null;
   },
 
   // First-login migration: push all local data to cloud
   migrateLocalToCloud: async function() {
-    if (!isMember() || !_supabase) return;
-    var progress = this.loadProgress();
-    var notes = this.loadNotes();
-    var successLog = this.loadJSON('grapplingAppState', {}).successLog || [];
-    var migrated = 0;
-    // Sync progress
-    for (var key in progress) {
-      if (progress[key] && progress[key] !== 'none') {
-        await this._apiPost('progress', { technique_key: key, status: progress[key] });
-        migrated++;
-      }
-    }
-    // Sync notes
-    for (var nkey in notes) {
-      if (notes[nkey]) {
-        await this._apiPost('notes', { technique_key: nkey, note_text: notes[nkey] });
-        migrated++;
-      }
-    }
-    // Sync success log
-    for (var i = 0; i < successLog.length; i++) {
-      await this._apiPost('success-log', { technique_key: successLog[i].key });
-      migrated++;
-    }
-    if (migrated > 0) showToast('Synced ' + migrated + ' items to your account');
-    this.save('gm_migrated', '1');
+    // API endpoints don't exist - skip migration
+    return;
   },
 
   saveAppState: function(appState) { this.save('grapplingAppState', appState); },
@@ -1597,9 +1551,9 @@ const UserStore = {
   getKeyVersion: function() { return parseInt(this.load('grapplingmap_key_version') || '0', 10); },
   setKeyVersion: function(v) { this.save('grapplingmap_key_version', String(v)); },
 
-  // Sync success log to API (fire-and-forget)
+  // Sync success log to API (fire-and-forget) - disabled, endpoint doesn't exist
   syncSuccessToAPI: function(key) {
-    if (isMember() && _supabase) { this._apiPost('success-log', { technique_key: key }); }
+    // API endpoint doesn't exist - do nothing
   },
 
   clearUserData: function() {
@@ -2124,20 +2078,7 @@ function formatPromptJobWhen(value) {
 var WHOOP_MCP_HEALTH_URL = 'https://whoop-mcp-production-032e.up.railway.app/healthz';
 
 async function fetchWhoopStatus() {
-  // 1. Try Supabase edge function
-  var response = await providerRequest('whoop-status', 'GET');
-  if (response && response.ok) {
-    var item = response.item || response.data || response;
-    return {
-      ok: true,
-      connected: !!(item && (item.connected || item.is_connected)),
-      last_sync_at: item && (item.last_sync_at || item.synced_at || item.updated_at) || null,
-      latest_date: item && (item.latest_date || item.date) || null,
-      status_text: item && (item.status_text || item.status) || '',
-      provider: item && item.provider || 'whoop'
-    };
-  }
-  // 2. Fallback: fetch directly from live WHOOP MCP health endpoint
+  // Use Railway WHOOP MCP as primary backend (Supabase functions don't exist)
   try {
     var resp = await fetch(WHOOP_MCP_HEALTH_URL, { signal: AbortSignal.timeout(8000) });
     if (!resp.ok) return { ok: false, error: 'health_fetch_failed' };
@@ -2170,20 +2111,12 @@ async function fetchWhoopStatus() {
 }
 
 async function refreshWhoopFromBackend() {
-  // 1. Try Supabase edge function (original path)
-  var response = await providerRequest('whoop-refresh', 'POST', { date: new Date().toISOString().slice(0, 10) });
-  if (response && response.ok) {
-    var item = response.item || response.data || response.daily || response;
-    var normalized = normalizeWhoopDailyForApp(item);
-    if (normalized) {
-      _applyWhoopRefresh(normalized);
-      return { ok: true, item: normalized };
-    }
-  }
-  // 2. Fallback: trigger sync on Railway + fetch health status
+  // Use Railway WHOOP MCP as primary backend (Supabase functions don't exist)
   try {
+    // Trigger sync on Railway
     await fetch(WHOOP_MCP_HEALTH_URL.replace('/healthz', '/diag/trigger-sync'), { method: 'POST', signal: AbortSignal.timeout(30000) });
   } catch(e) { /* sync trigger is best-effort */ }
+  
   try {
     var healthResp = await fetch(WHOOP_MCP_HEALTH_URL, { signal: AbortSignal.timeout(8000) });
     if (!healthResp.ok) return { ok: false, error: 'health_unavailable' };
@@ -2219,14 +2152,9 @@ function _applyWhoopRefresh(normalized) {
 }
 
 async function startWhoopConnectFlow() {
-  var response = await providerRequest('whoop-connect', 'POST', { redirect_to: window.location.href });
-  if (!response || response.ok === false) return response || { ok: false, error: 'connect_unavailable' };
-  var url = response.connect_url || response.url || response.redirect_to || response.auth_url;
-  if (url) {
-    window.location.href = url;
-    return { ok: true, redirecting: true };
-  }
-  return { ok: false, error: 'missing_connect_url' };
+  // WHOOP OAuth not implemented (Supabase edge function doesn't exist)
+  // Railway backend handles WHOOP connection server-side
+  return { ok: false, error: 'oauth_not_implemented' };
 }
 
 function getWhoopUiState() {
@@ -2369,27 +2297,8 @@ function syncPolarData(data) {
   if (typeof updateAITrainingCard === 'function') updateAITrainingCard();
   showToast('Polar data synced for ' + normalized.date);
   
-  // Send to backend asynchronously: fire-and-forget with backend persistence
-  // health-import will: normalize, deduplicate by (user, date, provider), store raw import, update provider_connections
-  if (typeof providerRequest === 'function') {
-    (async function() {
-      try {
-        var backendResult = await providerRequest('health-import', 'POST', {
-          provider: 'polar',
-          import_mode: 'manual_upload',
-          raw_payload: data
-        });
-        if (backendResult && backendResult.ok && backendResult.import_id) {
-          // Silent success: backend stored the import
-          console.log('Polar import stored serverside:', backendResult.import_id);
-        } else if (backendResult && backendResult.error) {
-          console.warn('Polar backend import failed:', backendResult.error);
-        }
-      } catch (e) {
-        console.warn('Polar backend call error:', e);
-        // Intentionally silent — local sync succeeded, backend optional
-      }
-    })(); // IIFE for fire-and-forget async
+  // Backend persistence disabled - health-import endpoint doesn't exist
+  // Local sync succeeded, no backend call needed
   }
   
   return true;
@@ -7533,7 +7442,15 @@ function openHealthMetricsManager() {
           '<span style="font-family:Barlow Condensed,sans-serif;font-size:14px;letter-spacing:0.4px;color:var(--text);">Apple Health</span>' +
           '<span style="font-family:DM Mono,monospace;font-size:9px;color:' + (ahData ? '#34d399' : '#8892a4') + ';border:1px solid rgba(255,255,255,0.08);padding:2px 6px;border-radius:999px;">' + (ahData ? 'DATA LOADED' : 'NOT CONNECTED') + '</span>' +
         '</div>' +
-        (ahData ? dataSummaryHtml(ahData) : '<div style="font-family:DM Mono,monospace;font-size:10px;color:var(--text-muted);">Import an Apple Health export to enable HRV and sleep-based recommendations.</div>') +
+        (ahData ? dataSummaryHtml(ahData) : '<div style="font-family:DM Mono,monospace;font-size:10px;color:var(--text-muted);">Upload today\'s Apple Health export file to enable HRV and sleep-based recommendations.</div>') +
+        '<details style="margin-top:6px;border-top:1px solid rgba(255,255,255,0.05);padding-top:8px;">' +
+          '<summary style="cursor:pointer;font-family:DM Mono,monospace;font-size:10px;color:#8892a4;">Upload Apple Health file</summary>' +
+          '<div id="appleDropZone" style="border:2px dashed rgba(255,255,255,0.2);border-radius:6px;padding:16px;text-align:center;margin-top:8px;background:rgba(255,255,255,0.02);transition:border-color 0.2s;">' +
+            '<div style="font-family:DM Mono,monospace;font-size:10px;color:#8892a4;margin-bottom:8px;">Drag & drop Apple Health JSON file here or click to select</div>' +
+            '<input type="file" id="appleImportFile" accept=".json" style="display:none;">' +
+            '<button id="appleSelectFileBtn" style="background:rgba(255,255,255,0.04);border:1px solid var(--border);color:var(--text-dim);font-family:DM Mono,monospace;font-size:10px;padding:6px 12px;border-radius:6px;cursor:pointer;">Select File</button>' +
+          '</div>' +
+        '</details>' +
         importBlockHtml('appleImportJson', '{"date":"2026-04-05","hrv_ms":48,"resting_hr":58,"sleep_hours":6.9,"active_energy_kcal":420}') +
       '</div>'
     );
@@ -7620,6 +7537,41 @@ function openHealthMetricsManager() {
         var files = e.dataTransfer.files;
         if (files.length > 0) {
           handlePolarFile(files[0]);
+        }
+      });
+    }
+
+    // Apple Health file import
+    var appleDropZone = document.getElementById('appleDropZone');
+    var appleFileInput = document.getElementById('appleImportFile');
+    var appleSelectBtn = document.getElementById('appleSelectFileBtn');
+    function handleAppleFile(file) {
+      if (!file) return;
+      var reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          var data = JSON.parse(e.target.result);
+          if (syncAppleHealthData(data)) { closeModal(); }
+        } catch(e) { showToast('Invalid JSON file'); }
+      };
+      reader.readAsText(file);
+    }
+    if (appleSelectBtn) appleSelectBtn.addEventListener('click', function() { appleFileInput.click(); });
+    if (appleFileInput) appleFileInput.addEventListener('change', function() { handleAppleFile(appleFileInput.files[0]); });
+    if (appleDropZone) {
+      appleDropZone.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        appleDropZone.style.borderColor = 'var(--accent)';
+      });
+      appleDropZone.addEventListener('dragleave', function(e) {
+        appleDropZone.style.borderColor = 'rgba(255,255,255,0.2)';
+      });
+      appleDropZone.addEventListener('drop', function(e) {
+        e.preventDefault();
+        appleDropZone.style.borderColor = 'rgba(255,255,255,0.2)';
+        var files = e.dataTransfer.files;
+        if (files.length > 0) {
+          handleAppleFile(files[0]);
         }
       });
     }

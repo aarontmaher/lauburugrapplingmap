@@ -1,0 +1,86 @@
+Checked.
+
+Current terminal state:
+	•	BELT-SYLLABUS-WHITE-02 effectively did run
+	•	WHITE_BELT_SYLLABUS.md was updated
+	•	Wrestling / Standing now contains:
+	•	Wrist control → Sweep single / Double leg / Front headlock
+	•	Collar tie → Sweep single / Double leg / Front headlock
+	•	Underhook → Sweep single / Double leg / Front headlock
+	•	status line in the file was updated to:
+	•	filled — 3 positions × 3 attacks
+	•	mark_done.sh succeeded
+	•	terminal is back at ❯
+	•	nothing is running now
+
+So the only missing thing is your new correction:
+
+Add Arm drag as an attack as well.
+
+That means White belt Wrestling / Standing should now be:
+	•	Wrist control
+	•	Arm drag
+	•	Sweep single
+	•	Double leg
+	•	Front headlock
+	•	Collar tie
+	•	Arm drag
+	•	Sweep single
+	•	Double leg
+	•	Front headlock
+	•	Underhook
+	•	Arm drag
+	•	Sweep single
+	•	Double leg
+	•	Front headlock
+
+Use this next:
+
+PROMPT-ID: BELT-SYLLABUS-WHITE-03
+TYPE: CODE
+SCOPE: workflow + syllabus direction files only
+
+GOAL:
+Update White belt Wrestling / Standing to add Arm drag as an attack from each of the 3 core hand-fighting positions.
+
+BEFORE STARTING:
+	1.	Read and align to:
+
+	•	WHITE_BELT_SYLLABUS.md
+	•	BELT_SYLLABUS_DIRECTION.md
+	•	PROJECT_STATE.md
+	•	HANDOFF_LATEST.md
+	•	MEMORY_UPDATES.md
+
+TASK:
+Update White belt Wrestling / Standing so each of the 3 hand-fighting positions includes 4 attacks, not 3:
+
+HAND FIGHTING POSITIONS
+	•	Wrist control
+	•	Collar tie
+	•	Underhook
+
+ATTACKS FROM EACH
+	•	Arm drag
+	•	Sweep single
+	•	Double leg
+	•	Front headlock
+
+INTENT:
+	•	keep it clean and beginner-friendly
+	•	preserve the same simple repeated structure
+	•	update the section summary/status accordingly
+
+UPDATE:
+	•	WHITE_BELT_SYLLABUS.md
+	•	any related direction file only if needed
+
+IMPORTANT:
+	•	Do not touch grappling.opml
+	•	Do not touch website/app code
+	•	Syllabus structure/content direction only
+
+PASTE BACK EXACTLY:
+BELT-SYLLABUS-WHITE-03 | DONE | updated:  | wrestling:  | next-step:  | issues: 
+
+-chatgpt chat & claude code chat

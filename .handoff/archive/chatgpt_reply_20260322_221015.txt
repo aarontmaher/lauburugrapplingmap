@@ -1,0 +1,104 @@
+LIVE-FOLDER-APPLY-01 is done.
+
+What finished:
+	•	146 missing live-footage folders were created
+	•	1356 old empty scaffold folders were removed
+	•	0 skipped items
+	•	0 errors during apply
+	•	apply summary generated:
+	•	~/GrapplingMap/live-footage/apply-summary.txt
+	•	~/GrapplingMap/live-footage/apply-summary.json
+	•	audit reports regenerated
+	•	post-apply state is effectively clean:
+	•	expected: 1768
+	•	actual: 1767 shown by the script
+	•	but Code found the one remaining discrepancy is just a trailing-slash comparison artifact
+	•	folder exists on disk
+	•	unexpected folders: 0
+	•	missing folders: effectively 0
+	•	no real video files were removed
+
+My read:
+	•	This is a very good result.
+	•	The scaffold cleanup/apply is complete enough to trust.
+	•	The remaining “1 off” is an audit-script comparison bug, not a real folder problem.
+	•	The next smart step is not more scaffold cleanup — it is to fix the audit script so the verification tool itself is correct.
+
+Next prompt:
+
+PROMPT-ID: LIVE-FOLDER-AUDIT-FIX-01
+TYPE: CODE
+SCOPE: live-footage audit script correctness only
+MODE: autonomous safe batch, no scaffold changes
+
+SOURCE OF TRUTH POLICY:
+grappling.opml remains the content source of truth.
+Do not change grappling.opml in this pass.
+Do not change technique content, canonical naming, transitions, or OPML structure.
+Do not move, rename, create, or delete live-footage folders in this pass.
+Focus only on fixing the audit script/reporting so it correctly recognizes the final scaffold state.
+
+GOAL:
+Fix the audit script so it no longer reports a false missing-folder mismatch caused by path normalization/trailing-slash comparison issues.
+
+CONTEXT:
+LIVE-FOLDER-APPLY-01 successfully created the missing folders and removed the old empty scaffold.
+The remaining discrepancy is not a real structure problem — it is an audit/reporting correctness issue.
+The verification tool should now be made accurate so future audits are trustworthy.
+
+DO THESE 10 IMPROVEMENTS IN THIS PASS:
+	1.	Identify the exact path normalization bug causing the false missing-folder report.
+	2.	Fix trailing-slash/path-normalization handling in the audit script.
+	3.	Ensure duplicate-named nested paths are compared correctly.
+	4.	Ensure expected vs actual path comparison is normalized consistently.
+	5.	Re-run the audit after the fix.
+	6.	Verify the final scaffold now reports as fully matching the intended structure.
+	7.	Regenerate the human-readable audit report.
+	8.	Regenerate the machine-readable audit report.
+	9.	Keep the audit script read-only and conservative.
+	10.	Report the final corrected counts clearly.
+
+DETAIL REQUIREMENTS:
+	•	Do not modify the live-footage scaffold in this pass.
+	•	Do not create/delete/move any folders in this pass.
+	•	Only fix the audit/reporting logic.
+	•	Prefer small precise normalization fixes over broad rewrite.
+	•	Make the final tool trustworthy for later content work.
+
+EXPLICITLY OUT OF SCOPE:
+	•	no grappling.opml edits
+	•	no live-footage scaffold changes
+	•	no speculative cleanup
+	•	no website/app UI changes
+	•	no content-meaning decisions
+
+RULES:
+Work only on safe audit-script correctness.
+Do not touch grappling.opml.
+Do not change content structure.
+Do not invent grappling content.
+Preserve current scaffold exactly as it is.
+If you discover any real mismatch beyond the known normalization bug, report it clearly rather than fixing it silently.
+
+TESTING / VALIDATION:
+	•	verify the audit runs successfully
+	•	verify the trailing-slash/path-normalization issue is resolved
+	•	verify the final report reflects the real scaffold state
+	•	verify both human-readable and machine-readable outputs are regenerated
+	•	verify no scaffold changes occurred
+
+FINAL OUTPUT:
+LIVE-FOLDER-AUDIT-FIX-01 | DONE
+automatic:
+	•	<completed item 1>
+	•	<completed item 2>
+	•	<completed item 3>
+	•	<completed item 4>
+	•	<completed item 5>
+	•	<completed item 6>
+	•	<completed item 7>
+	•	<completed item 8>
+	•	<completed item 9>
+	•	<completed item 10>
+remaining:
+	•	

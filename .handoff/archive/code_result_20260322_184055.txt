@@ -1,0 +1,1 @@
+PHONE-APP-MODE-01 | DONE | published: f9406f0 | PWA manifest, service worker, safe areas, touch feedback, app-like mobile UX | errors: none

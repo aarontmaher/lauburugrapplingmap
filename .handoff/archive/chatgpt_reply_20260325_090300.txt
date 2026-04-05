@@ -1,0 +1,67 @@
+Send this to Cowork as plain text:
+
+Read and align to:
+	•	PROJECT_STATE.md
+	•	DECISIONS.md
+	•	WORKFLOW_RULES.md
+	•	HANDOFF_LATEST.md
+	•	MEMORY_UPDATES.md
+	•	SYSTEM_OPTIMIZATION.md
+	•	AUTOMATION_SUGGESTIONS.md
+	•	AUTOMATION_NEXT.md
+
+GOAL:
+Create the next Claude Chat prompt for the current project state and return it in a clean copy-paste-ready form for Aaron to paste into Chat.
+
+CURRENT CONTEXT:
+	•	The latest completed code task was the sub-position separate nodes trial
+	•	Trial result:
+	•	sub-positions now appear as separate smaller nodes in the 3D graph
+	•	feature flag: SUBPOSITION_TRIAL = true
+	•	revert path: set it back to false
+	•	Aaron now needs Chat to review or audit this from a product/user perspective
+
+TASK:
+	1.	Review the current project state.
+	2.	Generate the best next Claude Chat prompt for this exact state.
+	3.	The prompt should help Chat evaluate the current product meaningfully.
+	4.	Focus especially on:
+
+	•	whether separate-node sub-positions improve the graph
+	•	whether the graph is clearer or more cluttered
+	•	whether this helps a real grappler understand the system
+	•	whether this should be kept or reverted
+	•	how this affects beginner/intermediate/advanced users
+	•	what the next best improvements are after this trial
+
+OUTPUT RULE:
+Return only a clean copy-paste-ready Claude Chat prompt.
+Do not return commentary before or after it.
+Do not explain your reasoning.
+Do not wrap it in markdown code fences.
+
+STYLE RULE:
+Make the Chat prompt strong, practical, and human-centered.
+It should tell Claude Chat to audit the current live product and make a keep/revert judgment on the sub-position trial.
+
+-chatgpt chat & claude code chat
+
+And if you want Cowork to produce a guest + member audit prompt for Chat instead, use this version:
+
+Read and align to:
+	•	PROJECT_STATE.md
+	•	DECISIONS.md
+	•	WORKFLOW_RULES.md
+	•	HANDOFF_LATEST.md
+	•	MEMORY_UPDATES.md
+	•	SYSTEM_OPTIMIZATION.md
+	•	AUTOMATION_SUGGESTIONS.md
+	•	AUTOMATION_NEXT.md
+
+GOAL:
+Create the next Claude Chat prompt for a dual audit:
+	1.	guest / no account
+	2.	member / logged-in account
+
+CURRENT CONTEXT:
+	•	The site

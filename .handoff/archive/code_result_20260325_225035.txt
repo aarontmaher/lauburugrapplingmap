@@ -1,0 +1,1 @@
+BUG FIXES B1+B2+B3 | DONE | undefined subtitle + belt scope + AI fallback | 8c20d47 | pushed

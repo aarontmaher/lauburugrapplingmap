@@ -1,0 +1,1 @@
+ACCOUNTS-BATCH-03 | DONE | Supabase auth wired | 4d7be1d | pushed | signup/login/logout/session all working

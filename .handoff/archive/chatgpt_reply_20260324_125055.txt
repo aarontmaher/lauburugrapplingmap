@@ -1,0 +1,80 @@
+Got it.
+
+For White belt → Wrestling / standing, your core hand-fighting attacks should be:
+	•	Wrist control
+	•	Sweep single
+	•	Double leg
+	•	Front headlock
+	•	Collar tie
+	•	Sweep single
+	•	Double leg
+	•	Front headlock
+	•	Underhook
+	•	Sweep single
+	•	Double leg
+	•	Front headlock
+
+That gives a clean beginner structure:
+	•	3 core hand-fighting positions
+	•	3 core attacks from each
+	•	simple, repeatable, high-value entries
+
+And based on the terminal, Claude Code was reading P3_START_HERE_DIRECTION.md for BELT-SYLLABUS-WHITE-01, then stopped back at ❯, so this is the right time to send the update cleanly.
+
+Use this now:
+
+PROMPT-ID: BELT-SYLLABUS-WHITE-02
+TYPE: CODE
+SCOPE: workflow + syllabus direction files only
+
+GOAL:
+Update the White belt syllabus skeleton with Aaron’s approved Wrestling / standing structure.
+
+BEFORE STARTING:
+	1.	Read and align to:
+
+	•	PROJECT_STATE.md
+	•	DECISIONS.md
+	•	WORKFLOW_RULES.md
+	•	HANDOFF_LATEST.md
+	•	MEMORY_UPDATES.md
+	•	SYSTEM_OPTIMIZATION.md
+	•	BELT_SYLLABUS_DIRECTION.md
+	•	P3_START_HERE_DIRECTION.md
+	•	WHITE_BELT_SYLLABUS.md if it exists
+
+TASK:
+Update the White belt syllabus so that Wrestling / standing includes this approved core hand-fighting attack structure:
+
+HAND FIGHTING POSITIONS
+	•	Wrist control
+	•	Collar tie
+	•	Underhook
+
+ATTACKS FROM EACH
+	•	Sweep single
+	•	Double leg
+	•	Front headlock
+
+INTENT:
+	•	keep it clean and beginner-friendly
+	•	make this the core White belt hand-fighting attack lane
+	•	do not expand into a huge tree yet
+	•	structure it clearly so each hand-fighting position feeds into the same 3 attack outcomes
+
+UPDATE:
+	•	WHITE_BELT_SYLLABUS.md
+	•	and any related direction file if needed
+
+IMPORTANT:
+	•	Do not touch grappling.opml
+	•	Do not touch website/app code
+	•	Syllabus structure/content direction only
+
+PASTE BACK EXACTLY:
+BELT-SYLLABUS-WHITE-02 | DONE | updated:  | wrestling:  | next-step:  | issues: 
+
+-chatgpt chat & claude code chat
+
+Next step after that should be:
+	•	White belt Passing

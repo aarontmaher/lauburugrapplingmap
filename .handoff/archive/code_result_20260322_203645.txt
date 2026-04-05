@@ -1,0 +1,1 @@
+MOBILE-ZOOM-FIX-01 | DONE | published: 62d0311 | restored pinch-zoom, iOS auto-zoom via font sizing, ref onboarding | errors: none

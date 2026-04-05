@@ -1,0 +1,156 @@
+APP-FEATURES-07 is done and published.
+
+What finished:
+	•	videos are now marked watched when played in the modal
+	•	watched state persists in localStorage across sessions
+	•	Video Library shows watched indicators and a watched count
+	•	Drill Circuit added:
+	•	picks up to 5 random drills from My Drills
+	•	numbered sequence
+	•	2 min drill + 30s rest flow
+	•	updates lastPracticed
+	•	reshuffle support
+	•	completion toast
+	•	menu now includes Drill Circuit in the training section
+
+Result:
+	•	publish: yes
+	•	commit: 834932e
+	•	live-review-ready: yes
+	•	blockers: none
+	•	tests: Code says prior commits were consistently 11/12 pass
+
+My read:
+	•	This is a genuinely good batch.
+	•	Video watched tracking and Drill Circuit are real repeated-use training features.
+	•	I agree with Code that the app is now close to feature-complete for the current protected scope.
+	•	I do not think the next best move is more random feature invention.
+	•	The best next move is an architecture-lite batch: deep linking, sharing/bookmarking, resilient state, and a couple of safe technical hardening improvements that still help the product without touching OPML/content structure.
+
+Next prompt:
+
+PROMPT-ID: ARCHITECTURE-LITE-01
+TYPE: CODE
+SCOPE: lightweight product architecture and safe technical hardening only, excluding protected content areas
+MODE: autonomous safe batch with publish at end if clean
+
+SOURCE OF TRUTH POLICY:
+grappling.opml remains the content source of truth.
+Do not change grappling.opml in this pass.
+Do not change technique content, canonical naming, transitions, or OPML structure.
+Do not do content migration or grappling-knowledge decisions.
+Focus on lightweight product architecture, sharing, resilience, and safe technical hardening that improve the app/website experience without touching protected content areas.
+
+GOAL:
+Implement the next 10 highest-value non-content architecture-lite improvements now that core product features are largely complete.
+
+DO THESE 10 IMPROVEMENTS IN THIS PASS:
+	1.	Add lightweight deep linking for the current tab and selected study context where safe.
+	2.	Add the ability to share or copy a link to the current position/technique context if a safe low-risk version is feasible.
+	3.	Improve restore/resume logic so deep-linked or last-state restoration is more reliable and coherent.
+	4.	Add a safe export of a drill/session list or selected training surface if feasible without content changes.
+	5.	Improve localStorage failure handling so the app warns the user if persistence fails instead of silently swallowing it.
+	6.	Improve video URL parsing robustness so both youtu.be and youtube.com/watch URLs are handled correctly where relevant.
+	7.	Improve graph camera safety with reasonable zoom bounds if this is still missing and can be done safely.
+	8.	Improve graph/render loop robustness where there are obvious low-risk fixes with real user value.
+	9.	Improve app-level error/fallback messaging for unsupported or failed graph/WebGL states if a safe low-maintenance version is feasible.
+	10.	Add the next-best safe architecture-lite improvement with real user value if one of the above is already effectively done.
+
+DETAIL REQUIREMENTS:
+
+DEEP LINKING / SHARE
+	•	Prefer a lightweight hash-based or similarly low-risk approach.
+	•	The user should be able to reopen or share the current study context more reliably.
+	•	Keep it safe, compact, and frontend-only.
+
+RESTORE / RESUME
+	•	Make last-state restoration and direct-link restoration work together coherently.
+	•	Prefer meaningful study context over saving every tiny UI detail.
+
+EXPORT OF TRAINING SURFACES
+	•	If feasible, allow a practical export of current drills/session context in a lightweight user-friendly way.
+	•	Keep it simple and useful.
+
+PERSISTENCE SAFETY
+	•	Treat user progress/data as valuable.
+	•	If save/load fails, surface that clearly and safely.
+
+VIDEO URL ROBUSTNESS
+	•	Handle common YouTube URL shapes more safely.
+	•	Keep existing behavior intact where it already works.
+
+GRAPH SAFETY / HARDENING
+	•	Focus only on low-risk improvements with real user value:
+	•	zoom bounds
+	•	safer error handling
+	•	obvious timing/render robustness
+	•	Do not do a large graph-engine rewrite.
+
+WEBGL / FALLBACK
+	•	If the graph cannot render, give the user a clearer product-facing fallback or explanation where safe.
+	•	Keep it lightweight.
+
+EXPLICITLY OUT OF SCOPE:
+	•	no grappling.opml edits
+	•	no content migration or restructuring
+	•	no canonical renaming
+	•	no transition/destination decisions
+	•	no grappling content creation
+	•	no backend/auth/sync server architecture
+	•	no native app packaging
+	•	no large analytics system
+	•	no major graph rewrite
+	•	no content-phase decisions
+
+RULES:
+Work only on safe architecture-lite and technical-hardening improvements.
+Do not touch grappling.opml.
+Do not change content structure.
+Do not invent grappling content.
+Do not change canonical names or transitions in source data.
+Preserve current functionality unless directly improving it.
+Rebuild and verify locally before finishing.
+If the batch is clean and safe, publish it at the end.
+If publish is not safe, stop before publish and report why.
+Prefer meaningful product improvements over filler.
+Critically evaluate each item before implementing it; if it is weak, outdated, or not actually good for the product, skip it and use the effort on the next-best safe item.
+
+TESTING / VALIDATION:
+Verify Reference still selects/expands correctly.
+Verify Network panel behavior still works.
+Verify media/video behavior still works.
+Verify filters still work.
+Verify cross-view actions still work.
+Verify progress/state survives reload correctly.
+Verify deep links/share links restore the intended context if implemented.
+Verify graph/WebGL fallback behavior where relevant.
+Verify mobile/PWA usability where relevant.
+Update tests only where behavior intentionally changed.
+If one pre-existing headless WebGL failure remains, report it clearly without masking anything.
+
+FINAL OUTPUT:
+ARCHITECTURE-LITE-01 | DONE
+automatic:
+	•	<completed item 1>
+	•	<completed item 2>
+	•	<completed item 3>
+	•	<completed item 4>
+	•	<completed item 5>
+	•	<completed item 6>
+	•	<completed item 7>
+	•	<completed item 8>
+	•	<completed item 9>
+	•	<completed item 10>
+remaining:
+	•	
+
+tests:
+	•	<what passed / what changed>
+publish:
+	•	attempted: yes/no
+	•	pushed: yes/no
+	•	commit: 
+	•	live-review-ready: yes/no
+	•	blockers: 
+notes:
+	•	

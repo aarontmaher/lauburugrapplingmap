@@ -1,0 +1,83 @@
+Terminal looks good.
+
+What just completed:
+	•	KM-BRIDGE-CONTINUATION-FIX-01 | DONE
+	•	Code created:
+	•	~/.handoff/continue_automation.sh
+	•	This fixes the old KM bridge continuation order:
+	1.	write next prompt first
+	2.	then signal done
+	3.	refuse to signal done if prompt write fails
+	•	stale run.lock handling was added
+	•	POSITION-MEMORY-IMPROVEMENT-02
+	•	Code checked the current placement memory against the classification memory
+	•	result: already aligned
+	•	it says:
+	•	26 classification entries
+	•	32 chains in placement memory
+	•	34 videos analyzed
+	•	it judged this a natural stopping point
+
+Important current state:
+	•	mark_done.sh succeeded:
+	•	Done signal created. Result saved to last_code_result.txt
+	•	terminal is back at ❯
+	•	so this was a normal completed stop, not a failure
+
+What that means:
+	•	the KM bridge fix was applied
+	•	the position-memory lane is currently up to date
+	•	there is no active automation still running right now
+
+Only noise:
+	•	Auto-update failed is still just Claude Code’s own self-update issue, not your project
+
+Best next move depends on what lane you want next:
+	•	website/app improvements again
+	•	or new clip intake / live-footage sorting
+
+Ready-to-send next automation prompt for the website/app lane:
+
+PROMPT-ID: WEBSITE-IMPROVEMENT-ITERATION-16
+TYPE: CODE
+SCOPE: safe frontend/product improvements only
+
+GOAL:
+Resume the website/app improvement loop from a fresh stopping point and identify the next genuinely worthwhile batch.
+
+BEFORE STARTING:
+	1.	Read and align to:
+
+	•	PROJECT_STATE.md
+	•	DECISIONS.md
+	•	WORKFLOW_RULES.md
+	•	HANDOFF_LATEST.md
+	•	MEMORY_UPDATES.md
+	•	SYSTEM_OPTIMIZATION.md
+
+	2.	Summarize briefly:
+
+	•	source of truth
+	•	current default priority
+	•	locked decisions relevant to this batch
+	•	current next best action
+
+TASK:
+Inspect the current local website/app state and choose the next genuinely worthwhile frontend/product improvement batch.
+Only continue if there is a real user-facing improvement worth doing.
+
+RULES:
+	•	Prioritize website/app improvements first
+	•	Do not touch grappling.opml
+	•	Do not alter grappling taxonomy/content structure
+	•	Do not modify live-footage folder organization
+	•	Keep changes safe and frontend/product only
+	•	Validate locally before stopping
+	•	Use the old KM bridge only
+	•	If non-stopping, use continue_automation.sh for continuation
+	•	Do not prompt upload unless true stopping point
+
+PASTE BACK EXACTLY:
+WEBSITE-IMPROVEMENT-ITERATION-16 | DONE | batch:  | files:  | validation:  | next-best:  | memory-sync: <yes/no> | stopping-point: <yes/no> | issues: 
+
+-chatgpt chat & claude code chat

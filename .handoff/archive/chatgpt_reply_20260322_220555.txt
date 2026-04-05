@@ -1,0 +1,106 @@
+LIVE-FOLDER-CLEANUP-PLAN-01 is done.
+
+What finished:
+	•	cleanup plan generated
+	•	146 folders classified as safe to create
+	•	1356 folders classified as safe to trash
+	•	0 folders need human review
+	•	all unexpected folders were empty old-scaffold folders with only README placeholders
+	•	human-readable plan created:
+	•	~/GrapplingMap/live-footage/cleanup-plan.txt
+	•	machine-readable plan created:
+	•	~/GrapplingMap/live-footage/cleanup-plan.json
+	•	dry-run and apply commands were included in the plan
+
+My read:
+	•	This is a very good result.
+	•	Since there are no real video files in the unexpected folders, this is about as safe as a cleanup plan gets.
+	•	I agree with Code’s conclusion that the next step should be the actual apply pass.
+
+Next prompt:
+
+PROMPT-ID: LIVE-FOLDER-APPLY-01
+TYPE: CODE
+SCOPE: live-footage scaffold apply only
+MODE: autonomous safe apply pass
+
+SOURCE OF TRUTH POLICY:
+grappling.opml remains the content source of truth.
+Do not change grappling.opml in this pass.
+Do not change technique content, canonical naming, transitions, or OPML structure.
+Apply only the already-reviewed live-footage scaffold cleanup plan.
+Do not do any speculative cleanup beyond the approved plan.
+
+GOAL:
+Apply the reviewed live-footage scaffold cleanup plan by creating the 146 missing folders and removing the 1356 old empty scaffold folders that contain only README placeholders.
+
+CONTEXT:
+LIVE-FOLDER-CLEANUP-PLAN-01 found:
+	•	146 safe creates
+	•	1356 safe to trash
+	•	0 ambiguous cases
+	•	0 folders with real video files
+The cleanup plan indicates this apply is safe because all unexpected folders are empty old scaffold placeholders only.
+
+DO THESE 10 IMPROVEMENTS IN THIS PASS:
+	1.	Re-read the cleanup plan outputs before applying anything.
+	2.	Verify again that the unexpected folders still contain no real video files.
+	3.	Create the 146 missing folders required by the current OPML-derived structure.
+	4.	Remove the 1356 old empty scaffold folders that contain only README placeholders.
+	5.	Preserve any non-placeholder real content if anything unexpected is discovered during apply.
+	6.	Abort or skip only the specific item if a supposedly safe folder is no longer safe.
+	7.	Produce an apply summary report with what was created and removed.
+	8.	Produce a machine-readable apply summary if feasible.
+	9.	Re-run the audit after apply to confirm the scaffold now matches the intended structure.
+	10.	Report the final post-apply counts clearly.
+
+DETAIL REQUIREMENTS:
+	•	Only apply what the cleanup plan already classified as safe.
+	•	Do not remove anything containing real video/content files.
+	•	If a folder changed since the plan and is no longer clearly safe, skip it and report it.
+	•	Keep the apply conservative and auditable.
+	•	Prefer item-level skips over broad failure if a small number of paths become unsafe.
+
+EXPLICITLY OUT OF SCOPE:
+	•	no grappling.opml edits
+	•	no speculative folder cleanup beyond the approved plan
+	•	no renaming outside the approved plan
+	•	no website/app UI changes
+	•	no content-meaning decisions
+
+RULES:
+Work only on the approved scaffold apply step.
+Do not touch grappling.opml.
+Do not change content structure.
+Do not invent grappling content.
+Preserve real files if any are unexpectedly encountered.
+If any item becomes ambiguous, skip it and report it rather than forcing it.
+
+TESTING / VALIDATION:
+	•	verify the 146 missing folders were created
+	•	verify the 1356 empty old-scaffold folders were removed if still safe
+	•	verify no real video/content files were removed
+	•	re-run the audit after apply
+	•	verify the post-apply state is cleaner and closer to expected structure
+	•	produce clear human-readable final counts
+
+FINAL OUTPUT:
+LIVE-FOLDER-APPLY-01 | DONE
+automatic:
+	•	<completed item 1>
+	•	<completed item 2>
+	•	<completed item 3>
+	•	<completed item 4>
+	•	<completed item 5>
+	•	<completed item 6>
+	•	<completed item 7>
+	•	<completed item 8>
+	•	<completed item 9>
+	•	<completed item 10>
+remaining:
+	•	
+
+changed files:
+	•	<file/folder list summary>
+post-apply counts:
+	•	

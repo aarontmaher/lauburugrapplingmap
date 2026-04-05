@@ -1,0 +1,100 @@
+WEBSITE-AUTO-LOOP-16 is done and published.
+
+What finished:
+	•	section headers now show position counts
+	•	tree-row hover contrast is stronger and more obviously clickable
+	•	schema heading rows now have a subtle tinted background and rounded corners
+	•	Code verified that empty headings, Notes styling, and heading distinction were already implemented in earlier loops
+
+Result:
+	•	tests: 11/12 pass
+	•	remaining fail: same pre-existing headless WebGL / 3D canvas issue
+	•	publish: yes
+	•	commit: 217e9f4
+	•	live-review-ready: yes
+
+Most important note from Code:
+	•	the “0 Total” issue is not a live bug in its view; header stats are hidden until progress exists
+
+PROMPT-ID: WEBSITE-AUTO-LOOP-17
+TYPE: CODE
+SCOPE: app UI / UX polish only
+MODE: autonomous safe batch with publish at end if clean
+
+SOURCE OF TRUTH POLICY:
+grappling.opml remains the content source of truth.
+Do not change grappling.opml in this pass.
+Do not change technique content, canonical naming, transitions, or OPML structure.
+Focus only on website/app behavior and presentation.
+
+GOAL:
+Continue the safe autonomous website-improvement loop by implementing the next highest-value safe frontend/product improvements without touching protected content areas.
+
+CURRENT STRATEGY:
+Preserve all working behavior from loops 01–16.
+Keep improving premium feel, clarity, and instructional usability.
+Prefer grouped frontend polish by area.
+Avoid anything requiring grappling/content decisions.
+
+THIS BATCH PRIORITY:
+	1.	Improve current-location/context clarity in both Reference and Network
+	2.	Improve consistency and scanability of action pills/buttons across views
+	3.	Improve empty/zero/loading state polish where still generic
+	4.	Improve selected-detail hierarchy and main lesson state emphasis
+	5.	Fix any remaining small safe interaction friction discovered during this pass
+
+DETAIL GOALS:
+Make current context easier to understand at a glance.
+Keep Reference and Network visually aligned as one product.
+Make actions feel consistent and intentional.
+Improve product-like feel of empty/loading states.
+Keep changes subtle, premium, frontend-only, and low-risk.
+
+GOOD CANDIDATES FOR THIS PASS:
+Lightweight context line or orientation aid in selected detail views.
+Stronger grouping of technique title, notes, and media actions.
+More consistent styling/spacing for action pills across Reference and Network.
+Cleaner zero-state wording/presentation where still generic.
+Subtle improvements to current-selection visibility without adding clutter.
+Small polish to cross-view actions and their placement if safe.
+
+RULES:
+Work only on safe frontend/product improvements.
+Do not touch grappling.opml.
+Do not change content structure.
+Do not invent grappling content.
+Do not change canonical names or transitions in source data.
+Preserve current functionality unless directly improving it.
+Rebuild and verify locally before finishing.
+If the batch is clean and safe, publish it at the end.
+If publish is not safe, stop before publish and report why.
+
+TESTING / VALIDATION:
+Verify Reference still selects/expands correctly.
+Verify Network panel behavior still works.
+Verify media behavior still works.
+Verify filters still work.
+Verify cross-view actions still work.
+Verify Track All and progress pills still behave correctly.
+Update tests only where behavior intentionally changed.
+If one pre-existing headless WebGL failure remains, report it clearly without masking anything.
+
+FINAL OUTPUT:
+WEBSITE-AUTO-LOOP-17 | DONE
+automatic:
+	•	<completed item 1>
+	•	<completed item 2>
+	•	<completed item 3>
+remaining:
+	•	
+
+tests:
+	•	<what passed / what changed>
+publish:
+	•	attempted: yes/no
+	•	pushed: yes/no
+	•	commit: 
+	•	live-review-ready: yes/no
+	•	blockers: 
+notes:
+	•	

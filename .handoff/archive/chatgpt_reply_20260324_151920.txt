@@ -1,0 +1,99 @@
+Checked.
+
+Here’s the current terminal state:
+
+What did complete
+
+BELT-SYLLABUS-BLUE-02 finished successfully.
+
+It:
+	•	created/updated BLUE_BELT_SYLLABUS.md
+	•	committed locally:
+	•	248e37e
+	•	returned this result:
+
+BELT-SYLLABUS-BLUE-02 | DONE | current-state: Blue belt skeleton created with 6 sections (Wrestling, Passing, Dominant Positions, Guard, Defence/Escapes, Chains/Follow-ups) | next-section: Wrestling / Standing (counters to WB attacks, new position, shot defence) — needs Aaron's picks | open-picks: all slots marked "needs Aaron selection" (~30 total across all sections) | issues: none
+
+Then mark_done.sh succeeded.
+
+What did not complete
+
+After that, the PRODUCT-DIRECTION-P3-POPUP-01 prompt was pasted in and Claude started thinking:
+	•	✶ Topsy-turvying…
+
+Then it dropped back to ❯.
+
+There is no:
+	•	PRODUCT-DIRECTION-P3-POPUP-01 | DONE ...
+	•	no validation summary
+	•	no commit/push
+	•	no mark_done.sh for that popup batch
+
+So that popup task did not finish cleanly.
+
+Current real state
+	•	Blue belt skeleton is done
+	•	Start Here popup/modal task is not done
+	•	terminal is idle right now
+	•	latest finished code-side item is the Blue belt syllabus skeleton
+
+Next best move
+
+If you want to stay on the syllabus lane:
+	•	continue Blue belt Wrestling / Standing
+
+If you want to switch to the UI lane:
+	•	resend the popup task cleanly
+
+If you want the popup task again, use:
+
+PROMPT-ID: PRODUCT-DIRECTION-P3-POPUP-01
+TYPE: CODE
+SCOPE: safe frontend/product improvements only
+
+GOAL:
+Change the current inline “Start Here / New to grappling” section into a centered popup/modal instead of a normal dropdown/inline block.
+
+ISSUE:
+Right now the new-to-grappling guidance is embedded inline in the page. It should instead appear as a clear centered popup so it feels like a guided starting path, not just more page content.
+
+DESIRED BEHAVIOR:
+	1.	Show the Start Here content in a centered modal/popup card.
+	2.	Make it feel like a new-user entry point.
+	3.	Allow the user to:
+
+	•	start using it immediately
+	•	dismiss/close it easily
+
+	4.	Keep it clean on desktop and mobile.
+	5.	Do not make it annoying:
+
+	•	ideally it should remember dismissal locally
+	•	and be reopenable later from a clear place if needed
+
+PRODUCT INTENT:
+	•	this is for newer users
+	•	it should feel intentional and helpful
+	•	it should not clutter the normal reference view
+	•	it should improve first-use clarity
+
+RULES:
+	•	Do not touch grappling.opml
+	•	Do not alter grappling taxonomy/content structure
+	•	Do not modify live-footage folder organization
+	•	Keep changes safe and frontend/product only
+	•	Validate locally before stopping
+	•	Use the locked old KM bridge automation format
+	•	Do not prompt upload unless true stopping point
+
+VALIDATION:
+	1.	confirm Start Here appears as a centered popup/modal
+	2.	confirm it is readable on desktop and mobile
+	3.	confirm it can be dismissed cleanly
+	4.	confirm dismissal state is handled sensibly if implemented
+	5.	confirm no runtime regressions
+
+PASTE BACK EXACTLY:
+PRODUCT-DIRECTION-P3-POPUP-01 | DONE | batch:  | files:  | validation:  | next-best:  | memory-sync: <yes/no> | stopping-point: <yes/no> | issues: 
+
+-chatgpt chat & claude code chat

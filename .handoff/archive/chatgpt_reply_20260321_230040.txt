@@ -1,0 +1,40 @@
+PROMPT-ID: BRIDGE-REAL-TEST-01
+TYPE: CODE
+SCOPE: automation bridge verification only
+
+GOAL:
+Produce one short final DONE block and trigger the real bridge flow, without changing website code or grappling.opml.
+
+TASKS:
+1. Do not edit any files outside the handoff folder.
+2. Do not change website/app code.
+3. Do not change grappling.opml.
+4. Immediately output the final DONE block below.
+5. Then write it through the real bridge writer so the detector can fire.
+
+FINAL OUTPUT:
+PASTE BACK EXACTLY:
+
+BRIDGE-REAL-TEST-01 | DONE
+automatic:
+- emitted a clean real DONE block
+- triggered the real handoff writer
+- made no app/content changes
+remaining:
+- none
+changed files:
+- none
+tests:
+- not applicable
+publish:
+- attempted: no
+- pushed: no
+- commit: none
+- live-review-ready: no
+- blockers: none
+notes:
+- bridge-only real cycle test
+
+After printing the DONE block, run the real handoff writer for that exact final result.
+
+-chatgpt chat

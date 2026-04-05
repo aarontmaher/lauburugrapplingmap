@@ -1,0 +1,64 @@
+Checked.
+
+This batch finished successfully.
+
+What just completed
+
+ACCOUNTS-BATCH-03-SUPABASE-INTEGRATION | DONE
+
+What Code wired
+	•	Supabase auth client setup
+	•	signup
+	•	login
+	•	logout
+	•	auth session detection
+	•	auth state change listener
+	•	guest/member UI toggle tied to real auth state
+
+Files changed
+	•	index.html
+
+Validation
+	•	11/12 passed
+	•	same old pre-existing failing canvas/smoke issue
+	•	no new blocker reported
+
+Commit
+	•	committed as:
+	•	4d7be1d
+
+Important repo note
+
+The final mark_done summary says:
+	•	pushed
+
+So Code is reporting this as pushed.
+
+Current state
+	•	terminal is back at ❯
+	•	nothing is actively running
+	•	stopping-point: no
+	•	so this lane can continue without needing to stop
+
+Best next moves
+
+For accounts, the next best step is exactly what Code said:
+	•	Batch 4: polish + offline fallback
+	•	and/or test the auth flow on the live site
+
+My recommendation:
+	1.	test the auth flow on the live site first
+	2.	then run Batch 4 after you confirm signup/login/logout behaves properly
+
+What to test live now
+	•	Create Account works
+	•	Login works
+	•	Logout works
+	•	guest/member UI switches correctly
+	•	guest preview still works
+	•	full 3D map is still visible to guests
+	•	locked content still behaves as intended
+
+If you want, I can give you the exact next prompt for:
+	•	accounts Batch 4
+	•	and the next syllabus automation batch in parallel.

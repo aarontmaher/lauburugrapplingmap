@@ -1,0 +1,1 @@
+Audit: typed AI chat input + belt syllabus filtering on live site. Test as guest + member. Output to AUTOMATION_SUGGESTIONS_INBOX.md. Source: Cowork. Status: pending.

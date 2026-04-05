@@ -1,0 +1,102 @@
+Checked.
+
+This run worked normally.
+
+What Claude Code just did:
+	•	It recognized AUTOMATION_NEXT.md was stale
+	•	It updated it and re-ranked the queue
+	•	It promoted the new priority order to:
+
+	1.	Success Logging
+	2.	Graph detail panel shows technique names
+	3.	“Game map” personalized graph overlay
+	4.	Game-Driven Daily Suggestions
+	5.	Successful-Game Dashboard section
+
+It also correctly noted:
+	•	Game-Driven Daily Suggestions depends on Success Logging first
+	•	the bigger game-driven features are now organized in the right order
+
+Then it ran:
+	•	mark_done.sh
+	•	and successfully created:
+	•	Done signal created. Result saved to last_code_result.txt
+
+So this batch:
+	•	did finish
+	•	did update the queue
+	•	did not crash
+	•	is back at ❯
+	•	nothing is currently running
+
+One thing missing:
+	•	it updated AUTOMATION_NEXT.md
+	•	but I do not see the final explicit line:
+	•	AUTOMATION-SUGGESTIONS-REVIEW-03 | DONE | ...
+	•	so the work completed, but the reporting format was slightly incomplete
+
+The important project takeaway is:
+	•	the queue is now much better organized
+	•	Success Logging is clearly the next best product feature
+	•	the rest of the “active training partner” ideas now sit behind that dependency correctly
+
+Next automation prompt:
+
+PROMPT-ID: SUCCESS-LOGGING-BATCH-01
+TYPE: CODE
+SCOPE: safe frontend/product improvements only
+
+GOAL:
+Implement the foundation success-logging feature that unlocks game-driven recommendations.
+
+BEFORE STARTING:
+	1.	Read and align to:
+
+	•	PROJECT_STATE.md
+	•	DECISIONS.md
+	•	WORKFLOW_RULES.md
+	•	HANDOFF_LATEST.md
+	•	MEMORY_UPDATES.md
+	•	SYSTEM_OPTIMIZATION.md
+	•	AUTOMATION_NEXT.md
+	•	AUTOMATION_SUGGESTIONS.md
+
+	2.	Summarize briefly:
+
+	•	source of truth
+	•	current default priority
+	•	why success logging is the next best batch
+	•	what later features depend on it
+
+IMPLEMENT THIS BATCH:
+	1.	Add a simple success logging action on technique detail
+	•	one-tap “Hit this” / “Log success”
+	2.	Store success events locally with:
+	•	technique id
+	•	timestamp/date
+	•	optional lightweight context if easy (training/comp), otherwise leave context for later
+	3.	Keep it lightweight and non-disruptive
+	4.	Make the stored data ready for later use by:
+	•	game-driven daily suggestions
+	•	successful-game dashboard
+	•	next-best-move recommendations
+
+RULES:
+	•	Do not touch grappling.opml
+	•	Do not alter grappling taxonomy/content structure
+	•	Do not modify live-footage folder organization
+	•	Keep changes safe and frontend/product only
+	•	Validate locally before stopping
+	•	Use the locked old KM bridge automation format
+	•	Do not prompt upload unless true stopping point
+
+VALIDATION:
+	1.	Confirm a user can log a successful hit from technique detail
+	2.	Confirm success data persists locally
+	3.	Confirm no regressions to existing track/drilling/learned flow
+	4.	Confirm no runtime errors
+
+PASTE BACK EXACTLY:
+SUCCESS-LOGGING-BATCH-01 | DONE | batch:  | files:  | validation:  | next-best:  | memory-sync: <yes/no> | stopping-point: <yes/no> | issues: 
+
+-chatgpt chat & claude code chat

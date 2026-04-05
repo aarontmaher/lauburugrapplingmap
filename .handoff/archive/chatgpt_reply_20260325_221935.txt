@@ -1,0 +1,144 @@
+Checked.
+
+Current terminal state is idle.
+
+What just completed:
+	•	Typed AI chat input shipped
+	•	Cumulative belt syllabus filters shipped
+	•	Weekly summary button shipped
+	•	audit outbox was refreshed
+	•	trigger is now:
+	•	status: "ready"
+	•	commit: 8d00a1d
+
+Latest commit
+	•	8d00a1d — Belt syllabus cumulative filters + typed AI chat
+
+What Code says is done
+
+AUTOMATION-RESUME-ALL-LANES-05 | DONE
+
+Shipped in that run:
+	•	AI Coach typed chat
+	•	belt syllabus cumulative filters
+	•	weekly summary
+
+And separately:
+BELT-SYLLABUS-CUMULATIVE-FILTERS-01 | DONE
+
+Details:
+	•	belt filtering now works in Reference view
+	•	cumulative logic is:
+	•	White = 12 positions
+	•	Blue = White + 9
+	•	Purple = +7
+	•	Brown = +7
+	•	Black = all
+	•	validation:
+	•	11/12 pass
+	•	same old 3D graph smoke failure
+
+Important limitation
+
+Code explicitly says:
+	•	the belt cumulative filter is shipped for Reference view
+	•	next batch is:
+	•	extend belt filter to Position Map graph
+
+So right now:
+	•	Reference filtering = done
+	•	Position Map / 3D graph filtering = not done yet
+
+Audit automation
+
+Code refreshed:
+	•	automation-outbox/chat_audit_prompt.txt
+	•	automation-outbox/cowork_audit_prompt.txt
+	•	automation-outbox/audit_trigger.json
+
+Trigger is set to:
+	•	status: "ready"
+
+So your KM audit automation is ready to fire now.
+
+Bottom line
+	•	terminal is clean
+	•	nothing is running
+	•	typed AI chat is live
+	•	cumulative belt filters are live in Reference
+	•	graph-side belt filtering still needs the next batch
+	•	audit trigger is ready
+
+The next best prompt is:
+
+PROMPT-ID: BELT-SYLLABUS-CUMULATIVE-FILTERS-02
+TYPE: CODE
+SCOPE: safe frontend/product automation
+
+GOAL:
+Continue the cumulative belt syllabus filter lane by extending the belt filter from Reference view into the Position Map / 3D graph so both views stay synchronized.
+
+CURRENT CONTEXT:
+	•	cumulative belt filtering is already shipped in Reference view
+	•	typed AI chat shipped
+	•	weekly summary shipped
+	•	latest commit: 8d00a1d
+	•	current next batch identified by Code is:
+	•	extend belt filter to Position Map graph
+	•	this should run as automation, not a one-off task
+
+BEFORE STARTING:
+	1.	Read and align to:
+
+	•	PROJECT_STATE.md
+	•	DECISIONS.md
+	•	WORKFLOW_RULES.md
+	•	HANDOFF_LATEST.md
+	•	MEMORY_UPDATES.md
+	•	SYSTEM_OPTIMIZATION.md
+	•	WHITE_BELT_SYLLABUS.md
+	•	BLUE_BELT_SYLLABUS.md
+	•	PURPLE_BELT_SYLLABUS.md
+	•	BROWN_BELT_SYLLABUS.md
+	•	BLACK_BELT_SYLLABUS.md
+	•	BELT_SYLLABUS_DIRECTION.md
+	•	AUTOMATION_NEXT.md
+	•	AUTOMATION_SUGGESTIONS.md
+
+	2.	Summarize briefly:
+
+	•	current belt filter state
+	•	what is already working in Reference
+	•	safest way to extend the same cumulative logic into the Position Map / 3D graph
+	•	what must remain synchronized
+
+TASK:
+Run this as automation.
+
+PHASE 1:
+Extend cumulative belt filtering into the Position Map / 3D graph.
+
+REQUIREMENTS:
+	1.	The same cumulative belt logic must apply to the graph:
+
+	•	White = White only
+	•	Blue = White + Blue
+	•	Purple = White + Blue + Purple
+	•	Brown = White + Blue + Purple + Brown
+	•	Black = White + Blue + Purple + Brown + Black
+
+	2.	Reference and Position Map must stay synchronized
+	3.	Active belt filter must remain clearly visible
+	4.	User must still be able to return to full-content mode
+	5.	Preserve graph readability and usability
+	6.	Keep current typed AI chat and weekly summary behavior intact
+
+CHECK FOR:
+	•	graph nodes filtered correctly
+	•	graph edges behave sensibly under filtering
+	•	Reference and graph remain aligned
+	•	no regressions in other filters
+	•	desktop/mobile remain sensible
+
+AFTER EACH COMPLETED BATCH:
+	•	continue

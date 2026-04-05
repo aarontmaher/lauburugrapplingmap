@@ -1,0 +1,36 @@
+Checked.
+
+Current terminal state is idle.
+
+What just completed:
+	•	CROSS-DEVICE-TESTING-RULE-01 | DONE
+
+What Code changed:
+	•	updated WORKFLOW_RULES.md
+	•	locked in the cross-device testing rule:
+	•	don’t call something “fixed” just because it works on one device
+	•	treat iPhone/iOS Safari and Android/Chrome as separate classes
+	•	also consider Mac and Windows
+	•	report coverage honestly, e.g.:
+	•	verified on X
+	•	not yet verified on Y
+
+What the added rule says in practice:
+	•	no more claiming “mobile fixed” from only one phone
+	•	graph/tap/zoom/auth/layout/video/modal fixes should be thought about across:
+	•	iPhone
+	•	Android
+	•	Mac
+	•	Windows
+	•	different screen sizes
+
+Closeout:
+	•	mark_done.sh succeeded
+	•	result saved to last_code_result.txt
+	•	terminal returned to ❯
+	•	nothing is actively running now
+
+So the real current state is:
+	•	cross-device testing rule is now locked
+	•	terminal is clean
+	•	no active batch is running

@@ -1,0 +1,1 @@
+BATCHES-A-B-C | DONE | search auto-expand + breadcrumb dedup + settings dismiss + heading counts + video indicator + hover feedback + one-video-at-a-time + grouped menu + dev hiding + total count always shown

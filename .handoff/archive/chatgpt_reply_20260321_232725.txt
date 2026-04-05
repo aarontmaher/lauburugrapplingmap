@@ -1,0 +1,33 @@
+Right — you haven’t updated Macro 3 yet.
+
+The terminal is telling us what Macro 3 should be now:
+
+Your final 3-macro setup should be
+
+Macro 1 — DETECT-CODE-DONE
+Detects done.signal
+
+Macro 2 — SEND-CHECK-TERMINAL-APP
+Sends check terminal and waits 60–90s
+
+Macro 3 — PASTE-TO-CODE
+Must run this exact chained command:That is the change you still need to make.
+
+Right now, if Macro 3 is still only doing paste_to_code.sh, then the auto-capture step never runs, so nothing gets pasted back unless you do it manually.
+
+What to do now
+
+Open Keyboard Maestro and edit PASTE-TO-CODE.
+
+Replace whatever is currently in the script box with:Keep:
+	•	Ignore results
+
+That’s the missing piece.
+
+After you change it, the next real loop should be able to:
+	1.	auto-capture my reply from the ChatGPT app
+	2.	paste it into Claude Code
+	3.	press Return
+	4.	clear the lock
+
+If you want, send one screenshot of Macro 3 after you change it and I’ll confirm it’s correct.

@@ -1,0 +1,157 @@
+
+
+tests:
+	•	<what passed / what changed>
+publish:
+	•	attempted: yes/no
+	•	pushed: yes/no
+	•	commit: 
+	•	live-review-ready: yes/no
+	•	blockers: 
+notes:
+	•	APP-FEATURES-06 is done and published.
+
+What finished:
+	•	panel search added automatically to list panels with more than 5 items
+	•	search filters in real time by label and meta text
+	•	search auto-focuses and hides section headers while filtering
+	•	Drill Timer added in the menu with 3/5/10 minute presets
+	•	timer supports start / pause / resume / reset
+	•	timer uses a large display and turns red at zero
+	•	weekly activity added to Progress Dashboard
+	•	weekly activity uses real lastPracticed timestamps from the last 4 weeks
+	•	Code explicitly skipped filler for items that were already effectively done
+
+Result:
+	•	publish: yes
+	•	commit: 1d9e3c0
+	•	live-review-ready: yes
+	•	blockers: none
+	•	tests: Code says prior commits were consistently 11/12 pass
+
+My read:
+	•	This is a good batch.
+	•	Panel search and the drill timer are real product improvements.
+	•	Weekly activity is also worthwhile because it uses real local data and adds training-value context.
+	•	I agree with Code not forcing the remaining items.
+
+Next prompt:
+
+PROMPT-ID: APP-FEATURES-07
+TYPE: CODE
+SCOPE: product features and lightweight architecture only, excluding protected content areas
+MODE: autonomous safe batch with publish at end if clean
+
+SOURCE OF TRUTH POLICY:
+grappling.opml remains the content source of truth.
+Do not change grappling.opml in this pass.
+Do not change technique content, canonical naming, transitions, or OPML structure.
+Do not do content migration or grappling-knowledge decisions.
+Focus on product features and safe architecture that improve the app/website experience without touching protected content areas.
+
+GOAL:
+Implement the next 10 highest-value non-content product improvements after APP-FEATURES-06, prioritizing repeated-use training value, session usability, and reducing friction between choosing what to study and actually studying it.
+
+DO THESE 10 IMPROVEMENTS IN THIS PASS:
+	1.	Improve the Drill Timer so it feels more integrated with training use rather than a generic timer.
+	2.	Improve the My Drills panel so it works better as a practical session surface.
+	3.	Improve the Recent techniques panel so it better supports quick resume into study.
+	4.	Add stronger quick actions from My Drills, Recent, Video Library, and Gap Finder into the relevant study context.
+	5.	Improve the Progress Dashboard so the weekly activity and per-section progress are easier to read at a glance.
+	6.	Improve the Video Library so it is more useful as a repeated-use study surface, not just a grouped list.
+	7.	Improve the Gap Finder so it feels more actionable for deciding what to work on next.
+	8.	Improve mobile/PWA training-day usability across these feature panels with fewer taps and clearer actions.
+	9.	Improve state continuity so the last meaningful feature panel and context can be restored more intelligently where safe.
+	10.	Add the next-best safe repeated-use training feature with real value if one of the above items is already effectively done.
+
+DETAIL REQUIREMENTS:
+
+DRILL TIMER
+	•	Make it feel more purpose-built for drilling.
+	•	Safe examples include:
+	•	clearer preset hierarchy
+	•	better session context
+	•	improved zero-state feedback
+	•	better in-panel usability
+	•	Do not add gimmicks.
+
+MY DRILLS / RECENT / VIDEO LIBRARY / GAP FINDER
+	•	Improve these as a coherent training workflow.
+	•	The user should be able to move quickly from:
+choosing something
+to opening it
+to drilling it
+to resuming later.
+	•	Prefer compact high-value actions over clutter.
+
+QUICK ACTIONS
+	•	If safe, add direct jump actions into the relevant study context from these panels.
+	•	Keep them simple, obvious, and mobile-friendly.
+
+PROGRESS DASHBOARD
+	•	Improve readability and hierarchy without turning it into analytics clutter.
+	•	Keep it grounded in real local data only.
+
+MOBILE / PWA
+	•	Prioritize between-round usability:
+	•	fewer taps
+	•	clearer action hierarchy
+	•	better scanability
+	•	better quick return to the right place
+
+STATE CONTINUITY
+	•	Restore the last meaningful feature surface/context where useful.
+	•	Do not save noisy or low-value state just because it is possible.
+
+EXPLICITLY OUT OF SCOPE:
+	•	no grappling.opml edits
+	•	no content migration or restructuring
+	•	no canonical renaming
+	•	no transition/destination decisions
+	•	no grappling content creation
+	•	no backend/auth/sync server architecture
+	•	no native app packaging
+	•	no large analytics system
+	•	no content-phase decisions
+
+RULES:
+Work only on safe product features and lightweight architecture.
+Do not touch grappling.opml.
+Do not change content structure.
+Do not invent grappling content.
+Do not change canonical names or transitions in source data.
+Preserve current functionality unless directly improving it.
+Rebuild and verify locally before finishing.
+If the batch is clean and safe, publish it at the end.
+If publish is not safe, stop before publish and report why.
+Prefer meaningful product improvements over filler.
+Critically evaluate any suggested item before implementing it; if it is weak, outdated, or not actually good for the product, skip it and use the effort on the next-best safe feature.
+
+TESTING / VALIDATION:
+Verify Reference still selects/expands correctly.
+Verify Network panel behavior still works.
+Verify media/video behavior still works.
+Verify filters still work.
+Verify cross-view actions still work.
+Verify progress data survives reload correctly.
+Verify new feature panels do not break current views.
+Verify mobile/PWA usability where relevant.
+Verify drill timer behavior and any new quick actions.
+Update tests only where behavior intentionally changed.
+If one pre-existing headless WebGL failure remains, report it clearly without masking anything.
+
+FINAL OUTPUT:
+APP-FEATURES-07 | DONE
+automatic:
+	•	<completed item 1>
+	•	<completed item 2>
+	•	<completed item 3>
+	•	<completed item 4>
+	•	<completed item 5>
+	•	<completed item 6>
+	•	<completed item 7>
+	•	<completed item 8>
+	•	<completed item 9>
+	•	<completed item 10>
+remaining:
+	•	

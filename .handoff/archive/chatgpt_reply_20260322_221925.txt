@@ -1,0 +1,145 @@
+CONTENT-OPS-01 is done.
+
+What finished:
+	•	content report upgraded with:
+	•	Quick Pick: top 5 actionable leaf techniques to work on next
+	•	section-level priority by video coverage
+	•	position-level priority by video coverage
+	•	live footage gaps summary
+	•	report now shows:
+	•	96 techniques with instructional video but no live clips
+	•	1778 empty scaffold folders ready for clips
+	•	reports regenerated:
+	•	~/GrapplingMap/reports/content-report.txt
+	•	~/GrapplingMap/reports/content-report.json
+	•	workflow/tooling remains read-only and conservative
+
+Result:
+	•	publish: no
+	•	commit: none
+	•	live-review-ready: n/a
+	•	blockers: none
+
+My read:
+	•	Good batch.
+	•	This is useful, not filler.
+	•	Code is probably right that the operations tooling is now close to complete for the current protected scope.
+	•	The next best move is a final workflow-convenience batch so future content work is easier to run repeatedly, not more abstract reporting.
+
+Next prompt:
+
+PROMPT-ID: CONTENT-OPS-02
+TYPE: CODE
+SCOPE: content-operations workflow convenience only, excluding protected content edits
+MODE: autonomous safe batch, no content edits
+
+SOURCE OF TRUTH POLICY:
+grappling.opml remains the content source of truth.
+Do not change grappling.opml content in this pass.
+Do not change technique content, canonical naming, transitions, or OPML structure.
+Do not do content migration or grappling-knowledge decisions.
+Focus only on workflow convenience, packaging, and repeatable tooling that make future content operations easier to run.
+
+GOAL:
+Implement the next 10 highest-value workflow-convenience improvements now that the content operations tooling and reports are largely complete.
+
+DO THESE 10 IMPROVEMENTS IN THIS PASS:
+	1.	Create a single simple entry-point command or script that runs the main content-ops reports together.
+	2.	Create a single simple entry-point command or script that runs live-footage validation/audit checks together.
+	3.	Create a clearly organized report bundle location or index so Aaron can find the most important outputs quickly.
+	4.	Add a concise “start here” operations summary that points Aaron to the most useful reports first.
+	5.	Improve CONTENT-WORKFLOW.md so the repeated content workflow is faster to follow in practice.
+	6.	Add a practical “daily / per session” usage flow for future content work using the existing tools only.
+	7.	Add safer command help/usage output to the key scripts so they are easier to run correctly later.
+	8.	Add lightweight consistency to filenames/output organization so repeated runs are easier to review.
+	9.	Add the next-best safe workflow-convenience improvement with real operational value if one of the above is already effectively done.
+	10.	Keep all of it read-only by default unless a script is explicitly meant to validate only.
+
+DETAIL REQUIREMENTS:
+
+ENTRY-POINT SCRIPTS
+	•	Prefer a small number of practical entry points over many separate commands.
+	•	Do not overengineer.
+	•	Keep them conservative and easy to trust.
+
+REPORT BUNDLE / INDEX
+	•	Make it obvious which files matter most:
+	•	Quick Pick
+	•	section priority
+	•	position priority
+	•	live footage gaps
+	•	audit status
+	•	Prefer a simple index/readme/report summary over a complex system.
+
+WORKFLOW GUIDE
+	•	Make CONTENT-WORKFLOW.md practical, concise, and repeatable.
+	•	Help Aaron answer:
+	•	what do I run first
+	•	what report do I read first
+	•	what should I work on next
+	•	how do I validate folders/clips safely
+
+USAGE / HELP
+	•	Improve script ergonomics so future use is less error-prone.
+	•	Safe help text is worthwhile if it reduces friction.
+
+OUTPUT ORGANIZATION
+	•	Make repeated report runs easier to understand and compare.
+	•	Keep output structure simple.
+
+EXPLICITLY OUT OF SCOPE:
+	•	no grappling.opml edits
+	•	no content migration or restructuring
+	•	no canonical renaming
+	•	no transition/destination decisions
+	•	no grappling content creation
+	•	no live-footage moves or deletions
+	•	no website/app UI changes unless strictly necessary for workflow support
+	•	no backend/auth/sync architecture
+	•	no native app packaging
+
+RULES:
+Work only on safe content-operations workflow convenience.
+Do not touch grappling.opml content.
+Do not change content structure.
+Do not invent grappling content.
+Preserve current scaffold and app behavior.
+If something is ambiguous, report it rather than forcing it.
+Prefer practical repeatability improvements over filler.
+
+TESTING / VALIDATION:
+	•	verify current tools still run
+	•	verify any new entry-point scripts work correctly
+	•	verify live-footage audit still reports clean
+	•	verify report paths/indexing are correct
+	•	verify no scaffold changes occur
+	•	verify outputs are practical and easy to review
+
+FINAL OUTPUT:
+CONTENT-OPS-02 | DONE
+automatic:
+	•	<completed item 1>
+	•	<completed item 2>
+	•	<completed item 3>
+	•	<completed item 4>
+	•	<completed item 5>
+	•	<completed item 6>
+	•	<completed item 7>
+	•	<completed item 8>
+	•	<completed item 9>
+	•	<completed item 10>
+remaining:
+	•	
+
+changed files:
+	•	<file/report/script list>
+tests:
+	•	<what passed / what changed>
+publish:
+	•	attempted: yes/no
+	•	pushed: yes/no
+	•	commit: 
+	•	live-review-ready: yes/no
+	•	blockers: 
+notes:
+	•	

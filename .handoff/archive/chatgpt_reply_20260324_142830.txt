@@ -1,0 +1,202 @@
+Yes — Code has not uploaded/pushed the latest White belt syllabus update yet.
+
+From the terminal:
+	•	it updated WHITE_BELT_SYLLABUS.md
+	•	it filled Guard
+	•	it clarified Defence / Escapes needs your picks
+	•	it consolidated Core Submissions and Core Transitions
+	•	but there is no final BELT-SYLLABUS-WHITE-07 | DONE ... line
+	•	and there is no commit/push shown
+	•	terminal dropped back to ❯
+
+So the current state is:
+	•	latest syllabus edits are local only
+	•	not cleanly closed out
+	•	not pushed yet
+
+Claude Chat prompt for a fresh audit
+
+Read and align to:
+	•	PROJECT_STATE.md
+	•	DECISIONS.md
+	•	WORKFLOW_RULES.md
+	•	HANDOFF_LATEST.md
+	•	MEMORY_UPDATES.md
+	•	SYSTEM_OPTIMIZATION.md
+	•	AUTOMATION_SUGGESTIONS.md
+	•	AUTOMATION_NEXT.md
+
+GOAL:
+Do a fresh human-centered audit of the current GrapplingMap product because a lot has changed.
+
+IMPORTANT:
+Review this as a real grappler using the product, not as a developer.
+
+USE THESE USER LENSES:
+	•	beginner
+	•	intermediate
+	•	advanced
+
+AND THESE USAGE MODES:
+	•	first-time user
+	•	gym use between rounds
+	•	active drilling session
+	•	reviewing successful techniques
+	•	building a personal game
+	•	browsing reference content
+	•	using the graph / Position Map
+
+TASK:
+Produce a broad but high-quality improvement sweep of the current product.
+
+DO NOT:
+	•	assume old problems still exist
+	•	output generic filler
+	•	treat every idea as automatically good
+	•	reward complexity for its own sake
+
+GENERATE IMPROVEMENTS ACROSS:
+	1.	Home / first impression
+	2.	Training mode / active use
+	3.	Build-your-game / next-move guidance
+	4.	Reference view / browsing
+	5.	Graph / Position Map
+	6.	Video experience
+	7.	Mobile / gym use
+	8.	Progress / tracking / success logging
+	9.	Beginner clarity
+	10.	Advanced user value
+	11.	Things to simplify / hide / remove
+	12.	Future bigger features
+
+FOR EACH SUGGESTION INCLUDE:
+	•	what it is
+	•	why it matters
+	•	who it helps most:
+	•	beginner / intermediate / advanced
+	•	effort:
+	•	easy / medium / large
+	•	whether it should be:
+	•	now / later / reject
+
+OUTPUT:
+	1.	PRODUCT SUMMARY
+	2.	BEST CURRENT DIRECTION
+	3.	IMPROVEMENTS BY CATEGORY
+	4.	TOP 10 NEXT
+	5.	TOP 10 QUICK WINS
+	6.	TOP 10 LATER
+	7.	TOP 10 REJECT / AVOID
+	8.	ADDITIONAL BIG FEATURE BETS
+
+Be concrete, opinionated, and human-centered.
+
+-chatgpt chat & claude code chat
+
+Cowork prompt for a fresh audit
+
+Use the live product like a real human user and do a fresh audit because a lot has changed.
+
+Read and align to:
+	•	PROJECT_STATE.md
+	•	DECISIONS.md
+	•	WORKFLOW_RULES.md
+	•	HANDOFF_LATEST.md
+	•	MEMORY_UPDATES.md
+	•	SYSTEM_OPTIMIZATION.md
+	•	AUTOMATION_SUGGESTIONS.md
+	•	AUTOMATION_NEXT.md
+
+GOAL:
+Do a broad human-centered audit of the current product and generate strong worthwhile suggestions.
+
+REVIEW FROM THESE USER PERSPECTIVES:
+	•	beginner grappler
+	•	intermediate grappler
+	•	advanced grappler
+
+REVIEW FROM THESE USE CASES:
+	•	first-time opening the app
+	•	finding one useful technique quickly
+	•	using it at the gym on phone
+	•	drilling / training actively
+	•	building a personal game
+	•	using the graph / Position Map
+	•	reviewing recent successes and deciding what to work on next
+
+TASK:
+Generate a broad but high-quality improvement sweep.
+
+FOCUS ON:
+	•	what feels genuinely good now
+	•	what still feels confusing or weak
+	•	what helps real training
+	•	what feels passive vs active
+	•	what helps people build their actual game
+	•	what still feels too hidden, too slow, or too abstract
+
+FOR EACH SUGGESTION INCLUDE:
+	•	what it is
+	•	why it matters
+	•	who it helps most:
+	•	beginner / intermediate / advanced
+	•	effort:
+	•	easy / medium / large
+	•	whether it should be:
+	•	now / later / reject
+
+OUTPUT:
+	1.	HUMAN SUMMARY
+	2.	WHAT FEELS GREAT
+	3.	WHAT STILL FEELS CONFUSING OR WEAK
+	4.	IMPROVEMENTS BY CATEGORY
+	5.	TOP 10 NEXT
+	6.	TOP 10 QUICK WINS
+	7.	TOP 10 LATER
+	8.	TOP 10 REJECT / AVOID
+	9.	ADDITIONAL BIG FEATURE BETS
+
+Be practical, not theoretical. Prefer real user value over complexity.
+
+-chatgpt chat & claude code chat
+
+Before running those audits
+
+Since the latest syllabus work is still local-only, I’d first have Code close that batch cleanly so your audit sees a settled state.
+
+Use this next:
+
+PROMPT-ID: BELT-SYLLABUS-WHITE-07-RECOVER-01
+TYPE: CODE
+SCOPE: workflow + syllabus direction files only
+
+GOAL:
+Cleanly close the current partially completed White belt syllabus update before new audits run.
+
+CURRENT STATE:
+WHITE_BELT_SYLLABUS.md was updated locally with:
+	•	Guard filled
+	•	Defence / Escapes clarified as needing Aaron picks
+	•	Core Submissions consolidated
+	•	Core Transitions consolidated
+
+But the batch did not finish cleanly:
+	•	no final DONE line
+	•	no mark_done result for this batch
+	•	no commit/push shown
+
+TASK:
+	1.	Review the current local syllabus edits.
+	2.	Confirm they are correct and intended.
+	3.	Finish the batch cleanly with the normal result format.
+	4.	Commit/push only if this lane should now be treated as a true stopping point.
+
+IMPORTANT:
+	•	Do not touch grappling.opml
+	•	Do not touch website/app code
+	•	Syllabus direction only
+
+PASTE BACK EXACTLY:
+BELT-SYLLABUS-WHITE-07-RECOVER-01 | DONE | batch:  | files:  | repo-status: <LOCAL ONLY / COMMITTED LOCAL / PUSHED> | issues: 
+
+-chatgpt chat & claude code chat

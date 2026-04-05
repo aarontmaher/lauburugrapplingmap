@@ -1,0 +1,87 @@
+Checked.
+
+The AI lane finished cleanly and terminal is now idle.
+
+What completed
+
+AI-APP-AUTOMATION-LOOP-01 | DONE
+
+Code completed:
+	•	Batch 1
+	•	local AI actions
+	•	AI panel
+	•	Batch 2
+	•	richer clickable AI responses
+	•	AI intelligence layers architecture
+	•	private user layer
+	•	shared aggregate layer
+	•	AI assistant layer
+
+Files/commits
+
+Commits shown:
+	•	b6a0728
+	•	AI Batch 2: rich clickable AI responses
+	•	ffaed76
+	•	AI intelligence layers architecture: private + aggregate + assistant
+
+Main file updated:
+	•	AI_FOUNDATION_PLAN.md
+
+What the architecture now says
+
+Private layer
+9 resources mapped, including:
+	•	progress
+	•	success log
+	•	notes
+	•	belt state
+	•	drills
+	•	recent viewed
+	•	videos watched
+	•	last practiced
+	•	preferences
+
+Aggregate layer
+6 shared signals defined, including:
+	•	popular techniques
+	•	common paths
+	•	common next moves
+	•	weak-point clusters
+	•	belt distribution
+	•	community stats
+
+AI behavior
+	•	Guest AI
+	•	can use map structure + aggregate data
+	•	Member AI
+	•	can use private user data + aggregate data + structure
+	•	LLM/natural-language layer comes later
+
+API shape
+	•	Private
+	•	/api/me/*
+	•	Aggregate
+	•	/api/aggregate/*
+
+Next batch
+
+Code says the next AI batch is:
+	•	Batch 3: API contract + Supabase Edge Functions
+
+Blockers
+
+Code says this lane is now blocked on:
+	•	Supabase Edge Functions setup for Batch 3
+	•	LLM API key for Batch 4
+
+Closeout
+	•	mark_done.sh succeeded
+	•	terminal returned to ❯
+	•	nothing is actively running
+
+Bottom line
+	•	AI foundation batches 1–2 are done
+	•	intelligence layers architecture is done
+	•	terminal is clean
+	•	next AI step needs Supabase Edge Functions setup before Code can continue

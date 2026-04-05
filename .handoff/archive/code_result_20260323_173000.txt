@@ -1,0 +1,1 @@
+LIVE-FOOTAGE-AUDIT-05 | DONE | Desktop copy was the problem, not ~/GrapplingMap | 110 moved, 160 ambiguous remain in Desktop copy | errors: none

@@ -1,0 +1,20 @@
+PROMPT-ID: WEBSITE-IMPROVEMENT-ITERATION-17
+TYPE: CODE
+SCOPE: safe frontend/product improvements only
+
+GOAL:
+Continue the website/app improvement loop. Assess honestly whether there are worthwhile improvements remaining.
+
+RULES:
+- Prioritize website/app improvements first
+- Do not touch grappling.opml
+- Do not alter grappling taxonomy/content structure
+- Do not modify live-footage folder organization
+- Keep changes safe and frontend/product only
+- Validate locally before stopping
+- Use the locked old KM bridge automation format
+
+PASTE BACK EXACTLY:
+WEBSITE-IMPROVEMENT-ITERATION-17 | DONE | batch: <summary> | files: <list> | validation: <result> | next-best: <list or none> | memory-sync: <yes/no> | stopping-point: <yes/no> | issues: <list or none>
+
+-chatgpt chat & claude code chat

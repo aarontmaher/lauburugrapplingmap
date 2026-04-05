@@ -1,0 +1,46 @@
+Checked.
+
+Current terminal state is idle and back at ❯.
+
+What just completed:
+	•	strict belt graph filter shipped
+	•	commit: fed95df
+	•	Code says:
+	•	sub-positions now follow parent syllabus membership
+	•	unclassified nodes are hidden under strict belt filtering
+	•	Claude Chat audit fixes shipped
+	•	commit: 7c005be
+	•	changes made:
+	•	Create Account modal copy now leads with value:
+	•	track progress across 994 techniques
+	•	build your personal game map
+	•	drill with timers
+	•	find gaps in your system
+	•	Reference onboarding text now leads with value:
+	•	“994 no-gi techniques organized by position”
+	•	“Tap any section to explore. Search to find specific techniques.”
+
+What Code concluded from the audit:
+	•	many Chat audit items were already shipped
+	•	the genuinely new code-side items it acted on were mainly:
+	•	better account CTA copy
+	•	more value-led onboarding text
+	•	some data-side issues remain outside this exact code batch:
+	•	"Example:" placeholder nodes
+	•	"Subtopic" Mindomo artifact
+	•	capitalization inconsistencies
+
+Validation state shown earlier in the terminal:
+	•	11/12 passed
+	•	same old known failing item:
+	•	3D graph tab loads canvas
+
+Closeout:
+	•	mark_done.sh succeeded
+	•	run.lock removed
+	•	nothing is actively running now
+
+So the real current state is:
+	•	belt graph filter is stricter now
+	•	CTA/onboarding copy was improved
+	•	terminal is clean and idle

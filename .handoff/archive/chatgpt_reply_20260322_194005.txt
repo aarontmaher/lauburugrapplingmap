@@ -1,0 +1,122 @@
+PHONE-APP-MODE-02 is done and published.
+
+What finished:
+	•	bottom-sheet detail panel now feels more native on mobile:
+	•	16px rounded corners
+	•	upward shadow
+	•	wider drag handle
+	•	safe-area bottom padding
+	•	mobile node rows now have taller touch targets
+	•	mobile section headers are taller and easier to tap
+	•	video modal is positioned from the top on mobile and respects safe-area top inset
+	•	note panel now has safe-area bottom padding
+	•	overscroll-behavior is disabled to reduce accidental pull-to-refresh in app/PWA mode
+	•	inline player is full-width on mobile
+	•	onboarding hint is positioned above the safe area
+
+Result:
+	•	tests: 11/12 pass
+	•	remaining fail: same pre-existing headless WebGL / 3D canvas issue
+	•	publish: yes
+	•	commit: 729bf47
+	•	live-review-ready: yes
+
+Code’s note:
+	•	the phone experience now feels significantly more native
+	•	next worthwhile phone-app improvements are things like proper app icons, launch/splash polish, and possibly swipe-to-dismiss for the bottom sheet
+
+Raw next prompt for Code:
+
+PROMPT-ID: PHONE-APP-MODE-03
+TYPE: CODE
+SCOPE: app mobile UX / PWA / app-like experience only
+MODE: autonomous safe batch with publish at end if clean
+
+SOURCE OF TRUTH POLICY:
+grappling.opml remains the content source of truth.
+Do not change grappling.opml in this pass.
+Do not change technique content, canonical naming, transitions, or OPML structure.
+Focus only on improving the phone-app style experience from the existing website/product.
+
+GOAL:
+Continue improving the installed/mobile-app feel of the product without touching protected content areas.
+
+CURRENT CONTEXT:
+PHONE-APP-MODE-01 and 02 already added:
+	•	manifest and service worker
+	•	standalone/mobile web app meta tags
+	•	safe-area support
+	•	compact app-like mobile header
+	•	larger touch targets
+	•	bottom-sheet polish
+	•	full-width inline player on mobile
+	•	safer overscroll behavior
+
+THIS BATCH PRIORITY:
+	1.	Improve installed-app polish and mobile-native feel further
+	2.	Improve mobile panel dismissal and bottom-sheet ergonomics
+	3.	Improve app-icon / launch / startup polish if safely feasible
+	4.	Improve mobile navigation clarity and action grouping
+	5.	Preserve all current working desktop/shared behavior unless directly improving it
+
+GOOD CANDIDATES FOR THIS PASS:
+	•	proper app icon support if missing or incomplete
+	•	launch/splash/startup polish if feasible within PWA constraints
+	•	swipe-to-dismiss or stronger dismissal ergonomics for mobile bottom sheet if safe
+	•	better mobile action grouping and spacing
+	•	better mobile context/orientation cues
+	•	better mobile video/player ergonomics
+	•	subtle touch feedback / animation polish where safe
+	•	small mobile-specific empty/loading state improvements
+
+EXPLICITLY OUT OF SCOPE:
+	•	no grappling.opml edits
+	•	no content migration or restructuring
+	•	no canonical renaming
+	•	no transition/destination decisions
+	•	no native Swift/Kotlin/React Native app
+	•	no backend/auth/sync architecture
+	•	no content-phase decisions
+
+RULES:
+Work only on safe frontend/product improvements.
+Do not touch grappling.opml.
+Do not change content structure.
+Do not invent grappling content.
+Do not change canonical names or transitions in source data.
+Preserve current functionality unless directly improving it.
+Rebuild and verify locally before finishing.
+If the batch is clean and safe, publish it at the end.
+If publish is not safe, stop before publish and report why.
+
+TESTING / VALIDATION:
+Verify Reference still selects/expands correctly.
+Verify Network panel behavior still works.
+Verify media/video behavior still works.
+Verify filters still work.
+Verify cross-view actions still work.
+Verify mobile/tight viewport behavior specifically.
+Verify touch targets and bottom bars are usable.
+Verify PWA/install changes do not break the current app.
+Update tests only where behavior intentionally changed.
+If one pre-existing headless WebGL failure remains, report it clearly without masking anything.
+
+FINAL OUTPUT:
+PHONE-APP-MODE-03 | DONE
+automatic:
+	•	<completed item 1>
+	•	<completed item 2>
+	•	<completed item 3>
+remaining:
+	•	
+
+tests:
+	•	<what passed / what changed>
+publish:
+	•	attempted: yes/no
+	•	pushed: yes/no
+	•	commit: 
+	•	live-review-ready: yes/no
+	•	blockers: 
+notes:
+	•	

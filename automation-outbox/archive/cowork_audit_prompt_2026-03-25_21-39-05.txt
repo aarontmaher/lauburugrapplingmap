@@ -1,0 +1,2 @@
+TEST: Audit automation end-to-end test with new 3-state model.
+If you receive this in Cowork, reply with: COWORK AUDIT TEST OK

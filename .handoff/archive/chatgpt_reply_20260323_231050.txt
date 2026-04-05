@@ -1,0 +1,53 @@
+If it’s saved from your phone and you’re trying to use it from your laptop via iCloud, the key question is where it was saved:
+
+If it was saved to Photos on your phone
+
+On your laptop, it will show up in the Photos app, not as a normal file in Finder.
+
+So:
+	•	open Photos on the Mac
+	•	find the video there
+	•	export it or drag it out if you need a normal file
+
+This only works if iCloud Photos is turned on for both phone and laptop.
+
+If it was saved to Files / iCloud Drive on your phone
+
+On your laptop, it will show up in Finder → iCloud Drive as a normal file.
+
+So:
+	•	open Finder
+	•	click iCloud Drive
+	•	find the folder you saved it into on the phone
+	•	download it locally if needed
+
+Why you may not be seeing it
+
+Usually one of these is happening:
+	•	you saved it to Photos, but you’re looking in Finder
+	•	you saved it to Files, but you’re looking in Photos
+	•	iCloud sync hasn’t finished yet
+	•	the file is still only a cloud placeholder and hasn’t downloaded on the Mac yet
+	•	you saved it into On My iPhone, not iCloud Drive
+
+Best way to check on the phone
+
+On iPhone:
+	•	open the video
+	•	tap Share
+	•	see whether it says it’s in Photos or Files
+	•	if in Files, check the exact folder path
+
+Best workflow for CapCut
+
+If you want to import it into CapCut on the laptop, the easiest path is:
+	•	save it into iCloud Drive
+	•	then on the laptop open Finder → iCloud Drive
+	•	drag that file into CapCut
+
+If it’s only in Photos, then:
+	•	open Photos on the Mac
+	•	drag/export the clip out first
+	•	then import into CapCut
+
+If you want, tell me whether the video is currently in Photos or Files on your phone, and

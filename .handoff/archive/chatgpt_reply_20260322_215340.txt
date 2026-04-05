@@ -1,0 +1,125 @@
+APP-FEATURES-08 is done.
+
+What happened:
+	•	Code did an exhaustive audit of the current app/product surface
+	•	it deliberately made no changes
+	•	it concluded the app is effectively feature-complete within the current protected scope
+
+Result:
+	•	publish: no
+	•	commit: none
+	•	live-review-ready: yes
+	•	blockers: none
+
+Code’s conclusion:
+	•	more app-feature batches would be filler
+	•	the next real ROI is content
+	•	current published state is still the right one
+
+That’s a good stop decision. I agree with it.
+
+Next prompt:
+
+PROMPT-ID: CONTENT-READINESS-01
+TYPE: CODE
+SCOPE: content-readiness tooling and admin surfaces only, excluding protected content edits
+MODE: autonomous safe batch with publish at end if clean
+
+SOURCE OF TRUTH POLICY:
+grappling.opml remains the content source of truth.
+Do not change grappling.opml content in this pass.
+Do not change technique content, canonical naming, transitions, or OPML structure.
+Do not do content migration or grappling-knowledge decisions.
+Focus only on building tooling, verification, admin surfaces, and readiness features that make the next content phase easier, safer, and more valuable without editing protected content.
+
+GOAL:
+Implement the next 10 highest-value non-content improvements that prepare the product for the future content phase, now that the app itself is feature-complete.
+
+DO THESE 10 IMPROVEMENTS IN THIS PASS:
+	1.	Add a lightweight content-readiness dashboard that reports useful stats from existing data without changing content.
+	2.	Surface counts for positions, techniques, videos, live-footage availability, and tracked progress in a clean admin/readiness view if feasible.
+	3.	Add a safe “missing video / no video yet” reporting surface so content gaps are easier to see.
+	4.	Add a safe “positions with low content density” or similar readiness report using only existing structure/data.
+	5.	Add a safe “content completeness by section” view using current real data only.
+	6.	Add lightweight tooling or reporting for live-footage folder readiness if safe and useful.
+	7.	Improve internal/admin visibility into what the next content work should target first, without changing content.
+	8.	Add export/report capability for these readiness views if feasible and lightweight.
+	9.	Improve resilience and maintainability of any scripts/panels created in this pass so they are useful later during content work.
+	10.	Add the next-best safe content-readiness feature with real value if one of the above items is already effectively done.
+
+DETAIL REQUIREMENTS:
+
+CONTENT-READINESS DASHBOARD
+	•	This should help identify where future content work will have the most value.
+	•	Use only existing data.
+	•	Keep it compact, practical, and product/admin-like rather than debuggy.
+
+GAP / COMPLETENESS REPORTING
+	•	Report gaps honestly using real current structure/data only.
+	•	Do not invent missing content.
+	•	Do not alter source-of-truth structure.
+
+LIVE-FOOTAGE READINESS
+	•	If useful, integrate or expose safe reporting around the live-footage scaffold/readiness.
+	•	Do not move or rename live-footage folders in this pass unless clearly justified and explicitly necessary.
+
+EXPORT / REPORTS
+	•	If feasible, allow a lightweight export or machine-readable summary of readiness info.
+	•	Keep it simple and practical.
+
+EXPLICITLY OUT OF SCOPE:
+	•	no grappling.opml edits
+	•	no content migration or restructuring
+	•	no canonical renaming
+	•	no transition/destination decisions
+	•	no grappling content creation
+	•	no speculative live-folder cleanup
+	•	no backend/auth/sync server architecture
+	•	no native app packaging
+
+RULES:
+Work only on safe content-readiness tooling and admin/reporting.
+Do not touch grappling.opml content.
+Do not change content structure.
+Do not invent grappling content.
+Do not change canonical names or transitions in source data.
+Preserve current functionality unless directly improving readiness/reporting.
+Rebuild and verify locally before finishing.
+If the batch is clean and safe, publish it at the end.
+If publish is not safe, stop before publish and report why.
+Prefer meaningful readiness improvements over filler.
+Critically evaluate each item before implementing it; if it is weak, outdated, or not actually useful, skip it and use the effort on the next-best safe item.
+
+TESTING / VALIDATION:
+Verify the current app still works.
+Verify the new readiness/admin/reporting surfaces do not break current views.
+Verify reported counts and summaries are based on real current data.
+Verify any exports/reports behave safely.
+If one pre-existing headless WebGL failure remains, report it clearly without masking anything.
+
+FINAL OUTPUT:
+CONTENT-READINESS-01 | DONE
+automatic:
+	•	<completed item 1>
+	•	<completed item 2>
+	•	<completed item 3>
+	•	<completed item 4>
+	•	<completed item 5>
+	•	<completed item 6>
+	•	<completed item 7>
+	•	<completed item 8>
+	•	<completed item 9>
+	•	<completed item 10>
+remaining:
+	•	
+
+tests:
+	•	<what passed / what changed>
+publish:
+	•	attempted: yes/no
+	•	pushed: yes/no
+	•	commit: 
+	•	live-review-ready: yes/no
+	•	blockers: 
+notes:
+	•	

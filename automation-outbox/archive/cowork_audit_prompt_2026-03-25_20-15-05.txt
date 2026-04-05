@@ -1,0 +1,6 @@
+Audit the compact AI Coach widget on the live site at aarontmaher.github.io/Chat-gpt/
+
+Test as GUEST and MEMBER. Focus on: compact layout, overlap, mobile, usability.
+
+Output suggestions to ~/Chat-gpt/AUTOMATION_SUGGESTIONS_INBOX.md. Source: Cowork. Status: pending.
+Include keep/revert judgment on compact layout.

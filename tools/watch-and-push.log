@@ -1,0 +1,2036 @@
+
+----------------------------------------------------
+  Grappling Map OPML Watcher
+  Watching : /Users/aaronmaher/GrapplingMap/exports
+           : /Users/aaronmaher/Downloads
+  Repo     : /Users/aaronmaher/Chat-gpt
+  Press Ctrl-C to stop
+----------------------------------------------------
+
+[0;32m[18:53:09][0m Detected: /Users/aaronmaher/Downloads/grappling (5).opml
+[0;32m[18:53:09][0m Processing: grappling (5).opml
+cp: /Users/aaronmaher/Downloads/grappling (5).opml: Operation not permitted
+[0;32m[18:53:09][0m Archived -> archive/grappling_20260316_185309.opml
+cp: /Users/aaronmaher/Downloads/grappling (5).opml: Operation not permitted
+[0;32m[18:53:09][0m Copied to grappling.opml
+[0;32m[18:53:09][0m Converting OPML -> updating index.html...
+Reading: /Users/aaronmaher/Chat-gpt/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+Network: 3674 total nodes, 108 in_network, 78 edges
+Updated index.html (110193 chars of SECTIONS data)
+[1;33m[18:53:10] WARN:[0m No changes detected -- skipping commit
+[0;32m[18:53:10][0m Detected: /Users/aaronmaher/Downloads/grappling (5).opml
+[0;32m[18:53:10][0m Processing: grappling (5).opml
+cp: /Users/aaronmaher/Downloads/grappling (5).opml: Operation not permitted
+[0;32m[18:53:10][0m Archived -> archive/grappling_20260316_185310.opml
+cp: /Users/aaronmaher/Downloads/grappling (5).opml: Operation not permitted
+[0;32m[18:53:10][0m Copied to grappling.opml
+[0;32m[18:53:10][0m Converting OPML -> updating index.html...
+Reading: /Users/aaronmaher/Chat-gpt/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+Network: 3674 total nodes, 108 in_network, 78 edges
+Updated index.html (110193 chars of SECTIONS data)
+[1;33m[18:53:10] WARN:[0m No changes detected -- skipping commit
+[0;32m[20:44:01][0m Detected: /Users/aaronmaher/Downloads/grappling (6).opml
+[0;32m[20:44:01][0m Processing: grappling (6).opml
+cp: /Users/aaronmaher/Downloads/grappling (6).opml: Operation not permitted
+[0;32m[20:44:01][0m Archived -> archive/grappling_20260316_204401.opml
+cp: /Users/aaronmaher/Downloads/grappling (6).opml: Operation not permitted
+[0;32m[20:44:01][0m Copied to grappling.opml
+[0;32m[20:44:01][0m Converting OPML -> updating index.html...
+Reading: /Users/aaronmaher/Chat-gpt/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+Network: 3674 total nodes, 108 in_network, 78 edges
+Updated index.html (110193 chars of SECTIONS data)
+[main 1496277] Update grappling map from Mindomo export [20260316_204401]
+ Committer: Aaron Maher <aaronmaher@Aarons-MacBook-Air.local>
+Your name and email address were configured automatically based
+on your username and hostname. Please check that they are accurate.
+You can suppress this message by setting them explicitly. Run the
+following command and follow the instructions in your editor to edit
+your configuration file:
+
+    git config --global --edit
+
+After doing this, you may fix the identity used for this commit with:
+
+    git commit --amend --reset-author
+
+ 1 file changed, 26 insertions(+), 6 deletions(-)
+[0;32m[20:44:01][0m Pushing to GitHub...
+To github.com:aarontmaher/Chat-gpt.git
+   96d4bc2..1496277  main -> main
+[0;32m[20:44:04][0m Done! GitHub Pages will update in ~30-60 seconds.
+
+[0;32m[20:44:04][0m Detected: /Users/aaronmaher/Downloads/grappling (6).opml
+[0;32m[20:44:04][0m Processing: grappling (6).opml
+cp: /Users/aaronmaher/Downloads/grappling (6).opml: Operation not permitted
+[0;32m[20:44:04][0m Archived -> archive/grappling_20260316_204404.opml
+cp: /Users/aaronmaher/Downloads/grappling (6).opml: Operation not permitted
+[0;32m[20:44:04][0m Copied to grappling.opml
+[0;32m[20:44:04][0m Converting OPML -> updating index.html...
+Reading: /Users/aaronmaher/Chat-gpt/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+Network: 3655 total nodes, 107 in_network, 77 edges
+Updated index.html (109737 chars of SECTIONS data)
+[1;33m[20:44:04] WARN:[0m No changes detected -- skipping commit
+[0;32m[20:47:15][0m Detected: /Users/aaronmaher/Downloads/grappling (7).opml
+[0;32m[20:47:15][0m Processing: grappling (7).opml
+cp: /Users/aaronmaher/Downloads/grappling (7).opml: Operation not permitted
+[0;32m[20:47:15][0m Archived -> archive/grappling_20260316_204715.opml
+cp: /Users/aaronmaher/Downloads/grappling (7).opml: Operation not permitted
+[0;32m[20:47:15][0m Copied to grappling.opml
+[0;32m[20:47:15][0m Converting OPML -> updating index.html...
+Reading: /Users/aaronmaher/Chat-gpt/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+Network: 3655 total nodes, 107 in_network, 77 edges
+Updated index.html (109737 chars of SECTIONS data)
+[1;33m[20:47:15] WARN:[0m No changes detected -- skipping commit
+[0;32m[20:47:15][0m Detected: /Users/aaronmaher/Downloads/grappling (7).opml
+[0;32m[20:47:15][0m Processing: grappling (7).opml
+cp: /Users/aaronmaher/Downloads/grappling (7).opml: Operation not permitted
+[0;32m[20:47:15][0m Archived -> archive/grappling_20260316_204715.opml
+cp: /Users/aaronmaher/Downloads/grappling (7).opml: Operation not permitted
+[0;32m[20:47:15][0m Copied to grappling.opml
+[0;32m[20:47:15][0m Converting OPML -> updating index.html...
+Reading: /Users/aaronmaher/Chat-gpt/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+Network: 3655 total nodes, 107 in_network, 77 edges
+Updated index.html (109737 chars of SECTIONS data)
+[1;33m[20:47:15] WARN:[0m No changes detected -- skipping commit
+[0;32m[21:05:06][0m Detected: /Users/aaronmaher/Downloads/grappling (8).opml
+[0;32m[21:05:06][0m Processing: grappling (8).opml
+cp: /Users/aaronmaher/Downloads/grappling (8).opml: Operation not permitted
+[0;32m[21:05:06][0m Archived -> archive/grappling_20260316_210506.opml
+cp: /Users/aaronmaher/Downloads/grappling (8).opml: Operation not permitted
+[0;32m[21:05:06][0m Copied to grappling.opml
+[0;32m[21:05:06][0m Converting OPML -> updating index.html...
+Reading: /Users/aaronmaher/Chat-gpt/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+Network: 3655 total nodes, 107 in_network, 77 edges
+Updated index.html (109737 chars of SECTIONS data)
+[1;33m[21:05:06] WARN:[0m No changes detected -- skipping commit
+[0;32m[21:05:06][0m Detected: /Users/aaronmaher/Downloads/grappling (8).opml
+[0;32m[21:05:06][0m Processing: grappling (8).opml
+cp: /Users/aaronmaher/Downloads/grappling (8).opml: Operation not permitted
+[0;32m[21:05:06][0m Archived -> archive/grappling_20260316_210506.opml
+cp: /Users/aaronmaher/Downloads/grappling (8).opml: Operation not permitted
+[0;32m[21:05:06][0m Copied to grappling.opml
+[0;32m[21:05:06][0m Converting OPML -> updating index.html...
+Reading: /Users/aaronmaher/Chat-gpt/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+Network: 3655 total nodes, 107 in_network, 77 edges
+Updated index.html (109737 chars of SECTIONS data)
+[1;33m[21:05:06] WARN:[0m No changes detected -- skipping commit
+[0;32m[21:40:19][0m Detected: /Users/aaronmaher/Downloads/grappling (9).opml
+[0;32m[21:40:19][0m Processing: grappling (9).opml
+cp: /Users/aaronmaher/Downloads/grappling (9).opml: Operation not permitted
+[0;32m[21:40:19][0m Archived -> archive/grappling_20260316_214019.opml
+cp: /Users/aaronmaher/Downloads/grappling (9).opml: Operation not permitted
+[0;32m[21:40:19][0m Copied to grappling.opml
+[0;32m[21:40:19][0m Converting OPML -> updating index.html...
+Reading: /Users/aaronmaher/Chat-gpt/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+Network: 3661 total nodes, 107 in_network, 77 edges
+Updated index.html (109876 chars of SECTIONS data)
+fatal: Unable to create '/Users/aaronmaher/Chat-gpt/.git/index.lock': File exists.
+
+Another git process seems to be running in this repository, e.g.
+an editor opened by 'git commit'. Please make sure all processes
+are terminated then try again. If it still fails, a git process
+may have crashed in this repository earlier:
+remove the file manually to continue.
+[main 4cb9165] Update grappling map from Mindomo export [20260316_214019]
+ Committer: Aaron Maher <aaronmaher@Aarons-MacBook-Air.local>
+Your name and email address were configured automatically based
+on your username and hostname. Please check that they are accurate.
+You can suppress this message by setting them explicitly. Run the
+following command and follow the instructions in your editor to edit
+your configuration file:
+
+    git config --global --edit
+
+After doing this, you may fix the identity used for this commit with:
+
+    git commit --amend --reset-author
+
+ 2 files changed, 11 insertions(+), 4 deletions(-)
+[0;32m[21:40:19][0m Pushing to GitHub...
+To github.com:aarontmaher/Chat-gpt.git
+   1496277..4cb9165  main -> main
+[0;32m[21:40:23][0m Done! GitHub Pages will update in ~30-60 seconds.
+
+[0;32m[21:40:23][0m Detected: /Users/aaronmaher/Downloads/grappling (9).opml
+[0;32m[21:40:23][0m Processing: grappling (9).opml
+cp: /Users/aaronmaher/Downloads/grappling (9).opml: Operation not permitted
+[0;32m[21:40:23][0m Archived -> archive/grappling_20260316_214023.opml
+cp: /Users/aaronmaher/Downloads/grappling (9).opml: Operation not permitted
+[0;32m[21:40:23][0m Copied to grappling.opml
+[0;32m[21:40:23][0m Converting OPML -> updating index.html...
+Reading: /Users/aaronmaher/Chat-gpt/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+Network: 3661 total nodes, 107 in_network, 77 edges
+Updated index.html (109876 chars of SECTIONS data)
+[1;33m[21:40:23] WARN:[0m No changes detected -- skipping commit
+[0;32m[22:41:56][0m Detected: /Users/aaronmaher/Downloads/grappling (10).opml
+[0;32m[22:41:56][0m Processing: grappling (10).opml
+cp: /Users/aaronmaher/Downloads/grappling (10).opml: Operation not permitted
+[0;32m[22:41:56][0m Archived -> archive/grappling_20260316_224156.opml
+cp: /Users/aaronmaher/Downloads/grappling (10).opml: Operation not permitted
+[0;32m[22:41:56][0m Copied to grappling.opml
+[0;32m[22:41:56][0m Converting OPML -> updating index.html...
+Reading: /Users/aaronmaher/Chat-gpt/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+Network: 3661 total nodes, 107 in_network, 77 edges
+Updated index.html (110008 chars of SECTIONS data)
+fatal: Unable to create '/Users/aaronmaher/Chat-gpt/.git/index.lock': File exists.
+
+Another git process seems to be running in this repository, e.g.
+an editor opened by 'git commit'. Please make sure all processes
+are terminated then try again. If it still fails, a git process
+may have crashed in this repository earlier:
+remove the file manually to continue.
+[main 420832b] Update grappling map from Mindomo export [20260316_224156]
+ Committer: Aaron Maher <aaronmaher@Aarons-MacBook-Air.local>
+Your name and email address were configured automatically based
+on your username and hostname. Please check that they are accurate.
+You can suppress this message by setting them explicitly. Run the
+following command and follow the instructions in your editor to edit
+your configuration file:
+
+    git config --global --edit
+
+After doing this, you may fix the identity used for this commit with:
+
+    git commit --amend --reset-author
+
+ 2 files changed, 37 insertions(+), 37 deletions(-)
+[0;32m[22:41:56][0m Pushing to GitHub...
+To github.com:aarontmaher/Chat-gpt.git
+ ! [remote rejected] main -> main (cannot lock ref 'refs/heads/main': is at 420832bbaf1d4eed7599793fea5f0738676643ce but expected 4cb91655e77111b9f0f57443bb1921867d7cda97)
+error: failed to push some refs to 'github.com:aarontmaher/Chat-gpt.git'
+[0;31m[22:41:59] ERROR:[0m git push failed. Check credentials (see README for help).
+[0;32m[22:41:59][0m Detected: /Users/aaronmaher/Downloads/grappling (10).opml
+[0;32m[22:41:59][0m Processing: grappling (10).opml
+cp: /Users/aaronmaher/Downloads/grappling (10).opml: Operation not permitted
+[0;32m[22:41:59][0m Archived -> archive/grappling_20260316_224159.opml
+cp: /Users/aaronmaher/Downloads/grappling (10).opml: Operation not permitted
+[0;32m[22:41:59][0m Copied to grappling.opml
+[0;32m[22:41:59][0m Converting OPML -> updating index.html...
+Reading: /Users/aaronmaher/Chat-gpt/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+Network: 3661 total nodes, 107 in_network, 77 edges
+Updated index.html (110008 chars of SECTIONS data)
+[1;33m[22:41:59] WARN:[0m No changes detected -- skipping commit
+[0;32m[00:01:07][0m Detected: /Users/aaronmaher/Downloads/grappling (11).opml
+[0;32m[00:01:07][0m Processing: grappling (11).opml
+cp: /Users/aaronmaher/Downloads/grappling (11).opml: Operation not permitted
+[0;32m[00:01:07][0m Archived -> archive/grappling_20260317_000107.opml
+cp: /Users/aaronmaher/Downloads/grappling (11).opml: Operation not permitted
+[0;32m[00:01:07][0m Copied to grappling.opml
+[0;32m[00:01:07][0m Converting OPML -> updating index.html...
+Reading: /Users/aaronmaher/Chat-gpt/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+Network: 3655 total nodes, 107 in_network, 77 edges
+Updated index.html (109865 chars of SECTIONS data)
+[1;33m[00:01:07] WARN:[0m No changes detected -- skipping commit
+[0;32m[00:01:07][0m Detected: /Users/aaronmaher/Downloads/grappling (11).opml
+[0;32m[00:01:07][0m Processing: grappling (11).opml
+cp: /Users/aaronmaher/Downloads/grappling (11).opml: Operation not permitted
+[0;32m[00:01:07][0m Archived -> archive/grappling_20260317_000107.opml
+cp: /Users/aaronmaher/Downloads/grappling (11).opml: Operation not permitted
+[0;32m[00:01:07][0m Copied to grappling.opml
+[0;32m[00:01:07][0m Converting OPML -> updating index.html...
+Reading: /Users/aaronmaher/Chat-gpt/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+Network: 3655 total nodes, 107 in_network, 77 edges
+Updated index.html (109865 chars of SECTIONS data)
+[1;33m[00:01:07] WARN:[0m No changes detected -- skipping commit
+[0;32m[08:49:18][0m Detected: /Users/aaronmaher/Downloads/grappling (12).opml
+[0;32m[08:49:18][0m Processing: grappling (12).opml
+cp: /Users/aaronmaher/Downloads/grappling (12).opml: Operation not permitted
+[0;32m[08:49:18][0m Archived -> archive/grappling_20260317_084918.opml
+cp: /Users/aaronmaher/Downloads/grappling (12).opml: Operation not permitted
+[0;32m[08:49:18][0m Copied to grappling.opml
+[0;32m[08:49:18][0m Converting OPML -> updating index.html...
+Reading: /Users/aaronmaher/Chat-gpt/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+Network: 3655 total nodes, 107 in_network, 77 edges
+Updated index.html (109865 chars of SECTIONS data)
+[1;33m[08:49:19] WARN:[0m No changes detected -- skipping commit
+[0;32m[08:49:19][0m Detected: /Users/aaronmaher/Downloads/grappling (12).opml
+[0;32m[08:49:19][0m Processing: grappling (12).opml
+cp: /Users/aaronmaher/Downloads/grappling (12).opml: Operation not permitted
+[0;32m[08:49:19][0m Archived -> archive/grappling_20260317_084919.opml
+cp: /Users/aaronmaher/Downloads/grappling (12).opml: Operation not permitted
+[0;32m[08:49:19][0m Copied to grappling.opml
+[0;32m[08:49:19][0m Converting OPML -> updating index.html...
+Reading: /Users/aaronmaher/Chat-gpt/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+Network: 3655 total nodes, 107 in_network, 77 edges
+Updated index.html (109865 chars of SECTIONS data)
+[1;33m[08:49:19] WARN:[0m No changes detected -- skipping commit
+[0;32m[13:49:15][0m Detected: /Users/aaronmaher/Downloads/grappling (13).opml
+[0;32m[13:49:15][0m Processing: grappling (13).opml
+cp: /Users/aaronmaher/Downloads/grappling (13).opml: Operation not permitted
+[0;32m[13:49:15][0m Archived -> archive/grappling_20260317_134915.opml
+cp: /Users/aaronmaher/Downloads/grappling (13).opml: Operation not permitted
+[0;32m[13:49:15][0m Copied to grappling.opml
+[0;32m[13:49:15][0m Converting OPML -> updating index.html...
+Reading: /Users/aaronmaher/Chat-gpt/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+Network: 3347 total nodes, 101 in_network, 71 edges
+Updated index.html (101059 chars of SECTIONS data)
+[1;33m[13:49:16] WARN:[0m No changes detected -- skipping commit
+[0;32m[13:49:16][0m Detected: /Users/aaronmaher/Downloads/grappling (13).opml
+[0;32m[13:49:16][0m Processing: grappling (13).opml
+cp: /Users/aaronmaher/Downloads/grappling (13).opml: Operation not permitted
+[0;32m[13:49:16][0m Archived -> archive/grappling_20260317_134916.opml
+cp: /Users/aaronmaher/Downloads/grappling (13).opml: Operation not permitted
+[0;32m[13:49:16][0m Copied to grappling.opml
+[0;32m[13:49:16][0m Converting OPML -> updating index.html...
+Reading: /Users/aaronmaher/Chat-gpt/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+Network: 3347 total nodes, 101 in_network, 71 edges
+Updated index.html (101059 chars of SECTIONS data)
+[1;33m[13:49:18] WARN:[0m No changes detected -- skipping commit
+[0;32m[14:12:17][0m Detected: /Users/aaronmaher/Downloads/grappling (14).opml
+[0;32m[14:12:17][0m Processing: grappling (14).opml
+cp: /Users/aaronmaher/Downloads/grappling (14).opml: Operation not permitted
+[0;32m[14:12:17][0m Archived -> archive/grappling_20260317_141217.opml
+cp: /Users/aaronmaher/Downloads/grappling (14).opml: Operation not permitted
+[0;32m[14:12:17][0m Copied to grappling.opml
+[0;32m[14:12:17][0m Converting OPML -> updating index.html...
+Reading: /Users/aaronmaher/Chat-gpt/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+Network: 3375 total nodes, 101 in_network, 71 edges
+Updated index.html (101717 chars of SECTIONS data)
+[main 9965373] Update grappling map from Mindomo export [20260317_141217]
+ Committer: Aaron Maher <aaronmaher@Aarons-MacBook-Air.local>
+Your name and email address were configured automatically based
+on your username and hostname. Please check that they are accurate.
+You can suppress this message by setting them explicitly. Run the
+following command and follow the instructions in your editor to edit
+your configuration file:
+
+    git config --global --edit
+
+After doing this, you may fix the identity used for this commit with:
+
+    git commit --amend --reset-author
+
+ 2 files changed, 40 insertions(+), 6 deletions(-)
+[0;32m[14:12:17][0m Pushing to GitHub...
+To github.com:aarontmaher/Chat-gpt.git
+   ecbd3f3..9965373  main -> main
+[0;32m[14:12:20][0m Done! GitHub Pages will update in ~30-60 seconds.
+
+[0;32m[14:12:20][0m Detected: /Users/aaronmaher/Downloads/grappling (14).opml
+[0;32m[14:12:20][0m Processing: grappling (14).opml
+cp: /Users/aaronmaher/Downloads/grappling (14).opml: Operation not permitted
+[0;32m[14:12:20][0m Archived -> archive/grappling_20260317_141220.opml
+cp: /Users/aaronmaher/Downloads/grappling (14).opml: Operation not permitted
+[0;32m[14:12:20][0m Copied to grappling.opml
+[0;32m[14:12:20][0m Converting OPML -> updating index.html...
+Reading: /Users/aaronmaher/Chat-gpt/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+Network: 3375 total nodes, 101 in_network, 71 edges
+Updated index.html (101717 chars of SECTIONS data)
+[1;33m[14:12:21] WARN:[0m No changes detected -- skipping commit
+[0;32m[15:22:03][0m Detected: /Users/aaronmaher/Downloads/grappling (15).opml
+[0;32m[15:22:03][0m Processing: grappling (15).opml
+cp: /Users/aaronmaher/Downloads/grappling (15).opml: Operation not permitted
+[0;32m[15:22:03][0m Archived -> archive/grappling_20260317_152203.opml
+cp: /Users/aaronmaher/Downloads/grappling (15).opml: Operation not permitted
+[0;32m[15:22:03][0m Copied to grappling.opml
+[0;32m[15:22:03][0m Converting OPML -> updating index.html...
+Reading: /Users/aaronmaher/Chat-gpt/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+Network: 3375 total nodes, 101 in_network, 71 edges
+Updated index.html (101717 chars of SECTIONS data)
+[1;33m[15:22:03] WARN:[0m No changes detected -- skipping commit
+[0;32m[15:22:03][0m Detected: /Users/aaronmaher/Downloads/grappling (15).opml
+[0;32m[15:22:03][0m Processing: grappling (15).opml
+cp: /Users/aaronmaher/Downloads/grappling (15).opml: Operation not permitted
+[0;32m[15:22:03][0m Archived -> archive/grappling_20260317_152203.opml
+cp: /Users/aaronmaher/Downloads/grappling (15).opml: Operation not permitted
+[0;32m[15:22:03][0m Copied to grappling.opml
+[0;32m[15:22:03][0m Converting OPML -> updating index.html...
+Reading: /Users/aaronmaher/Chat-gpt/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+Network: 3375 total nodes, 101 in_network, 71 edges
+Updated index.html (101717 chars of SECTIONS data)
+[1;33m[15:22:03] WARN:[0m No changes detected -- skipping commit
+[0;32m[15:41:49][0m Detected: /Users/aaronmaher/Downloads/grappling (16).opml
+[0;32m[15:41:49][0m Processing: grappling (16).opml
+cp: /Users/aaronmaher/Downloads/grappling (16).opml: Operation not permitted
+[0;32m[15:41:49][0m Archived -> archive/grappling_20260317_154149.opml
+cp: /Users/aaronmaher/Downloads/grappling (16).opml: Operation not permitted
+[0;32m[15:41:49][0m Copied to grappling.opml
+[0;32m[15:41:49][0m Converting OPML -> updating index.html...
+Reading: /Users/aaronmaher/Chat-gpt/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+Network: 3385 total nodes, 99 in_network, 69 edges
+Updated index.html (101944 chars of SECTIONS data)
+[1;33m[15:41:49] WARN:[0m No changes detected -- skipping commit
+[0;32m[15:41:49][0m Detected: /Users/aaronmaher/Downloads/grappling (16).opml
+[0;32m[15:41:49][0m Processing: grappling (16).opml
+cp: /Users/aaronmaher/Downloads/grappling (16).opml: Operation not permitted
+[0;32m[15:41:49][0m Archived -> archive/grappling_20260317_154149.opml
+cp: /Users/aaronmaher/Downloads/grappling (16).opml: Operation not permitted
+[0;32m[15:41:49][0m Copied to grappling.opml
+[0;32m[15:41:49][0m Converting OPML -> updating index.html...
+Reading: /Users/aaronmaher/Chat-gpt/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+Network: 3385 total nodes, 99 in_network, 69 edges
+Updated index.html (101944 chars of SECTIONS data)
+[1;33m[15:41:49] WARN:[0m No changes detected -- skipping commit
+[0;32m[15:50:54][0m Detected: /Users/aaronmaher/Downloads/grappling (17).opml
+[0;32m[15:50:54][0m Processing: grappling (17).opml
+cp: /Users/aaronmaher/Downloads/grappling (17).opml: Operation not permitted
+[0;32m[15:50:54][0m Archived -> archive/grappling_20260317_155054.opml
+cp: /Users/aaronmaher/Downloads/grappling (17).opml: Operation not permitted
+[0;32m[15:50:54][0m Copied to grappling.opml
+[0;32m[15:50:54][0m Converting OPML -> updating index.html...
+Reading: /Users/aaronmaher/Chat-gpt/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+Network: 3385 total nodes, 99 in_network, 69 edges
+Updated index.html (102131 chars of SECTIONS data)
+[1;33m[15:50:55] WARN:[0m No changes detected -- skipping commit
+[0;32m[15:50:55][0m Detected: /Users/aaronmaher/Downloads/grappling (17).opml
+[0;32m[15:50:55][0m Processing: grappling (17).opml
+cp: /Users/aaronmaher/Downloads/grappling (17).opml: Operation not permitted
+[0;32m[15:50:55][0m Archived -> archive/grappling_20260317_155055.opml
+cp: /Users/aaronmaher/Downloads/grappling (17).opml: Operation not permitted
+[0;32m[15:50:55][0m Copied to grappling.opml
+[0;32m[15:50:55][0m Converting OPML -> updating index.html...
+Reading: /Users/aaronmaher/Chat-gpt/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+Network: 3385 total nodes, 99 in_network, 69 edges
+Updated index.html (102131 chars of SECTIONS data)
+[1;33m[15:50:55] WARN:[0m No changes detected -- skipping commit
+[0;32m[16:26:23][0m Detected: /Users/aaronmaher/Downloads/grappling (18).opml
+[0;32m[16:26:23][0m Processing: grappling (18).opml
+cp: /Users/aaronmaher/Downloads/grappling (18).opml: Operation not permitted
+[0;32m[16:26:24][0m Archived -> archive/grappling_20260317_162623.opml
+cp: /Users/aaronmaher/Downloads/grappling (18).opml: Operation not permitted
+[0;32m[16:26:24][0m Copied to grappling.opml
+[0;32m[16:26:24][0m Converting OPML -> updating index.html...
+Reading: /Users/aaronmaher/Chat-gpt/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+Network: 3360 total nodes, 99 in_network, 69 edges
+Updated index.html (101306 chars of SECTIONS data)
+On branch main
+Your branch and 'origin/main' have diverged,
+and have 4 and 3 different commits each, respectively.
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	.claude/
+	tools/watch-and-push.log
+
+nothing added to commit but untracked files present (use "git add" to track)
+[0;32m[16:26:24][0m Pushing to GitHub...
+To github.com:aarontmaher/Chat-gpt.git
+ ! [rejected]        main -> main (non-fast-forward)
+error: failed to push some refs to 'github.com:aarontmaher/Chat-gpt.git'
+hint: Updates were rejected because the tip of your current branch is behind
+hint: its remote counterpart. If you want to integrate the remote changes,
+hint: use 'git pull' before pushing again.
+hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+[0;31m[16:26:26] ERROR:[0m git push failed. Check credentials (see README for help).
+[0;32m[16:26:26][0m Detected: /Users/aaronmaher/Downloads/grappling (18).opml
+[0;32m[16:26:26][0m Processing: grappling (18).opml
+cp: /Users/aaronmaher/Downloads/grappling (18).opml: Operation not permitted
+[0;32m[16:26:26][0m Archived -> archive/grappling_20260317_162626.opml
+cp: /Users/aaronmaher/Downloads/grappling (18).opml: Operation not permitted
+[0;32m[16:26:26][0m Copied to grappling.opml
+[0;32m[16:26:26][0m Converting OPML -> updating index.html...
+Reading: /Users/aaronmaher/Chat-gpt/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+Network: 3360 total nodes, 99 in_network, 69 edges
+Updated index.html (101306 chars of SECTIONS data)
+[1;33m[16:26:26] WARN:[0m No changes detected -- skipping commit
+[0;32m[16:55:27][0m Detected: /Users/aaronmaher/Downloads/grappling (19).opml
+[0;32m[16:55:27][0m Processing: grappling (19).opml
+cp: /Users/aaronmaher/Downloads/grappling (19).opml: Operation not permitted
+[0;32m[16:55:27][0m Archived -> archive/grappling_20260317_165527.opml
+cp: /Users/aaronmaher/Downloads/grappling (19).opml: Operation not permitted
+[0;32m[16:55:27][0m Copied to grappling.opml
+[0;32m[16:55:27][0m Converting OPML -> updating index.html...
+Reading: /Users/aaronmaher/Chat-gpt/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+Network: 3372 total nodes, 99 in_network, 69 edges
+Updated index.html (101584 chars of SECTIONS data)
+On branch main
+Your branch and 'origin/main' have diverged,
+and have 5 and 4 different commits each, respectively.
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	.claude/
+	tools/watch-and-push.log
+
+nothing added to commit but untracked files present (use "git add" to track)
+[0;32m[16:55:27][0m Pushing to GitHub...
+To github.com:aarontmaher/Chat-gpt.git
+ ! [rejected]        main -> main (non-fast-forward)
+error: failed to push some refs to 'github.com:aarontmaher/Chat-gpt.git'
+hint: Updates were rejected because the tip of your current branch is behind
+hint: its remote counterpart. If you want to integrate the remote changes,
+hint: use 'git pull' before pushing again.
+hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+[0;31m[16:55:30] ERROR:[0m git push failed. Check credentials (see README for help).
+[0;32m[16:55:30][0m Detected: /Users/aaronmaher/Downloads/grappling (19).opml
+[0;32m[16:55:30][0m Processing: grappling (19).opml
+cp: /Users/aaronmaher/Downloads/grappling (19).opml: Operation not permitted
+[0;32m[16:55:30][0m Archived -> archive/grappling_20260317_165530.opml
+cp: /Users/aaronmaher/Downloads/grappling (19).opml: Operation not permitted
+[0;32m[16:55:30][0m Copied to grappling.opml
+[0;32m[16:55:30][0m Converting OPML -> updating index.html...
+Reading: /Users/aaronmaher/Chat-gpt/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+Network: 3372 total nodes, 99 in_network, 69 edges
+Updated index.html (101584 chars of SECTIONS data)
+[1;33m[16:55:30] WARN:[0m No changes detected -- skipping commit
+[0;32m[22:32:11][0m Detected: /Users/aaronmaher/Downloads/grappling (20).opml
+[0;32m[22:32:12][0m Processing: grappling (20).opml
+cp: /Users/aaronmaher/Downloads/grappling (20).opml: Operation not permitted
+[0;32m[22:32:12][0m Archived -> archive/grappling_20260317_223212.opml
+cp: /Users/aaronmaher/Downloads/grappling (20).opml: Operation not permitted
+[0;32m[22:32:12][0m Copied to grappling.opml
+[0;32m[22:32:12][0m Converting OPML -> updating index.html...
+Reading: /Users/aaronmaher/Chat-gpt/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+Network: 3367 total nodes, 98 in_network, 68 edges
+Updated index.html (101410 chars of SECTIONS data)
+[1;33m[22:32:15] WARN:[0m No changes detected -- skipping commit
+[0;32m[22:32:15][0m Detected: /Users/aaronmaher/Downloads/grappling (20).opml
+[0;32m[22:32:15][0m Processing: grappling (20).opml
+cp: /Users/aaronmaher/Downloads/grappling (20).opml: Operation not permitted
+[0;32m[22:32:15][0m Archived -> archive/grappling_20260317_223215.opml
+cp: /Users/aaronmaher/Downloads/grappling (20).opml: Operation not permitted
+[0;32m[22:32:15][0m Copied to grappling.opml
+[0;32m[22:32:15][0m Converting OPML -> updating index.html...
+Reading: /Users/aaronmaher/Chat-gpt/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+Network: 3367 total nodes, 98 in_network, 68 edges
+Updated index.html (101410 chars of SECTIONS data)
+[1;33m[22:32:16] WARN:[0m No changes detected -- skipping commit
+[0;32m[22:50:05][0m Detected: /Users/aaronmaher/Downloads/grappling (21).opml
+[0;32m[22:50:05][0m Processing: grappling (21).opml
+cp: /Users/aaronmaher/Downloads/grappling (21).opml: Operation not permitted
+[0;32m[22:50:06][0m Archived -> archive/grappling_20260317_225005.opml
+cp: /Users/aaronmaher/Downloads/grappling (21).opml: Operation not permitted
+[0;32m[22:50:06][0m Copied to grappling.opml
+[0;32m[22:50:06][0m Converting OPML -> updating index.html...
+Reading: /Users/aaronmaher/Chat-gpt/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+Network: 3367 total nodes, 98 in_network, 68 edges
+Updated index.html (101375 chars of SECTIONS data)
+On branch main
+Your branch and 'origin/main' have diverged,
+and have 7 and 4 different commits each, respectively.
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	.claude/
+	tools/watch-and-push.log
+
+nothing added to commit but untracked files present (use "git add" to track)
+[0;32m[22:50:06][0m Pushing to GitHub...
+To github.com:aarontmaher/Chat-gpt.git
+ ! [rejected]        main -> main (non-fast-forward)
+error: failed to push some refs to 'github.com:aarontmaher/Chat-gpt.git'
+hint: Updates were rejected because the tip of your current branch is behind
+hint: its remote counterpart. If you want to integrate the remote changes,
+hint: use 'git pull' before pushing again.
+hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+[0;31m[22:50:08] ERROR:[0m git push failed. Check credentials (see README for help).
+[0;32m[22:50:08][0m Detected: /Users/aaronmaher/Downloads/grappling (21).opml
+[0;32m[22:50:08][0m Processing: grappling (21).opml
+cp: /Users/aaronmaher/Downloads/grappling (21).opml: Operation not permitted
+[0;32m[22:50:08][0m Archived -> archive/grappling_20260317_225008.opml
+cp: /Users/aaronmaher/Downloads/grappling (21).opml: Operation not permitted
+[0;32m[22:50:08][0m Copied to grappling.opml
+[0;32m[22:50:08][0m Converting OPML -> updating index.html...
+Reading: /Users/aaronmaher/Chat-gpt/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+Network: 3367 total nodes, 98 in_network, 68 edges
+Updated index.html (101375 chars of SECTIONS data)
+[1;33m[22:50:08] WARN:[0m No changes detected -- skipping commit
+[0;32m[00:02:44][0m Detected: /Users/aaronmaher/Downloads/grappling (22).opml
+[0;32m[00:02:44][0m Processing: grappling (22).opml
+cp: /Users/aaronmaher/Downloads/grappling (22).opml: Operation not permitted
+[0;32m[00:02:45][0m Archived -> archive/grappling_20260318_000244.opml
+cp: /Users/aaronmaher/Downloads/grappling (22).opml: Operation not permitted
+[0;32m[00:02:45][0m Copied to grappling.opml
+[0;32m[00:02:45][0m Converting OPML -> updating index.html...
+Reading: /Users/aaronmaher/Chat-gpt/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+Network: 3367 total nodes, 98 in_network, 68 edges
+Updated index.html (101375 chars of SECTIONS data)
+[1;33m[00:02:45] WARN:[0m No changes detected -- skipping commit
+[0;32m[00:02:45][0m Detected: /Users/aaronmaher/Downloads/grappling (22).opml
+[0;32m[00:02:45][0m Processing: grappling (22).opml
+cp: /Users/aaronmaher/Downloads/grappling (22).opml: Operation not permitted
+[0;32m[00:02:45][0m Archived -> archive/grappling_20260318_000245.opml
+cp: /Users/aaronmaher/Downloads/grappling (22).opml: Operation not permitted
+[0;32m[00:02:45][0m Copied to grappling.opml
+[0;32m[00:02:45][0m Converting OPML -> updating index.html...
+Reading: /Users/aaronmaher/Chat-gpt/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+Network: 3367 total nodes, 98 in_network, 68 edges
+Updated index.html (101375 chars of SECTIONS data)
+[1;33m[00:02:45] WARN:[0m No changes detected -- skipping commit
+[0;32m[00:49:44][0m Detected: /Users/aaronmaher/Downloads/grappling (23).opml
+[0;32m[00:49:44][0m Processing: grappling (23).opml
+cp: /Users/aaronmaher/Downloads/grappling (23).opml: Operation not permitted
+[0;32m[00:49:44][0m Archived -> archive/grappling_20260318_004944.opml
+cp: /Users/aaronmaher/Downloads/grappling (23).opml: Operation not permitted
+[0;32m[00:49:44][0m Copied to grappling.opml
+[0;32m[00:49:44][0m Converting OPML -> updating index.html...
+Reading: /Users/aaronmaher/Chat-gpt/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+Network: 3367 total nodes, 98 in_network, 68 edges
+Updated index.html (101368 chars of SECTIONS data)
+On branch main
+Your branch and 'origin/main' have diverged,
+and have 8 and 7 different commits each, respectively.
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	.claude/
+	tools/watch-and-push.log
+
+nothing added to commit but untracked files present (use "git add" to track)
+[0;32m[00:49:44][0m Pushing to GitHub...
+To github.com:aarontmaher/Chat-gpt.git
+ ! [rejected]        main -> main (non-fast-forward)
+error: failed to push some refs to 'github.com:aarontmaher/Chat-gpt.git'
+hint: Updates were rejected because the tip of your current branch is behind
+hint: its remote counterpart. If you want to integrate the remote changes,
+hint: use 'git pull' before pushing again.
+hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+[0;31m[00:49:47] ERROR:[0m git push failed. Check credentials (see README for help).
+[0;32m[00:49:47][0m Detected: /Users/aaronmaher/Downloads/grappling (23).opml
+[0;32m[00:49:47][0m Processing: grappling (23).opml
+cp: /Users/aaronmaher/Downloads/grappling (23).opml: Operation not permitted
+[0;32m[00:49:47][0m Archived -> archive/grappling_20260318_004947.opml
+cp: /Users/aaronmaher/Downloads/grappling (23).opml: Operation not permitted
+[0;32m[00:49:47][0m Copied to grappling.opml
+[0;32m[00:49:47][0m Converting OPML -> updating index.html...
+Reading: /Users/aaronmaher/Chat-gpt/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+Network: 3367 total nodes, 98 in_network, 68 edges
+Updated index.html (101368 chars of SECTIONS data)
+[1;33m[00:49:47] WARN:[0m No changes detected -- skipping commit
+[0;32m[01:29:43][0m Detected: /Users/aaronmaher/Downloads/grappling (24).opml
+[0;32m[01:29:43][0m Processing: grappling (24).opml
+cp: /Users/aaronmaher/Downloads/grappling (24).opml: Operation not permitted
+[0;32m[01:29:43][0m Archived -> archive/grappling_20260318_012943.opml
+cp: /Users/aaronmaher/Downloads/grappling (24).opml: Operation not permitted
+[0;32m[01:29:43][0m Copied to grappling.opml
+[0;32m[01:29:43][0m Converting OPML -> updating index.html...
+Reading: /Users/aaronmaher/Chat-gpt/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+Network: 3368 total nodes, 98 in_network, 68 edges
+Updated index.html (101391 chars of SECTIONS data)
+On branch main
+Your branch and 'origin/main' have diverged,
+and have 9 and 7 different commits each, respectively.
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	.claude/
+	tools/watch-and-push.log
+
+nothing added to commit but untracked files present (use "git add" to track)
+[0;32m[01:29:43][0m Pushing to GitHub...
+To github.com:aarontmaher/Chat-gpt.git
+ ! [rejected]        main -> main (non-fast-forward)
+error: failed to push some refs to 'github.com:aarontmaher/Chat-gpt.git'
+hint: Updates were rejected because the tip of your current branch is behind
+hint: its remote counterpart. If you want to integrate the remote changes,
+hint: use 'git pull' before pushing again.
+hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+[0;31m[01:29:46] ERROR:[0m git push failed. Check credentials (see README for help).
+[0;32m[01:29:46][0m Detected: /Users/aaronmaher/Downloads/grappling (24).opml
+[0;32m[01:29:46][0m Processing: grappling (24).opml
+cp: /Users/aaronmaher/Downloads/grappling (24).opml: Operation not permitted
+[0;32m[01:29:46][0m Archived -> archive/grappling_20260318_012946.opml
+cp: /Users/aaronmaher/Downloads/grappling (24).opml: Operation not permitted
+[0;32m[01:29:46][0m Copied to grappling.opml
+[0;32m[01:29:46][0m Converting OPML -> updating index.html...
+Reading: /Users/aaronmaher/Chat-gpt/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+Network: 3368 total nodes, 98 in_network, 68 edges
+Updated index.html (101391 chars of SECTIONS data)
+[1;33m[01:29:46] WARN:[0m No changes detected -- skipping commit
+[0;32m[01:42:24][0m Detected: /Users/aaronmaher/Downloads/grappling (25).opml
+[0;32m[01:42:24][0m Processing: grappling (25).opml
+cp: /Users/aaronmaher/Downloads/grappling (25).opml: Operation not permitted
+[0;32m[01:42:24][0m Archived -> archive/grappling_20260318_014224.opml
+cp: /Users/aaronmaher/Downloads/grappling (25).opml: Operation not permitted
+[0;32m[01:42:24][0m Copied to grappling.opml
+[0;32m[01:42:24][0m Converting OPML -> updating index.html...
+Reading: /Users/aaronmaher/Chat-gpt/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+Network: 3367 total nodes, 98 in_network, 68 edges
+Updated index.html (101352 chars of SECTIONS data)
+On branch main
+Your branch and 'origin/main' have diverged,
+and have 10 and 7 different commits each, respectively.
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	.claude/
+	tools/watch-and-push.log
+
+nothing added to commit but untracked files present (use "git add" to track)
+[0;32m[01:42:24][0m Pushing to GitHub...
+To github.com:aarontmaher/Chat-gpt.git
+ ! [rejected]        main -> main (non-fast-forward)
+error: failed to push some refs to 'github.com:aarontmaher/Chat-gpt.git'
+hint: Updates were rejected because the tip of your current branch is behind
+hint: its remote counterpart. If you want to integrate the remote changes,
+hint: use 'git pull' before pushing again.
+hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+[0;31m[01:42:27] ERROR:[0m git push failed. Check credentials (see README for help).
+[0;32m[01:42:27][0m Detected: /Users/aaronmaher/Downloads/grappling (25).opml
+[0;32m[01:42:27][0m Processing: grappling (25).opml
+cp: /Users/aaronmaher/Downloads/grappling (25).opml: Operation not permitted
+[0;32m[01:42:27][0m Archived -> archive/grappling_20260318_014227.opml
+cp: /Users/aaronmaher/Downloads/grappling (25).opml: Operation not permitted
+[0;32m[01:42:27][0m Copied to grappling.opml
+[0;32m[01:42:27][0m Converting OPML -> updating index.html...
+Reading: /Users/aaronmaher/Chat-gpt/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+Network: 3367 total nodes, 98 in_network, 68 edges
+Updated index.html (101352 chars of SECTIONS data)
+[1;33m[01:42:27] WARN:[0m No changes detected -- skipping commit
+[0;32m[13:58:04][0m Detected: /Users/aaronmaher/Downloads/grappling (26).opml
+[0;32m[13:58:04][0m Processing: grappling (26).opml
+cp: /Users/aaronmaher/Downloads/grappling (26).opml: Operation not permitted
+[0;32m[13:58:04][0m Archived -> archive/grappling_20260318_135804.opml
+cp: /Users/aaronmaher/Downloads/grappling (26).opml: Operation not permitted
+[0;32m[13:58:04][0m Copied to grappling.opml
+[0;32m[13:58:04][0m Converting OPML -> updating index.html...
+Reading: /Users/aaronmaher/Chat-gpt/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+Canonical positions: 42
+Transition edges: 29 unique | total weight: 29 | max weight: 1
+Warnings: 7 total (NO_DEST: 6, AMBIG_DEST: 0, NO_SRC: 0, MALFORMED: 1, UNRESOLVED: 0)
+  WARN: NO_DEST: "→ 2-on-1" — no matching position (src: "Outside tie (You)", section "Wrestling")
+  WARN: NO_DEST: "→ Head inside snatch single" — no matching position (src: "Underhook (You)", section "Wrestling")
+  WARN: NO_DEST: "→ Snatch head outside single" — no matching position (src: "Underhook (You)", section "Wrestling")
+  WARN: NO_DEST: "→ Head outside single" — no matching position (src: "Underhook (You)", section "Wrestling")
+  WARN: NO_DEST: "→ Snatch single" — no matching position (src: "You", section "Wrestling")
+  WARN: NO_DEST: "→ Knee staple" — no matching position (src: "Wrestling bodylock", section "Wrestling")
+  WARN: MALFORMED: "→ Knee on belly" (section "Dominant Positions")
+Network: 3367 total nodes, 26 in_network, 29 transition edges
+Updated index.html (101352 chars of SECTIONS data)
+[main 7700163] Update grappling map from Mindomo export [20260318_135804]
+ Committer: Aaron Maher <aaronmaher@Aarons-MacBook-Air.local>
+Your name and email address were configured automatically based
+on your username and hostname. Please check that they are accurate.
+You can suppress this message by setting them explicitly. Run the
+following command and follow the instructions in your editor to edit
+your configuration file:
+
+    git config --global --edit
+
+After doing this, you may fix the identity used for this commit with:
+
+    git commit --amend --reset-author
+
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+[0;32m[13:58:05][0m Pushing to GitHub...
+To github.com:aarontmaher/Chat-gpt.git
+   eb4be4e..7700163  main -> main
+[0;32m[13:58:08][0m Done! GitHub Pages will update in ~30-60 seconds.
+
+[0;32m[13:58:08][0m Detected: /Users/aaronmaher/Downloads/grappling (26).opml
+[0;32m[13:58:08][0m Processing: grappling (26).opml
+cp: /Users/aaronmaher/Downloads/grappling (26).opml: Operation not permitted
+[0;32m[13:58:08][0m Archived -> archive/grappling_20260318_135808.opml
+cp: /Users/aaronmaher/Downloads/grappling (26).opml: Operation not permitted
+[0;32m[13:58:08][0m Copied to grappling.opml
+[0;32m[13:58:08][0m Converting OPML -> updating index.html...
+Reading: /Users/aaronmaher/Chat-gpt/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+Canonical positions: 42
+Transition edges: 32 unique | total weight: 33 | max weight: 2
+Warnings: 3 total (NO_DEST: 2, AMBIG_DEST: 0, NO_SRC: 0, MALFORMED: 1, UNRESOLVED: 0)
+  WARN: NO_DEST: "→ 2-on-1" — no matching position (src: "Outside tie (You)", section "Wrestling")
+  WARN: NO_DEST: "→ Knee staple" — no matching position (src: "Wrestling bodylock", section "Wrestling")
+  WARN: MALFORMED: "→ Knee on belly" (section "Dominant Positions")
+Network: 3367 total nodes, 28 in_network, 32 transition edges
+Updated index.html (101345 chars of SECTIONS data)
+[1;33m[13:58:08] WARN:[0m No changes detected -- skipping commit
+[0;32m[14:05:12][0m Detected: /Users/aaronmaher/Downloads/grappling (27).opml
+[0;32m[14:05:12][0m Processing: grappling (27).opml
+cp: /Users/aaronmaher/Downloads/grappling (27).opml: Operation not permitted
+[0;32m[14:05:12][0m Archived -> archive/grappling_20260318_140512.opml
+cp: /Users/aaronmaher/Downloads/grappling (27).opml: Operation not permitted
+[0;32m[14:05:12][0m Copied to grappling.opml
+[0;32m[14:05:12][0m Converting OPML -> updating index.html...
+ERROR: "const SECTIONS = " not found in index.html
+Reading: /Users/aaronmaher/Chat-gpt/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+Canonical positions: 42
+Transition edges: 32 unique | total weight: 33 | max weight: 2
+Warnings: 3 total (NO_DEST: 2, AMBIG_DEST: 0, NO_SRC: 0, MALFORMED: 1, UNRESOLVED: 0)
+  WARN: NO_DEST: "→ 2-on-1" — no matching position (src: "Outside tie (You)", section "Wrestling")
+  WARN: NO_DEST: "→ Knee staple" — no matching position (src: "Wrestling bodylock", section "Wrestling")
+  WARN: MALFORMED: "→ Knee on belly" (section "Dominant Positions")
+Network: 3367 total nodes, 28 in_network, 32 transition edges
+[0;31m[14:05:12] ERROR:[0m Conversion failed. Aborting commit.
+[0;32m[14:05:12][0m Detected: /Users/aaronmaher/Downloads/grappling (27).opml
+[0;32m[14:05:12][0m Processing: grappling (27).opml
+cp: /Users/aaronmaher/Downloads/grappling (27).opml: Operation not permitted
+[0;32m[14:05:12][0m Archived -> archive/grappling_20260318_140512.opml
+cp: /Users/aaronmaher/Downloads/grappling (27).opml: Operation not permitted
+[0;32m[14:05:12][0m Copied to grappling.opml
+[0;32m[14:05:12][0m Converting OPML -> updating index.html...
+Reading: /Users/aaronmaher/Chat-gpt/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+Canonical positions: 42
+Transition edges: 32 unique | total weight: 33 | max weight: 2
+Warnings: 3 total (NO_DEST: 2, AMBIG_DEST: 0, NO_SRC: 0, MALFORMED: 1, UNRESOLVED: 0)
+  WARN: NO_DEST: "→ 2-on-1" — no matching position (src: "Outside tie (You)", section "Wrestling")
+  WARN: NO_DEST: "→ Knee staple" — no matching position (src: "Wrestling bodylock", section "Wrestling")
+  WARN: MALFORMED: "→ Knee on belly" (section "Dominant Positions")
+Network: 3367 total nodes, 28 in_network, 32 transition edges
+Updated index.html (101345 chars of SECTIONS data)
+[1;33m[14:05:12] WARN:[0m No changes detected -- skipping commit
+[0;32m[17:03:33][0m Detected: /Users/aaronmaher/Downloads/grappling (28).opml
+[0;32m[17:03:33][0m Processing: grappling (28).opml
+cp: /Users/aaronmaher/Downloads/grappling (28).opml: Operation not permitted
+[0;32m[17:03:33][0m Archived -> archive/grappling_20260318_170333.opml
+cp: /Users/aaronmaher/Downloads/grappling (28).opml: Operation not permitted
+[0;32m[17:03:33][0m Copied to grappling.opml
+[0;32m[17:03:33][0m Converting OPML -> updating index.html...
+Reading: /Users/aaronmaher/Chat-gpt/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+Canonical positions: 42
+Transition edges: 33 unique | total weight: 33 | max weight: 1
+Warnings: 1 total (NO_DEST: 0, AMBIG_DEST: 0, NO_SRC: 0, MALFORMED: 1, UNRESOLVED: 0)
+  WARN: MALFORMED: "→ Knee on belly" (section "Dominant Positions")
+Network: 3363 total nodes, 29 in_network, 33 transition edges
+Updated index.html (101153 chars of SECTIONS data)
+[1;33m[17:03:33] WARN:[0m No changes detected -- skipping commit
+[0;32m[17:03:33][0m Detected: /Users/aaronmaher/Downloads/grappling (28).opml
+[0;32m[17:03:33][0m Processing: grappling (28).opml
+cp: /Users/aaronmaher/Downloads/grappling (28).opml: Operation not permitted
+[0;32m[17:03:33][0m Archived -> archive/grappling_20260318_170333.opml
+cp: /Users/aaronmaher/Downloads/grappling (28).opml: Operation not permitted
+[0;32m[17:03:33][0m Copied to grappling.opml
+[0;32m[17:03:33][0m Converting OPML -> updating index.html...
+Reading: /Users/aaronmaher/Chat-gpt/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+Canonical positions: 42
+Transition edges: 33 unique | total weight: 33 | max weight: 1
+Warnings: 1 total (NO_DEST: 0, AMBIG_DEST: 0, NO_SRC: 0, MALFORMED: 1, UNRESOLVED: 0)
+  WARN: MALFORMED: "→ Knee on belly" (section "Dominant Positions")
+Network: 3363 total nodes, 29 in_network, 33 transition edges
+Updated index.html (101153 chars of SECTIONS data)
+[1;33m[17:03:34] WARN:[0m No changes detected -- skipping commit
+[0;32m[17:59:08][0m Detected: /Users/aaronmaher/Downloads/grappling (29).opml
+[0;32m[17:59:08][0m Processing: grappling (29).opml
+cp: /Users/aaronmaher/Downloads/grappling (29).opml: Operation not permitted
+[0;32m[17:59:08][0m Archived -> archive/grappling_20260318_175908.opml
+cp: /Users/aaronmaher/Downloads/grappling (29).opml: Operation not permitted
+[0;32m[17:59:08][0m Copied to grappling.opml
+[0;32m[17:59:08][0m Converting OPML -> updating index.html...
+Reading: /Users/aaronmaher/Chat-gpt/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+  HELD: → Knee on belly (awaiting context label)
+  HELD: → Knee on belly (awaiting context label)
+Canonical positions: 42
+Transition edges: 33 unique | total weight: 33 | max weight: 1
+Warnings: 0 total (NO_DEST: 0, AMBIG_DEST: 0, NO_SRC: 0, MALFORMED: 0, UNRESOLVED: 0)
+Network: 3363 total nodes, 29 in_network, 33 transition edges
+Updated index.html (101147 chars of SECTIONS data)
+[main f6b132f] Update grappling map from Mindomo export [20260318_175908]
+ Committer: Aaron Maher <aaronmaher@Aarons-MacBook-Air.local>
+Your name and email address were configured automatically based
+on your username and hostname. Please check that they are accurate.
+You can suppress this message by setting them explicitly. Run the
+following command and follow the instructions in your editor to edit
+your configuration file:
+
+    git config --global --edit
+
+After doing this, you may fix the identity used for this commit with:
+
+    git commit --amend --reset-author
+
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+[0;32m[17:59:09][0m Pushing to GitHub...
+To github.com:aarontmaher/Chat-gpt.git
+ ! [remote rejected] main -> main (cannot lock ref 'refs/heads/main': is at f6b132f45113bd911c2d64659dcb3f0241813bae but expected 8825f2d02fc7c61566aeaca625b051fba9248701)
+error: failed to push some refs to 'github.com:aarontmaher/Chat-gpt.git'
+[0;31m[17:59:12] ERROR:[0m git push failed. Check credentials (see README for help).
+[0;32m[17:59:12][0m Detected: /Users/aaronmaher/Downloads/grappling (29).opml
+[0;32m[17:59:12][0m Processing: grappling (29).opml
+cp: /Users/aaronmaher/Downloads/grappling (29).opml: Operation not permitted
+[0;32m[17:59:12][0m Archived -> archive/grappling_20260318_175912.opml
+cp: /Users/aaronmaher/Downloads/grappling (29).opml: Operation not permitted
+[0;32m[17:59:12][0m Copied to grappling.opml
+[0;32m[17:59:12][0m Converting OPML -> updating index.html...
+Reading: /Users/aaronmaher/Chat-gpt/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+  HELD: → Knee on belly (awaiting context label)
+  HELD: → Knee on belly (awaiting context label)
+Canonical positions: 42
+Transition edges: 33 unique | total weight: 33 | max weight: 1
+Warnings: 0 total (NO_DEST: 0, AMBIG_DEST: 0, NO_SRC: 0, MALFORMED: 0, UNRESOLVED: 0)
+Network: 3363 total nodes, 29 in_network, 33 transition edges
+Updated index.html (101147 chars of SECTIONS data)
+[1;33m[17:59:12] WARN:[0m No changes detected -- skipping commit
+[0;32m[18:43:12][0m Detected: /Users/aaronmaher/Downloads/grappling (30).opml
+[0;32m[18:43:12][0m Processing: grappling (30).opml
+cp: /Users/aaronmaher/Downloads/grappling (30).opml: Operation not permitted
+[0;32m[18:43:12][0m Archived -> archive/grappling_20260318_184312.opml
+cp: /Users/aaronmaher/Downloads/grappling (30).opml: Operation not permitted
+[0;32m[18:43:12][0m Copied to grappling.opml
+[0;32m[18:43:12][0m Converting OPML -> updating index.html...
+ERROR: "const SECTIONS = " not found in index.html
+Reading: /Users/aaronmaher/Chat-gpt/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+  HELD: → Knee on belly (awaiting context label)
+  HELD: → Knee on belly (awaiting context label)
+Canonical positions: 42
+Transition edges: 33 unique | total weight: 33 | max weight: 1
+Warnings: 0 total (NO_DEST: 0, AMBIG_DEST: 0, NO_SRC: 0, MALFORMED: 0, UNRESOLVED: 0)
+Network: 3371 total nodes, 29 in_network, 33 transition edges
+[0;31m[18:43:12] ERROR:[0m Conversion failed. Aborting commit.
+[0;32m[18:43:12][0m Detected: /Users/aaronmaher/Downloads/grappling (30).opml
+[0;32m[18:43:12][0m Processing: grappling (30).opml
+cp: /Users/aaronmaher/Downloads/grappling (30).opml: Operation not permitted
+[0;32m[18:43:12][0m Archived -> archive/grappling_20260318_184312.opml
+cp: /Users/aaronmaher/Downloads/grappling (30).opml: Operation not permitted
+[0;32m[18:43:12][0m Copied to grappling.opml
+[0;32m[18:43:12][0m Converting OPML -> updating index.html...
+Reading: /Users/aaronmaher/Chat-gpt/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+  HELD: → Knee on belly (awaiting context label)
+  HELD: → Knee on belly (awaiting context label)
+Canonical positions: 42
+Transition edges: 33 unique | total weight: 33 | max weight: 1
+Warnings: 0 total (NO_DEST: 0, AMBIG_DEST: 0, NO_SRC: 0, MALFORMED: 0, UNRESOLVED: 0)
+Network: 3371 total nodes, 29 in_network, 33 transition edges
+Updated index.html (101349 chars of SECTIONS data)
+[1;33m[18:43:13] WARN:[0m No changes detected -- skipping commit
+[0;32m[21:29:13][0m Detected: /Users/aaronmaher/Downloads/grappling (31).opml
+[0;32m[21:29:13][0m Processing: grappling (31).opml
+cp: /Users/aaronmaher/Downloads/grappling (31).opml: Operation not permitted
+[0;32m[21:29:13][0m Archived -> archive/grappling_20260318_212913.opml
+cp: /Users/aaronmaher/Downloads/grappling (31).opml: Operation not permitted
+[0;32m[21:29:13][0m Copied to grappling.opml
+[0;32m[21:29:13][0m Converting OPML -> updating index.html...
+Reading: /Users/aaronmaher/Chat-gpt/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+  HELD: → Knee on belly (awaiting context label)
+  HELD: → Knee on belly (awaiting context label)
+Canonical positions: 42
+Transition edges: 33 unique | total weight: 33 | max weight: 1
+Warnings: 0 total (NO_DEST: 0, AMBIG_DEST: 0, NO_SRC: 0, MALFORMED: 0, UNRESOLVED: 0)
+Network: 3383 total nodes, 29 in_network, 33 transition edges
+Updated index.html (101595 chars of SECTIONS data)
+fatal: Unable to create '/Users/aaronmaher/Chat-gpt/.git/index.lock': File exists.
+
+Another git process seems to be running in this repository, e.g.
+an editor opened by 'git commit'. Please make sure all processes
+are terminated then try again. If it still fails, a git process
+may have crashed in this repository earlier:
+remove the file manually to continue.
+[main a9fe95a] Update grappling map from Mindomo export [20260318_212913]
+ Committer: Aaron Maher <aaronmaher@Aarons-MacBook-Air.local>
+Your name and email address were configured automatically based
+on your username and hostname. Please check that they are accurate.
+You can suppress this message by setting them explicitly. Run the
+following command and follow the instructions in your editor to edit
+your configuration file:
+
+    git config --global --edit
+
+After doing this, you may fix the identity used for this commit with:
+
+    git commit --amend --reset-author
+
+ 2 files changed, 18 insertions(+), 5 deletions(-)
+[0;32m[21:29:13][0m Pushing to GitHub...
+To github.com:aarontmaher/Chat-gpt.git
+   93c5b88..a9fe95a  main -> main
+[0;32m[21:29:16][0m Done! GitHub Pages will update in ~30-60 seconds.
+
+[0;32m[21:29:16][0m Detected: /Users/aaronmaher/Downloads/grappling (31).opml
+[0;32m[21:29:16][0m Processing: grappling (31).opml
+cp: /Users/aaronmaher/Downloads/grappling (31).opml: Operation not permitted
+[0;32m[21:29:16][0m Archived -> archive/grappling_20260318_212916.opml
+cp: /Users/aaronmaher/Downloads/grappling (31).opml: Operation not permitted
+[0;32m[21:29:16][0m Copied to grappling.opml
+[0;32m[21:29:16][0m Converting OPML -> updating index.html...
+Reading: /Users/aaronmaher/Chat-gpt/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+  HELD: → Knee on belly (awaiting context label)
+  HELD: → Knee on belly (awaiting context label)
+Canonical positions: 42
+Transition edges: 33 unique | total weight: 33 | max weight: 1
+Warnings: 0 total (NO_DEST: 0, AMBIG_DEST: 0, NO_SRC: 0, MALFORMED: 0, UNRESOLVED: 0)
+Network: 3383 total nodes, 29 in_network, 33 transition edges
+Updated index.html (101595 chars of SECTIONS data)
+[1;33m[21:29:17] WARN:[0m No changes detected -- skipping commit
+[0;32m[21:29:47][0m Detected: /Users/aaronmaher/GrapplingMap/exports/grappling.opml
+[0;32m[21:29:47][0m Processing: grappling.opml
+[0;32m[21:29:47][0m Archived -> archive/grappling_20260318_212947.opml
+[0;32m[21:29:47][0m Copied to grappling.opml
+[0;32m[21:29:47][0m Converting OPML -> updating index.html...
+Reading: /Users/aaronmaher/Chat-gpt/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+  HELD: → Knee on belly (awaiting context label)
+  HELD: → Knee on belly (awaiting context label)
+Canonical positions: 42
+Transition edges: 33 unique | total weight: 33 | max weight: 1
+Warnings: 0 total (NO_DEST: 0, AMBIG_DEST: 0, NO_SRC: 0, MALFORMED: 0, UNRESOLVED: 0)
+Network: 3383 total nodes, 29 in_network, 33 transition edges
+Updated index.html (101595 chars of SECTIONS data)
+[1;33m[21:29:48] WARN:[0m No changes detected -- skipping commit
+[0;32m[22:01:46][0m Detected: /Users/aaronmaher/Downloads/grappling (32).opml
+[0;32m[22:01:46][0m Processing: grappling (32).opml
+cp: /Users/aaronmaher/Downloads/grappling (32).opml: Operation not permitted
+[0;32m[22:01:46][0m Archived -> archive/grappling_20260318_220146.opml
+cp: /Users/aaronmaher/Downloads/grappling (32).opml: Operation not permitted
+[0;32m[22:01:46][0m Copied to grappling.opml
+[0;32m[22:01:46][0m Converting OPML -> updating index.html...
+Reading: /Users/aaronmaher/Chat-gpt/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+  HELD: → Knee on belly (awaiting context label)
+  HELD: → Knee on belly (awaiting context label)
+Canonical positions: 42
+Transition edges: 33 unique | total weight: 33 | max weight: 1
+Warnings: 0 total (NO_DEST: 0, AMBIG_DEST: 0, NO_SRC: 0, MALFORMED: 0, UNRESOLVED: 0)
+Network: 3383 total nodes, 29 in_network, 33 transition edges
+Updated index.html (101595 chars of SECTIONS data)
+[1;33m[22:01:46] WARN:[0m No changes detected -- skipping commit
+[0;32m[22:01:46][0m Detected: /Users/aaronmaher/Downloads/grappling (32).opml
+[0;32m[22:01:46][0m Processing: grappling (32).opml
+cp: /Users/aaronmaher/Downloads/grappling (32).opml: Operation not permitted
+[0;32m[22:01:46][0m Archived -> archive/grappling_20260318_220146.opml
+cp: /Users/aaronmaher/Downloads/grappling (32).opml: Operation not permitted
+[0;32m[22:01:46][0m Copied to grappling.opml
+[0;32m[22:01:46][0m Converting OPML -> updating index.html...
+Reading: /Users/aaronmaher/Chat-gpt/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+  HELD: → Knee on belly (awaiting context label)
+  HELD: → Knee on belly (awaiting context label)
+Canonical positions: 42
+Transition edges: 33 unique | total weight: 33 | max weight: 1
+Warnings: 0 total (NO_DEST: 0, AMBIG_DEST: 0, NO_SRC: 0, MALFORMED: 0, UNRESOLVED: 0)
+Network: 3383 total nodes, 29 in_network, 33 transition edges
+Updated index.html (101595 chars of SECTIONS data)
+[1;33m[22:01:46] WARN:[0m No changes detected -- skipping commit
+[0;32m[23:09:46][0m Detected: /Users/aaronmaher/Downloads/grappling (33).opml
+[0;32m[23:09:46][0m Processing: grappling (33).opml
+cp: /Users/aaronmaher/Downloads/grappling (33).opml: Operation not permitted
+[0;32m[23:09:46][0m Archived -> archive/grappling_20260318_230946.opml
+cp: /Users/aaronmaher/Downloads/grappling (33).opml: Operation not permitted
+[0;32m[23:09:46][0m Copied to grappling.opml
+[0;32m[23:09:46][0m Converting OPML -> updating index.html...
+Reading: /Users/aaronmaher/Chat-gpt/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+  HELD: → Knee on belly (awaiting context label)
+  HELD: → Knee on belly (awaiting context label)
+Canonical positions: 42
+Transition edges: 33 unique | total weight: 33 | max weight: 1
+Warnings: 0 total (NO_DEST: 0, AMBIG_DEST: 0, NO_SRC: 0, MALFORMED: 0, UNRESOLVED: 0)
+Network: 3383 total nodes, 29 in_network, 33 transition edges
+Updated index.html (101595 chars of SECTIONS data)
+[1;33m[23:09:46] WARN:[0m No changes detected -- skipping commit
+[0;32m[23:09:46][0m Detected: /Users/aaronmaher/Downloads/grappling (33).opml
+[0;32m[23:09:46][0m Processing: grappling (33).opml
+cp: /Users/aaronmaher/Downloads/grappling (33).opml: Operation not permitted
+[0;32m[23:09:46][0m Archived -> archive/grappling_20260318_230946.opml
+cp: /Users/aaronmaher/Downloads/grappling (33).opml: Operation not permitted
+[0;32m[23:09:46][0m Copied to grappling.opml
+[0;32m[23:09:46][0m Converting OPML -> updating index.html...
+Reading: /Users/aaronmaher/Chat-gpt/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+  HELD: → Knee on belly (awaiting context label)
+  HELD: → Knee on belly (awaiting context label)
+Canonical positions: 42
+Transition edges: 33 unique | total weight: 33 | max weight: 1
+Warnings: 0 total (NO_DEST: 0, AMBIG_DEST: 0, NO_SRC: 0, MALFORMED: 0, UNRESOLVED: 0)
+Network: 3383 total nodes, 29 in_network, 33 transition edges
+Updated index.html (101595 chars of SECTIONS data)
+[1;33m[23:09:46] WARN:[0m No changes detected -- skipping commit
+[0;32m[00:12:23][0m Detected: /Users/aaronmaher/Downloads/grappling (34).opml
+[0;32m[00:12:23][0m Processing: grappling (34).opml
+cp: /Users/aaronmaher/Downloads/grappling (34).opml: Operation not permitted
+[0;32m[00:12:23][0m Archived -> archive/grappling_20260319_001223.opml
+cp: /Users/aaronmaher/Downloads/grappling (34).opml: Operation not permitted
+[0;32m[00:12:23][0m Copied to grappling.opml
+[0;32m[00:12:23][0m Converting OPML -> updating index.html...
+Reading: /Users/aaronmaher/Chat-gpt/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+  HELD: → Knee on belly (awaiting context label)
+  HELD: → Knee on belly (awaiting context label)
+Canonical positions: 42
+Transition edges: 33 unique | total weight: 33 | max weight: 1
+Warnings: 0 total (NO_DEST: 0, AMBIG_DEST: 0, NO_SRC: 0, MALFORMED: 0, UNRESOLVED: 0)
+Network: 3383 total nodes, 29 in_network, 33 transition edges
+Updated index.html (101605 chars of SECTIONS data)
+fatal: Unable to create '/Users/aaronmaher/Chat-gpt/.git/index.lock': File exists.
+
+Another git process seems to be running in this repository, e.g.
+an editor opened by 'git commit'. Please make sure all processes
+are terminated then try again. If it still fails, a git process
+may have crashed in this repository earlier:
+remove the file manually to continue.
+[0;32m[00:12:23][0m Pushing to GitHub...
+To github.com:aarontmaher/Chat-gpt.git
+ ! [remote rejected] main -> main (cannot lock ref 'refs/heads/main': is at f838b7a757913b6ff07f71f2edecc24fdcb1dd46 but expected 58c8c964939ba7f63ad6fe1c6e505d4bcc80e1fd)
+error: failed to push some refs to 'github.com:aarontmaher/Chat-gpt.git'
+[0;31m[00:12:26] ERROR:[0m git push failed. Check credentials (see README for help).
+[0;32m[00:12:26][0m Detected: /Users/aaronmaher/Downloads/grappling (34).opml
+[0;32m[00:12:26][0m Processing: grappling (34).opml
+cp: /Users/aaronmaher/Downloads/grappling (34).opml: Operation not permitted
+[0;32m[00:12:26][0m Archived -> archive/grappling_20260319_001226.opml
+cp: /Users/aaronmaher/Downloads/grappling (34).opml: Operation not permitted
+[0;32m[00:12:26][0m Copied to grappling.opml
+[0;32m[00:12:26][0m Converting OPML -> updating index.html...
+Reading: /Users/aaronmaher/Chat-gpt/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+  HELD: → Knee on belly (awaiting context label)
+  HELD: → Knee on belly (awaiting context label)
+Canonical positions: 42
+Transition edges: 33 unique | total weight: 33 | max weight: 1
+Warnings: 0 total (NO_DEST: 0, AMBIG_DEST: 0, NO_SRC: 0, MALFORMED: 0, UNRESOLVED: 0)
+Network: 3383 total nodes, 29 in_network, 33 transition edges
+Updated index.html (101605 chars of SECTIONS data)
+[1;33m[00:12:26] WARN:[0m No changes detected -- skipping commit
+[0;32m[09:22:37][0m Detected: /Users/aaronmaher/GrapplingMap/exports/grappling.opml
+[0;32m[09:22:37][0m Processing: grappling.opml
+[0;32m[09:22:37][0m Archived -> archive/grappling_20260319_092237.opml
+[0;32m[09:22:37][0m Copied to grappling.opml
+[0;32m[09:22:37][0m Converting OPML -> updating index.html...
+Reading: /Users/aaronmaher/Chat-gpt/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+  HELD: → Knee on belly (awaiting context label)
+  HELD: → Knee on belly (awaiting context label)
+Canonical positions: 42
+Transition edges: 33 unique | total weight: 33 | max weight: 1
+Warnings: 0 total (NO_DEST: 0, AMBIG_DEST: 0, NO_SRC: 0, MALFORMED: 0, UNRESOLVED: 0)
+Network: 3383 total nodes, 29 in_network, 33 transition edges
+Updated index.html (101605 chars of SECTIONS data)
+[1;33m[09:22:38] WARN:[0m No changes detected -- skipping commit
+[0;32m[09:25:23][0m Detected: /Users/aaronmaher/Downloads/grappling (35).opml
+[0;32m[09:25:23][0m Processing: grappling (35).opml
+cp: /Users/aaronmaher/Downloads/grappling (35).opml: Operation not permitted
+[0;32m[09:25:23][0m Archived -> archive/grappling_20260319_092523.opml
+cp: /Users/aaronmaher/Downloads/grappling (35).opml: Operation not permitted
+[0;32m[09:25:23][0m Copied to grappling.opml
+[0;32m[09:25:23][0m Converting OPML -> updating index.html...
+Reading: /Users/aaronmaher/Chat-gpt/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+  HELD: → Knee on belly (awaiting context label)
+  HELD: → Knee on belly (awaiting context label)
+Canonical positions: 42
+Transition edges: 33 unique | total weight: 33 | max weight: 1
+Warnings: 0 total (NO_DEST: 0, AMBIG_DEST: 0, NO_SRC: 0, MALFORMED: 0, UNRESOLVED: 0)
+Network: 3383 total nodes, 29 in_network, 33 transition edges
+Updated index.html (101605 chars of SECTIONS data)
+fatal: Unable to create '/Users/aaronmaher/Chat-gpt/.git/index.lock': File exists.
+
+Another git process seems to be running in this repository, e.g.
+an editor opened by 'git commit'. Please make sure all processes
+are terminated then try again. If it still fails, a git process
+may have crashed in this repository earlier:
+remove the file manually to continue.
+fatal: Unable to create '/Users/aaronmaher/Chat-gpt/.git/index.lock': File exists.
+
+Another git process seems to be running in this repository, e.g.
+an editor opened by 'git commit'. Please make sure all processes
+are terminated then try again. If it still fails, a git process
+may have crashed in this repository earlier:
+remove the file manually to continue.
+[0;32m[09:25:24][0m Pushing to GitHub...
+To github.com:aarontmaher/Chat-gpt.git
+   f838b7a..d41cf55  main -> main
+[0;32m[09:25:27][0m Done! GitHub Pages will update in ~30-60 seconds.
+
+[0;32m[09:25:27][0m Detected: /Users/aaronmaher/Downloads/grappling (35).opml
+[0;32m[09:25:27][0m Processing: grappling (35).opml
+cp: /Users/aaronmaher/Downloads/grappling (35).opml: Operation not permitted
+[0;32m[09:25:27][0m Archived -> archive/grappling_20260319_092527.opml
+cp: /Users/aaronmaher/Downloads/grappling (35).opml: Operation not permitted
+[0;32m[09:25:27][0m Copied to grappling.opml
+[0;32m[09:25:27][0m Converting OPML -> updating index.html...
+Reading: /Users/aaronmaher/Chat-gpt/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+  HELD: → Knee on belly (awaiting context label)
+  HELD: → Knee on belly (awaiting context label)
+Canonical positions: 42
+Transition edges: 33 unique | total weight: 33 | max weight: 1
+Warnings: 0 total (NO_DEST: 0, AMBIG_DEST: 0, NO_SRC: 0, MALFORMED: 0, UNRESOLVED: 0)
+Network: 3383 total nodes, 29 in_network, 33 transition edges
+Updated index.html (101605 chars of SECTIONS data)
+[1;33m[09:25:27] WARN:[0m No changes detected -- skipping commit
+[0;32m[10:02:36][0m Detected: /Users/aaronmaher/Downloads/grappling (36).opml
+[0;32m[10:02:37][0m Processing: grappling (36).opml
+cp: /Users/aaronmaher/Downloads/grappling (36).opml: Operation not permitted
+[0;32m[10:02:37][0m Archived -> archive/grappling_20260319_100237.opml
+cp: /Users/aaronmaher/Downloads/grappling (36).opml: Operation not permitted
+[0;32m[10:02:37][0m Copied to grappling.opml
+[0;32m[10:02:37][0m Converting OPML -> updating index.html...
+Reading: /Users/aaronmaher/Chat-gpt/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+  HELD: → Knee on belly (awaiting context label)
+  HELD: → Knee on belly (awaiting context label)
+Canonical positions: 42
+Transition edges: 34 unique | total weight: 34 | max weight: 1
+Warnings: 0 total (NO_DEST: 0, AMBIG_DEST: 0, NO_SRC: 0, MALFORMED: 0, UNRESOLVED: 0)
+Network: 3383 total nodes, 32 in_network, 34 transition edges
+Updated index.html (101636 chars of SECTIONS data)
+On branch main
+Your branch is ahead of 'origin/main' by 1 commit.
+  (use "git push" to publish your local commits)
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	.claude/
+	tools/watch-and-push.log
+
+nothing added to commit but untracked files present (use "git add" to track)
+[0;32m[10:02:37][0m Pushing to GitHub...
+To github.com:aarontmaher/Chat-gpt.git
+   d41cf55..bdf0017  main -> main
+[0;32m[10:02:40][0m Done! GitHub Pages will update in ~30-60 seconds.
+
+[0;32m[10:02:40][0m Detected: /Users/aaronmaher/Downloads/grappling (36).opml
+[0;32m[10:02:40][0m Processing: grappling (36).opml
+cp: /Users/aaronmaher/Downloads/grappling (36).opml: Operation not permitted
+[0;32m[10:02:40][0m Archived -> archive/grappling_20260319_100240.opml
+cp: /Users/aaronmaher/Downloads/grappling (36).opml: Operation not permitted
+[0;32m[10:02:40][0m Copied to grappling.opml
+[0;32m[10:02:40][0m Converting OPML -> updating index.html...
+Reading: /Users/aaronmaher/Chat-gpt/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+  HELD: → Knee on belly (awaiting context label)
+  HELD: → Knee on belly (awaiting context label)
+Canonical positions: 42
+Transition edges: 34 unique | total weight: 34 | max weight: 1
+Warnings: 0 total (NO_DEST: 0, AMBIG_DEST: 0, NO_SRC: 0, MALFORMED: 0, UNRESOLVED: 0)
+Network: 3383 total nodes, 32 in_network, 34 transition edges
+Updated index.html (101636 chars of SECTIONS data)
+[1;33m[10:02:41] WARN:[0m No changes detected -- skipping commit
+[0;32m[13:01:57][0m Detected: /Users/aaronmaher/GrapplingMap/exports/grappling.opml
+[0;32m[13:01:57][0m Processing: grappling.opml
+[0;32m[13:01:57][0m Archived -> archive/grappling_20260319_130157.opml
+[0;32m[13:01:57][0m Copied to grappling.opml
+[0;32m[13:01:57][0m Converting OPML -> updating index.html...
+Reading: /Users/aaronmaher/Chat-gpt/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+  HELD: → Knee on belly (awaiting context label)
+  HELD: → Knee on belly (awaiting context label)
+Canonical positions: 42
+Transition edges: 33 unique | total weight: 33 | max weight: 1
+Warnings: 0 total (NO_DEST: 0, AMBIG_DEST: 0, NO_SRC: 0, MALFORMED: 0, UNRESOLVED: 0)
+Network: 3383 total nodes, 29 in_network, 33 transition edges
+Updated index.html (101605 chars of SECTIONS data)
+On branch main
+Your branch is ahead of 'origin/main' by 1 commit.
+  (use "git push" to publish your local commits)
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	.claude/
+	tools/watch-and-push.log
+
+nothing added to commit but untracked files present (use "git add" to track)
+[0;32m[13:01:57][0m Pushing to GitHub...
+To github.com:aarontmaher/Chat-gpt.git
+ ! [remote rejected] main -> main (cannot lock ref 'refs/heads/main': is at 5b815b81c07111ca229213ae77dbb636f09d4403 but expected bdf0017ab784f62bd39f9d9b4d4818303a3561ed)
+error: failed to push some refs to 'github.com:aarontmaher/Chat-gpt.git'
+[0;31m[13:02:00] ERROR:[0m git push failed. Check credentials (see README for help).
+[0;32m[13:29:29][0m Detected: /Users/aaronmaher/Downloads/grappling (37).opml
+[0;32m[13:29:29][0m Processing: grappling (37).opml
+cp: /Users/aaronmaher/Downloads/grappling (37).opml: Operation not permitted
+[0;32m[13:29:29][0m Archived -> archive/grappling_20260319_132929.opml
+cp: /Users/aaronmaher/Downloads/grappling (37).opml: Operation not permitted
+[0;32m[13:29:29][0m Copied to grappling.opml
+[0;32m[13:29:29][0m Converting OPML -> updating index.html...
+Reading: /Users/aaronmaher/Chat-gpt/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+  HELD: → Knee on belly (awaiting context label)
+  HELD: → Knee on belly (awaiting context label)
+Canonical positions: 42
+Transition edges: 34 unique | total weight: 34 | max weight: 1
+Warnings: 0 total (NO_DEST: 0, AMBIG_DEST: 0, NO_SRC: 0, MALFORMED: 0, UNRESOLVED: 0)
+Network: 3383 total nodes, 32 in_network, 34 transition edges
+Updated index.html (101636 chars of SECTIONS data)
+fatal: Unable to create '/Users/aaronmaher/Chat-gpt/.git/index.lock': File exists.
+
+Another git process seems to be running in this repository, e.g.
+an editor opened by 'git commit'. Please make sure all processes
+are terminated then try again. If it still fails, a git process
+may have crashed in this repository earlier:
+remove the file manually to continue.
+[0;32m[13:29:29][0m Pushing to GitHub...
+To github.com:aarontmaher/Chat-gpt.git
+ ! [remote rejected] main -> main (cannot lock ref 'refs/heads/main': is at b954aa63149d761b9569cdefa6e74f70f4c6066d but expected 5b815b81c07111ca229213ae77dbb636f09d4403)
+error: failed to push some refs to 'github.com:aarontmaher/Chat-gpt.git'
+[0;31m[13:29:33] ERROR:[0m git push failed. Check credentials (see README for help).
+[0;32m[13:29:33][0m Detected: /Users/aaronmaher/Downloads/grappling (37).opml
+[0;32m[13:29:33][0m Processing: grappling (37).opml
+cp: /Users/aaronmaher/Downloads/grappling (37).opml: Operation not permitted
+[0;32m[13:29:33][0m Archived -> archive/grappling_20260319_132933.opml
+cp: /Users/aaronmaher/Downloads/grappling (37).opml: Operation not permitted
+[0;32m[13:29:33][0m Copied to grappling.opml
+[0;32m[13:29:33][0m Converting OPML -> updating index.html...
+Reading: /Users/aaronmaher/Chat-gpt/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+  HELD: → Knee on belly (awaiting context label)
+  HELD: → Knee on belly (awaiting context label)
+Canonical positions: 42
+Transition edges: 34 unique | total weight: 34 | max weight: 1
+Warnings: 0 total (NO_DEST: 0, AMBIG_DEST: 0, NO_SRC: 0, MALFORMED: 0, UNRESOLVED: 0)
+Network: 3383 total nodes, 32 in_network, 34 transition edges
+Updated index.html (101636 chars of SECTIONS data)
+[1;33m[13:29:33] WARN:[0m No changes detected -- skipping commit
+[0;32m[14:57:30][0m Detected: /Users/aaronmaher/GrapplingMap/exports/grappling.opml
+[0;32m[14:57:30][0m Processing: grappling.opml
+[0;32m[14:57:30][0m Archived -> archive/grappling_20260319_145730.opml
+[0;32m[14:57:30][0m Copied to grappling.opml
+[0;32m[14:57:30][0m Converting OPML -> updating index.html...
+Reading: /Users/aaronmaher/Chat-gpt/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+  HELD: → Knee on belly (awaiting context label)
+  HELD: → Knee on belly (awaiting context label)
+Canonical positions: 42
+Transition edges: 34 unique | total weight: 34 | max weight: 1
+Warnings: 0 total (NO_DEST: 0, AMBIG_DEST: 0, NO_SRC: 0, MALFORMED: 0, UNRESOLVED: 0)
+Network: 3383 total nodes, 32 in_network, 34 transition edges
+Updated index.html (101636 chars of SECTIONS data)
+[1;33m[14:57:31] WARN:[0m No changes detected -- skipping commit
+[0;32m[15:28:02][0m Detected: /Users/aaronmaher/Downloads/grappling (38).opml
+[0;32m[15:28:02][0m Processing: grappling (38).opml
+cp: /Users/aaronmaher/Downloads/grappling (38).opml: Operation not permitted
+[0;32m[15:28:02][0m Archived -> archive/grappling_20260319_152802.opml
+cp: /Users/aaronmaher/Downloads/grappling (38).opml: Operation not permitted
+[0;32m[15:28:02][0m Copied to grappling.opml
+[0;32m[15:28:02][0m Converting OPML -> updating index.html...
+Reading: /Users/aaronmaher/Chat-gpt/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+  HELD: → Knee on belly (awaiting context label)
+  HELD: → Knee on belly (awaiting context label)
+Canonical positions: 42
+Transition edges: 36 unique | total weight: 36 | max weight: 1
+Warnings: 0 total (NO_DEST: 0, AMBIG_DEST: 0, NO_SRC: 0, MALFORMED: 0, UNRESOLVED: 0)
+Network: 3385 total nodes, 36 in_network, 36 transition edges
+Updated index.html (101759 chars of SECTIONS data)
+fatal: Unable to create '/Users/aaronmaher/Chat-gpt/.git/index.lock': File exists.
+
+Another git process seems to be running in this repository, e.g.
+an editor opened by 'git commit'. Please make sure all processes
+are terminated then try again. If it still fails, a git process
+may have crashed in this repository earlier:
+remove the file manually to continue.
+[main dbc74f5] Update grappling map from Mindomo export [20260319_152802]
+ Committer: Aaron Maher <aaronmaher@Aarons-MacBook-Air.local>
+Your name and email address were configured automatically based
+on your username and hostname. Please check that they are accurate.
+You can suppress this message by setting them explicitly. Run the
+following command and follow the instructions in your editor to edit
+your configuration file:
+
+    git config --global --edit
+
+After doing this, you may fix the identity used for this commit with:
+
+    git commit --amend --reset-author
+
+ 2 files changed, 6 insertions(+), 4 deletions(-)
+[0;32m[15:28:02][0m Pushing to GitHub...
+To github.com:aarontmaher/Chat-gpt.git
+   50d9d9e..dbc74f5  main -> main
+[0;32m[15:28:06][0m Done! GitHub Pages will update in ~30-60 seconds.
+
+[0;32m[15:28:06][0m Detected: /Users/aaronmaher/Downloads/grappling (38).opml
+[0;32m[15:28:06][0m Processing: grappling (38).opml
+cp: /Users/aaronmaher/Downloads/grappling (38).opml: Operation not permitted
+[0;32m[15:28:06][0m Archived -> archive/grappling_20260319_152806.opml
+cp: /Users/aaronmaher/Downloads/grappling (38).opml: Operation not permitted
+[0;32m[15:28:06][0m Copied to grappling.opml
+[0;32m[15:28:06][0m Converting OPML -> updating index.html...
+Reading: /Users/aaronmaher/Chat-gpt/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+  HELD: → Knee on belly (awaiting context label)
+  HELD: → Knee on belly (awaiting context label)
+Canonical positions: 42
+Transition edges: 36 unique | total weight: 36 | max weight: 1
+Warnings: 0 total (NO_DEST: 0, AMBIG_DEST: 0, NO_SRC: 0, MALFORMED: 0, UNRESOLVED: 0)
+Network: 3385 total nodes, 36 in_network, 36 transition edges
+Updated index.html (101759 chars of SECTIONS data)
+[1;33m[15:28:06] WARN:[0m No changes detected -- skipping commit
+[0;32m[15:43:00][0m Detected: /Users/aaronmaher/GrapplingMap/exports/grappling.opml
+[0;32m[15:43:00][0m Processing: grappling.opml
+[0;32m[15:43:00][0m Archived -> archive/grappling_20260319_154300.opml
+[0;32m[15:43:00][0m Copied to grappling.opml
+[0;32m[15:43:00][0m Converting OPML -> updating index.html...
+Reading: /Users/aaronmaher/Chat-gpt/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+  HELD: → Knee on belly (awaiting context label)
+  HELD: → Knee on belly (awaiting context label)
+Canonical positions: 42
+Transition edges: 36 unique | total weight: 36 | max weight: 1
+Warnings: 0 total (NO_DEST: 0, AMBIG_DEST: 0, NO_SRC: 0, MALFORMED: 0, UNRESOLVED: 0)
+Network: 3385 total nodes, 36 in_network, 36 transition edges
+Updated index.html (101759 chars of SECTIONS data)
+[1;33m[15:43:01] WARN:[0m No changes detected -- skipping commit
+[0;32m[16:44:22][0m Detected: /Users/aaronmaher/Downloads/grappling (39).opml
+[0;32m[16:44:22][0m Processing: grappling (39).opml
+cp: /Users/aaronmaher/Downloads/grappling (39).opml: Operation not permitted
+[0;32m[16:44:23][0m Archived -> archive/grappling_20260319_164422.opml
+cp: /Users/aaronmaher/Downloads/grappling (39).opml: Operation not permitted
+[0;32m[16:44:23][0m Copied to grappling.opml
+[0;32m[16:44:23][0m Converting OPML -> updating index.html...
+Reading: /Users/aaronmaher/Chat-gpt/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+  HELD: → Knee on belly (awaiting context label)
+  HELD: → Knee on belly (awaiting context label)
+Canonical positions: 42
+Transition edges: 36 unique | total weight: 36 | max weight: 1
+Warnings: 0 total (NO_DEST: 0, AMBIG_DEST: 0, NO_SRC: 0, MALFORMED: 0, UNRESOLVED: 0)
+Network: 3387 total nodes, 36 in_network, 36 transition edges
+Updated index.html (101837 chars of SECTIONS data)
+[1;33m[16:44:25] WARN:[0m No changes detected -- skipping commit
+[0;32m[16:44:25][0m Detected: /Users/aaronmaher/Downloads/grappling (39).opml
+[0;32m[16:44:25][0m Processing: grappling (39).opml
+cp: /Users/aaronmaher/Downloads/grappling (39).opml: Operation not permitted
+[0;32m[16:44:25][0m Archived -> archive/grappling_20260319_164425.opml
+cp: /Users/aaronmaher/Downloads/grappling (39).opml: Operation not permitted
+[0;32m[16:44:25][0m Copied to grappling.opml
+[0;32m[16:44:25][0m Converting OPML -> updating index.html...
+Reading: /Users/aaronmaher/Chat-gpt/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+  HELD: → Knee on belly (awaiting context label)
+  HELD: → Knee on belly (awaiting context label)
+Canonical positions: 42
+Transition edges: 36 unique | total weight: 36 | max weight: 1
+Warnings: 0 total (NO_DEST: 0, AMBIG_DEST: 0, NO_SRC: 0, MALFORMED: 0, UNRESOLVED: 0)
+Network: 3387 total nodes, 36 in_network, 36 transition edges
+Updated index.html (101837 chars of SECTIONS data)
+[1;33m[16:44:26] WARN:[0m No changes detected -- skipping commit
+[0;32m[17:02:37][0m Detected: /Users/aaronmaher/GrapplingMap/exports/grappling.opml
+[0;32m[17:02:37][0m Processing: grappling.opml
+[0;32m[17:02:37][0m Archived -> archive/grappling_20260319_170237.opml
+[0;32m[17:02:37][0m Copied to grappling.opml
+[0;32m[17:02:37][0m Converting OPML -> updating index.html...
+Reading: /Users/aaronmaher/Chat-gpt/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+  HELD: → Knee on belly (awaiting context label)
+  HELD: → Knee on belly (awaiting context label)
+Canonical positions: 42
+Transition edges: 36 unique | total weight: 36 | max weight: 1
+Warnings: 0 total (NO_DEST: 0, AMBIG_DEST: 0, NO_SRC: 0, MALFORMED: 0, UNRESOLVED: 0)
+Network: 3387 total nodes, 36 in_network, 36 transition edges
+Updated index.html (101837 chars of SECTIONS data)
+[1;33m[17:02:39] WARN:[0m No changes detected -- skipping commit
+[0;32m[17:10:25][0m Detected: /Users/aaronmaher/Downloads/grappling (40).opml
+[0;32m[17:10:25][0m Processing: grappling (40).opml
+cp: /Users/aaronmaher/Downloads/grappling (40).opml: Operation not permitted
+[0;32m[17:10:25][0m Archived -> archive/grappling_20260319_171025.opml
+cp: /Users/aaronmaher/Downloads/grappling (40).opml: Operation not permitted
+[0;32m[17:10:26][0m Copied to grappling.opml
+[0;32m[17:10:26][0m Converting OPML -> updating index.html...
+Reading: /Users/aaronmaher/Chat-gpt/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+  HELD: → Knee on belly (awaiting context label)
+  HELD: → Knee on belly (awaiting context label)
+Canonical positions: 43
+Transition edges: 36 unique | total weight: 36 | max weight: 1
+Warnings: 0 total (NO_DEST: 0, AMBIG_DEST: 0, NO_SRC: 0, MALFORMED: 0, UNRESOLVED: 0)
+Network: 3402 total nodes, 36 in_network, 36 transition edges
+Updated index.html (102209 chars of SECTIONS data)
+[1;33m[17:10:26] WARN:[0m No changes detected -- skipping commit
+[0;32m[17:10:26][0m Detected: /Users/aaronmaher/Downloads/grappling (40).opml
+[0;32m[17:10:26][0m Processing: grappling (40).opml
+cp: /Users/aaronmaher/Downloads/grappling (40).opml: Operation not permitted
+[0;32m[17:10:26][0m Archived -> archive/grappling_20260319_171026.opml
+cp: /Users/aaronmaher/Downloads/grappling (40).opml: Operation not permitted
+[0;32m[17:10:26][0m Copied to grappling.opml
+[0;32m[17:10:26][0m Converting OPML -> updating index.html...
+Reading: /Users/aaronmaher/Chat-gpt/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+  HELD: → Knee on belly (awaiting context label)
+  HELD: → Knee on belly (awaiting context label)
+Canonical positions: 43
+Transition edges: 36 unique | total weight: 36 | max weight: 1
+Warnings: 0 total (NO_DEST: 0, AMBIG_DEST: 0, NO_SRC: 0, MALFORMED: 0, UNRESOLVED: 0)
+Network: 3402 total nodes, 36 in_network, 36 transition edges
+Updated index.html (102209 chars of SECTIONS data)
+[1;33m[17:10:26] WARN:[0m No changes detected -- skipping commit
+[0;32m[17:22:57][0m Detected: /Users/aaronmaher/Downloads/grappling (41).opml
+[0;32m[17:22:57][0m Processing: grappling (41).opml
+cp: /Users/aaronmaher/Downloads/grappling (41).opml: Operation not permitted
+[0;32m[17:22:57][0m Archived -> archive/grappling_20260319_172257.opml
+cp: /Users/aaronmaher/Downloads/grappling (41).opml: Operation not permitted
+[0;32m[17:22:57][0m Copied to grappling.opml
+[0;32m[17:22:57][0m Converting OPML -> updating index.html...
+Reading: /Users/aaronmaher/Chat-gpt/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+  HELD: → Knee on belly (awaiting context label)
+  HELD: → Knee on belly (awaiting context label)
+Canonical positions: 43
+Transition edges: 36 unique | total weight: 36 | max weight: 1
+Warnings: 0 total (NO_DEST: 0, AMBIG_DEST: 0, NO_SRC: 0, MALFORMED: 0, UNRESOLVED: 0)
+Network: 3402 total nodes, 36 in_network, 36 transition edges
+Updated index.html (102209 chars of SECTIONS data)
+[1;33m[17:22:57] WARN:[0m No changes detected -- skipping commit
+[0;32m[17:22:57][0m Detected: /Users/aaronmaher/Downloads/grappling (41).opml
+[0;32m[17:22:57][0m Processing: grappling (41).opml
+cp: /Users/aaronmaher/Downloads/grappling (41).opml: Operation not permitted
+[0;32m[17:22:57][0m Archived -> archive/grappling_20260319_172257.opml
+cp: /Users/aaronmaher/Downloads/grappling (41).opml: Operation not permitted
+[0;32m[17:22:57][0m Copied to grappling.opml
+[0;32m[17:22:57][0m Converting OPML -> updating index.html...
+Reading: /Users/aaronmaher/Chat-gpt/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+  HELD: → Knee on belly (awaiting context label)
+  HELD: → Knee on belly (awaiting context label)
+Canonical positions: 43
+Transition edges: 36 unique | total weight: 36 | max weight: 1
+Warnings: 0 total (NO_DEST: 0, AMBIG_DEST: 0, NO_SRC: 0, MALFORMED: 0, UNRESOLVED: 0)
+Network: 3402 total nodes, 36 in_network, 36 transition edges
+Updated index.html (102209 chars of SECTIONS data)
+[1;33m[17:22:57] WARN:[0m No changes detected -- skipping commit
+[0;32m[22:53:06][0m Detected: /Users/aaronmaher/GrapplingMap/exports/grappling.opml
+[0;32m[22:53:06][0m Processing: grappling.opml
+[0;32m[22:53:06][0m Archived -> archive/grappling_20260319_225306.opml
+[0;32m[22:53:06][0m Copied to grappling.opml
+[0;32m[22:53:06][0m Converting OPML -> updating index.html...
+Reading: /Users/aaronmaher/Chat-gpt/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+  HELD: → Knee on belly (awaiting context label)
+  HELD: → Knee on belly (awaiting context label)
+Canonical positions: 43
+Transition edges: 36 unique | total weight: 36 | max weight: 1
+Warnings: 0 total (NO_DEST: 0, AMBIG_DEST: 0, NO_SRC: 0, MALFORMED: 0, UNRESOLVED: 0)
+Network: 3402 total nodes, 36 in_network, 36 transition edges
+Updated index.html (102209 chars of SECTIONS data)
+[1;33m[22:53:07] WARN:[0m No changes detected -- skipping commit
+[0;32m[22:54:04][0m Detected: /Users/aaronmaher/Downloads/grappling (42).opml
+[0;32m[22:54:04][0m Processing: grappling (42).opml
+cp: /Users/aaronmaher/Downloads/grappling (42).opml: Operation not permitted
+[0;32m[22:54:04][0m Archived -> archive/grappling_20260319_225404.opml
+cp: /Users/aaronmaher/Downloads/grappling (42).opml: Operation not permitted
+[0;32m[22:54:04][0m Copied to grappling.opml
+[0;32m[22:54:04][0m Converting OPML -> updating index.html...
+Reading: /Users/aaronmaher/Chat-gpt/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+  HELD: → Knee on belly (awaiting context label)
+  HELD: → Knee on belly (awaiting context label)
+Canonical positions: 43
+Transition edges: 36 unique | total weight: 36 | max weight: 1
+Warnings: 0 total (NO_DEST: 0, AMBIG_DEST: 0, NO_SRC: 0, MALFORMED: 0, UNRESOLVED: 0)
+Network: 3402 total nodes, 36 in_network, 36 transition edges
+Updated index.html (102209 chars of SECTIONS data)
+[1;33m[22:54:04] WARN:[0m No changes detected -- skipping commit
+[0;32m[22:54:04][0m Detected: /Users/aaronmaher/Downloads/grappling (42).opml
+[0;32m[22:54:04][0m Processing: grappling (42).opml
+cp: /Users/aaronmaher/Downloads/grappling (42).opml: Operation not permitted
+[0;32m[22:54:04][0m Archived -> archive/grappling_20260319_225404.opml
+cp: /Users/aaronmaher/Downloads/grappling (42).opml: Operation not permitted
+[0;32m[22:54:04][0m Copied to grappling.opml
+[0;32m[22:54:04][0m Converting OPML -> updating index.html...
+Reading: /Users/aaronmaher/Chat-gpt/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+  HELD: → Knee on belly (awaiting context label)
+  HELD: → Knee on belly (awaiting context label)
+Canonical positions: 43
+Transition edges: 36 unique | total weight: 36 | max weight: 1
+Warnings: 0 total (NO_DEST: 0, AMBIG_DEST: 0, NO_SRC: 0, MALFORMED: 0, UNRESOLVED: 0)
+Network: 3402 total nodes, 36 in_network, 36 transition edges
+Updated index.html (102209 chars of SECTIONS data)
+[1;33m[22:54:04] WARN:[0m No changes detected -- skipping commit
+[0;32m[22:58:46][0m Detected: /Users/aaronmaher/GrapplingMap/exports/grappling.opml
+[0;32m[22:58:46][0m Processing: grappling.opml
+[0;32m[22:58:46][0m Archived -> archive/grappling_20260319_225846.opml
+[0;32m[22:58:46][0m Copied to grappling.opml
+[0;32m[22:58:46][0m Converting OPML -> updating index.html...
+Reading: /Users/aaronmaher/Chat-gpt/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+  HELD: → Knee on belly (awaiting context label)
+  HELD: → Knee on belly (awaiting context label)
+Canonical positions: 43
+Transition edges: 36 unique | total weight: 36 | max weight: 1
+Warnings: 0 total (NO_DEST: 0, AMBIG_DEST: 0, NO_SRC: 0, MALFORMED: 0, UNRESOLVED: 0)
+Network: 3402 total nodes, 36 in_network, 36 transition edges
+Updated index.html (102209 chars of SECTIONS data)
+[1;33m[22:58:46] WARN:[0m No changes detected -- skipping commit
+[0;32m[23:08:01][0m Detected: /Users/aaronmaher/GrapplingMap/exports/grappling.opml
+[0;32m[23:08:01][0m Processing: grappling.opml
+[0;32m[23:08:01][0m Archived -> archive/grappling_20260319_230801.opml
+[0;32m[23:08:01][0m Copied to grappling.opml
+[0;32m[23:08:01][0m Converting OPML -> updating index.html...
+Reading: /Users/aaronmaher/Chat-gpt/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+  HELD: → Knee on belly (awaiting context label)
+  HELD: → Knee on belly (awaiting context label)
+Canonical positions: 43
+Transition edges: 36 unique | total weight: 36 | max weight: 1
+Warnings: 0 total (NO_DEST: 0, AMBIG_DEST: 0, NO_SRC: 0, MALFORMED: 0, UNRESOLVED: 0)
+Network: 3403 total nodes, 36 in_network, 36 transition edges
+Updated index.html (102247 chars of SECTIONS data)
+[main 5cffc18] Update grappling map from Mindomo export [20260319_230801]
+ Committer: Aaron Maher <aaronmaher@Aarons-MacBook-Air.local>
+Your name and email address were configured automatically based
+on your username and hostname. Please check that they are accurate.
+You can suppress this message by setting them explicitly. Run the
+following command and follow the instructions in your editor to edit
+your configuration file:
+
+    git config --global --edit
+
+After doing this, you may fix the identity used for this commit with:
+
+    git commit --amend --reset-author
+
+ 2 files changed, 5500 insertions(+), 5498 deletions(-)
+[0;32m[23:08:01][0m Pushing to GitHub...
+To github.com:aarontmaher/Chat-gpt.git
+   5484675..5cffc18  main -> main
+[0;32m[23:08:05][0m Done! GitHub Pages will update in ~30-60 seconds.
+
+[0;32m[23:13:34][0m Detected: /Users/aaronmaher/GrapplingMap/exports/grappling.opml
+[0;32m[23:13:34][0m Processing: grappling.opml
+[0;32m[23:13:34][0m Archived -> archive/grappling_20260319_231334.opml
+[0;32m[23:13:34][0m Copied to grappling.opml
+[0;32m[23:13:34][0m Converting OPML -> updating index.html...
+Reading: /Users/aaronmaher/Chat-gpt/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+  HELD: → Knee on belly (awaiting context label)
+  HELD: → Knee on belly (awaiting context label)
+Canonical positions: 43
+Transition edges: 36 unique | total weight: 36 | max weight: 1
+Warnings: 0 total (NO_DEST: 0, AMBIG_DEST: 0, NO_SRC: 0, MALFORMED: 0, UNRESOLVED: 0)
+Network: 3402 total nodes, 36 in_network, 36 transition edges
+Updated index.html (102209 chars of SECTIONS data)
+[main 71179bb] Update grappling map from Mindomo export [20260319_231334]
+ Committer: Aaron Maher <aaronmaher@Aarons-MacBook-Air.local>
+Your name and email address were configured automatically based
+on your username and hostname. Please check that they are accurate.
+You can suppress this message by setting them explicitly. Run the
+following command and follow the instructions in your editor to edit
+your configuration file:
+
+    git config --global --edit
+
+After doing this, you may fix the identity used for this commit with:
+
+    git commit --amend --reset-author
+
+ 2 files changed, 4 insertions(+), 5 deletions(-)
+[0;32m[23:13:34][0m Pushing to GitHub...
+To github.com:aarontmaher/Chat-gpt.git
+   5cffc18..71179bb  main -> main
+[0;32m[23:13:38][0m Done! GitHub Pages will update in ~30-60 seconds.
+
+[0;32m[23:41:47][0m Detected: /Users/aaronmaher/GrapplingMap/exports/grappling.opml
+[0;32m[23:41:47][0m Processing: grappling.opml
+[0;32m[23:41:47][0m Archived -> archive/grappling_20260319_234147.opml
+[0;32m[23:41:47][0m Copied to grappling.opml
+[0;32m[23:41:47][0m Converting OPML -> updating index.html...
+Reading: /Users/aaronmaher/Chat-gpt/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+  HELD: → Knee on belly (awaiting context label)
+  HELD: → Knee on belly (awaiting context label)
+Canonical positions: 43
+Transition edges: 36 unique | total weight: 36 | max weight: 1
+Warnings: 0 total (NO_DEST: 0, AMBIG_DEST: 0, NO_SRC: 0, MALFORMED: 0, UNRESOLVED: 0)
+Network: 3403 total nodes, 36 in_network, 36 transition edges
+Updated index.html (102244 chars of SECTIONS data)
+[main fcfc8ae] Update grappling map from Mindomo export [20260319_234147]
+ Committer: Aaron Maher <aaronmaher@Aarons-MacBook-Air.local>
+Your name and email address were configured automatically based
+on your username and hostname. Please check that they are accurate.
+You can suppress this message by setting them explicitly. Run the
+following command and follow the instructions in your editor to edit
+your configuration file:
+
+    git config --global --edit
+
+After doing this, you may fix the identity used for this commit with:
+
+    git commit --amend --reset-author
+
+ 2 files changed, 5 insertions(+), 4 deletions(-)
+[0;32m[23:41:47][0m Pushing to GitHub...
+To github.com:aarontmaher/Chat-gpt.git
+   bb23b51..fcfc8ae  main -> main
+[0;32m[23:41:51][0m Done! GitHub Pages will update in ~30-60 seconds.
+
+[0;32m[23:42:21][0m Detected: /Users/aaronmaher/GrapplingMap/exports/grappling.opml
+[0;32m[23:42:21][0m Processing: grappling.opml
+[0;32m[23:42:21][0m Archived -> archive/grappling_20260319_234221.opml
+[0;32m[23:42:21][0m Copied to grappling.opml
+[0;32m[23:42:21][0m Converting OPML -> updating index.html...
+Reading: /Users/aaronmaher/Chat-gpt/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+  HELD: → Knee on belly (awaiting context label)
+  HELD: → Knee on belly (awaiting context label)
+Canonical positions: 43
+Transition edges: 36 unique | total weight: 36 | max weight: 1
+Warnings: 0 total (NO_DEST: 0, AMBIG_DEST: 0, NO_SRC: 0, MALFORMED: 0, UNRESOLVED: 0)
+Network: 3402 total nodes, 36 in_network, 36 transition edges
+Updated index.html (102209 chars of SECTIONS data)
+[main 792dbb9] Update grappling map from Mindomo export [20260319_234221]
+ Committer: Aaron Maher <aaronmaher@Aarons-MacBook-Air.local>
+Your name and email address were configured automatically based
+on your username and hostname. Please check that they are accurate.
+You can suppress this message by setting them explicitly. Run the
+following command and follow the instructions in your editor to edit
+your configuration file:
+
+    git config --global --edit
+
+After doing this, you may fix the identity used for this commit with:
+
+    git commit --amend --reset-author
+
+ 2 files changed, 4 insertions(+), 5 deletions(-)
+[0;32m[23:42:21][0m Pushing to GitHub...
+To github.com:aarontmaher/Chat-gpt.git
+   fcfc8ae..792dbb9  main -> main
+[0;32m[23:42:25][0m Done! GitHub Pages will update in ~30-60 seconds.
+
+[0;32m[18:24:37][0m Detected: /Users/aaronmaher/GrapplingMap/exports/grappling.opml
+[0;32m[18:24:37][0m Processing: grappling.opml
+[0;32m[18:24:37][0m Archived -> archive/grappling_20260320_182437.opml
+[0;32m[18:24:37][0m Copied to grappling.opml
+[0;32m[18:24:37][0m Converting OPML -> updating index.html...
+Reading: /Users/aaronmaher/Chat-gpt/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+  HELD: → Knee on belly (awaiting context label)
+  HELD: → Knee on belly (awaiting context label)
+Canonical positions: 43
+Transition edges: 44 unique | total weight: 44 | max weight: 1
+Warnings: 6 total (NO_DEST: 6, AMBIG_DEST: 0, NO_SRC: 0, MALFORMED: 0, UNRESOLVED: 0)
+  WARN: NO_DEST: "→ Anaconda" — no matching position (src: "Front Headlock", section "Dominant Positions")
+  WARN: NO_DEST: "→ Crucifix" — no matching position (src: "Front Headlock", section "Dominant Positions")
+  WARN: NO_DEST: "→ Seatbelt choking side up" — no matching position (src: "Front Headlock", section "Dominant Positions")
+  WARN: NO_DEST: "→ Seatbelt choking side down" — no matching position (src: "Front Headlock", section "Dominant Positions")
+  WARN: NO_DEST: "→ Seatbelt no hooks" — no matching position (src: "Front Headlock", section "Dominant Positions")
+  WARN: NO_DEST: "→ Grounded head inside single leg" — no matching position (src: "Front Headlock", section "Dominant Positions")
+Network: 3198 total nodes, 37 in_network, 44 transition edges
+Updated index.html (98252 chars of SECTIONS data)
+[main 7f19885] Update grappling map from Mindomo export [20260320_182437]
+ Committer: Aaron Maher <aaronmaher@Aarons-MacBook-Air.local>
+Your name and email address were configured automatically based
+on your username and hostname. Please check that they are accurate.
+You can suppress this message by setting them explicitly. Run the
+following command and follow the instructions in your editor to edit
+your configuration file:
+
+    git config --global --edit
+
+After doing this, you may fix the identity used for this commit with:
+
+    git commit --amend --reset-author
+
+ 2 files changed, 170 insertions(+), 504 deletions(-)
+[0;32m[18:24:37][0m Pushing to GitHub...
+To github.com:aarontmaher/Chat-gpt.git
+   29fb786..7f19885  main -> main
+[0;32m[18:24:40][0m Done! GitHub Pages will update in ~30-60 seconds.
+
+[0;32m[18:25:29][0m Detected: /Users/aaronmaher/GrapplingMap/exports/grappling.opml
+[0;32m[18:25:29][0m Processing: grappling.opml
+[0;32m[18:25:29][0m Archived -> archive/grappling_20260320_182529.opml
+[0;32m[18:25:29][0m Copied to grappling.opml
+[0;32m[18:25:29][0m Converting OPML -> updating index.html...
+Reading: /Users/aaronmaher/Chat-gpt/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+  HELD: → Knee on belly (awaiting context label)
+  HELD: → Knee on belly (awaiting context label)
+Canonical positions: 43
+Transition edges: 44 unique | total weight: 44 | max weight: 1
+Warnings: 6 total (NO_DEST: 6, AMBIG_DEST: 0, NO_SRC: 0, MALFORMED: 0, UNRESOLVED: 0)
+  WARN: NO_DEST: "→ Anaconda" — no matching position (src: "Front Headlock", section "Dominant Positions")
+  WARN: NO_DEST: "→ Crucifix" — no matching position (src: "Front Headlock", section "Dominant Positions")
+  WARN: NO_DEST: "→ Seatbelt choking side up" — no matching position (src: "Front Headlock", section "Dominant Positions")
+  WARN: NO_DEST: "→ Seatbelt choking side down" — no matching position (src: "Front Headlock", section "Dominant Positions")
+  WARN: NO_DEST: "→ Seatbelt no hooks" — no matching position (src: "Front Headlock", section "Dominant Positions")
+  WARN: NO_DEST: "→ Grounded head inside single leg" — no matching position (src: "Front Headlock", section "Dominant Positions")
+Network: 3198 total nodes, 37 in_network, 44 transition edges
+Updated index.html (98252 chars of SECTIONS data)
+[1;33m[18:25:29] WARN:[0m No changes detected -- skipping commit
+[0;32m[18:25:50][0m Detected: /Users/aaronmaher/GrapplingMap/exports/grappling.opml
+[0;32m[18:25:50][0m Processing: grappling.opml
+[0;32m[18:25:50][0m Archived -> archive/grappling_20260320_182550.opml
+[0;32m[18:25:50][0m Copied to grappling.opml
+[0;32m[18:25:50][0m Converting OPML -> updating index.html...
+Reading: /Users/aaronmaher/Chat-gpt/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+  HELD: → Knee on belly (awaiting context label)
+  HELD: → Knee on belly (awaiting context label)
+Canonical positions: 43
+Transition edges: 44 unique | total weight: 44 | max weight: 1
+Warnings: 6 total (NO_DEST: 6, AMBIG_DEST: 0, NO_SRC: 0, MALFORMED: 0, UNRESOLVED: 0)
+  WARN: NO_DEST: "→ Anaconda" — no matching position (src: "Front Headlock", section "Dominant Positions")
+  WARN: NO_DEST: "→ Crucifix" — no matching position (src: "Front Headlock", section "Dominant Positions")
+  WARN: NO_DEST: "→ Seatbelt choking side up" — no matching position (src: "Front Headlock", section "Dominant Positions")
+  WARN: NO_DEST: "→ Seatbelt choking side down" — no matching position (src: "Front Headlock", section "Dominant Positions")
+  WARN: NO_DEST: "→ Seatbelt no hooks" — no matching position (src: "Front Headlock", section "Dominant Positions")
+  WARN: NO_DEST: "→ Grounded head inside single leg" — no matching position (src: "Front Headlock", section "Dominant Positions")
+Network: 3198 total nodes, 37 in_network, 44 transition edges
+Updated index.html (98252 chars of SECTIONS data)
+[main 3a49323] Update grappling map from Mindomo export [20260320_182550]
+ Committer: Aaron Maher <aaronmaher@Aarons-MacBook-Air.local>
+Your name and email address were configured automatically based
+on your username and hostname. Please check that they are accurate.
+You can suppress this message by setting them explicitly. Run the
+following command and follow the instructions in your editor to edit
+your configuration file:
+
+    git config --global --edit
+
+After doing this, you may fix the identity used for this commit with:
+
+    git commit --amend --reset-author
+
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+[0;32m[18:25:50][0m Pushing to GitHub...
+To github.com:aarontmaher/Chat-gpt.git
+   7f19885..3a49323  main -> main
+[0;32m[18:25:53][0m Done! GitHub Pages will update in ~30-60 seconds.
+
+[0;32m[19:32:19][0m Detected: /Users/aaronmaher/GrapplingMap/exports/grappling.opml
+[0;32m[19:32:19][0m Processing: grappling.opml
+[0;32m[19:32:19][0m Archived -> archive/grappling_20260320_193219.opml
+[0;32m[19:32:19][0m Copied to grappling.opml
+[0;32m[19:32:19][0m Converting OPML -> updating index.html...
+Reading: /Users/aaronmaher/Chat-gpt/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+  HELD: → Knee on belly (awaiting context label)
+  HELD: → Knee on belly (awaiting context label)
+Canonical positions: 43
+Transition edges: 44 unique | total weight: 44 | max weight: 1
+Warnings: 6 total (NO_DEST: 6, AMBIG_DEST: 0, NO_SRC: 0, MALFORMED: 0, UNRESOLVED: 0)
+  WARN: NO_DEST: "→ Anaconda" — no matching position (src: "Front Headlock", section "Dominant Positions")
+  WARN: NO_DEST: "→ Crucifix" — no matching position (src: "Front Headlock", section "Dominant Positions")
+  WARN: NO_DEST: "→ Seatbelt choking side up" — no matching position (src: "Front Headlock", section "Dominant Positions")
+  WARN: NO_DEST: "→ Seatbelt choking side down" — no matching position (src: "Front Headlock", section "Dominant Positions")
+  WARN: NO_DEST: "→ Seatbelt no hooks" — no matching position (src: "Front Headlock", section "Dominant Positions")
+  WARN: NO_DEST: "→ Grounded head inside single leg" — no matching position (src: "Front Headlock", section "Dominant Positions")
+Network: 3117 total nodes, 37 in_network, 44 transition edges
+Updated index.html (95822 chars of SECTIONS data)
+[main b726bc6] Update grappling map from Mindomo export [20260320_193219]
+ Committer: Aaron Maher <aaronmaher@Aarons-MacBook-Air.local>
+Your name and email address were configured automatically based
+on your username and hostname. Please check that they are accurate.
+You can suppress this message by setting them explicitly. Run the
+following command and follow the instructions in your editor to edit
+your configuration file:
+
+    git config --global --edit
+
+After doing this, you may fix the identity used for this commit with:
+
+    git commit --amend --reset-author
+
+ 2 files changed, 44 insertions(+), 167 deletions(-)
+[0;32m[19:32:19][0m Pushing to GitHub...
+To github.com:aarontmaher/Chat-gpt.git
+   3a49323..b726bc6  main -> main
+[0;32m[19:32:22][0m Done! GitHub Pages will update in ~30-60 seconds.
+
+[0;32m[21:27:43][0m Detected: /Users/aaronmaher/GrapplingMap/exports/grappling.opml
+[0;32m[21:27:43][0m Processing: grappling.opml
+[0;32m[21:27:43][0m Archived -> archive/grappling_20260320_212743.opml
+[0;32m[21:27:43][0m Copied to grappling.opml
+[0;32m[21:27:43][0m Converting OPML -> updating index.html...
+Reading: /Users/aaronmaher/Chat-gpt/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+Canonical positions: 43
+Transition edges: 48 unique | total weight: 48 | max weight: 1
+Warnings: 6 total (NO_DEST: 6, AMBIG_DEST: 0, NO_SRC: 0, MALFORMED: 0, UNRESOLVED: 0)
+  WARN: NO_DEST: "→ Anaconda" — no matching position (src: "Front Headlock", section "Dominant Positions")
+  WARN: NO_DEST: "→ Crucifix" — no matching position (src: "Front Headlock", section "Dominant Positions")
+  WARN: NO_DEST: "→ Seatbelt choking side up" — no matching position (src: "Front Headlock", section "Dominant Positions")
+  WARN: NO_DEST: "→ Seatbelt choking side down" — no matching position (src: "Front Headlock", section "Dominant Positions")
+  WARN: NO_DEST: "→ Seatbelt no hooks" — no matching position (src: "Front Headlock", section "Dominant Positions")
+  WARN: NO_DEST: "→ Grounded head inside single leg" — no matching position (src: "Front Headlock", section "Dominant Positions")
+Network: 3064 total nodes, 37 in_network, 48 transition edges
+Updated index.html (94576 chars of SECTIONS data)
+On branch main
+Your branch is ahead of 'origin/main' by 1 commit.
+  (use "git push" to publish your local commits)
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   live-playlists.json
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	patches.json
+	restructure_front_headlock.py
+	tools/watch-and-push.log
+
+no changes added to commit (use "git add" and/or "git commit -a")
+[0;32m[21:27:43][0m Pushing to GitHub...
+To github.com:aarontmaher/Chat-gpt.git
+   7932a4f..a8cc941  main -> main
+[0;32m[21:27:46][0m Done! GitHub Pages will update in ~30-60 seconds.
+
+
+----------------------------------------------------
+  Grappling Map OPML Watcher
+  Watching : /Users/aaronmaher/GrapplingMap/exports
+           : /Users/aaronmaher/Downloads
+  Repo     : /Users/aaronmaher/Chat-gpt
+  Press Ctrl-C to stop
+----------------------------------------------------
+
+[0;32m[17:13:29][0m Detected: /Users/aaronmaher/GrapplingMap/exports/grappling.opml
+[0;32m[17:13:30][0m OPML_SOURCE=direct-edit:/Users/aaronmaher/GrapplingMap/exports/grappling.opml
+[0;32m[17:13:30][0m OPML_MTIME=2026-03-21T17:13:28
+[0;32m[17:13:30][0m OPML_FINGERPRINT=05f2bef91ddf068c6f5db6cd73e4c508
+[0;32m[17:13:30][0m Archived -> archive/grappling_20260321_171330.opml
+[0;32m[17:13:30][0m Running opml_to_sections.py /Users/aaronmaher/GrapplingMap/exports/grappling.opml
+Reading: /Users/aaronmaher/GrapplingMap/exports/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+Canonical positions: 43
+Transition edges: 57 unique | total weight: 57 | max weight: 1
+Warnings: 6 total (NO_DEST: 6, AMBIG_DEST: 0, NO_SRC: 0, MALFORMED: 0, UNRESOLVED: 0)
+  WARN: NO_DEST: "→ Anaconda" — no matching position (src: "Front Headlock", section "Dominant Positions")
+  WARN: NO_DEST: "→ Crucifix" — no matching position (src: "Front Headlock", section "Dominant Positions")
+  WARN: NO_DEST: "→ Seatbelt choking side up" — no matching position (src: "Front Headlock", section "Dominant Positions")
+  WARN: NO_DEST: "→ Seatbelt choking side down" — no matching position (src: "Front Headlock", section "Dominant Positions")
+  WARN: NO_DEST: "→ Seatbelt no hooks" — no matching position (src: "Front Headlock", section "Dominant Positions")
+  WARN: NO_DEST: "→ Grounded head inside single leg" — no matching position (src: "Front Headlock", section "Dominant Positions")
+Network: 3001 total nodes, 38 in_network, 57 transition edges
+Updated index.html (92147 chars of SECTIONS data)
+[0;32m[17:13:30][0m LIVE_OPML=/Users/aaronmaher/GrapplingMap/exports/grappling.opml
+[main 99edb92] Update grappling map from Mindomo export [20260321_171330]
+ Committer: Aaron Maher <aaronmaher@Aarons-MacBook-Air.local>
+Your name and email address were configured automatically based
+on your username and hostname. Please check that they are accurate.
+You can suppress this message by setting them explicitly. Run the
+following command and follow the instructions in your editor to edit
+your configuration file:
+
+    git config --global --edit
+
+After doing this, you may fix the identity used for this commit with:
+
+    git commit --amend --reset-author
+
+ 2 files changed, 134 insertions(+), 393 deletions(-)
+[0;32m[17:13:30][0m Pulling latest from GitHub (in case worktree pushed)...
+Already up to date.
+[0;32m[17:13:33][0m Pushing to GitHub...
+To github.com:aarontmaher/Chat-gpt.git
+   a8cc941..99edb92  main -> main
+[0;32m[17:13:36][0m Done! GitHub Pages will update in ~30-60 seconds.
+results.md updated: edges=57 commit=99edb92
+
+[0;32m[23:40:26][0m Detected: /Users/aaronmaher/GrapplingMap/exports/grappling.opml
+[0;32m[23:40:26][0m OPML_SOURCE=direct-edit:/Users/aaronmaher/GrapplingMap/exports/grappling.opml
+[0;32m[23:40:26][0m OPML_MTIME=2026-03-22T23:40:25
+[0;32m[23:40:26][0m OPML_FINGERPRINT=06ef9dfd7fa066df3d46f663999a78fd
+[0;32m[23:40:26][0m Archived -> archive/grappling_20260322_234026.opml
+[0;32m[23:40:26][0m Running opml_to_sections.py /Users/aaronmaher/GrapplingMap/exports/grappling.opml
+Reading: /Users/aaronmaher/GrapplingMap/exports/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+Canonical positions: 43
+Transition edges: 57 unique | total weight: 57 | max weight: 1
+Warnings: 6 total (NO_DEST: 6, AMBIG_DEST: 0, NO_SRC: 0, MALFORMED: 0, UNRESOLVED: 0)
+  WARN: NO_DEST: "→ Anaconda" — no matching position (src: "Front Headlock", section "Dominant Positions")
+  WARN: NO_DEST: "→ Crucifix" — no matching position (src: "Front Headlock", section "Dominant Positions")
+  WARN: NO_DEST: "→ Seatbelt choking side up" — no matching position (src: "Front Headlock", section "Dominant Positions")
+  WARN: NO_DEST: "→ Seatbelt choking side down" — no matching position (src: "Front Headlock", section "Dominant Positions")
+  WARN: NO_DEST: "→ Seatbelt no hooks" — no matching position (src: "Front Headlock", section "Dominant Positions")
+  WARN: NO_DEST: "→ Grounded head inside single leg" — no matching position (src: "Front Headlock", section "Dominant Positions")
+Network: 2817 total nodes, 48 in_network, 57 transition edges
+Updated index.html (86912 chars of SECTIONS data)
+[0;32m[23:40:26][0m LIVE_OPML=/Users/aaronmaher/GrapplingMap/exports/grappling.opml
+[main f8c7f49] Update grappling map from Mindomo export [20260322_234026]
+ Committer: Aaron Maher <aaronmaher@Aarons-MacBook-Air.local>
+Your name and email address were configured automatically based
+on your username and hostname. Please check that they are accurate.
+You can suppress this message by setting them explicitly. Run the
+following command and follow the instructions in your editor to edit
+your configuration file:
+
+    git config --global --edit
+
+After doing this, you may fix the identity used for this commit with:
+
+    git commit --amend --reset-author
+
+ 2 files changed, 144 insertions(+), 328 deletions(-)
+[0;32m[23:40:26][0m Pulling latest from GitHub (in case worktree pushed)...
+Already up to date.
+[0;32m[23:40:29][0m Pushing to GitHub...
+To github.com:aarontmaher/Chat-gpt.git
+   85464eb..f8c7f49  main -> main
+[0;32m[23:40:32][0m Done! GitHub Pages will update in ~30-60 seconds.
+results.md updated: edges=57 commit=f8c7f49
+
+[0;32m[09:44:26][0m Detected: /Users/aaronmaher/GrapplingMap/exports/grappling.opml
+[0;32m[09:44:26][0m OPML_SOURCE=direct-edit:/Users/aaronmaher/GrapplingMap/exports/grappling.opml
+[0;32m[09:44:26][0m OPML_MTIME=2026-03-23T09:44:25
+[0;32m[09:44:26][0m OPML_FINGERPRINT=12cae39ad4c47759717e564c1595293a
+[0;32m[09:44:26][0m Archived -> archive/grappling_20260323_094426.opml
+[0;32m[09:44:26][0m Running opml_to_sections.py /Users/aaronmaher/GrapplingMap/exports/grappling.opml
+Reading: /Users/aaronmaher/GrapplingMap/exports/grappling.opml
+Parsed 4 sections: ['Wrestling', 'Guard', 'Dominant Positions', 'Scrambles']
+Canonical positions: 43
+Transition edges: 57 unique | total weight: 57 | max weight: 1
+Warnings: 6 total (NO_DEST: 6, AMBIG_DEST: 0, NO_SRC: 0, MALFORMED: 0, UNRESOLVED: 0)
+  WARN: NO_DEST: "→ Anaconda" — no matching position (src: "Front Headlock", section "Dominant Positions")
+  WARN: NO_DEST: "→ Crucifix" — no matching position (src: "Front Headlock", section "Dominant Positions")
+  WARN: NO_DEST: "→ Seatbelt choking side up" — no matching position (src: "Front Headlock", section "Dominant Positions")
+  WARN: NO_DEST: "→ Seatbelt choking side down" — no matching position (src: "Front Headlock", section "Dominant Positions")
+  WARN: NO_DEST: "→ Seatbelt no hooks" — no matching position (src: "Front Headlock", section "Dominant Positions")
+  WARN: NO_DEST: "→ Grounded head inside single leg" — no matching position (src: "Front Headlock", section "Dominant Positions")
+Network: 2817 total nodes, 48 in_network, 57 transition edges
+Updated index.html (86906 chars of SECTIONS data)
+[0;32m[09:44:26][0m LIVE_OPML=/Users/aaronmaher/GrapplingMap/exports/grappling.opml
+[main 4ce1dfe] Update grappling map from Mindomo export [20260323_094426]
+ Committer: Aaron Maher <aaronmaher@Aarons-MacBook-Air.local>
+Your name and email address were configured automatically based
+on your username and hostname. Please check that they are accurate.
+You can suppress this message by setting them explicitly. Run the
+following command and follow the instructions in your editor to edit
+your configuration file:
+
+    git config --global --edit
+
+After doing this, you may fix the identity used for this commit with:
+
+    git commit --amend --reset-author
+
+ 2 files changed, 15 insertions(+), 15 deletions(-)
+[0;32m[09:44:26][0m Pulling latest from GitHub (in case worktree pushed)...
+Already up to date.
+[0;32m[09:44:29][0m Pushing to GitHub...
+To github.com:aarontmaher/Chat-gpt.git
+   cfd4ec1..4ce1dfe  main -> main
+[0;32m[09:44:32][0m Done! GitHub Pages will update in ~30-60 seconds.
+results.md updated: edges=57 commit=4ce1dfe
+
+
+----------------------------------------------------
+  Grappling Map OPML Watcher
+  Watching : /Users/aaronmaher/GrapplingMap/exports
+           : /Users/aaronmaher/Downloads
+  Repo     : /Users/aaronmaher/Chat-gpt
+  Press Ctrl-C to stop
+----------------------------------------------------
+

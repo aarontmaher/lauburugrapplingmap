@@ -1,0 +1,118 @@
+VISUAL-VERIFY-PACK-01 is done.
+
+What finished:
+	•	desktop verified: bootHealthy=true, 4 sections, 1726 items, 0 JS errors
+	•	mobile/narrow-width verified: bootHealthy=true, 4 sections, 1726 items, 0 JS errors
+	•	live site fetched successfully
+	•	no critical regressions found
+	•	no code changes made
+	•	no publish needed
+
+Important limitation:
+	•	Claude Code could not take real screenshots from the terminal sandbox
+	•	it verified behavior/state, but not pixel screenshots
+
+Code’s conclusion:
+	•	the product is now genuinely solid on the current frontend/product scope
+	•	the remaining meaningful work is content-driven, not more frontend polishing
+	•	remaining visible issues are things like:
+	•	low video coverage
+	•	OPML-sourced labels like “Hand fighting (NEW)”
+	•	positions with 0 techniques from real data
+
+My read:
+	•	I agree
+	•	I would not send another generic UI polish batch
+	•	the next best move is either:
+	1.	actual content work, or
+	2.	a real screenshot pack from a visual-capable agent/tool, or
+	3.	a phone-only validation pass by a human
+
+Next prompt:
+
+PROMPT-ID: CONTENT-STARTER-01
+TYPE: CODE
+SCOPE: content-work support only, not content decisions
+MODE: autonomous safe batch, no OPML edits unless explicitly asked later
+
+SOURCE OF TRUTH POLICY:
+grappling.opml remains the content source of truth.
+Do not change grappling.opml content in this pass.
+Do not change technique content, canonical naming, transitions, or OPML structure.
+Do not do content migration or grappling-knowledge decisions.
+Focus only on making the actual next content work easier to start immediately and safely.
+
+GOAL:
+Prepare the cleanest practical starting point for real content work, now that the product/tooling side is effectively complete.
+
+DO THESE 10 IMPROVEMENTS IN THIS PASS:
+	1.	Create a simple “start here now” content-work report from the existing reports.
+	2.	Produce the top 20 best next content targets from current real data.
+	3.	Group those targets by section so content work can begin in a focused order.
+	4.	Separate targets with instructional-video priority from live-footage priority if feasible.
+	5.	Create a concise human-readable report Aaron can use immediately.
+	6.	Create a concise machine-readable version of the same priorities.
+	7.	Make the report point clearly to the relevant scaffold paths where useful.
+	8.	Ensure the report uses only real current data and neutral signals.
+	9.	Keep the output practical and not overloaded.
+	10.	Do not modify OPML or content in this pass.
+
+DETAIL REQUIREMENTS:
+	•	Use existing reports and tooling where possible.
+	•	Prefer one clear actionable report over many scattered outputs.
+	•	Make it easy to answer:
+	•	what should I work on first
+	•	where is it
+	•	what type of content is missing
+	•	Do not invent strategic grappling judgments beyond neutral structural/data signals.
+
+EXPLICITLY OUT OF SCOPE:
+	•	no grappling.opml edits
+	•	no content migration or restructuring
+	•	no canonical renaming
+	•	no transition/destination decisions
+	•	no grappling content creation itself
+	•	no website/app UI changes unless strictly necessary for this report
+
+RULES:
+Work only on safe content-start support.
+Do not touch grappling.opml content.
+Do not change content structure.
+Do not invent grappling content.
+Prefer one strong actionable output over filler.
+
+TESTING / VALIDATION:
+	•	verify current reports still run
+	•	verify the new priority report is generated successfully
+	•	verify it is based on real current data
+	•	verify no scaffold changes occur
+	•	verify no app changes occur
+
+FINAL OUTPUT:
+CONTENT-STARTER-01 | DONE
+automatic:
+	•	<completed item 1>
+	•	<completed item 2>
+	•	<completed item 3>
+	•	<completed item 4>
+	•	<completed item 5>
+	•	<completed item 6>
+	•	<completed item 7>
+	•	<completed item 8>
+	•	<completed item 9>
+	•	<completed item 10>
+remaining:
+	•	
+
+changed files:
+	•	<file/report/script list>
+tests:
+	•	<what passed / what changed>
+publish:
+	•	attempted: no/yes
+	•	pushed: no/yes
+	•	commit: 
+	•	live-review-ready: yes/no
+	•	blockers: 
+notes:
+	•	

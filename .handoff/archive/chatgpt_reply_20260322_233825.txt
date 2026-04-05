@@ -1,0 +1,30 @@
+Yes — this should be an audit-only pass first, not an auto-fix pass.
+
+Given how many structure-sensitive rules you’ve locked in, the right move is:
+	•	scan the whole OPML
+	•	compare nodes against the expected schema/order rules
+	•	report all structural violations
+	•	do not silently “fix” them yet
+
+Use this plain prompt for Claude Code:
+
+PROMPT-ID: OPML-STRUCTURE-AUDIT-01
+TYPE: CODE
+SCOPE: full grappling.opml structure audit only
+MODE: read-only audit, no content edits
+
+SOURCE OF TRUTH POLICY:
+grappling.opml is the source of truth.
+Do not edit grappling.opml in this pass.
+Do not change technique content, canonical naming, transitions, or OPML structure in this pass.
+Do not do speculative cleanup or auto-fixes.
+Focus only on finding and reporting structure bugs across the full OPML.
+
+GOAL:
+Audit the entire grappling.opml for structure bugs, schema/order violations, duplicate structural artifacts, and other consistency problems, without making any edits yet.
+
+DO THESE 10 THINGS IN THIS PASS:
+	1.	Scan the entire grappling.opml, not just one branch.
+	2.	Identify nodes whose heading order does not match the expected standard for their category.
+	3.	Identify positions using the wrong heading set for their category.
+	4.	Identify duplicate structural artifacts such as heading-name children under the same heading where they

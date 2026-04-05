@@ -1,0 +1,25 @@
+No — that link is not the normal one you want for this project.
+
+It’s a Kamatera page for self-hosting Supabase on a VPS, not the official Supabase cloud dashboard. The page explicitly says “Supabase Hosting,” talks about deploying Supabase on Kamatera infrastructure, self-hosting, server specs, and root access.  ￼
+
+For your website, the simpler/correct path is the official Supabase signup/dashboard:
+	•	official signup: supabase.com/dashboard/sign-up  ￼
+
+So the best move is:
+	•	Use official Supabase
+	•	create a project there
+	•	then get:
+	•	Project URL
+	•	anon/public key
+	•	give those to Code
+
+You only want the Kamatera/self-hosted route if you deliberately want to run and manage your own Supabase server. For your current site/accounts/paywall setup, that’s extra complexity you do not need. The official Supabase route is the right one.  ￼
+
+After you create the official project, go to:
+	•	Settings
+	•	API
+and copy:
+	•	Project URL
+	•	anon/public key
+
+Do not use the service role / secret key.

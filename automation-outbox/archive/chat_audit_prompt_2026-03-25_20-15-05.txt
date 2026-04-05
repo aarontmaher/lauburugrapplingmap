@@ -1,0 +1,13 @@
+Review the current GrapplingMap product at aarontmaher.github.io/Chat-gpt/ focusing on the compact AI Coach widget (bottom-right, 320px).
+
+Key questions:
+1. Does the compact AI Coach feel right? Too small? Too hidden?
+2. Does it overlap graph/reference content?
+3. Is it usable on mobile?
+4. Does it make guests want to sign up?
+5. Does it add real value for members?
+6. Should it stay compact or go back to full-width?
+
+Also review: Supabase auth, belt UI, game intelligence features, training flow.
+
+Output: Top 5 improvements, keep/revert judgment, bugs found.

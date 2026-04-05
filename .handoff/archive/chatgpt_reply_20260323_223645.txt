@@ -1,0 +1,137 @@
+Yes — I’m treating this as the locked automation standard now.
+
+What I’m locking in from this point:
+	•	use the current working old KM bridge
+	•	use plain-text prompts only
+	•	use the old bridge signaling flow, not the watcher flow
+	•	only sync/upload shared memory at a true stopping point
+	•	for non-stopping batches, continue using the continuation handoff
+	•	don’t reintroduce alternate automation formats unless you explicitly ask
+
+Paste this to Claude Code:
+
+PROMPT-ID: AUTOMATION-FORMAT-LOCK-02
+TYPE: CODE
+SCOPE: workflow/shared-memory rules only
+
+GOAL:
+Lock the currently working automation format as the permanent default for this project.
+
+LOCK THIS AS THE STANDARD:
+	1.	Active automation system
+
+	•	old Keyboard Maestro bridge only
+
+	2.	Prompt format
+
+	•	plain text only
+	•	no copy-box formatting for automation prompts
+
+	3.	Non-stopping batch behavior
+
+	•	worthwhile work remains
+	•	write continuation using the current working old-bridge-compatible flow
+	•	use continue_automation.sh / mark_done.sh behavior as currently working
+	•	no shared-memory upload prompt
+	•	no Finder upload-folder open
+
+	4.	True stopping point behavior
+
+	•	no continuation prompt
+	•	mark done through the old bridge
+	•	only then allow:
+	•	commit/push
+	•	shared-memory update
+	•	bundle refresh
+	•	upload prompt
+	•	upload-folder open
+
+	5.	Explicitly retired
+
+	•	watcher flow
+	•	.prompt_ready / next_automation_prompt.txt flow
+	•	launchd continuation assumptions
+	•	alternate automation handoff formats unless Aaron explicitly requests them
+
+	6.	Shared memory rule
+
+	•	treat this automation format as locked project workflow
+	•	keep it in shared memory so ChatGPT, Claude Chat, and Claude Code all follow it
+
+UPDATE AS NEEDED:
+	•	WORKFLOW_RULES.md
+	•	DECISIONS.md
+	•	HANDOFF_LATEST.md
+	•	MEMORY_UPDATES.md
+	•	SYSTEM_OPTIMIZATION.md
+
+AFTER UPDATING:
+Give a short alignment summary:
+	•	active automation system
+	•	non-stopping behavior
+	•	true stopping-point behavior
+	•	retired automation paths
+
+PASTE BACK EXACTLY:
+AUTOMATION-FORMAT-LOCK-02 | DONE | updated:  | alignment:  | issues: 
+
+-chatgpt chat & claude code chat
+
+And if you want Claude Chat aligned too, paste this there:
+
+Use this as the locked automation standard going forward:
+	•	active automation system = current working old Keyboard Maestro bridge only
+	•	plain-text prompts only for automation
+	•	non-stopping batch = continue using the working continuation flow, no memory upload
+	•	true stopping point = no continuation prompt, then commit/push + memory sync/upload if appropriate
+	•	do not suggest watcher flow, .prompt_ready, next_automation_prompt.txt, or launchd continuation anymore unless Aaron explicitly asks
+
+Treat this as shared-memory truth for automation.
+
+-chatgpt chat & claude code chat
+
+Next automation prompt:
+
+PROMPT-ID: WEBSITE-IMPROVEMENT-ITERATION-16
+TYPE: CODE
+SCOPE: safe frontend/product improvements only
+
+GOAL:
+Resume the website/app improvement loop from the now-locked working automation format and identify the next genuinely worthwhile batch.
+
+BEFORE STARTING:
+	1.	Read and align to:
+
+	•	PROJECT_STATE.md
+	•	DECISIONS.md
+	•	WORKFLOW_RULES.md
+	•	HANDOFF_LATEST.md
+	•	MEMORY_UPDATES.md
+	•	SYSTEM_OPTIMIZATION.md
+
+	2.	Summarize briefly:
+
+	•	source of truth
+	•	current default priority
+	•	locked decisions relevant to this batch
+	•	current next best action
+
+TASK:
+Inspect the current local website/app state and choose the next genuinely worthwhile frontend/product improvement batch.
+Only continue if there is a real user-facing improvement worth doing.
+
+RULES:
+	•	prioritize website/app improvements first
+	•	do not touch grappling.opml
+	•	do not alter grappling taxonomy/content structure
+	•	do not modify live-footage folder organization
+	•	keep changes safe and frontend/product only
+	•	validate locally before stopping
+	•	use the locked old KM bridge automation format
+	•	if non-stopping, continue using the current working continuation flow
+	•	do not prompt upload unless true stopping point
+
+PASTE BACK EXACTLY:
+WEBSITE-IMPROVEMENT-ITERATION-16 | DONE | batch:  | files:  | validation:  | next-best:  | memory-sync: <yes/no> | stopping-point: <yes/no> | issues: 
+
+-chatgpt chat & claude code chat

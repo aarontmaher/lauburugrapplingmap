@@ -1,0 +1,97 @@
+Checked.
+
+This run completed normally.
+
+What terminal shows:
+	•	AUTOMATION-SUGGESTIONS-APPEND-CLAUDE-AUDIT-01 effectively finished
+	•	AUTOMATION_SUGGESTIONS.md was heavily cleaned up and reorganized
+	•	Claude appended the worthwhile items from the latest Claude Chat audit and separated them into clearer sections
+
+Main structure now looks like:
+	•	Already Shipped This Session
+	•	Pending Suggestions
+	•	Product Direction — Needs Aaron
+	•	Code Can Build (waiting for approval)
+	•	Aaron-Approved Feature Requests
+	•	Success-Based Next-Move Recommendations
+	•	Game-Driven Daily Suggestions
+	•	Explicitly Avoid
+	•	Rejected by Code
+
+Important content changes:
+	•	it added the human-audit product ideas into the suggestion pool
+	•	it marked a lot of current improvements as already shipped
+	•	it kept bigger product-direction items pending instead of auto-approving them
+	•	it explicitly recorded the “avoid” list from the audit
+	•	it updated the success/game-driven suggestion area to reflect that:
+	•	success logging is now done
+	•	next steps are:
+	•	successful-game summary
+	•	next-best-move engine
+	•	home-screen daily suggestion card
+
+Then it ran:
+	•	mark_done.sh
+	•	and successfully created:
+	•	Done signal created. Result saved to last_code_result.txt
+
+So this batch:
+	•	worked
+	•	finished
+	•	did not crash
+	•	terminal is now back at ❯
+	•	nothing is currently running
+
+Only noise:
+	•	Auto-update failed is still just Claude Code’s own self-update issue
+
+Bottom line
+
+The suggestion file is now much better organized, and the terminal is idle.
+
+Best next move is to get Code to produce the next ranked shortlist from this cleaned suggestion pool.
+
+Use this next:
+
+PROMPT-ID: AUTOMATION-SUGGESTIONS-SHORTLIST-04
+TYPE: CODE
+SCOPE: workflow/shared suggestion handling only
+
+GOAL:
+Now that AUTOMATION_SUGGESTIONS.md has been cleaned up and reorganized, produce the next ranked shortlist of the best items to build.
+
+TASK:
+	1.	Read:
+
+	•	AUTOMATION_SUGGESTIONS.md
+	•	AUTOMATION_NEXT.md
+	•	WORKFLOW_RULES.md
+	•	SYSTEM_OPTIMIZATION.md
+
+	2.	From the updated suggestion pool, identify:
+
+	•	the strongest approved next build items
+	•	the strongest pending items that still need Aaron review
+	•	the best ordering of product work from here
+
+	3.	Update:
+
+	•	AUTOMATION_NEXT.md
+	•	AUTOMATION_REVIEW_READY.md
+as needed
+
+IMPORTANT:
+	•	Do not implement anything in this prompt
+	•	Do not auto-approve pending suggestions
+	•	Do not touch grappling.opml
+	•	Do not touch website/app code
+
+OUTPUT:
+	•	top next build items
+	•	top pending review items
+	•	where the game-driven chain now sits in the roadmap
+
+PASTE BACK EXACTLY:
+AUTOMATION-SUGGESTIONS-SHORTLIST-04 | DONE | next:  | review-ready:  | roadmap:  | issues: 
+
+-chatgpt chat & claude code chat

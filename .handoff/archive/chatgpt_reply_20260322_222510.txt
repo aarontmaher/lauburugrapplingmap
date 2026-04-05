@@ -1,0 +1,77 @@
+DESKTOP-CLEANUP-AUDIT-01 is done.
+
+What finished:
+	•	47 screenshots moved to _Organized/Screenshots/
+	•	7 screen recordings moved to _Organized/Screen-Recordings/
+	•	2 old OPML exports moved to _Organized/Old-Exports/
+	•	4 old HTML prototypes moved to _Organized/Old-Prototypes/
+	•	1 grappling clip moved to _Organized/Grappling-Clips/
+	•	3 lock files moved to _Review/
+	•	0 files deleted
+
+Result:
+	•	67 files organized
+	•	Desktop reduced from 80 items to 13
+	•	11 project/ambiguous items intentionally left untouched
+	•	write_code_result.sh ran successfully
+	•	done.signal was created
+
+My read:
+	•	This was a good conservative cleanup.
+	•	It did the right thing by leaving project folders and ambiguous items alone.
+	•	I would not run another blind desktop-cleanup batch immediately.
+
+Next prompt:
+
+PROMPT-ID: DESKTOP-CLEANUP-REVIEW-01
+TYPE: CODE
+SCOPE: Desktop organization review only
+MODE: conservative follow-up, no blind cleanup
+
+GOAL:
+Review the current Desktop after the first cleanup pass and identify whether there are any remaining clearly safe organization improvements, without touching project folders or ambiguous items unless they are now unmistakably safe.
+
+TASKS:
+	1.	Inspect the current Desktop state after DESKTOP-CLEANUP-AUDIT-01.
+	2.	Review the remaining 11 untouched items.
+	3.	Categorize each remaining item as:
+	•	definitely leave alone
+	•	now clearly safe to organize
+	•	ambiguous / still leave alone
+	4.	Do not move anything unless it is now clearly safe and low-risk.
+	5.	If no meaningful safe follow-up cleanup exists, stop and say so.
+	6.	Do not delete anything permanently.
+	7.	Preserve filenames.
+	8.	Do not touch files outside the Desktop.
+	9.	Prefer leaving items alone over risky cleanup.
+	10.	Report exactly what was reviewed and whether any second-pass cleanup is actually worthwhile.
+
+IMPORTANT RULES:
+	•	Be more conservative than the first pass.
+	•	Do not move active project folders.
+	•	Do not rename important files.
+	•	Do not force a second pass if the Desktop is already in a good state.
+
+FINAL OUTPUT:
+DESKTOP-CLEANUP-REVIEW-01 | DONE
+automatic:
+	•	<completed item 1>
+	•	<completed item 2>
+	•	<completed item 3>
+	•	<completed item 4>
+	•	<completed item 5>
+	•	<completed item 6>
+	•	<completed item 7>
+	•	<completed item 8>
+	•	<completed item 9>
+	•	<completed item 10>
+remaining:
+	•	
+
+moved:
+	•	<file/folder summary or none>
+left alone:
+	•	
+
+review folders:
+	•	

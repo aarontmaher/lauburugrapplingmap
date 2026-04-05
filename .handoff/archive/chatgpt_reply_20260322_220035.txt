@@ -1,0 +1,112 @@
+CONTENT-READINESS-02 is done and published.
+
+What finished:
+	•	missing-video items are now clickable and jump directly to the technique in Reference
+	•	low-density positions are now ranked and clickable
+	•	position density is sorted lowest-content-first
+	•	readiness JSON export added
+	•	export includes:
+	•	totals
+	•	video coverage %
+	•	per-section breakdown
+	•	missing-video list
+	•	position density list
+	•	export uses dated filenames and toast feedback
+
+Result:
+	•	publish: yes
+	•	commit: 4cf029a
+	•	live-review-ready: yes
+	•	blockers: none
+	•	tests: local verification passed with bootHealthy=true and 0 errors
+
+My read:
+	•	Good batch.
+	•	This made the readiness tooling genuinely actionable.
+	•	Code’s conclusion is reasonable: this admin/readiness side is basically complete unless you move into actual content work.
+
+Next prompt:
+
+PROMPT-ID: LIVE-FOLDER-AUDIT-SCRIPT-01
+TYPE: CODE
+SCOPE: live-footage verification tooling only
+MODE: autonomous safe batch, no speculative folder moves
+
+SOURCE OF TRUTH POLICY:
+grappling.opml remains the content source of truth.
+Do not change grappling.opml in this pass.
+Do not change technique content, canonical naming, transitions, or OPML structure.
+Do not do speculative folder cleanup or folder moves in this pass.
+Focus only on building a safe verification/audit tool for the live-footage structure.
+
+GOAL:
+Create a reliable script-based audit that compares the live-footage folder scaffold against the intended OPML-derived structure and reports mismatches safely, without making risky organizational changes.
+
+CONTEXT:
+The top-level live-footage structure appears correct.
+There are many README placeholder files and little or no actual video content yet.
+A deeper comparison across the generated live-footage folders should be done with tooling, not manual inspection.
+
+DO THESE 10 IMPROVEMENTS IN THIS PASS:
+	1.	Build a script that enumerates the expected live-footage structure from the source-of-truth hierarchy.
+	2.	Build a script that enumerates the actual current live-footage structure.
+	3.	Compare expected vs actual and report missing folders.
+	4.	Compare expected vs actual and report unexpected extra folders.
+	5.	Compare expected vs actual and report duplicated or suspicious nested trash/scaffold anomalies.
+	6.	Produce a human-readable report file summarizing the audit.
+	7.	Produce a machine-readable report file (JSON) summarizing the audit.
+	8.	Make the audit ignore clearly non-structural metadata files where appropriate.
+	9.	Keep the audit conservative and read-only by default.
+	10.	If useful, add an optional dry-run cleanup recommendation section, but do not move/delete anything in this pass.
+
+DETAIL REQUIREMENTS:
+	•	Do not move, rename, or delete folders in this pass.
+	•	Do not guess intended structure from folder names alone if source-of-truth data can be used.
+	•	If the existing pipeline already has a relevant script, reuse or extend it safely rather than duplicating logic blindly.
+	•	Treat _TRASH, nested _TRASH, INBOX, and metadata files carefully and explicitly in the report.
+	•	Report clearly:
+	•	expected folders missing
+	•	unexpected folders present
+	•	ambiguous items
+	•	ignored items
+	•	Make the output useful for a later safe fix pass.
+
+EXPLICITLY OUT OF SCOPE:
+	•	no grappling.opml edits
+	•	no live-footage folder moves
+	•	no deletions
+	•	no speculative renaming
+	•	no content-meaning decisions
+	•	no website/app UI changes in this pass
+
+RULES:
+Work only on safe audit tooling and reporting.
+Do not touch grappling.opml.
+Do not change content structure.
+Do not invent grappling content.
+Preserve current files and folders.
+If an item is ambiguous, report it rather than fixing it.
+Prefer clear reporting over aggressive cleanup logic.
+
+TESTING / VALIDATION:
+	•	verify the audit runs successfully on the current live-footage tree
+	•	verify it produces both human-readable and machine-readable output
+	•	verify it does not modify the live-footage structure
+	•	verify ignored items are explicitly documented
+	•	if there are no structural mismatches, report that clearly
+
+FINAL OUTPUT:
+LIVE-FOLDER-AUDIT-SCRIPT-01 | DONE
+automatic:
+	•	<completed item 1>
+	•	<completed item 2>
+	•	<completed item 3>
+	•	<completed item 4>
+	•	<completed item 5>
+	•	<completed item 6>
+	•	<completed item 7>
+	•	<completed item 8>
+	•	<completed item 9>
+	•	<completed item 10>
+remaining:
+	•	
