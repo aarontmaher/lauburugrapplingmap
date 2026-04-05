@@ -2246,11 +2246,13 @@ function getWhoopUiState() {
 function updateWhoopMenuLabel() {
   var btn = document.getElementById('menuWhoopSyncBtn');
   if (!btn) return;
-  if (typeof isCurrentUserWhoopOwner === 'function' && isCurrentUserWhoopOwner()) {
-    var state = getWhoopUiState();
-    btn.textContent = state.connected ? 'Health \u2713 WHOOP' : 'Health Metrics';
-  } else {
+  var hp = window.HealthProvider;
+  var connected = hp ? hp.getConnectedProviders() : [];
+  if (connected.length === 0) {
     btn.textContent = 'Health Metrics';
+  } else {
+    var labels = connected.map(function(p) { return hp.PROVIDER_LABELS[p] || p; });
+    btn.textContent = 'Health \u2713 ' + labels.join(', ');
   }
 }
 
@@ -7360,187 +7362,209 @@ document.getElementById('menuResetBtn').addEventListener('click', function() {
   updateWhoopMenuLabel();
   showToast('All progress has been reset');
 });
-// ─── WHOOP Connection Manager ────────────────────────────────
+// ─── Health Metrics Manager (provider-aware) ──────────────────
 document.getElementById('menuWhoopSyncBtn').addEventListener('click', function() {
   document.getElementById('headerMenu').style.display = 'none';
-  openWhoopManager();
+  openHealthMetricsManager();
 });
 
-function openWhoopManager() {
+function openHealthMetricsManager() {
   var overlay = document.createElement('div');
   overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;';
   var modal = document.createElement('div');
   modal.style.cssText = 'background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;max-width:460px;width:100%;max-height:80vh;overflow-y:auto;box-shadow:0 20px 64px rgba(0,0,0,0.45);';
   modal.innerHTML =
     '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px;">' +
-      '<div><div style="font-family:Bebas Neue,sans-serif;font-size:22px;color:var(--accent);letter-spacing:1px;">WHOOP</div><div style="font-family:DM Mono,monospace;font-size:11px;color:var(--text-dim);line-height:1.5;margin-top:4px;">Recovery and readiness sync for coach suggestions and training context.</div></div>' +
-      '<button id="whoopManagerClose" aria-label="Close WHOOP manager" style="background:none;border:1px solid var(--border);color:var(--text-muted);font-size:14px;width:32px;height:32px;border-radius:50%;cursor:pointer;">×</button>' +
+      '<div><div style="font-family:Bebas Neue,sans-serif;font-size:22px;color:var(--accent);letter-spacing:1px;">Health Metrics</div>' +
+      '<div style="font-family:DM Mono,monospace;font-size:11px;color:var(--text-dim);line-height:1.5;margin-top:4px;">Recovery and readiness data for training recommendations.</div></div>' +
+      '<button id="healthManagerClose" aria-label="Close" style="background:none;border:1px solid var(--border);color:var(--text-muted);font-size:14px;width:32px;height:32px;border-radius:50%;cursor:pointer;">×</button>' +
     '</div>' +
-    '<div id="whoopManagerBody" style="display:flex;flex-direction:column;gap:12px;"></div>';
+    '<div id="healthManagerBody" style="display:flex;flex-direction:column;gap:14px;"></div>';
   overlay.appendChild(modal);
   document.body.appendChild(overlay);
   var closeModal = function() { overlay.remove(); };
   overlay.addEventListener('click', function(e) { if (e.target === overlay) closeModal(); });
-  modal.querySelector('#whoopManagerClose').addEventListener('click', closeModal);
+  modal.querySelector('#healthManagerClose').addEventListener('click', closeModal);
 
-  var body = modal.querySelector('#whoopManagerBody');
+  var body = modal.querySelector('#healthManagerBody');
 
-  function debugFallbackHtml() {
-    return '<details style="margin-top:6px;border-top:1px solid rgba(255,255,255,0.06);padding-top:10px;">' +
-      '<summary style="cursor:pointer;font-family:DM Mono,monospace;font-size:11px;color:#8892a4;">Admin/debug fallback: paste WHOOP JSON</summary>' +
-      '<div style="margin-top:10px;font-family:DM Mono,monospace;font-size:11px;color:var(--text-dim);line-height:1.5;">Use this only when backend WHOOP auth/sync is unavailable.</div>' +
-      '<textarea id="whoopSyncInput" style="width:100%;min-height:120px;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:DM Mono,monospace;font-size:11px;padding:10px;resize:vertical;margin-top:10px;" placeholder=\'{\"date\":\"2026-04-03\",\"recovery_score\":36,\"hrv_ms\":53,\"resting_hr\":56,\"sleep_hours\":7.2,\"daily_strain\":7.8}\'></textarea>' +
-      '<div style="display:flex;gap:8px;justify-content:flex-end;margin-top:10px;">' +
-        '<button id="whoopDebugSyncBtn" style="background:rgba(255,255,255,0.04);border:1px solid var(--border);color:var(--text-dim);font-family:DM Mono,monospace;font-size:11px;padding:7px 14px;border-radius:6px;cursor:pointer;">Import debug JSON</button>' +
-      '</div>' +
-      '</details>';
+  // ── Helper: render one metric data summary row ────────────
+  function dataSummaryHtml(d) {
+    if (!d) return '';
+    var recColor = d.recovery_score != null ? (d.recovery_score >= 67 ? '#34d399' : d.recovery_score >= 34 ? '#f0c040' : '#f85149') : 'var(--text-dim)';
+    return '<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:8px;">' +
+      '<div style="border:1px solid rgba(255,255,255,0.05);border-radius:8px;padding:8px;text-align:center;"><div style="font-family:DM Mono,monospace;font-size:9px;color:#667;">Recovery</div><div style="font-family:Bebas Neue,sans-serif;font-size:20px;color:' + recColor + ';margin-top:2px;">' + (d.recovery_score != null ? d.recovery_score + '%' : '—') + '</div></div>' +
+      '<div style="border:1px solid rgba(255,255,255,0.05);border-radius:8px;padding:8px;text-align:center;"><div style="font-family:DM Mono,monospace;font-size:9px;color:#667;">HRV</div><div style="font-family:Bebas Neue,sans-serif;font-size:20px;color:var(--text);margin-top:2px;">' + (d.hrv_ms != null ? d.hrv_ms + '<span style="font-size:10px;">ms</span>' : '—') + '</div></div>' +
+      '<div style="border:1px solid rgba(255,255,255,0.05);border-radius:8px;padding:8px;text-align:center;"><div style="font-family:DM Mono,monospace;font-size:9px;color:#667;">Sleep</div><div style="font-family:Bebas Neue,sans-serif;font-size:20px;color:var(--text);margin-top:2px;">' + (d.sleep_hours != null ? d.sleep_hours.toFixed(1) + '<span style="font-size:10px;">h</span>' : '—') + '</div></div>' +
+    '</div>' +
+    '<div style="font-family:DM Mono,monospace;font-size:9px;color:var(--text-muted);margin-top:4px;">Date: ' + d.date + (d.synced_at ? ' · Synced ' + ccFormatWhen(d.synced_at) : '') + '</div>';
   }
 
-  function renderPanel(model) {
-    var state = getWhoopUiState();
-    var ad = model.auth_detail || {};
-    var needsReauth = ad.reauth_required || ad.sync_blocked;
-    var statusTone = needsReauth ? '#ff7c70' : model.connected ? '#34d399' : state.debugDataOnly ? '#d29922' : '#8892a4';
-    var statusLabel = needsReauth ? 'REAUTH NEEDED' : model.connected ? 'CONNECTED' : state.debugDataOnly ? 'DEBUG' : 'NOT CONNECTED';
-    var primaryLabel = needsReauth ? 'Reconnect WHOOP' : model.connected ? 'Refresh data' : 'Connect WHOOP';
-    var primaryDisabled = !!model.primaryDisabled;
-    var helper = needsReauth
-      ? 'WHOOP authorization has expired. Reconnect to resume live sync.'
-      : model.connected
-        ? 'Recovery, strain, and sleep sync automatically. Refresh to pull the latest data now.'
-        : (isMember() ? 'Connect your WHOOP account to sync recovery data automatically.' : 'Sign in to connect WHOOP.');
-    var lastSync = state.lastSyncAt ? ccFormatWhen(state.lastSyncAt) : (model.last_sync_at ? ccFormatWhen(model.last_sync_at) : 'never');
-    var latestDate = state.latestDate || model.latest_date || 'none';
+  // ── Helper: manual import block ────────────────────────────
+  function importBlockHtml(id, placeholder) {
+    return '<details style="margin-top:6px;border-top:1px solid rgba(255,255,255,0.05);padding-top:8px;">' +
+      '<summary style="cursor:pointer;font-family:DM Mono,monospace;font-size:10px;color:#8892a4;">Import JSON manually</summary>' +
+      '<textarea id="' + id + '" style="width:100%;min-height:90px;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:DM Mono,monospace;font-size:10px;padding:8px;resize:vertical;margin-top:8px;" placeholder=\'' + placeholder + '\'></textarea>' +
+      '<div style="display:flex;justify-content:flex-end;margin-top:6px;">' +
+        '<button id="' + id + 'Btn" style="background:rgba(255,255,255,0.04);border:1px solid var(--border);color:var(--text-dim);font-family:DM Mono,monospace;font-size:10px;padding:6px 12px;border-radius:6px;cursor:pointer;">Import</button>' +
+      '</div></details>';
+  }
 
-    // Today's data summary (if available)
-    var todaySummary = '';
-    if (model.connected && STATE.whoopData && isWhoopDataRecent(STATE.whoopData)) {
-      var wd = STATE.whoopData;
-      var recColor = wd.recovery_score >= 67 ? '#34d399' : wd.recovery_score >= 34 ? '#f0c040' : '#f85149';
-      todaySummary =
-        '<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:8px;">' +
-          '<div style="border:1px solid rgba(255,255,255,0.05);border-radius:8px;padding:8px;background:rgba(255,255,255,0.015);text-align:center;"><div style="font-family:DM Mono,monospace;font-size:9px;color:#667;">Recovery</div><div style="font-family:Bebas Neue,sans-serif;font-size:22px;color:' + recColor + ';margin-top:2px;">' + (wd.recovery_score != null ? wd.recovery_score + '%' : '—') + '</div></div>' +
-          '<div style="border:1px solid rgba(255,255,255,0.05);border-radius:8px;padding:8px;background:rgba(255,255,255,0.015);text-align:center;"><div style="font-family:DM Mono,monospace;font-size:9px;color:#667;">HRV</div><div style="font-family:Bebas Neue,sans-serif;font-size:22px;color:var(--text);margin-top:2px;">' + (wd.hrv_ms != null ? wd.hrv_ms + '<span style="font-size:11px;color:var(--text-dim);">ms</span>' : '—') + '</div></div>' +
-          '<div style="border:1px solid rgba(255,255,255,0.05);border-radius:8px;padding:8px;background:rgba(255,255,255,0.015);text-align:center;"><div style="font-family:DM Mono,monospace;font-size:9px;color:#667;">Strain</div><div style="font-family:Bebas Neue,sans-serif;font-size:22px;color:var(--text);margin-top:2px;">' + (wd.daily_strain != null ? wd.daily_strain : '—') + '</div></div>' +
-        '</div>';
-    }
+  function render() {
+    var hp = window.HealthProvider;
+    var connected = hp ? hp.getConnectedProviders() : [];
+    var sections = [];
 
-    body.innerHTML =
-      '<div style="border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:12px;background:rgba(255,255,255,0.02);">' +
-        '<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;">' +
-          '<div style="display:flex;align-items:center;gap:8px;">' +
-            '<span style="width:8px;height:8px;border-radius:50%;background:' + statusTone + ';flex-shrink:0;"></span>' +
-            '<span style="font-family:Barlow Condensed,sans-serif;font-size:15px;letter-spacing:0.4px;color:var(--text);">' + (needsReauth ? 'WHOOP needs reauthorization' : model.connected ? 'WHOOP connected' : 'WHOOP not connected') + '</span>' +
+    // ── WHOOP section (only shown to WHOOP owner) ──────────
+    if (isCurrentUserWhoopOwner()) {
+      var whoopState = getWhoopUiState();
+      var ad = {};
+      var statusTone = whoopState.connected ? '#34d399' : whoopState.debugDataOnly ? '#d29922' : '#8892a4';
+      var statusLabel = whoopState.connected ? 'CONNECTED' : whoopState.debugDataOnly ? 'DEBUG' : 'NOT CONNECTED';
+      var whoopData = STATE.whoopData && isWhoopDataRecent(STATE.whoopData) ? STATE.whoopData : null;
+
+      sections.push(
+        '<div style="border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:12px;" id="hmWhoopSection">' +
+          '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px;">' +
+            '<span style="font-family:Barlow Condensed,sans-serif;font-size:14px;letter-spacing:0.4px;color:var(--text);">WHOOP</span>' +
+            '<span style="font-family:DM Mono,monospace;font-size:9px;color:' + statusTone + ';border:1px solid rgba(255,255,255,0.08);padding:2px 6px;border-radius:999px;">' + statusLabel + '</span>' +
           '</div>' +
-          '<span style="font-family:DM Mono,monospace;font-size:9px;color:' + statusTone + ';border:1px solid rgba(255,255,255,0.08);padding:3px 7px;border-radius:999px;white-space:nowrap;">' + statusLabel + '</span>' +
-        '</div>' +
-        '<div style="font-family:DM Mono,monospace;font-size:10px;color:' + statusTone + ';margin-top:6px;">' + (model.statusText || helper) + '</div>' +
-        '<div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:10px;">' +
-          '<div style="border:1px solid rgba(255,255,255,0.05);border-radius:8px;padding:8px;background:rgba(255,255,255,0.015);"><div style="font-family:DM Mono,monospace;font-size:9px;color:#667;">Last sync</div><div style="font-family:Barlow Condensed,sans-serif;font-size:15px;color:var(--text);margin-top:3px;">' + lastSync + '</div></div>' +
-          '<div style="border:1px solid rgba(255,255,255,0.05);border-radius:8px;padding:8px;background:rgba(255,255,255,0.015);"><div style="font-family:DM Mono,monospace;font-size:9px;color:#667;">Latest day</div><div style="font-family:Barlow Condensed,sans-serif;font-size:15px;color:var(--text);margin-top:3px;">' + latestDate + '</div></div>' +
-        '</div>' +
-        todaySummary +
-      '</div>' +
-      '<div style="font-family:DM Mono,monospace;font-size:10px;color:var(--text-dim);line-height:1.5;">' + helper + '</div>' +
-      '<div style="display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;">' +
-        (isMember()
-          ? '<button id="whoopPrimaryBtn" ' + (primaryDisabled ? 'disabled ' : '') + 'style="background:' + (needsReauth ? '#ff7c70' : 'var(--accent)') + ';color:#000;border:none;font-family:DM Mono,monospace;font-size:11px;font-weight:600;padding:8px 14px;border-radius:6px;cursor:' + (primaryDisabled ? 'default' : 'pointer') + ';opacity:' + (primaryDisabled ? '0.55' : '1') + ';">' + primaryLabel + '</button>'
-          : '<button id="whoopAuthBtn" style="background:var(--accent);color:#000;border:none;font-family:DM Mono,monospace;font-size:11px;font-weight:600;padding:8px 14px;border-radius:6px;cursor:pointer;">Sign in to connect</button>') +
-      '</div>' +
-      debugFallbackHtml();
+          (whoopData ? dataSummaryHtml(Object.assign({}, whoopData, { _providerLabel: 'WHOOP' })) : '<div style="font-family:DM Mono,monospace;font-size:10px;color:var(--text-muted);">No recent data. Use Refresh to pull today\'s data.</div>') +
+          '<div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;">' +
+            (isMember()
+              ? '<button id="hmWhoopRefreshBtn" style="background:var(--accent);color:#000;border:none;font-family:DM Mono,monospace;font-size:10px;font-weight:600;padding:7px 12px;border-radius:6px;cursor:pointer;">' + (whoopState.connected ? 'Refresh' : 'Connect WHOOP') + '</button>'
+              : '<button id="hmWhoopAuthBtn" style="background:var(--accent);color:#000;border:none;font-family:DM Mono,monospace;font-size:10px;font-weight:600;padding:7px 12px;border-radius:6px;cursor:pointer;">Sign in to connect</button>') +
+          '</div>' +
+          importBlockHtml('whoopImportJson', '{"date":"2026-04-05","recovery_score":72,"hrv_ms":58,"resting_hr":54,"sleep_hours":7.4,"daily_strain":8.1}') +
+        '</div>'
+      );
+    }
 
-    var debugBtn = document.getElementById('whoopDebugSyncBtn');
-    if (debugBtn) debugBtn.addEventListener('click', function() {
-      var raw = document.getElementById('whoopSyncInput').value.trim();
-      if (!raw) { showToast('Please paste JSON data'); return; }
-      try {
-        var parsed = JSON.parse(raw);
-        if (syncWhoopData(parsed)) closeModal();
-      } catch(e) { showToast('Invalid JSON — check format'); }
+    // ── Polar section (any user) ───────────────────────────
+    var polarData = STATE.polarData && isWhoopDataRecent(STATE.polarData) ? STATE.polarData : null;
+    sections.push(
+      '<div style="border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:12px;">' +
+        '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px;">' +
+          '<span style="font-family:Barlow Condensed,sans-serif;font-size:14px;letter-spacing:0.4px;color:var(--text);">Polar</span>' +
+          '<span style="font-family:DM Mono,monospace;font-size:9px;color:' + (polarData ? '#34d399' : '#8892a4') + ';border:1px solid rgba(255,255,255,0.08);padding:2px 6px;border-radius:999px;">' + (polarData ? 'DATA LOADED' : 'NOT CONNECTED') + '</span>' +
+        '</div>' +
+        (polarData ? dataSummaryHtml(polarData) : '<div style="font-family:DM Mono,monospace;font-size:10px;color:var(--text-muted);">Import today\'s Polar export to enable training recommendations.</div>') +
+        importBlockHtml('polarImportJson', '{"date":"2026-04-05","recovery_score":68,"hrv_ms":52,"resting_hr":56,"sleep_hours":7.1,"training_load":4.2}') +
+      '</div>'
+    );
+
+    // ── Apple Health section (any user) ───────────────────
+    var ahData = STATE.appleHealthData && isWhoopDataRecent(STATE.appleHealthData) ? STATE.appleHealthData : null;
+    sections.push(
+      '<div style="border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:12px;">' +
+        '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px;">' +
+          '<span style="font-family:Barlow Condensed,sans-serif;font-size:14px;letter-spacing:0.4px;color:var(--text);">Apple Health</span>' +
+          '<span style="font-family:DM Mono,monospace;font-size:9px;color:' + (ahData ? '#34d399' : '#8892a4') + ';border:1px solid rgba(255,255,255,0.08);padding:2px 6px;border-radius:999px;">' + (ahData ? 'DATA LOADED' : 'NOT CONNECTED') + '</span>' +
+        '</div>' +
+        (ahData ? dataSummaryHtml(ahData) : '<div style="font-family:DM Mono,monospace;font-size:10px;color:var(--text-muted);">Import an Apple Health export to enable HRV and sleep-based recommendations.</div>') +
+        importBlockHtml('appleImportJson', '{"date":"2026-04-05","hrv_ms":48,"resting_hr":58,"sleep_hours":6.9,"active_energy_kcal":420}') +
+      '</div>'
+    );
+
+    // ── No-source state ────────────────────────────────────
+    if (connected.length === 0) {
+      sections.push(
+        '<div style="font-family:DM Mono,monospace;font-size:10px;color:var(--text-muted);text-align:center;padding:8px 0;line-height:1.6;">No health data connected yet.<br>Import a daily export above to get provider-backed training recommendations.</div>'
+      );
+    }
+
+    body.innerHTML = sections.join('');
+
+    // WHOOP buttons
+    var whoopRefreshBtn = document.getElementById('hmWhoopRefreshBtn');
+    if (whoopRefreshBtn) whoopRefreshBtn.addEventListener('click', async function() {
+      whoopRefreshBtn.textContent = 'Refreshing...';
+      whoopRefreshBtn.disabled = true;
+      var whoopState = getWhoopUiState();
+      if (whoopState.connected) {
+        var refreshed = await refreshWhoopFromBackend();
+        if (refreshed && refreshed.ok) { closeModal(); return; }
+      } else {
+        var flow = await startWhoopConnectFlow();
+        if (flow && flow.ok) { closeModal(); return; }
+      }
+      whoopRefreshBtn.textContent = 'Try again';
+      whoopRefreshBtn.disabled = false;
+    });
+    var whoopAuthBtn = document.getElementById('hmWhoopAuthBtn');
+    if (whoopAuthBtn) whoopAuthBtn.addEventListener('click', function() { requireAuth('connect WHOOP'); });
+
+    // WHOOP JSON import
+    var whoopImportBtn = document.getElementById('whoopImportJsonBtn');
+    if (whoopImportBtn) whoopImportBtn.addEventListener('click', function() {
+      var raw = document.getElementById('whoopImportJson').value.trim();
+      if (!raw) return showToast('Paste JSON first');
+      try { if (syncWhoopData(JSON.parse(raw))) { closeModal(); } }
+      catch(e) { showToast('Invalid JSON'); }
     });
 
-    var authBtn = document.getElementById('whoopAuthBtn');
-    if (authBtn) authBtn.addEventListener('click', function() { requireAuth('connect WHOOP'); });
+    // Polar JSON import
+    var polarImportBtn = document.getElementById('polarImportJsonBtn');
+    if (polarImportBtn) polarImportBtn.addEventListener('click', function() {
+      var raw = document.getElementById('polarImportJson').value.trim();
+      if (!raw) return showToast('Paste JSON first');
+      try { if (syncPolarData(JSON.parse(raw))) { closeModal(); } }
+      catch(e) { showToast('Invalid JSON'); }
+    });
 
-    var primaryBtn = document.getElementById('whoopPrimaryBtn');
-    if (primaryBtn && !primaryDisabled) primaryBtn.addEventListener('click', async function() {
-      renderPanel({ connected: model.connected, statusText: model.connected ? 'Refreshing WHOOP...' : 'Opening WHOOP connect flow...', primaryDisabled: true });
-      if (model.connected) {
-        var refreshed = await refreshWhoopFromBackend();
-        if (!refreshed || !refreshed.ok) {
-          renderPanel({ connected: true, statusText: 'Refresh unavailable right now. Use the debug fallback if you need temporary local data.' });
-          return;
-        }
-        closeModal();
-        return;
-      }
-      var connected = await startWhoopConnectFlow();
-      if (!connected || !connected.ok) {
-        renderPanel({ connected: false, statusText: 'WHOOP connect flow unavailable from website. Use the WHOOP MCP direct auth at the service endpoint instead.', primaryDisabled: false });
-      }
+    // Apple Health JSON import
+    var appleImportBtn = document.getElementById('appleImportJsonBtn');
+    if (appleImportBtn) appleImportBtn.addEventListener('click', function() {
+      var raw = document.getElementById('appleImportJson').value.trim();
+      if (!raw) return showToast('Paste JSON first');
+      try { if (syncAppleHealthData(JSON.parse(raw))) { closeModal(); } }
+      catch(e) { showToast('Invalid JSON'); }
     });
   }
 
-  (async function initWhoopManager() {
-    var state = getWhoopUiState();
-    if (!isMember()) {
-      renderPanel({ connected: false, statusText: 'Sign in first, then connect WHOOP to enable automatic sync.' });
-      return;
-    }
-    renderPanel({ connected: state.connected, statusText: 'Checking WHOOP connection...' });
-    var status = await fetchWhoopStatus();
-    if (status && status.ok) {
-      setWhoopConnectionMeta({
-        connected: status.connected,
-        last_sync_at: status.last_sync_at,
-        latest_date: status.latest_date,
-        source: status.connected ? 'backend' : getWhoopConnectionMeta().source || 'backend'
-      });
-      renderPanel({
-        connected: status.connected,
-        last_sync_at: status.last_sync_at,
-        latest_date: status.latest_date,
-        auth_detail: status.auth_detail || {},
-        statusText: status.status_text || (status.connected
-          ? ('Connected' + (status.last_sync_at ? ' \u00b7 last sync ' + ccFormatWhen(status.last_sync_at) : ''))
-          : 'Connect WHOOP to pull recovery automatically after auth.')
-      });
-      if (status.connected && !STATE.whoopData) await maybeAutoRefreshWhoop('force');
-      return;
-    }
-    renderPanel({
-      connected: state.connected || state.debugDataOnly,
-      statusText: state.debugDataOnly
-        ? 'Using locally imported debug data. Live WHOOP MCP was unreachable.'
-        : 'Could not reach WHOOP backend. Check network or service status.'
-    });
-  })();
+  render();
+
+  // Auto-check WHOOP status for WHOOP owner
+  if (isCurrentUserWhoopOwner() && isMember()) {
+    fetchWhoopStatus().then(function(status) {
+      if (status && status.ok) {
+        setWhoopConnectionMeta({
+          connected: status.connected,
+          last_sync_at: status.last_sync_at,
+          latest_date: status.latest_date,
+          source: status.connected ? 'backend' : getWhoopConnectionMeta().source || 'backend'
+        });
+        render(); // re-render with updated connection state
+        if (status.connected && !STATE.whoopData) maybeAutoRefreshWhoop('force');
+      }
+    }).catch(function() {});
+  }
 }
 
 // ─── WHOOP Readiness Card ─────────────────────────────────────
 function updateWhoopReadinessCard() {
   var card = document.getElementById('whoopReadinessCard');
   if (!card) return;
-  // Only show WHOOP readiness for the WHOOP owner
-  if (typeof isCurrentUserWhoopOwner === 'function' && !isCurrentUserWhoopOwner()) {
-    card.style.display = 'none';
-    return;
-  }
-  var data = STATE.whoopData;
-  if (!data || !isWhoopDataRecent(data)) {
-    card.style.display = 'none';
-    return;
-  }
   if (sessionStorage.getItem('gm_whoopDismissed') === '1') {
     card.style.display = 'none';
     return;
   }
+  // Provider-aware: use HealthProvider instead of WHOOP-owner gate
+  var hp = window.HealthProvider;
+  var data = hp ? hp.getLatestHealthData() : null;
+  if (!data || !isWhoopDataRecent(data)) {
+    card.style.display = 'none';
+    return;
+  }
   var score = data.recovery_score;
-  var color = score >= 67 ? '#34d399' : score >= 34 ? '#f0c040' : '#f85149';
-  var parts = ['Recovery <span style="color:' + color + ';font-weight:600;">' + score + '%</span>'];
+  var parts = [];
+  if (score != null) {
+    var color = score >= 67 ? '#34d399' : score >= 34 ? '#f0c040' : '#f85149';
+    parts.push('Recovery <span style="color:' + color + ';font-weight:600;">' + score + '%</span>');
+  }
   if (data.hrv_ms != null) parts.push('HRV ' + data.hrv_ms + 'ms');
   if (data.daily_strain != null) parts.push('Strain ' + data.daily_strain);
-  if (data.synced_at) parts.push('Synced ' + ccFormatWhen(data.synced_at));
+  if (data._providerLabel) parts.push('<span style="color:var(--text-muted);font-size:10px;">' + data._providerLabel + '</span>');
   document.getElementById('whoopReadinessText').innerHTML = parts.join(' <span style="color:var(--text-muted);">|</span> ');
   card.style.display = 'flex';
 }
@@ -7557,9 +7581,9 @@ function updateAITrainingCard() {
   var content = document.getElementById('aiTrainingContent');
   if (!card || !content) return;
 
-  // Only show AI training card for users with WHOOP intelligence data
-  // Other providers will get their own coaching surface later
-  if (typeof isCurrentUserWhoopOwner === 'function' && !isCurrentUserWhoopOwner()) {
+  // Provider-aware gate: show for any user with connected health data
+  var _hp = window.HealthProvider;
+  if (!_hp || _hp.getConnectedProviders().length === 0 || !_hp.isDataRecent()) {
     card.style.display = 'none';
     return;
   }
@@ -7573,13 +7597,8 @@ function updateAITrainingCard() {
   // Get coaching from intelligence layer
   var coaching = window.GrapplingIntelligence ? window.GrapplingIntelligence.getDailyCoaching() : null;
   if (!coaching || !coaching.data_quality.has_today) {
-    // No health data today — show gentle prompt
-    if (STATE.whoopData && isWhoopDataRecent(STATE.whoopData)) {
-      // Basic WHOOP data exists but intelligence layer may not have enough history
-      card.style.display = 'none'; // let the basic readiness card show instead
-    } else {
-      card.style.display = 'none';
-    }
+    // Intelligence layer needs history — fall back to basic readiness card
+    card.style.display = 'none';
     return;
   }
 
@@ -7633,7 +7652,8 @@ function updateAITrainingCard() {
   if (dq.missing.grappling_sessions && dq.missing.grappling_workout) caveats.push('no grappling session context');
   if (dq.missing.sleep_detail) caveats.push('basic sleep only');
   if (caveats.length > 0) {
-    html += '<div style="font-size:9px;color:var(--text-muted);margin-top:4px;font-style:italic;">Based on WHOOP data. ' + caveats.join(', ') + '.</div>';
+    var _provLabel = (_hp && _hp.getLatestHealthData() && _hp.getLatestHealthData()._providerLabel) || 'health data';
+    html += '<div style="font-size:9px;color:var(--text-muted);margin-top:4px;font-style:italic;">Based on ' + _provLabel + '. ' + caveats.join(', ') + '.</div>';
   }
 
   content.innerHTML = html;
