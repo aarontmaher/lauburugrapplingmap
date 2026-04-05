@@ -2295,14 +2295,75 @@ function syncPolarData(data) {
     window.GrapplingIntelligence.runPipeline();
   }
   if (typeof updateAITrainingCard === 'function') updateAITrainingCard();
-  showToast('Polar data synced for ' + normalized.date);
   
-  // Backend persistence disabled - health-import endpoint doesn't exist
-  // Local sync succeeded, no backend call needed
+  // ─── BACKEND-READY: Append to MultiUserHealth if authenticated ───────
+  // This wires Polar toward backend persistence while keeping local storage
+  if (isMember() && AUTH_USER && AUTH_USER.id && window.MultiUserHealth) {
+    (function() {
+      try {
+        var record = window.MultiUserHealth.createDailyRecord({
+          user_id: AUTH_USER.id,
+          date: normalized.date,
+          provider: 'polar',
+          health_metrics: {
+            recovery_score: normalized.recovery_score,
+            hrv_ms: normalized.hrv_ms,
+            resting_hr: normalized.resting_hr,
+            sleep_hours: normalized.sleep_hours,
+            sleep_performance_pct: normalized.sleep_performance_pct,
+            daily_strain: normalized.daily_strain
+          },
+          raw_payload: data,
+          data_source: 'manual_polar_import',
+          synced_at: normalized.synced_at
+        });
+        window.MultiUserHealth.appendDay(AUTH_USER.id, record);
+        _log('[Polar] Appended to MultiUserHealth for backend persistence');
+      } catch(e) {
+        _log('[Polar] MultiUserHealth append failed (non-fatal):', e.message);
+      }
+    })();
+  }
+  
+  showToast('Polar data synced for ' + normalized.date);
   return true;
 }
 
 window._syncPolar = function(data) { return syncPolarData(data); };
+
+// ─── BACKEND-READ: Load Polar from MultiUserHealth on member login ──
+// This enables reading back Polar data that was saved to MultiUserHealth
+function loadPolarFromBackend() {
+  if (!isMember() || !AUTH_USER || !AUTH_USER.id || !window.MultiUserHealth) return null;
+  try {
+    var history = window.MultiUserHealth.loadUserHistory(AUTH_USER.id);
+    if (!history || !history.length) return null;
+    // Find the most recent Polar import
+    for (var i = history.length - 1; i >= 0; i--) {
+      var rec = history[i];
+      if (rec.provider === 'polar' || rec.data_source === 'manual_polar_import') {
+        // Convert back to normalized state format
+        var metrics = rec.health_metrics || {};
+        return {
+          date: rec.date,
+          recovery_score: metrics.recovery_score,
+          hrv_ms: metrics.hrv_ms,
+          resting_hr: metrics.resting_hr,
+          sleep_hours: metrics.sleep_hours,
+          sleep_performance_pct: metrics.sleep_performance_pct,
+          daily_strain: metrics.daily_strain,
+          readiness_state: computeReadiness(metrics.recovery_score),
+          synced_at: rec.synced_at || rec.created_at,
+          source: 'polar',
+          raw_daily: rec.raw_payload || {}
+        };
+      }
+    }
+  } catch(e) {
+    _log('[Polar] Backend read failed (non-fatal):', e.message);
+  }
+  return null;
+}
 
 // ─── APPLE HEALTH NORMALIZATION ────────────────────────────────
 // Apple Health export / HealthKit field mapping → shared app schema
@@ -10060,11 +10121,17 @@ _log('[GrapplingMap] Debug API ready: window.__APP_DEBUG__');
     if (!alreadyMigrated) {
       UserStore.migrateLocalToCloud();
     }
-    // Load health data from backend (Apple Health, etc.)
+    // Load health data from backend (Apple Health, Polar, etc.)
     if (typeof loadAppleHealthFromBackend === 'function') {
       var backendAppleHealth = loadAppleHealthFromBackend();
       if (backendAppleHealth) {
         STATE.appleHealthData = backendAppleHealth;
+      }
+    }
+    if (typeof loadPolarFromBackend === 'function') {
+      var backendPolar = loadPolarFromBackend();
+      if (backendPolar) {
+        STATE.polarData = backendPolar;
       }
     }
     // Sync from API (merge cloud → local)
