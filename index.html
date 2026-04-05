@@ -1754,11 +1754,11 @@ function ccDefaultAgentBoard() {
       key: key,
       name: CONTROL_AGENT_LABELS[key],
       status: 'idle',
-      task: 'Awaiting MCP work status',
+      task: 'No active task',
       branch: null,
       lastCommit: null,
-      blockers: key === 'claude_chat' || key === 'chatgpt' || key === 'cowork' ? 'Read-only until remote connector is attached' : '',
-      summary: 'Local fallback snapshot',
+      blockers: '',
+      summary: '',
       updatedAt: null
     };
   });
@@ -4052,16 +4052,37 @@ function ccBuildActivity(snapshot) {
       });
     }
   });
-  // Include recent prompt jobs in activity
+  // Include recent prompt jobs in activity — show lifecycle events
   var promptJobs = _loadLocalPromptJobs ? _loadLocalPromptJobs() : [];
-  promptJobs.slice(0, 5).forEach(function(job) {
+  promptJobs.slice(0, 8).forEach(function(job) {
+    var agentName = job.target_agent ? (CONTROL_AGENT_LABELS[job.target_agent] || job.target_agent) : 'unknown';
+    var promptSnippet = (job.prompt || '').slice(0, 60) + ((job.prompt || '').length > 60 ? '…' : '');
+    // Dispatch event
     items.push({
-      ts: job.created_at || job.updated_at || '',
-      type: 'prompt dispatched',
-      title: job.target_agent ? (CONTROL_AGENT_LABELS[job.target_agent] || job.target_agent) : 'unknown',
-      body: (job.prompt || '').slice(0, 80) + ((job.prompt || '').length > 80 ? '…' : ''),
+      ts: job.created_at || '',
+      type: 'prompt → ' + agentName,
+      title: promptSnippet,
+      body: job.priority && job.priority !== 'normal' ? job.priority + ' priority' : '',
       status: job.status || 'pending'
     });
+    // Result event (if job has been claimed or completed)
+    if (job.status === 'completed' && job.updated_at && job.updated_at !== job.created_at) {
+      items.push({
+        ts: job.updated_at,
+        type: 'result ← ' + agentName,
+        title: (job.result_summary || 'Completed').slice(0, 60),
+        body: '',
+        status: 'done'
+      });
+    } else if (job.status === 'failed' && job.updated_at) {
+      items.push({
+        ts: job.updated_at,
+        type: 'failed ← ' + agentName,
+        title: (job.error || 'Failed').slice(0, 60),
+        body: '',
+        status: 'blocked'
+      });
+    }
   });
   return items.sort(function(a, b) {
     return (Date.parse(b.ts || 0) || 0) - (Date.parse(a.ts || 0) || 0);
@@ -4165,7 +4186,7 @@ function ccRenderAgentBoard(snapshot) {
   var root = document.getElementById('ccAgentBoard');
   document.getElementById('ccAgentMeta').textContent = snapshot.agents.length + ' lanes';
   if (!snapshot.agents.length) {
-    root.innerHTML = '<div class="cc-empty"><div class="cc-empty-title">No agent data yet</div><div class="cc-empty-copy">Attach `get_work_status` to replace the local fallback board.</div></div>';
+    root.innerHTML = '<div class="cc-empty"><div class="cc-empty-title">No agent lanes configured</div><div class="cc-empty-copy">Agent data will appear when work status is available.</div></div>';
     return;
   }
   root.innerHTML = '<div class="cc-agent-list">' + snapshot.agents.map(function(agent) {
@@ -11914,6 +11935,10 @@ function openCoachPanel() {
           '<div class="cc-detail-card"><h4>Dispatch State</h4><p>Created: ' + ccEscape(formatPromptJobWhen(selected.created_at)) + '<br>Updated: ' + ccEscape(formatPromptJobWhen(selected.updated_at)) + '<br>Claimed by: ' + ccEscape(selected.claimed_by || 'Unclaimed') + '</p></div>' +
           '<div class="cc-detail-card"><h4>Result Summary</h4><p>' + ccEscape(selected.result_summary || 'No result summary yet.') + '</p></div>' +
           '<div class="cc-detail-card"><h4>Artifacts / Errors</h4><p>' + ccEscape(selected.result_artifact || 'No result artifact yet.') + '<br>' + ccEscape(selected.error || 'No error recorded.') + '</p></div>' +
+        '</div>' +
+        '<div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;">' +
+          '<button data-pj-delete="' + ccEscape(selected.id) + '" style="min-height:34px;padding:0 12px;background:rgba(248,81,73,0.08);border:1px solid rgba(248,81,73,0.22);color:#ff7c70;font-family:DM Mono,monospace;font-size:10px;border-radius:8px;cursor:pointer;">Delete job</button>' +
+          '<button data-pj-retry="' + ccEscape(selected.id) + '" style="min-height:34px;padding:0 12px;background:rgba(71,200,255,0.08);border:1px solid rgba(71,200,255,0.22);color:var(--blue);font-family:DM Mono,monospace;font-size:10px;border-radius:8px;cursor:pointer;">Re-dispatch</button>' +
         '</div>';
     };
     var renderList = function() {
@@ -12020,15 +12045,46 @@ function openCoachPanel() {
       renderList();
     });
     detailEl.addEventListener('click', function(event) {
+      // Copy prompt
       var copyBtn = event.target.closest('[data-pj-copy-prompt]');
-      if (!copyBtn) return;
-      var selected = null;
-      state.jobs.forEach(function(item) { if (item.id === state.selectedId) selected = item; });
-      if (selected && selected.prompt) {
-        navigator.clipboard.writeText(selected.prompt).then(function() {
-          copyBtn.textContent = 'Copied';
-          setTimeout(function() { copyBtn.textContent = 'Copy'; }, 1500);
-        });
+      if (copyBtn) {
+        var sel = null;
+        state.jobs.forEach(function(item) { if (item.id === state.selectedId) sel = item; });
+        if (sel && sel.prompt) {
+          navigator.clipboard.writeText(sel.prompt).then(function() {
+            copyBtn.textContent = 'Copied';
+            setTimeout(function() { copyBtn.textContent = 'Copy'; }, 1500);
+          });
+        }
+        return;
+      }
+      // Delete job
+      var delBtn = event.target.closest('[data-pj-delete]');
+      if (delBtn) {
+        var delId = delBtn.getAttribute('data-pj-delete');
+        var jobs = _loadLocalPromptJobs().filter(function(j) { return j.id !== delId; });
+        _saveLocalPromptJobs(jobs);
+        state.jobs = jobs;
+        state.selectedId = jobs.length > 0 ? jobs[0].id : null;
+        renderList();
+        setStatus('Job deleted.');
+        setTimeout(function() { setStatus(''); }, 2000);
+        return;
+      }
+      // Re-dispatch (copy prompt to textarea)
+      var retryBtn = event.target.closest('[data-pj-retry]');
+      if (retryBtn) {
+        var retryId = retryBtn.getAttribute('data-pj-retry');
+        var job = null;
+        state.jobs.forEach(function(j) { if (j.id === retryId) job = j; });
+        if (job) {
+          modal.querySelector('#promptJobsPrompt').value = job.prompt || '';
+          if (job.target_agent) modal.querySelector('#promptJobsTarget').value = job.target_agent;
+          if (job.priority) modal.querySelector('#promptJobsPriority').value = job.priority;
+          modal.querySelector('#promptJobsPrompt').focus();
+          setStatus('Prompt copied for re-dispatch. Edit and send.');
+        }
+        return;
       }
     });
     overlay.addEventListener('click', function(event) { if (event.target === overlay) close(); });
