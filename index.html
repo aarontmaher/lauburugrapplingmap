@@ -2339,11 +2339,72 @@ function syncAppleHealthData(data) {
     window.GrapplingIntelligence.runPipeline();
   }
   if (typeof updateAITrainingCard === 'function') updateAITrainingCard();
+  
+  // ─── BACKEND-READY: Append to MultiUserHealth if authenticated ───────
+  // This wires Apple Health toward backend persistence while keeping local storage
+  if (isMember() && AUTH_USER && AUTH_USER.id && window.MultiUserHealth) {
+    (function() {
+      try {
+        var record = window.MultiUserHealth.createDailyRecord({
+          user_id: AUTH_USER.id,
+          date: normalized.date,
+          provider: 'apple_health',
+          health_metrics: {
+            hrv_ms: normalized.hrv_ms,
+            resting_hr: normalized.resting_hr,
+            sleep_hours: normalized.sleep_hours,
+            daily_strain: normalized.daily_strain
+          },
+          raw_payload: data,
+          data_source: 'manual_apple_health_import',
+          synced_at: normalized.synced_at
+        });
+        window.MultiUserHealth.appendDay(AUTH_USER.id, record);
+        _log('[Apple Health] Appended to MultiUserHealth for backend persistence');
+      } catch(e) {
+        _log('[Apple Health] MultiUserHealth append failed (non-fatal):', e.message);
+      }
+    })();
+  }
+  
   showToast('Apple Health data synced for ' + normalized.date);
   return true;
 }
 
 window._syncAppleHealth = function(data) { return syncAppleHealthData(data); };
+
+// ─── BACKEND-READ: Load Apple Health from MultiUserHealth on member login ───
+// This enables reading back Apple Health data that was saved to MultiUserHealth
+function loadAppleHealthFromBackend() {
+  if (!isMember() || !AUTH_USER || !AUTH_USER.id || !window.MultiUserHealth) return null;
+  try {
+    var history = window.MultiUserHealth.loadUserHistory(AUTH_USER.id);
+    if (!history || !history.length) return null;
+    // Find the most recent Apple Health import
+    for (var i = history.length - 1; i >= 0; i--) {
+      var rec = history[i];
+      if (rec.provider === 'apple_health' || rec.data_source === 'manual_apple_health_import') {
+        // Convert back to normalized state format
+        var metrics = rec.health_metrics || {};
+        return {
+          date: rec.date,
+          hrv_ms: metrics.hrv_ms,
+          resting_hr: metrics.resting_hr,
+          sleep_hours: metrics.sleep_hours,
+          daily_strain: metrics.daily_strain,
+          recovery_score: null, // Apple Health has no native recovery score
+          readiness_state: 'unknown',
+          synced_at: rec.synced_at || rec.created_at,
+          source: 'apple_health',
+          raw_daily: rec.raw_payload || {}
+        };
+      }
+    }
+  } catch(e) {
+    _log('[Apple Health] Backend read failed (non-fatal):', e.message);
+  }
+  return null;
+}
 
 // ─── HEALTH CONNECT NORMALIZATION ────────────────────────────────
 // Health Connect export field mapping → shared app schema
@@ -9998,6 +10059,13 @@ _log('[GrapplingMap] Debug API ready: window.__APP_DEBUG__');
     var alreadyMigrated = UserStore.load('gm_migrated') === '1';
     if (!alreadyMigrated) {
       UserStore.migrateLocalToCloud();
+    }
+    // Load health data from backend (Apple Health, etc.)
+    if (typeof loadAppleHealthFromBackend === 'function') {
+      var backendAppleHealth = loadAppleHealthFromBackend();
+      if (backendAppleHealth) {
+        STATE.appleHealthData = backendAppleHealth;
+      }
     }
     // Sync from API (merge cloud → local)
     Promise.all([
