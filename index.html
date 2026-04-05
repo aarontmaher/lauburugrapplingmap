@@ -933,7 +933,7 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
       <button id="menuWeeklySummaryBtn" style="display:block;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Weekly Summary</button>
       <button id="menuJournalBtn" style="display:block;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Sparring Journal</button>
       <button id="menuCoachBtn" style="display:block;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Coach</button>
-      <button id="menuWhoopSyncBtn" style="display:block;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Sync WHOOP</button>
+      <button id="menuWhoopSyncBtn" style="display:block;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Health Metrics</button>
       <div style="height:1px;background:rgba(255,255,255,0.06);margin:4px 0;"></div>
       <div style="font-size:9px;color:#556;letter-spacing:1px;text-transform:uppercase;padding:6px 14px 2px;">Progress</div>
       <button id="menuGameSummaryBtn" style="display:block;width:100%;text-align:left;background:none;border:none;color:#8892a4;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;cursor:pointer;">Game Summary</button>
@@ -1622,7 +1622,9 @@ const STATE = {
   suggestions: [],
   suggestion_handoffs: [],
   whoopData: null,
-  whoopConnection: null
+  whoopConnection: null,
+  polarData: null,
+  appleHealthData: null
 };
 // CONTROL CENTRE: STRUCTURAL LOGIC ZONE
 // Codex owns selection state, gating, menu/navigation rules, suggestion entry logic,
@@ -1867,7 +1869,10 @@ function saveState() {
     suggestions: STATE.suggestions || [],
     suggestion_handoffs: STATE.suggestion_handoffs || [],
     whoopData: STATE.whoopData || null,
-    whoopConnection: STATE.whoopConnection || null
+    whoopConnection: STATE.whoopConnection || null,
+    whoopDataUserId: (typeof getCurrentUserId === 'function' ? getCurrentUserId() : null) || null,
+    polarData: STATE.polarData || null,
+    appleHealthData: STATE.appleHealthData || null
   };
   UserStore.saveAppState(appState);
   if (document.getElementById('controlCentreView').style.display !== 'none' && typeof window.renderControlCentre === 'function') {
@@ -1915,8 +1920,26 @@ function loadState() {
     STATE.chains = appState.chains || [];
     STATE.suggestions = appState.suggestions || [];
     STATE.suggestion_handoffs = appState.suggestion_handoffs || [];
-    STATE.whoopData = appState.whoopData || null;
-    STATE.whoopConnection = appState.whoopConnection || null;
+    // WHOOP data is user-specific — only load if it belongs to the current user
+    // The whoopData in appState may be from a previous user session
+    var storedWhoopUserId = appState.whoopDataUserId || null;
+    var currentUid = (typeof getCurrentUserId === 'function') ? getCurrentUserId() : null;
+    if (storedWhoopUserId && currentUid && storedWhoopUserId !== currentUid) {
+      // Different user — do not load stale WHOOP data
+      STATE.whoopData = null;
+      STATE.whoopConnection = null;
+    } else {
+      STATE.whoopData = appState.whoopData || null;
+      STATE.whoopConnection = appState.whoopConnection || null;
+    }
+    // Polar and Apple Health are also user-scoped — same userId guard
+    if (storedWhoopUserId && currentUid && storedWhoopUserId !== currentUid) {
+      STATE.polarData = null;
+      STATE.appleHealthData = null;
+    } else {
+      STATE.polarData = appState.polarData || null;
+      STATE.appleHealthData = appState.appleHealthData || null;
+    }
   }
 }
 
@@ -2223,14 +2246,26 @@ function getWhoopUiState() {
 function updateWhoopMenuLabel() {
   var btn = document.getElementById('menuWhoopSyncBtn');
   if (!btn) return;
-  var state = getWhoopUiState();
-  if (state.connected) btn.textContent = 'WHOOP \u2713';
-  else if (state.debugDataOnly) btn.textContent = 'WHOOP (local)';
-  else btn.textContent = 'WHOOP';
+  if (typeof isCurrentUserWhoopOwner === 'function' && isCurrentUserWhoopOwner()) {
+    var state = getWhoopUiState();
+    btn.textContent = state.connected ? 'Health \u2713 WHOOP' : 'Health Metrics';
+  } else {
+    btn.textContent = 'Health Metrics';
+  }
+}
+
+// The Railway WHOOP backend is currently Aaron's single-account service.
+// Only the WHOOP owner should auto-refresh from it.
+var WHOOP_OWNER_EMAILS = ['aaron.t.maher@gmail.com'];
+function isCurrentUserWhoopOwner() {
+  var email = (AUTH_USER && AUTH_USER.email) || (AUTH_PROFILE && AUTH_PROFILE.email) || '';
+  return WHOOP_OWNER_EMAILS.indexOf(email.toLowerCase().trim()) !== -1;
 }
 
 async function maybeAutoRefreshWhoop(reason) {
   if (!isMember()) return false;
+  // Only auto-refresh WHOOP for the WHOOP owner — other users have different providers
+  if (!isCurrentUserWhoopOwner()) return false;
   var state = getWhoopUiState();
   var looksConnected = state.connected;
   if (!looksConnected) {
@@ -2296,6 +2331,173 @@ function syncWhoopData(data) {
 
 // Programmatic API
 window._syncWhoop = function(data) { return syncWhoopData(data); };
+
+// ─── POLAR NORMALIZATION ───────────────────────────────────────
+// Polar Flow / Polar API field mapping → shared app schema
+function normalizePolarDailyForApp(item) {
+  if (!item || !item.date) return null;
+  var sleepHours = item.sleep_hours != null ? item.sleep_hours
+    : (item.sleep_duration_minutes != null ? item.sleep_duration_minutes / 60 : null);
+  var recoveryScore = item.recovery_score != null ? item.recovery_score : null; // Polar Nightly Recharge (0-100)
+  return {
+    date: item.date,
+    recovery_score: recoveryScore,
+    hrv_ms: item.hrv_ms != null ? item.hrv_ms : (item.rmssd != null ? item.rmssd : null),
+    resting_hr: item.resting_hr != null ? item.resting_hr : (item.heart_rate_avg != null ? item.heart_rate_avg : null),
+    sleep_hours: sleepHours,
+    sleep_performance_pct: item.sleep_score != null ? item.sleep_score : null,
+    daily_strain: item.training_load != null ? item.training_load : null,
+    readiness_state: computeReadiness(recoveryScore),
+    synced_at: new Date().toISOString(),
+    source: 'polar',
+    raw_daily: item
+  };
+}
+
+function syncPolarData(data) {
+  if (!data || !data.date) { showToast('Polar sync: missing date field'); return false; }
+  var normalized = normalizePolarDailyForApp(data);
+  if (!normalized) { showToast('Polar sync: normalization failed'); return false; }
+  STATE.polarData = normalized;
+  saveState();
+  if (window.GrapplingIntelligence) {
+    window.GrapplingIntelligence.appendDay(normalized);
+    window.GrapplingIntelligence.runPipeline();
+  }
+  if (typeof updateAITrainingCard === 'function') updateAITrainingCard();
+  showToast('Polar data synced for ' + normalized.date);
+  return true;
+}
+
+window._syncPolar = function(data) { return syncPolarData(data); };
+
+// ─── APPLE HEALTH NORMALIZATION ────────────────────────────────
+// Apple Health export / HealthKit field mapping → shared app schema
+function normalizeAppleHealthDailyForApp(item) {
+  if (!item || !item.date) return null;
+  // Apple Health has no native recovery score — derive rough readiness from HRV if available
+  var hrv = item.hrv_ms != null ? item.hrv_ms : (item.hrv != null ? item.hrv : null);
+  var activeKcal = item.active_energy_kcal != null ? item.active_energy_kcal : null;
+  // Map active energy to a rough strain proxy (WHOOP strain scale 0-21)
+  var strainProxy = activeKcal != null ? Math.min(activeKcal / 100, 21) : null;
+  return {
+    date: item.date,
+    recovery_score: null, // Apple Health has no native recovery score
+    hrv_ms: hrv,
+    resting_hr: item.resting_hr != null ? item.resting_hr : (item.resting_heart_rate != null ? item.resting_heart_rate : null),
+    sleep_hours: item.sleep_hours != null ? item.sleep_hours : null,
+    sleep_performance_pct: null,
+    daily_strain: strainProxy,
+    readiness_state: 'unknown', // cannot derive without recovery score
+    synced_at: new Date().toISOString(),
+    source: 'apple_health',
+    raw_daily: item
+  };
+}
+
+function syncAppleHealthData(data) {
+  if (!data || !data.date) { showToast('Apple Health sync: missing date field'); return false; }
+  var normalized = normalizeAppleHealthDailyForApp(data);
+  if (!normalized) { showToast('Apple Health sync: normalization failed'); return false; }
+  STATE.appleHealthData = normalized;
+  saveState();
+  if (window.GrapplingIntelligence) {
+    window.GrapplingIntelligence.appendDay(normalized);
+    window.GrapplingIntelligence.runPipeline();
+  }
+  if (typeof updateAITrainingCard === 'function') updateAITrainingCard();
+  showToast('Apple Health data synced for ' + normalized.date);
+  return true;
+}
+
+window._syncAppleHealth = function(data) { return syncAppleHealthData(data); };
+
+// ─── HEALTH PROVIDER LAYER ─────────────────────────────────────
+// Provider-aware resolution: which providers are connected, which
+// metric comes from where, what data is available for this user.
+window.HealthProvider = {
+  // Metric families and which providers can supply them (priority order)
+  METRIC_OWNERS: {
+    recovery:      ['whoop', 'polar'],
+    hrv:           ['whoop', 'polar', 'apple_health'],
+    sleep:         ['whoop', 'polar', 'apple_health'],
+    strain:        ['whoop', 'polar'],
+    rhr:           ['whoop', 'polar', 'apple_health']
+  },
+
+  PROVIDER_LABELS: {
+    whoop: 'WHOOP',
+    polar: 'Polar',
+    apple_health: 'Apple Health'
+  },
+
+  // Which providers have data loaded for the current user
+  getConnectedProviders: function() {
+    var out = [];
+    if (STATE.whoopData) out.push('whoop');
+    if (STATE.polarData) out.push('polar');
+    if (STATE.appleHealthData) out.push('apple_health');
+    return out;
+  },
+
+  // Primary provider for a given metric family
+  getPrimaryForMetric: function(metric) {
+    var connected = this.getConnectedProviders();
+    var owners = this.METRIC_OWNERS[metric] || [];
+    for (var i = 0; i < owners.length; i++) {
+      if (connected.indexOf(owners[i]) !== -1) return owners[i];
+    }
+    return null;
+  },
+
+  // Raw data object for a provider
+  _dataFor: function(provider) {
+    if (provider === 'whoop') return STATE.whoopData;
+    if (provider === 'polar') return STATE.polarData;
+    if (provider === 'apple_health') return STATE.appleHealthData;
+    return null;
+  },
+
+  // Best available normalized health data for this user (richest first)
+  getLatestHealthData: function() {
+    var order = ['whoop', 'polar', 'apple_health'];
+    for (var i = 0; i < order.length; i++) {
+      var d = this._dataFor(order[i]);
+      if (d && d.date) {
+        return Object.assign({}, d, {
+          _provider: order[i],
+          _providerLabel: this.PROVIDER_LABELS[order[i]]
+        });
+      }
+    }
+    return null;
+  },
+
+  // Flat health summary object for use by the website AI
+  getHealthSummaryForAI: function() {
+    var d = this.getLatestHealthData();
+    if (!d) return { connected: false, providers: [], provider: null, providerLabel: null };
+    return {
+      connected: true,
+      providers: this.getConnectedProviders(),
+      provider: d._provider,
+      providerLabel: d._providerLabel,
+      date: d.date,
+      recovery_score: d.recovery_score,
+      readiness: d.readiness_state,
+      hrv_ms: d.hrv_ms,
+      resting_hr: d.resting_hr,
+      sleep_hours: d.sleep_hours,
+      sleep_performance_pct: d.sleep_performance_pct,
+      daily_strain: d.daily_strain
+    };
+  },
+
+  isDataRecent: function() {
+    var d = this.getLatestHealthData();
+    return d ? isWhoopDataRecent(d) : false; // isWhoopDataRecent checks any {date} object
+  }
+};
 
 const KEY_VERSION = 2;
 function checkKeyVersion() {
@@ -7319,6 +7521,11 @@ function openWhoopManager() {
 function updateWhoopReadinessCard() {
   var card = document.getElementById('whoopReadinessCard');
   if (!card) return;
+  // Only show WHOOP readiness for the WHOOP owner
+  if (typeof isCurrentUserWhoopOwner === 'function' && !isCurrentUserWhoopOwner()) {
+    card.style.display = 'none';
+    return;
+  }
   var data = STATE.whoopData;
   if (!data || !isWhoopDataRecent(data)) {
     card.style.display = 'none';
@@ -7350,6 +7557,13 @@ function updateAITrainingCard() {
   var content = document.getElementById('aiTrainingContent');
   if (!card || !content) return;
 
+  // Only show AI training card for users with WHOOP intelligence data
+  // Other providers will get their own coaching surface later
+  if (typeof isCurrentUserWhoopOwner === 'function' && !isCurrentUserWhoopOwner()) {
+    card.style.display = 'none';
+    return;
+  }
+
   // Dismissed for this session?
   if (sessionStorage.getItem('gm_aiTrainingDismissed') === '1') {
     card.style.display = 'none';
@@ -7359,7 +7573,7 @@ function updateAITrainingCard() {
   // Get coaching from intelligence layer
   var coaching = window.GrapplingIntelligence ? window.GrapplingIntelligence.getDailyCoaching() : null;
   if (!coaching || !coaching.data_quality.has_today) {
-    // No WHOOP data today — show gentle prompt
+    // No health data today — show gentle prompt
     if (STATE.whoopData && isWhoopDataRecent(STATE.whoopData)) {
       // Basic WHOOP data exists but intelligence layer may not have enough history
       card.style.display = 'none'; // let the basic readiness card show instead
@@ -9716,7 +9930,14 @@ _log('[GrapplingMap] Debug API ready: window.__APP_DEBUG__');
     AUTH_STATE = 'guest';
     AUTH_USER = null;
     AUTH_PROFILE = null;
+    // Clear user-specific health state on logout to prevent cross-user bleed
+    STATE.whoopData = null;
+    STATE.whoopConnection = null;
+    STATE.polarData = null;
+    STATE.appleHealthData = null;
     updateAuthUI();
+    if (typeof updateWhoopReadinessCard === 'function') updateWhoopReadinessCard();
+    if (typeof updateAITrainingCard === 'function') updateAITrainingCard();
     if (typeof buildSections === 'function') { buildSections(); markBuiltOut(); updateStats(); }
     if (typeof updateHomePanel === 'function') updateHomePanel();
   }
@@ -10182,6 +10403,78 @@ var AIActions = {
       actions: [{ label: 'Build session from these', fn: function() { window._aiRenderResponse(AIActions.buildSession()); } }]
     };
   },
+  healthCoaching: function(query) {
+    var hp = window.HealthProvider;
+    var health = hp ? hp.getHealthSummaryForAI() : null;
+
+    // No provider connected at all
+    if (!health || !health.connected) {
+      return {
+        title: 'No health data connected',
+        body: 'Connect WHOOP, Polar, or Apple Health to get training recommendations based on your recovery and readiness.\n\nOpen Health Metrics from the menu to connect a provider.'
+      };
+    }
+
+    // Data too stale
+    if (!hp.isDataRecent()) {
+      return {
+        title: 'No recent data — ' + health.providerLabel,
+        body: 'Your ' + health.providerLabel + ' data is from ' + (health.date || 'an unknown date') + '. Sync your device to get current recommendations.'
+      };
+    }
+
+    // Try intelligence layer first (WHOOP-backed, requires history)
+    var coaching = window.GrapplingIntelligence ? window.GrapplingIntelligence.getDailyCoaching() : null;
+    if (coaching && coaching.data_quality && coaching.data_quality.has_today) {
+      var r = coaching.readiness;
+      var t = coaching.training;
+      var body = 'Source: ' + health.providerLabel;
+      if (health.recovery_score != null) body += ' · Recovery: ' + health.recovery_score + '%';
+      if (health.hrv_ms != null) body += ' · HRV: ' + health.hrv_ms + 'ms';
+      if (health.resting_hr != null) body += ' · RHR: ' + health.resting_hr;
+      body += '\n\n' + t.reason;
+      body += '\n\nFocus: ' + t.focus + ' | Intensity: ' + t.intensity;
+      if (coaching.applicable_rules && coaching.applicable_rules.length > 0) {
+        body += '\n\nInsight: ' + coaching.applicable_rules[0].rule;
+      }
+      return { title: r.label + ' — ' + t.intensity + ' intensity today', body: body };
+    }
+
+    // Basic coaching from raw health data (no intelligence history needed)
+    var score = health.recovery_score;
+    var readiness = score != null ? computeReadiness(score) : 'unknown';
+    var title, body2;
+
+    if (score != null) {
+      // WHOOP or Polar with recovery score
+      if (readiness === 'low') {
+        title = 'Low recovery (' + score + '%) — train light';
+        body2 = 'Recovery is low. Keep it light today — technique drilling or flow rolling only. Avoid hard live rounds or max-effort conditioning.';
+      } else if (readiness === 'moderate') {
+        title = 'Moderate recovery (' + score + '%) — train smart';
+        body2 = 'Recovery is moderate. A normal training session is fine. Avoid going to failure — stop one step before max effort.';
+      } else {
+        title = 'High recovery (' + score + '%) — good to push';
+        body2 = 'Recovery is green. Good day to push intensity — competition prep, hard rounds, or new technique under pressure.';
+      }
+      if (health.hrv_ms != null) body2 += '\n\nHRV: ' + health.hrv_ms + 'ms';
+      if (health.sleep_hours != null) body2 += ' · Sleep: ' + health.sleep_hours.toFixed(1) + 'h';
+      if (health.daily_strain != null) body2 += ' · Yesterday strain: ' + health.daily_strain;
+    } else {
+      // Apple Health or Polar without recovery score
+      title = 'Health data available — ' + health.providerLabel;
+      body2 = health.providerLabel + ' doesn\'t provide a recovery score.';
+      if (health.hrv_ms != null) {
+        body2 += '\n\nHRV: ' + health.hrv_ms + 'ms — if this is at or above your baseline, normal training is fine. If significantly below, treat it like a low-recovery day.';
+      }
+      if (health.sleep_hours != null) body2 += '\nSleep: ' + health.sleep_hours.toFixed(1) + 'h';
+      if (health.resting_hr != null) body2 += '\nRHR: ' + health.resting_hr;
+      body2 += '\n\nFor full recovery scoring, connect WHOOP or Polar with Nightly Recharge.';
+    }
+
+    body2 += '\n\nSource: ' + health.providerLabel + ' · ' + health.date;
+    return { title: title, body: body2 };
+  },
   syllabusInfo: function() {
     var belt = window._getCurrentBelt ? window._getCurrentBelt() : 'white';
     var BELT_NAMES = { white: 'White Belt', blue: 'Blue Belt', purple: 'Purple Belt', brown: 'Brown Belt', black: 'Black Belt' };
@@ -10232,6 +10525,7 @@ var AIActions = {
 
   // All available actions (superset)
   var ALL_ACTIONS = [
+    { label: 'Today\'s readiness', key: 'healthCoaching', fn: function() { renderResponse(AIActions.healthCoaching('')); }, modes: ['train'] },
     { label: 'What to drill?', key: 'whatToDrill', fn: function() { renderResponse(AIActions.whatToDrill()); }, modes: ['train'] },
     { label: 'Next move', key: 'nextMove', fn: function() { renderResponse(AIActions.nextMove()); }, modes: ['explore', 'game'] },
     { label: 'Weak areas', key: 'weakAreas', fn: function() { renderResponse(AIActions.weakAreas()); }, modes: ['explore', 'game'] },
@@ -10468,6 +10762,11 @@ var AIActions = {
   function routeChat(text) {
     var q = text.toLowerCase().trim();
     if (!q) return;
+
+    // Health / readiness questions → provider-aware coaching
+    if (/train(ing)? today|should i train|recovery|readiness|how am i|how('s| is) my body|hrv|rhr|resting heart|sleep (last night|tonight|quality)|what('s| is) driving|low recovery|avoid today|strain|yesterday('s)? data|health (data|metrics)|my whoop|my polar|apple health/i.test(q)) {
+      return renderResponse(AIActions.healthCoaching(text));
+    }
 
     // Route to existing AI actions based on keywords
     // CW49: "drill" alone (or "drills") triggers whatToDrill
