@@ -1040,12 +1040,14 @@ async def api_shared_memory(request) -> JSONResponse:
         data = _read_json_file(path) or _empty_memory()
         data["user_id"] = user_id
         return _cors_json({"ok": True, "item": data, "user_id": user_id})
-    # POST: save per-user store
+    # POST: save per-user store (user_id required for writes)
     try:
         body = await request.json()
     except Exception:
         return _cors_json({"ok": False, "error": "invalid_json"}, 400)
-    user_id = body.get("user_id", "default")
+    user_id = body.get("user_id")
+    if not user_id or user_id == "default":
+        return _cors_json({"ok": False, "error": "user_id required for writes"}, 400)
     item = body.get("item")
     if not item:
         return _cors_json({"ok": False, "error": "missing item"}, 400)
@@ -1085,7 +1087,9 @@ async def api_user_health(request) -> JSONResponse:
         body = await request.json()
     except Exception:
         return _cors_json({"ok": False, "error": "invalid_json"}, 400)
-    uid = body.get("user_id", user_id)
+    uid = body.get("user_id") or user_id
+    if not uid or uid == "default":
+        return _cors_json({"ok": False, "error": "user_id required for writes"}, 400)
     action = body.get("action", "append")
     records = body.get("records", [])
     existing = _read_json_file(_user_health_path(uid)) or {"user_id": uid, "records": [], "providers": []}
@@ -1126,6 +1130,129 @@ async def api_providers(_request) -> JSONResponse:
         {"id": "cronometer", "name": "Cronometer", "status": "planned", "fields": ["nutrition"]},
         {"id": "manual", "name": "Manual", "status": "production", "fields": ["subjective","grappling_session","substances","nutrition","weight"]}
     ]})
+
+
+@mcp.custom_route("/api/ingest/polar", methods=["POST", "OPTIONS"], include_in_schema=False)
+async def api_ingest_polar(request) -> JSONResponse:
+    """Ingest Polar health data for a specific user. Normalizes and stores per-user."""
+    from starlette.responses import Response
+    if request.method == "OPTIONS":
+        return Response("", headers={
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "POST, OPTIONS",
+            "Access-Control-Allow-Headers": "Content-Type",
+        })
+    try:
+        body = await request.json()
+    except Exception:
+        return _cors_json({"ok": False, "error": "invalid_json"}, 400)
+    user_id = body.get("user_id")
+    if not user_id:
+        return _cors_json({"ok": False, "error": "user_id required"}, 400)
+    raw_records = body.get("records", body.get("days", []))
+    if not raw_records:
+        return _cors_json({"ok": False, "error": "no records provided"}, 400)
+    # Normalize each Polar record into the standard schema
+    normalized = []
+    for raw in raw_records:
+        rec = _normalize_polar_record(raw, user_id)
+        if rec:
+            normalized.append(rec)
+    if not normalized:
+        return _cors_json({"ok": False, "error": "no valid records after normalization"}, 400)
+    # Write to per-user health store
+    path = _user_health_path(user_id)
+    existing = _read_json_file(path) or {"user_id": user_id, "records": [], "providers": []}
+    existing_keys = {(r.get("date"), r.get("provider")) for r in existing["records"]}
+    added = 0
+    updated = 0
+    for rec in normalized:
+        key = (rec.get("date"), rec.get("provider"))
+        if key in existing_keys:
+            for i, er in enumerate(existing["records"]):
+                if (er.get("date"), er.get("provider")) == key:
+                    existing["records"][i] = rec
+                    updated += 1
+                    break
+        else:
+            existing["records"].append(rec)
+            existing_keys.add(key)
+            added += 1
+    existing["providers"] = list({r.get("provider") for r in existing["records"] if r.get("provider")})
+    existing["user_id"] = user_id
+    existing["updated_at"] = _now_iso()
+    _write_json_file(path, existing)
+    return _cors_json({
+        "ok": True,
+        "user_id": user_id,
+        "added": added,
+        "updated": updated,
+        "total_records": len(existing["records"]),
+        "providers": existing["providers"]
+    })
+
+
+def _normalize_polar_record(raw: dict, user_id: str) -> dict | None:
+    """Normalize a Polar record into the standard health schema."""
+    date = raw.get("date") or raw.get("local_date")
+    if not date:
+        return None
+    # Polar Nightly Recharge: ANS charge -5 to +5 → normalized 0-100
+    ans = raw.get("ans_charge")
+    recovery = round(((ans + 5) / 10) * 100) if ans is not None else None
+    recharge = raw.get("nightly_recharge_status", "")
+    readiness = "unknown"
+    if recharge in ("good", "very_good"):
+        readiness = "high"
+    elif recharge in ("ok", "compromised"):
+        readiness = "moderate"
+    elif recharge in ("poor", "very_poor"):
+        readiness = "low"
+    elif recovery is not None:
+        readiness = "high" if recovery >= 67 else "moderate" if recovery >= 34 else "low"
+    # Sleep: Polar reports in ms
+    sleep_ms = raw.get("sleep_duration_ms")
+    sleep_h = sleep_ms / 3600000 if sleep_ms else raw.get("sleep_duration_hours") or raw.get("sleep_hours")
+    deep_ms = raw.get("deep_sleep_ms")
+    rem_ms = raw.get("rem_sleep_ms")
+    return {
+        "user_id": user_id,
+        "date": date,
+        "provider": "polar",
+        "recovery_score": recovery,
+        "readiness_label": readiness,
+        "hrv_ms": raw.get("hrv_rmssd") or raw.get("hrv_ms") or raw.get("hrv"),
+        "resting_hr": raw.get("resting_heart_rate") or raw.get("sleeping_hr") or raw.get("resting_hr"),
+        "sleep_hours": round(sleep_h, 2) if sleep_h else None,
+        "sleep_performance_pct": raw.get("sleep_score") or raw.get("sleep_performance_pct"),
+        "sws_hours": round(deep_ms / 3600000, 2) if deep_ms else None,
+        "rem_hours": round(rem_ms / 3600000, 2) if rem_ms else None,
+        "respiratory_rate": raw.get("breathing_rate") or raw.get("respiratory_rate"),
+        "daily_strain": raw.get("training_load") or raw.get("cardio_load") or raw.get("daily_strain"),
+        "active_calories": raw.get("active_calories"),
+        "step_count": raw.get("steps") or raw.get("step_count"),
+        "workouts": _normalize_polar_workouts(raw.get("exercises") or raw.get("workouts") or []),
+        "data_source": "polar_import",
+        "imported_at": _now_iso()
+    }
+
+
+def _normalize_polar_workouts(exercises: list) -> list:
+    result = []
+    for w in exercises:
+        sport = (w.get("sport") or w.get("detailed_sport_info") or "").lower()
+        dur_ms = w.get("duration_ms")
+        result.append({
+            "type": w.get("sport_id") or w.get("sport"),
+            "sport_label": w.get("sport") or w.get("detailed_sport_info"),
+            "duration_min": round(dur_ms / 60000) if dur_ms else w.get("duration_minutes"),
+            "strain": w.get("training_load"),
+            "avg_hr": w.get("average_heart_rate") or w.get("avg_hr"),
+            "max_hr": w.get("max_heart_rate") or w.get("max_hr"),
+            "calories": w.get("calories"),
+            "is_grappling": any(k in sport for k in ("martial", "wrestling", "bjj", "jiu", "grappling"))
+        })
+    return result
 
 
 @mcp.custom_route("/api/healthz", methods=["GET"], include_in_schema=False)
