@@ -11,13 +11,13 @@
       "updated_at": null
     },
     "claude_code": {
-      "task": "Unify WHOOP canonical data source",
+      "task": "Multi-user health architecture with Polar-first expansion",
       "status": "idle",
       "branch": "main",
-      "commit": "b91ab40",
-      "last_commit": "b91ab40",
-      "summary": "WHOOP unified. MCP proxy committed (0786bd9). Railway-first for all production surfaces. Website, ChatGPT, Claude, CC all aligned to Railway canonical source.",
-      "updated_at": "2026-04-05T05:46:00Z"
+      "commit": "b68e1e3",
+      "last_commit": "b68e1e3",
+      "summary": "Multi-user health arch deployed: per-user data model, provider-agnostic schema (WHOOP+Polar+AppleHealth+Garmin+Cronometer+manual), role-based operator gating, per-user shared memory scoping. Polar is first non-WHOOP provider.",
+      "updated_at": "2026-04-05T06:32:00Z"
     },
     "codex": {
       "task": "WHOOP remote data hydration",
@@ -47,5 +47,5 @@
       "updated_at": null
     }
   },
-  "updated_at": "2026-04-05T05:46:00Z"
+  "updated_at": "2026-04-05T06:32:00Z"
 }
