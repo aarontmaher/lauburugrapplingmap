@@ -2138,11 +2138,39 @@ async function fetchWhoopStatus() {
 }
 
 async function refreshWhoopFromBackend() {
+  // 1. Try Supabase edge function (original path)
   var response = await whoopRequest('whoop-refresh', 'POST', { date: new Date().toISOString().slice(0, 10) });
-  if (!response || response.ok === false) return response || { ok: false, error: 'refresh_failed' };
-  var item = response.item || response.data || response.daily || response;
-  var normalized = normalizeWhoopDailyForApp(item);
-  if (!normalized) return { ok: false, error: 'invalid_daily_payload' };
+  if (response && response.ok) {
+    var item = response.item || response.data || response.daily || response;
+    var normalized = normalizeWhoopDailyForApp(item);
+    if (normalized) {
+      _applyWhoopRefresh(normalized);
+      return { ok: true, item: normalized };
+    }
+  }
+  // 2. Fallback: trigger sync on Railway + fetch health status
+  try {
+    await fetch(WHOOP_MCP_HEALTH_URL.replace('/healthz', '/diag/trigger-sync'), { method: 'POST', signal: AbortSignal.timeout(30000) });
+  } catch(e) { /* sync trigger is best-effort */ }
+  try {
+    var healthResp = await fetch(WHOOP_MCP_HEALTH_URL, { signal: AbortSignal.timeout(8000) });
+    if (!healthResp.ok) return { ok: false, error: 'health_unavailable' };
+    var health = await healthResp.json();
+    if (!health || !health.ok) return { ok: false, error: 'health_not_ok' };
+    var auth = health.auth || {};
+    setWhoopConnectionMeta({
+      connected: health.token_file_present && !auth.reauth_required,
+      last_sync_at: (health.latest_sync || {}).finished_at || auth.last_api_success_at,
+      latest_date: health.latest_local_date,
+      source: 'backend'
+    });
+    showToast('WHOOP synced — latest: ' + (health.latest_local_date || 'unknown'));
+    return { ok: true, latest_date: health.latest_local_date };
+  } catch(e) {
+    return { ok: false, error: 'railway_unreachable' };
+  }
+}
+function _applyWhoopRefresh(normalized) {
   STATE.whoopData = normalized;
   setWhoopConnectionMeta({
     connected: true,
@@ -2152,12 +2180,10 @@ async function refreshWhoopFromBackend() {
   });
   showToast('WHOOP refreshed for ' + normalized.date);
   updateGreeting();
-  // Feed into intelligence layer
   if (window.GrapplingIntelligence) {
     window.GrapplingIntelligence.appendDay(normalized);
     window.GrapplingIntelligence.runPipeline();
   }
-  return { ok: true, item: normalized };
 }
 
 async function startWhoopConnectFlow() {
