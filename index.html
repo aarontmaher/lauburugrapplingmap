@@ -1667,7 +1667,7 @@ function ccTaskTitle(value) {
 
 function ccTaskPreview(value) {
   var text = ccCompactText(value);
-  if (!text || text.toLowerCase() === 'idle') return 'Waiting for a new assignment.';
+  if (!text || text.toLowerCase() === 'idle' || text.toLowerCase() === 'no active task') return '';
   if (text.length > 150) return text.slice(0, 147) + '...';
   return text;
 }
@@ -4072,12 +4072,13 @@ function ccBuildActivity(snapshot) {
     }
   });
   snapshot.agents.forEach(function(agent) {
-    if (agent.updatedAt || agent.summary) {
+    // Only show agent activity when there's real task/summary content (not idle fallback)
+    if (agent.updatedAt && agent.summary && agent.status !== 'idle') {
       items.push({
-        ts: agent.updatedAt || '',
-        type: agent.name + ' status changed',
-        title: agent.task,
-        body: agent.summary || agent.blockers || 'Agent state refreshed',
+        ts: agent.updatedAt,
+        type: agent.name,
+        title: ccTaskTitle(agent.task),
+        body: agent.summary,
         status: agent.status
       });
     }
@@ -4294,11 +4295,10 @@ function ccRenderWorkQueue(snapshot) {
           '<div class="cc-task-title">' + ccEscape(ccTaskTitle(item.task)) + '</div>' +
           '<span class="cc-status ' + ccEscape(item.status || 'idle') + '">' + ccEscape(ccPrettyStatus(item.status || 'idle')) + '</span>' +
         '</div>' +
-        '<div class="cc-task-preview">' + ccEscape(ccTaskPreview(item.task || item.summary)) + '</div>' +
+        (ccTaskPreview(item.task || item.summary) ? '<div class="cc-task-preview">' + ccEscape(ccTaskPreview(item.task || item.summary)) + '</div>' : '') +
         '<div class="cc-task-meta">' +
-          '<span class="cc-task-id">' + ccEscape(item.taskId || ('JOB-' + item.key.toUpperCase())) + '</span>' +
           '<span><span class="cc-label">Agent</span> ' + ccEscape(item.name) + '</span>' +
-          '<span><span class="cc-label">Updated</span> ' + ccEscape(ccFormatWhen(item.updatedAt)) + '</span>' +
+          '<span><span class="cc-label">Updated</span> ' + (item.updatedAt ? ccEscape(ccFormatWhen(item.updatedAt)) : '\u2014') + '</span>' +
         '</div>' +
       '</div>' +
     '</article>';
@@ -4412,7 +4412,8 @@ function ccRenderActivity(snapshot) {
     return;
   }
   root.innerHTML = '<div class="cc-activity-list">' + items.map(function(item) {
-    return '<article class="cc-activity-card"><div class="cc-activity-head"><div class="cc-panel-title" style="font-size:12px;">' + ccEscape(item.type) + '</div><div class="cc-activity-time">' + ccEscape(ccFormatWhen(item.ts)) + '</div></div><div class="cc-activity-copy"><span class="cc-value-strong">' + ccEscape(item.title) + '</span> · ' + ccEscape(item.body || '') + '</div></article>';
+    var dotColor = item.status === 'done' || item.status === 'completed' ? 'var(--green)' : item.status === 'blocked' || item.status === 'failed' ? '#ff7c70' : item.status === 'in_progress' ? 'var(--blue)' : 'var(--text-muted)';
+    return '<article class="cc-activity-card"><div class="cc-activity-head"><div style="display:flex;align-items:center;gap:6px;"><span style="width:6px;height:6px;border-radius:50%;background:' + dotColor + ';flex-shrink:0;"></span><span class="cc-panel-title" style="font-size:12px;">' + ccEscape(item.type) + '</span></div><div class="cc-activity-time">' + ccEscape(ccFormatWhen(item.ts)) + '</div></div>' + (item.title || item.body ? '<div class="cc-activity-copy">' + (item.title ? '<span class="cc-value-strong">' + ccEscape(item.title) + '</span>' : '') + (item.title && item.body ? ' \u00b7 ' : '') + ccEscape(item.body || '') + '</div>' : '') + '</article>';
   }).join('') + '</div>';
 }
 
