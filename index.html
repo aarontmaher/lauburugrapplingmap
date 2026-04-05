@@ -697,6 +697,7 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
   .cc-topbar-meta { justify-content:flex-start; gap:6px; }
   .cc-topbar-meta .cc-pill { display:none; }
   .cc-topbar-meta .cc-env-pill, .cc-topbar-meta .cc-toolbar-btn { display:inline-flex; }
+  .cc-toolbar-btn { font-size:11px; min-height:32px; padding:0 10px; }
   .cc-env-host { max-width:100%; font-size:10px; }
   .cc-mobile-nav { display:flex; position:sticky; top:0; z-index:10; background:rgba(10,12,16,0.95); -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px); padding:6px 0; margin:-8px -8px 0; padding-left:8px; padding-right:8px; overflow-x:auto; -webkit-overflow-scrolling:touch; }
   .cc-mobile-nav-btn { font-size:10px; white-space:nowrap; flex-shrink:0; min-height:30px; padding:0 8px; }
@@ -4414,11 +4415,28 @@ function ccRenderActivity(snapshot) {
   }).join('') + '</div>';
 }
 
+// Fetch live work status from repo JSON file for CC data
+var _ccLastFetchedAt = 0;
+function _ccFetchLiveData() {
+  var now = Date.now();
+  if (now - _ccLastFetchedAt < 20000) return; // throttle to 20s
+  _ccLastFetchedAt = now;
+  fetch('./automation/state/WORK_STATUS.json?_=' + now, { signal: AbortSignal.timeout(5000) })
+    .then(function(r) { return r.ok ? r.json() : null; })
+    .then(function(data) {
+      if (!data || !data.agents) return;
+      if (!window.__GM_CONTROL_CENTRE_DATA__) window.__GM_CONTROL_CENTRE_DATA__ = {};
+      window.__GM_CONTROL_CENTRE_DATA__.work_status = data;
+    })
+    .catch(function() { /* silent — fallback to local state */ });
+}
+
 window.renderControlCentre = function() {
   var root = document.getElementById('controlCentreView');
   if (!root) return;
   if (!isAaronOperatorAccount()) return;
   if (root.getAttribute('data-cc-mounted') === 'false') return;
+  _ccFetchLiveData();
   var snapshot = ccBuildSnapshot();
   CONTROL_CENTRE_UI.snapshot = snapshot;
   ccRenderEnvironmentBadge();
