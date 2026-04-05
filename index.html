@@ -2174,9 +2174,9 @@ function updateWhoopMenuLabel() {
   var btn = document.getElementById('menuWhoopSyncBtn');
   if (!btn) return;
   var state = getWhoopUiState();
-  if (state.connected) btn.textContent = 'Refresh WHOOP';
-  else if (state.debugDataOnly) btn.textContent = 'WHOOP (Debug Data)';
-  else btn.textContent = 'Connect WHOOP';
+  if (state.connected) btn.textContent = 'WHOOP \u2713';
+  else if (state.debugDataOnly) btn.textContent = 'WHOOP (local)';
+  else btn.textContent = 'WHOOP';
 }
 
 async function maybeAutoRefreshWhoop(reason) {
