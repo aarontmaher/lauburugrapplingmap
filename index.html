@@ -7427,12 +7427,12 @@ function openHealthMetricsManager() {
         '<div style="border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:12px;" id="hmWhoopSection">' +
           '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px;">' +
             '<span style="font-family:Barlow Condensed,sans-serif;font-size:14px;letter-spacing:0.4px;color:var(--text);">WHOOP</span>' +
-            '<span style="font-family:DM Mono,monospace;font-size:9px;color:' + statusTone + ';border:1px solid rgba(255,255,255,0.08);padding:2px 6px;border-radius:999px;">' + statusLabel + '</span>' +
+            '<span style="font-family:DM Mono,monospace;font-size:9px;color:' + statusTone + ';border:1px solid rgba(255,255,255,0.08);padding:2px 6px;border-radius:999px;">' + (statusLabel === 'CONNECTED' ? 'Connected' : statusLabel === 'NOT CONNECTED' ? 'Not connected' : statusLabel === 'REAUTH NEEDED' ? 'Reconnect needed' : statusLabel) + '</span>' +
           '</div>' +
-          (whoopData ? dataSummaryHtml(Object.assign({}, whoopData, { _providerLabel: 'WHOOP' })) : '<div style="font-family:DM Mono,monospace;font-size:10px;color:var(--text-muted);">No recent data. Use Refresh to pull today\'s data.</div>') +
+          (whoopData ? dataSummaryHtml(Object.assign({}, whoopData, { _providerLabel: 'WHOOP' })) : '<div style="font-family:DM Mono,monospace;font-size:10px;color:var(--text-muted);">No recent data — use Refresh to pull today\'s data.</div>') +
           '<div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;">' +
             (isMember()
-              ? '<button id="hmWhoopRefreshBtn" style="background:var(--accent);color:#000;border:none;font-family:DM Mono,monospace;font-size:10px;font-weight:600;padding:7px 12px;border-radius:6px;cursor:pointer;">' + (whoopState.connected ? 'Refresh' : 'Connect WHOOP') + '</button>'
+              ? '<button id="hmWhoopRefreshBtn" style="background:var(--accent);color:#000;border:none;font-family:DM Mono,monospace;font-size:10px;font-weight:600;padding:7px 12px;border-radius:6px;cursor:pointer;">' + (whoopState.connected ? 'Refresh data' : 'Connect') + '</button>'
               : '<button id="hmWhoopAuthBtn" style="background:var(--accent);color:#000;border:none;font-family:DM Mono,monospace;font-size:10px;font-weight:600;padding:7px 12px;border-radius:6px;cursor:pointer;">Sign in to connect</button>') +
           '</div>' +
           importBlockHtml('whoopImportJson', '{"date":"2026-04-05","recovery_score":72,"hrv_ms":58,"resting_hr":54,"sleep_hours":7.4,"daily_strain":8.1}') +
@@ -7478,17 +7478,18 @@ function openHealthMetricsManager() {
     // WHOOP buttons
     var whoopRefreshBtn = document.getElementById('hmWhoopRefreshBtn');
     if (whoopRefreshBtn) whoopRefreshBtn.addEventListener('click', async function() {
-      whoopRefreshBtn.textContent = 'Refreshing...';
+      whoopRefreshBtn.textContent = 'Working...';
       whoopRefreshBtn.disabled = true;
       var whoopState = getWhoopUiState();
       if (whoopState.connected) {
         var refreshed = await refreshWhoopFromBackend();
         if (refreshed && refreshed.ok) { closeModal(); return; }
+        whoopRefreshBtn.textContent = 'Refresh unavailable';
       } else {
         var flow = await startWhoopConnectFlow();
         if (flow && flow.ok) { closeModal(); return; }
+        whoopRefreshBtn.textContent = 'Connect unavailable';
       }
-      whoopRefreshBtn.textContent = 'Try again';
       whoopRefreshBtn.disabled = false;
     });
     var whoopAuthBtn = document.getElementById('hmWhoopAuthBtn');
@@ -9642,12 +9643,7 @@ _log('[GrapplingMap] Debug API ready: window.__APP_DEBUG__');
     <button id="aiFeedbackBtn" style="background:rgba(232,255,71,0.08);border:1px solid rgba(232,255,71,0.2);color:var(--accent);font-family:'Barlow Condensed',sans-serif;font-size:11px;padding:5px 10px;border-radius:8px;cursor:pointer;letter-spacing:0.4px;margin-right:6px;">Feedback</button>
     <button id="aiPanelClose" style="background:none;border:none;color:#556;font-size:14px;cursor:pointer;padding:0 4px;">×</button>
   </div>
-  <div id="aiCoachModes" style="display:flex;gap:0;padding:0 14px;border-bottom:1px solid rgba(255,255,255,0.04);flex-shrink:0;">
-    <button class="ai-mode-tab" data-mode="explore" style="flex:1;background:none;border:none;border-bottom:2px solid transparent;color:#556;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:500;padding:6px 4px 5px;cursor:pointer;transition:all 0.15s;letter-spacing:0.3px;">Explore</button>
-    <button class="ai-mode-tab" data-mode="train" style="flex:1;background:none;border:none;border-bottom:2px solid transparent;color:#556;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:500;padding:6px 4px 5px;cursor:pointer;transition:all 0.15s;letter-spacing:0.3px;">Train</button>
-    <button class="ai-mode-tab" data-mode="game" style="flex:1;background:none;border:none;border-bottom:2px solid transparent;color:#556;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:500;padding:6px 4px 5px;cursor:pointer;transition:all 0.15s;letter-spacing:0.3px;">Build Game</button>
-    <button class="ai-mode-tab" data-mode="syllabus" style="flex:1;background:none;border:none;border-bottom:2px solid transparent;color:#556;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:500;padding:6px 4px 5px;cursor:pointer;transition:all 0.15s;letter-spacing:0.3px;">Syllabus</button>
-  </div>
+  <div id="aiCoachModes" style="display:none;"></div>
   <div id="aiGreeting" style="padding:8px 14px 4px;flex-shrink:0;display:none;"></div>
   <div id="aiQuickActions" style="display:flex;gap:4px;flex-wrap:wrap;padding:6px 14px;border-bottom:1px solid rgba(255,255,255,0.04);flex-shrink:0;"></div>
   <div id="aiResponse" style="flex:1;overflow-y:auto;padding:10px 14px;-webkit-overflow-scrolling:touch;min-height:80px;max-height:200px;"></div>
@@ -10543,19 +10539,9 @@ var AIActions = {
   // ─── COACHING MODES ─────────────────────────────────────────
   var _aiCoachMode = 'explore'; // default, auto-detected on open
 
-  // All available actions (superset)
+  // Focused action set: health metrics + feedback only
   var ALL_ACTIONS = [
     { label: 'Today\'s readiness', key: 'healthCoaching', fn: function() { renderResponse(AIActions.healthCoaching('')); }, modes: ['train'] },
-    { label: 'What to drill?', key: 'whatToDrill', fn: function() { renderResponse(AIActions.whatToDrill()); }, modes: ['train'] },
-    { label: 'Next move', key: 'nextMove', fn: function() { renderResponse(AIActions.nextMove()); }, modes: ['explore', 'game'] },
-    { label: 'Weak areas', key: 'weakAreas', fn: function() { renderResponse(AIActions.weakAreas()); }, modes: ['explore', 'game'] },
-    { label: 'Build session', key: 'buildSession', fn: function() { renderResponse(AIActions.buildSession()); }, modes: ['train'] },
-    { label: 'My game', key: 'myGame', fn: function() { renderResponse(AIActions.myGame()); }, modes: ['game'] },
-    { label: 'Connections', key: 'connections', fn: function() { renderResponse(AIActions.connections()); }, modes: ['explore'] },
-    { label: 'This week', key: 'thisWeek', fn: function() { renderResponse(AIActions.weeklySummary()); }, modes: ['train'] },
-    { label: 'Game summary', key: 'gameSummary', fn: function() { renderResponse(AIActions.gameSummary()); }, modes: ['game'] },
-    { label: 'Syllabus info', key: 'syllabusInfo', fn: function() { renderResponse(AIActions.syllabusInfo()); }, modes: ['syllabus'] },
-    { label: 'Why this filter?', key: 'whyFilter', fn: function() { renderResponse(AIActions.whyThisFilter()); }, modes: ['syllabus'] },
     { label: 'Send feedback', key: 'suggest', fn: function() {
       openSuggestionComposer({
         source: 'website_ai_coach',
@@ -10568,21 +10554,8 @@ var AIActions = {
     }, modes: ['explore','train','game','syllabus'] }
   ];
 
-  // Context-dependent actions (added dynamically)
-  function getContextActions() {
-    var extra = [];
-    if (SELECTED_NODE) {
-      var posLabel = SELECTED_NODE.label;
-      extra.push({ label: 'Drill ' + posLabel, key: 'drillPos', fn: function() { renderResponse(AIActions.drillPosition(posLabel)); }, context: true });
-      extra.push({ label: 'Connections from here', key: 'connHere', fn: function() { renderResponse(AIActions.connections()); }, context: true });
-    }
-    var curView = document.querySelector('.view-tab.active');
-    var isRef = curView && curView.dataset.view === 'reference';
-    if (isRef && STATE.currentFilter && STATE.currentFilter !== 'all') {
-      extra.push({ label: 'Why this filter?', key: 'whyFilterCtx', fn: function() { renderResponse(AIActions.whyThisFilter()); }, context: true });
-    }
-    return extra;
-  }
+  // No context-dependent chips in focused health-first mode
+  function getContextActions() { return []; }
 
   function autoDetectMode() {
     var drilling = Object.entries(STATE.progress).filter(function(kv) { return kv[1] === 'drilling'; });
@@ -10604,19 +10577,7 @@ var AIActions = {
 
   function updateCoachActions() {
     actionsEl.innerHTML = '';
-    // Context actions first (most relevant)
-    var ctxActions = getContextActions();
-    ctxActions.forEach(function(a) { appendActionBtn(a); });
-    // Mode-filtered actions
-    var modeActions = ALL_ACTIONS.filter(function(a) { return a.modes.indexOf(_aiCoachMode) !== -1; });
-    modeActions.forEach(function(a) { appendActionBtn(a); });
-    // Always show remaining core actions not already in mode (dimmed)
-    var shownKeys = new Set();
-    ctxActions.forEach(function(a) { shownKeys.add(a.key); });
-    modeActions.forEach(function(a) { shownKeys.add(a.key); });
-    ALL_ACTIONS.forEach(function(a) {
-      if (!shownKeys.has(a.key)) appendActionBtn(a, true);
-    });
+    ALL_ACTIONS.forEach(function(a) { appendActionBtn(a); });
   }
 
   function appendActionBtn(a, dimmed) {
@@ -10634,52 +10595,36 @@ var AIActions = {
     actionsEl.appendChild(btn);
   }
 
-  // ─── CONTEXT-AWARE GREETING ─────────────────────────────────
+  // ─── GREETING ───────────────────────────────────────────────
   function updateGreeting() {
-    var msg = '';
-    var drilling = Object.entries(STATE.progress).filter(function(kv) { return kv[1] === 'drilling'; });
-    var totalTracked = Object.keys(STATE.progress).length;
+    var hp = window.HealthProvider;
+    var healthData = hp ? hp.getLatestHealthData() : null;
+    var healthLine = '';
 
-    if (SELECTED_NODE) {
-      msg = 'You\'re looking at <strong>' + SELECTED_NODE.label + '</strong>. Want to explore its connections, find drills here, or build a session around it?';
-    } else {
-      var curView = document.querySelector('.view-tab.active');
-      var isGraph = curView && curView.dataset.view === 'graph3d';
-      if (isGraph) {
-        msg = 'Exploring the Position Map. Try selecting a node, or ask me to find your next move.';
-      } else if (drilling.length > 0) {
-        msg = 'You have <strong>' + drilling.length + '</strong> technique' + (drilling.length !== 1 ? 's' : '') + ' in your drill queue. Ready to train, or want coaching suggestions?';
-      } else if (totalTracked === 0) {
-        msg = 'Welcome! Start by exploring the Reference tree, or let me suggest where to begin.';
-      } else {
-        msg = 'Ask me anything about your training.';
+    if (healthData && isWhoopDataRecent(healthData)) {
+      // Intelligence layer coaching (requires history)
+      var coaching = window.GrapplingIntelligence ? window.GrapplingIntelligence.getDailyCoaching() : null;
+      if (coaching && coaching.data_quality.has_today) {
+        var r = coaching.readiness;
+        var t = coaching.training;
+        healthLine = '<br><span style="color:' + r.color + ';">' + r.label + '</span> \u2014 ' + t.reason;
+        healthLine += '<br><span style="font-size:11px;color:var(--text-dim);">Suggested: <strong>' + t.intensity + '</strong> intensity · <strong>' + t.focus + '</strong> focus</span>';
+      } else if (healthData.recovery_score != null) {
+        var score = healthData.recovery_score;
+        var color = score >= 67 ? '#34d399' : score >= 34 ? '#f0c040' : '#f85149';
+        healthLine = '<br><span style="color:' + color + ';">Recovery ' + score + '%</span>';
+        if (healthData.hrv_ms != null) healthLine += ' · HRV ' + healthData.hrv_ms + 'ms';
+        healthLine += ' <span style="color:var(--text-muted);font-size:10px;">Source: ' + healthData._providerLabel + '</span>';
+      } else if (healthData.hrv_ms != null) {
+        healthLine = '<br>HRV ' + healthData.hrv_ms + 'ms <span style="color:var(--text-muted);font-size:10px;">Source: ' + healthData._providerLabel + '</span>';
       }
     }
 
-    // WHOOP readiness + intelligence layer coaching
-    var whoopLine = '';
-    var coaching = window.GrapplingIntelligence ? window.GrapplingIntelligence.getDailyCoaching() : null;
-    if (coaching && coaching.data_quality.has_today) {
-      var r = coaching.readiness;
-      var t = coaching.training;
-      if (r.level === 'low') whoopLine = '<br><span style="color:' + r.color + '">\u26a0\ufe0f ' + r.label + ' (' + coaching.readiness.level + ')</span> \u2014 ' + t.reason;
-      else if (r.level === 'moderate') whoopLine = '<br><span style="color:' + r.color + '">' + r.label + '</span> \u2014 ' + t.reason;
-      else if (r.level === 'high') whoopLine = '<br><span style="color:' + r.color + '">\u2705 ' + r.label + '</span> \u2014 ' + t.reason;
-      // Add intensity/focus recommendation
-      whoopLine += '<br><span style="font-size:12px;color:var(--text-dim);">Suggested: <strong>' + t.intensity + '</strong> intensity, focus on <strong>' + t.focus + '</strong>.</span>';
-      // Surface applicable approved rules
-      if (coaching.applicable_rules.length > 0) {
-        whoopLine += '<br><span style="font-size:11px;color:var(--text-muted);">Insight: ' + coaching.applicable_rules[0].rule + '</span>';
-      }
-    } else if (STATE.whoopData && isWhoopDataRecent(STATE.whoopData)) {
-      // Fallback: basic readiness if intelligence layer has no history
-      var _wr = STATE.whoopData.recovery_score;
-      var _ws = computeReadiness(_wr);
-      if (_ws === 'low') whoopLine = '<br>\u26a0\ufe0f Recovery is low (' + _wr + '%) \u2014 consider lighter training today.';
-      else if (_ws === 'moderate') whoopLine = '<br>Recovery is moderate (' + _wr + '%) \u2014 train smart.';
-      else if (_ws === 'high') whoopLine = '<br>\u2705 Recovery is green (' + _wr + '%) \u2014 good to push.';
-    }
-    greetingEl.innerHTML = '<div style="font-family:DM Mono,monospace;font-size:11px;color:var(--text-dim);line-height:1.5;">' + msg + whoopLine + '</div>';
+    var msg = healthLine
+      ? 'Ask about your health metrics or training readiness.'
+      : 'Connect a health source (WHOOP, Polar, Apple Health) to get readiness guidance.';
+
+    greetingEl.innerHTML = '<div style="font-family:DM Mono,monospace;font-size:11px;color:var(--text-dim);line-height:1.6;">' + msg + healthLine + '</div>';
     greetingEl.style.display = '';
   }
 
@@ -10773,7 +10718,7 @@ var AIActions = {
 
   // Initial state
   setMode(autoDetectMode());
-  responseEl.innerHTML = '<div style="text-align:center;padding:20px;color:#556;font-family:Barlow Condensed,sans-serif;font-size:13px;">Ask me anything about your training.</div>';
+  responseEl.innerHTML = '<div style="text-align:center;padding:20px;color:#556;font-family:Barlow Condensed,sans-serif;font-size:13px;">Ask about your health metrics or training readiness.</div>';
 
   // ─── TYPED CHAT INPUT ─────────────────────────────────────────
   var chatInput = document.getElementById('aiChatInput');
@@ -10784,48 +10729,11 @@ var AIActions = {
     if (!q) return;
 
     // Health / readiness questions → provider-aware coaching
-    if (/train(ing)? today|should i train|recovery|readiness|how am i|how('s| is) my body|hrv|rhr|resting heart|sleep (last night|tonight|quality)|what('s| is) driving|low recovery|avoid today|strain|yesterday('s)? data|health (data|metrics)|my whoop|my polar|apple health/i.test(q)) {
+    if (/train(ing)? today|should i train|recovery|readiness|how am i|how('s| is) my (body|health)|hrv|rhr|resting heart|sleep (last night|tonight|quality)|what('s| is) driving|low recovery|avoid today|strain|yesterday('s)? data|health (data|metrics)|my whoop|my polar|apple health|what source|which provider/i.test(q)) {
       return renderResponse(AIActions.healthCoaching(text));
     }
 
-    // Route to existing AI actions based on keywords
-    // CW49: "drill" alone (or "drills") triggers whatToDrill
-    if (q === 'drill' || q === 'drills' || (q.includes('drill') && (q.includes('next') || q.includes('what') || q.includes('should') || q.includes('focus') || q.includes('practice')))) {
-      return renderResponse(AIActions.whatToDrill());
-    }
-    // "drill [position]" — drill a specific position
-    if (q.startsWith('drill ')) {
-      var posName = q.replace('drill ', '').trim();
-      if (posName.length > 1) return renderResponse(AIActions.drillPosition(posName));
-    }
-    if (q.includes('next move') || q.includes('expand') || q.includes('grow') || q === 'next') {
-      return renderResponse(AIActions.nextMove());
-    }
-    if (q.includes('weak') || q.includes('gap') || q.includes('missing')) {
-      return renderResponse(AIActions.weakAreas());
-    }
-    if (q.includes('build') && q.includes('session') || q.includes('session') && q.includes('today')) {
-      return renderResponse(AIActions.buildSession());
-    }
-    if (q.includes('my game') || q.includes('strongest') || q.includes('success') || q.includes('hitting')) {
-      return renderResponse(AIActions.myGame());
-    }
-    if (q.includes('game summary') || q.includes('game profile') || q.includes('overview')) {
-      return renderResponse(AIActions.gameSummary());
-    }
-    if (q.includes('connect') || q.includes('path') || q.includes('from') && q.includes('to')) {
-      return renderResponse(AIActions.connections());
-    }
-    if (q.includes('week') || q.includes('summary') || q.includes('recent')) {
-      return renderResponse(AIActions.weeklySummary());
-    }
-    if (q.includes('why') && (q.includes('filter') || q.includes('showing'))) {
-      return renderResponse(AIActions.whyThisFilter());
-    }
-    if (q.includes('syllabus') || q.includes('belt progress') || q.includes('belt info')) {
-      return renderResponse(AIActions.syllabusInfo());
-    }
-    // Suggestion detection
+    // Feedback
     if (/\b(bug|broken|suggest|feature request|could you add|should have|would be nice|improve|fix this|doesn'?t work|feedback)\b/i.test(q)) {
       openSuggestionComposer({
         prefill: text,
@@ -10833,33 +10741,14 @@ var AIActions = {
         copy: 'This looks like feedback. Review it, then send it into the public Suggestions queue for follow-up.',
         onSuccess: function(sug) {
           var clsLabel = {bug:'\uD83D\uDD34 Bug', feature_request:'\uD83D\uDD35 Feature', improvement:'\uD83D\uDFE1 Improvement', unclear:'\u26AA Feedback'}[sug.classification] || 'Feedback';
-          renderResponse({
-            title: 'Feedback captured \u2713',
-            body: clsLabel + '\n' + sug.normalized_summary + '\n\nSaved as ' + sug.id + ' for review.',
-          });
+          renderResponse({ title: 'Feedback captured \u2713', body: clsLabel + '\n' + sug.normalized_summary + '\n\nSaved as ' + sug.id + ' for review.' });
         }
       });
       return;
     }
-    // Search for a technique/position by name
-    if (q.includes('find') || q.includes('show') || q.includes('search') || q.includes('where')) {
-      var searchTerm = q.replace(/find|show|search|where|is|the|me|for/gi, '').trim();
-      if (searchTerm.length > 2) {
-        hideAI();
-        document.getElementById('refSearch').value = searchTerm;
-        if (typeof _refDoSearch === 'function') _refDoSearch();
-        switchToTab('reference');
-        return;
-      }
-    }
-    // Belt filter
-    if (q.includes('white belt') || q.includes('blue belt') || q.includes('purple belt') || q.includes('brown belt') || q.includes('black belt')) {
-      var belt = q.includes('white') ? 'white' : q.includes('blue') ? 'blue' : q.includes('purple') ? 'purple' : q.includes('brown') ? 'brown' : 'black';
-      if (window._setBelt) window._setBelt(belt);
-      return renderResponse({ title: belt.charAt(0).toUpperCase() + belt.slice(1) + ' Belt selected', body: 'Your belt has been set. The syllabus and recommendations will reflect this.' });
-    }
-    // Fallback: show inline message with search link (don't auto-switch tabs)
-    renderResponse({ title: 'I didn\'t understand that', body: 'Try: "drill", "next move", "weak areas", "build session", "my game", "syllabus", or "this week".', actionLabel: 'Search for "' + q + '" \u2192', action: function() { hideAI(); document.getElementById('refSearch').value = q; if (typeof _refDoSearch === 'function') _refDoSearch(); switchToTab('reference'); } });
+
+    // Fallback
+    renderResponse({ title: 'I can help with health metrics and training readiness.', body: 'Try asking:\n\u2022 How should I train today?\n\u2022 What\u2019s my recovery looking like?\n\u2022 What does my HRV mean?\n\u2022 What should I avoid today?\n\nOr use Send Feedback for bugs and ideas.' });
   }
 
   function handleChatSubmit() {
