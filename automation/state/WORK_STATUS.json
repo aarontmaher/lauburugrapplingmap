@@ -1,8 +1,51 @@
 {
+  "schema_version": 1,
   "agents": {
-    "claude_code": { "task": null, "status": "idle", "branch": null, "summary": null, "commit": null, "updated_at": null },
-    "codex": { "task": "MCP server build", "status": "in_progress", "branch": "codex/mcp-server", "summary": "building server layer on parsers", "commit": null, "updated_at": "2026-04-03T20:00:00Z" },
-    "cowork": { "task": null, "status": "idle", "branch": null, "summary": null, "commit": null, "updated_at": null }
+    "claude_chat": {
+      "task": null,
+      "status": "idle",
+      "branch": null,
+      "commit": null,
+      "last_commit": null,
+      "summary": null,
+      "updated_at": null
+    },
+    "claude_code": {
+      "task": "CC Cowork audit fixes: live data, mobile, WHOOP, gating",
+      "status": "in_progress",
+      "branch": "main",
+      "commit": "4776f44",
+      "last_commit": "4776f44",
+      "summary": "CC live data fetch from WORK_STATUS.json, mobile toolbar fix, WHOOP CORS for health endpoint. Deploying now.",
+      "updated_at": "2026-04-05T03:10:00Z"
+    },
+    "codex": {
+      "task": "WHOOP remote data hydration",
+      "status": "idle",
+      "branch": "codex/whoop-chatgpt-oauth",
+      "commit": "",
+      "last_commit": "",
+      "summary": "WHOOP live auth restored. Live sync working. Latest local date: 2026-04-05. 1044 days stored.",
+      "updated_at": "2026-04-05T00:40:10Z"
+    },
+    "chatgpt": {
+      "task": null,
+      "status": "idle",
+      "branch": null,
+      "commit": null,
+      "last_commit": null,
+      "summary": null,
+      "updated_at": null
+    },
+    "cowork": {
+      "task": null,
+      "status": "idle",
+      "branch": null,
+      "commit": null,
+      "last_commit": null,
+      "summary": null,
+      "updated_at": null
+    }
   },
-  "updated_at": "2026-04-03T20:00:00Z"
+  "updated_at": "2026-04-05T03:10:00Z"
 }
