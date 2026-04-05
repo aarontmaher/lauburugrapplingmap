@@ -4261,11 +4261,10 @@ function ccRenderSuggestionList(snapshot) {
   root.innerHTML = '<div class="cc-suggestion-list">' + snapshot.suggestions.map(function(item) {
     var selected = CONTROL_CENTRE_UI.selectedType === 'suggestion' && CONTROL_CENTRE_UI.selectedId === item.id;
     var badges = [
-      ccBadge('triage: ' + item.recommendation),
-      ccBadge('priority: ' + item.priority),
-      ccBadge('stage: ' + item.lifecycleStage),
-      ccBadge('AI: ' + (CONTROL_AGENT_LABELS[item.assignedAI] || item.assignedAI))
-    ];
+      ccBadge(item.recommendation),
+      item.priority !== 'normal' ? ccBadge(item.priority) : '',
+      ccBadge(CONTROL_AGENT_LABELS[item.assignedAI] || item.assignedAI)
+    ].filter(Boolean);
     if (item.duplicate) badges.push(ccBadge('duplicate'));
     if (item.photoCount) badges.push(ccBadge(item.photoCount + ' photo' + (item.photoCount !== 1 ? 's' : '')));
     return '<article class="cc-suggestion-card' + (selected ? ' selected' : '') + '" data-cc-suggestion="' + ccEscape(item.id) + '">' +
@@ -4384,13 +4383,11 @@ function ccRenderDetail(snapshot) {
   meta.textContent = item.id;
   root.innerHTML = '<div class="cc-detail-head"><div><div class="cc-detail-title">' + ccEscape(item.title) + '</div><div class="cc-detail-copy">' + ccEscape(item.fullText) + '</div></div><span class="cc-status ' + ccEscape(item.approvalStatus === 'approved' ? 'done' : item.approvalStatus === 'pending' ? 'waiting' : item.approvalStatus) + '">' + ccEscape(ccPrettyStatus(item.approvalStatus)) + '</span></div>' +
     '<div class="cc-assignment-banner"><div><div class="cc-assignment-label">Assigned To</div><div class="cc-assignment-value">' + ccEscape(CONTROL_AGENT_LABELS[item.assignedAI] || item.assignedAI) + '</div></div><span class="cc-status ' + ccEscape(item.lifecycleStage === 'blocked' ? 'blocked' : item.lifecycleStage === 'ready_for_preview' || item.lifecycleStage === 'verify_ready' ? 'ready' : item.lifecycleStage === 'in_progress' ? 'in_progress' : 'waiting') + '">' + ccEscape(ccPrettyStatus(item.lifecycleStage)) + '</span></div>' +
-    '<div class="cc-badge-row" style="margin-top:10px;">' +
-      ccBadge('triage: ' + item.recommendation) +
-      ccBadge('priority: ' + item.priority) +
-      ccBadge('assigned: ' + (CONTROL_AGENT_LABELS[item.assignedAI] || item.assignedAI)) +
-      ccBadge('handoff: ' + item.handoffStatus) +
-      ccBadge('preview: ' + item.previewStatus) +
-      ccBadge('lifecycle: ' + item.lifecycleStage) +
+    '<div class="cc-badge-row" style="margin-top:8px;">' +
+      ccBadge(item.recommendation) +
+      ccBadge(item.priority !== 'normal' ? item.priority + ' priority' : 'normal') +
+      (item.handoffStatus !== 'none' ? ccBadge('handoff: ' + item.handoffStatus) : '') +
+      (item.previewStatus !== 'not_started' ? ccBadge('preview: ' + item.previewStatus) : '') +
     '</div>' +
     '<div class="cc-detail-grid">' +
       '<div class="cc-detail-card"><h4>Triage Metadata</h4><p>Source: ' + ccEscape(item.source) + '<br>Created: ' + ccEscape(ccFormatWhen(item.createdAt)) + '<br>Classification: ' + ccEscape(item.classification) + '</p></div>' +
