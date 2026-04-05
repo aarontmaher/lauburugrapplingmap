@@ -7489,8 +7489,13 @@ function openHealthMetricsManager() {
           '<span style="font-family:Barlow Condensed,sans-serif;font-size:14px;letter-spacing:0.4px;color:var(--text);">Polar</span>' +
           '<span style="font-family:DM Mono,monospace;font-size:9px;color:' + (polarData ? '#34d399' : '#8892a4') + ';border:1px solid rgba(255,255,255,0.08);padding:2px 6px;border-radius:999px;">' + (polarData ? 'DATA LOADED' : 'NOT CONNECTED') + '</span>' +
         '</div>' +
-        (polarData ? dataSummaryHtml(polarData) : '<div style="font-family:DM Mono,monospace;font-size:10px;color:var(--text-muted);">Import today\'s Polar export to enable training recommendations.</div>') +
-        importBlockHtml('polarImportJson', '{"date":"2026-04-05","recovery_score":68,"hrv_ms":52,"resting_hr":56,"sleep_hours":7.1,"training_load":4.2}') +
+        (polarData ? dataSummaryHtml(polarData) : '<div style="font-family:DM Mono,monospace;font-size:10px;color:var(--text-muted);">Upload today\'s Polar export file to enable training recommendations.</div>') +
+        '<details style="margin-top:6px;border-top:1px solid rgba(255,255,255,0.05);padding-top:8px;">' +
+          '<summary style="cursor:pointer;font-family:DM Mono,monospace;font-size:10px;color:#8892a4;">Upload Polar file</summary>' +
+          '<input type="file" id="polarImportFile" accept=".json" style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:DM Mono,monospace;font-size:10px;padding:8px;margin-top:8px;">' +
+          '<div style="display:flex;justify-content:flex-end;margin-top:6px;">' +
+            '<button id="polarImportFileBtn" style="background:rgba(255,255,255,0.04);border:1px solid var(--border);color:var(--text-dim);font-family:DM Mono,monospace;font-size:10px;padding:6px 12px;border-radius:6px;cursor:pointer;">Import</button>' +
+          '</div></details>' +
       '</div>'
     );
 
@@ -7558,13 +7563,20 @@ function openHealthMetricsManager() {
       catch(e) { showToast('Invalid JSON'); }
     });
 
-    // Polar JSON import
-    var polarImportBtn = document.getElementById('polarImportJsonBtn');
+    // Polar file import
+    var polarImportBtn = document.getElementById('polarImportFileBtn');
     if (polarImportBtn) polarImportBtn.addEventListener('click', function() {
-      var raw = document.getElementById('polarImportJson').value.trim();
-      if (!raw) return showToast('Paste JSON first');
-      try { if (syncPolarData(JSON.parse(raw))) { closeModal(); } }
-      catch(e) { showToast('Invalid JSON'); }
+      var fileInput = document.getElementById('polarImportFile');
+      var file = fileInput.files[0];
+      if (!file) return showToast('Select a file first');
+      var reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          var data = JSON.parse(e.target.result);
+          if (syncPolarData(data)) { closeModal(); }
+        } catch(e) { showToast('Invalid JSON file'); }
+      };
+      reader.readAsText(file);
     });
 
     // Apple Health JSON import
