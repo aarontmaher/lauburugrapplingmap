@@ -7492,10 +7492,12 @@ function openHealthMetricsManager() {
         (polarData ? dataSummaryHtml(polarData) : '<div style="font-family:DM Mono,monospace;font-size:10px;color:var(--text-muted);">Upload today\'s Polar export file to enable training recommendations.</div>') +
         '<details style="margin-top:6px;border-top:1px solid rgba(255,255,255,0.05);padding-top:8px;">' +
           '<summary style="cursor:pointer;font-family:DM Mono,monospace;font-size:10px;color:#8892a4;">Upload Polar file</summary>' +
-          '<input type="file" id="polarImportFile" accept=".json" style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:DM Mono,monospace;font-size:10px;padding:8px;margin-top:8px;">' +
-          '<div style="display:flex;justify-content:flex-end;margin-top:6px;">' +
-            '<button id="polarImportFileBtn" style="background:rgba(255,255,255,0.04);border:1px solid var(--border);color:var(--text-dim);font-family:DM Mono,monospace;font-size:10px;padding:6px 12px;border-radius:6px;cursor:pointer;">Import</button>' +
-          '</div></details>' +
+          '<div id="polarDropZone" style="border:2px dashed rgba(255,255,255,0.2);border-radius:6px;padding:16px;text-align:center;margin-top:8px;background:rgba(255,255,255,0.02);transition:border-color 0.2s;">' +
+            '<div style="font-family:DM Mono,monospace;font-size:10px;color:#8892a4;margin-bottom:8px;">Drag & drop Polar JSON file here or click to select</div>' +
+            '<input type="file" id="polarImportFile" accept=".json" style="display:none;">' +
+            '<button id="polarSelectFileBtn" style="background:rgba(255,255,255,0.04);border:1px solid var(--border);color:var(--text-dim);font-family:DM Mono,monospace;font-size:10px;padding:6px 12px;border-radius:6px;cursor:pointer;">Select File</button>' +
+          '</div>' +
+        '</details>' +
       '</div>'
     );
 
@@ -7564,11 +7566,11 @@ function openHealthMetricsManager() {
     });
 
     // Polar file import
-    var polarImportBtn = document.getElementById('polarImportFileBtn');
-    if (polarImportBtn) polarImportBtn.addEventListener('click', function() {
-      var fileInput = document.getElementById('polarImportFile');
-      var file = fileInput.files[0];
-      if (!file) return showToast('Select a file first');
+    var dropZone = document.getElementById('polarDropZone');
+    var fileInput = document.getElementById('polarImportFile');
+    var selectBtn = document.getElementById('polarSelectFileBtn');
+    function handlePolarFile(file) {
+      if (!file) return;
       var reader = new FileReader();
       reader.onload = function(e) {
         try {
@@ -7577,7 +7579,26 @@ function openHealthMetricsManager() {
         } catch(e) { showToast('Invalid JSON file'); }
       };
       reader.readAsText(file);
-    });
+    }
+    if (selectBtn) selectBtn.addEventListener('click', function() { fileInput.click(); });
+    if (fileInput) fileInput.addEventListener('change', function() { handlePolarFile(fileInput.files[0]); });
+    if (dropZone) {
+      dropZone.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        dropZone.style.borderColor = 'var(--accent)';
+      });
+      dropZone.addEventListener('dragleave', function(e) {
+        dropZone.style.borderColor = 'rgba(255,255,255,0.2)';
+      });
+      dropZone.addEventListener('drop', function(e) {
+        e.preventDefault();
+        dropZone.style.borderColor = 'rgba(255,255,255,0.2)';
+        var files = e.dataTransfer.files;
+        if (files.length > 0) {
+          handlePolarFile(files[0]);
+        }
+      });
+    }
 
     // Apple Health JSON import
     var appleImportBtn = document.getElementById('appleImportJsonBtn');
