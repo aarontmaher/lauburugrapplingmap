@@ -101,6 +101,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="whoop-intelligence.js"></script>
 <script src="shared-memory.js"></script>
+<script src="multi-user-health.js"></script>
 <style>
 :root {
   --bg: #0a0c10;
@@ -1260,15 +1261,21 @@ function looksLikeAaronIdentity(value) {
 function isAaronOperatorAccount() {
   if (window.__GM_CONTROL_CENTRE_OWNER__ === true || window.__GM_OPERATOR_UI__ === true) return true;
   if (!isMember()) return false;
+  // Role-based: any user with operator/admin membership_status gets CC access
+  if (AUTH_PROFILE && isOperatorRole(AUTH_PROFILE.membership_status)) return true;
+  // Legacy fallback: Aaron's known email (owner always has access even without explicit role)
   var identities = [
     AUTH_PROFILE && AUTH_PROFILE.email,
-    AUTH_PROFILE && AUTH_PROFILE.display_name,
-    AUTH_USER && AUTH_USER.email,
-    AUTH_USER && AUTH_USER.displayName
+    AUTH_USER && AUTH_USER.email
   ];
   if (identities.some(isKnownAaronOwnerEmail)) return true;
-  if (AUTH_PROFILE && isOperatorRole(AUTH_PROFILE.membership_status)) return identities.some(looksLikeAaronIdentity);
   return false;
+}
+function getCurrentUserId() {
+  return (AUTH_USER && AUTH_USER.id) || (AUTH_PROFILE && AUTH_PROFILE.user_id) || null;
+}
+function getCurrentUserRole() {
+  return (AUTH_PROFILE && AUTH_PROFILE.membership_status) || 'user';
 }
 function isOperatorUIEnabled() {
   return isAaronOperatorAccount();

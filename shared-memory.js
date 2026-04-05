@@ -14,7 +14,15 @@
   'use strict';
 
   var MCP_API = 'https://mcp.lauburugrapplingmap.com/api';
-  var LOCAL_KEY = 'gm_shared_memory';
+  var LOCAL_KEY_PREFIX = 'gm_shared_memory';
+
+  function _getCurrentUserId() {
+    return (typeof getCurrentUserId === 'function' ? getCurrentUserId() : null) || 'default';
+  }
+
+  function _localKey(userId) {
+    return LOCAL_KEY_PREFIX + '_' + (userId || _getCurrentUserId());
+  }
 
   // ─── ITEM TYPES ────────────────────────────────────────────────────────────
   var ITEM_TYPE = {
@@ -91,57 +99,64 @@
     }
   }
 
-  function _loadLocal() {
+  function _loadLocal(userId) {
     try {
-      var raw = localStorage.getItem(LOCAL_KEY);
+      var raw = localStorage.getItem(_localKey(userId));
       return raw ? JSON.parse(raw) : _emptyStore();
     } catch (e) { return _emptyStore(); }
   }
 
-  function _saveLocal(store) {
-    try { localStorage.setItem(LOCAL_KEY, JSON.stringify(store)); }
+  function _saveLocal(store, userId) {
+    try { localStorage.setItem(_localKey(userId), JSON.stringify(store)); }
     catch (e) { /* storage full */ }
   }
 
-  async function _fetchFromBackend() {
+  async function _fetchFromBackend(userId) {
     try {
-      var resp = await fetch(MCP_API + '/shared-memory', { signal: AbortSignal.timeout(6000) });
+      var uid = userId || _getCurrentUserId();
+      var resp = await fetch(MCP_API + '/shared-memory?user_id=' + encodeURIComponent(uid), { signal: AbortSignal.timeout(6000) });
       if (!resp.ok) return null;
       var data = await resp.json();
       return (data && data.ok) ? data.item : null;
     } catch (e) { return null; }
   }
 
-  async function _pushToBackend(store) {
+  async function _pushToBackend(store, userId) {
     try {
+      var uid = userId || _getCurrentUserId();
       await fetch(MCP_API + '/shared-memory', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'save', item: store }),
+        body: JSON.stringify({ action: 'save', user_id: uid, item: store }),
         signal: AbortSignal.timeout(6000)
       });
     } catch (e) { /* best-effort */ }
   }
 
-  async function getStore() {
+  async function getStore(userId) {
+    var uid = userId || _getCurrentUserId();
     var now = Date.now();
-    if (_cache && now - _lastFetched < 10000) return _cache;
-    var backend = await _fetchFromBackend();
+    if (_cache && _cache._userId === uid && now - _lastFetched < 10000) return _cache;
+    var backend = await _fetchFromBackend(uid);
     if (backend && backend.schema_version) {
+      backend._userId = uid;
       _cache = backend;
-      _saveLocal(backend); // sync local
+      _saveLocal(backend, uid);
     } else {
-      _cache = _loadLocal();
+      _cache = _loadLocal(uid);
+      _cache._userId = uid;
     }
     _lastFetched = now;
     return _cache;
   }
 
-  async function saveStore(store) {
+  async function saveStore(store, userId) {
+    var uid = userId || _getCurrentUserId();
     store.updated_at = new Date().toISOString();
+    store._userId = uid;
     _cache = store;
-    _saveLocal(store);
-    await _pushToBackend(store);
+    _saveLocal(store, uid);
+    await _pushToBackend(store, uid);
   }
 
   // ─── CRUD ──────────────────────────────────────────────────────────────────
