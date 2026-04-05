@@ -100,6 +100,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="whoop-intelligence.js"></script>
+<script src="shared-memory.js"></script>
 <style>
 :root {
   --bg: #0a0c10;
@@ -8942,6 +8943,14 @@ window.__APP_DEBUG__ = {
       challenged: window.GrapplingIntelligence.getChallengedInsights(),
       approved_rules: window.GrapplingIntelligence.getApprovedRules()
     };
+  },
+  getSharedMemory: function() {
+    if (!window.SharedMemory) return { error: 'shared memory not loaded' };
+    return window.SharedMemory.getSummary();
+  },
+  importToMemory: function(payload) {
+    if (!window.SharedMemory) return { error: 'shared memory not loaded' };
+    return window.SharedMemory.importModelOutput(payload);
   }
 };
 _log('[GrapplingMap] Debug API ready: window.__APP_DEBUG__');
