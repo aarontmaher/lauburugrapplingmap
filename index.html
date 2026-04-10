@@ -6772,6 +6772,29 @@ window.initGraph3D = (function() {
           + '<span style="flex:1;color:#8899aa;">'+t+'</span>'
           + (tc > 0 ? '<span style="color:#4a5568;font-size:10px;background:rgba(255,255,255,0.04);padding:1px 6px;border-radius:8px;">'+tc+'</span>' : '');
         wrap.appendChild(item);
+        // Technique name preview — shown under the heading when the
+        // childList is collapsed (>8 techniques) so the user can see
+        // what's in there without clicking. First 3 valid technique
+        // names joined by ·, with "+N more" when the list is longer.
+        // Hidden when auto-expanded or on manual expand toggle.
+        var previewNames = [];
+        var previewExtra = 0;
+        if (h.c && h.c.length > 0) {
+          h.c.forEach(function(pc) {
+            var pct = (pc.t || '').trim();
+            if (!pct || SKIP_CHILDREN.has(pct) || PERSP_SET.has(pct) || SCHEMA_NAMES.has(pct)) return;
+            if (previewNames.length < 3) previewNames.push(pct);
+            else previewExtra++;
+          });
+        }
+        var previewEl = document.createElement('div');
+        previewEl.className = 'g3d-heading-preview';
+        var previewVisibleInitially = tc > 0 && !_autoExpand && previewNames.length > 0;
+        previewEl.style.cssText = 'display:' + (previewVisibleInitially ? 'block' : 'none') + ';padding:2px 0 6px 18px;font-family:Barlow Condensed,monospace;font-size:11px;color:#556;line-height:1.4;border-bottom:1px solid rgba(255,255,255,0.04);margin-bottom:4px;';
+        if (previewNames.length > 0) {
+          previewEl.textContent = previewNames.join(' \u00B7 ') + (previewExtra > 0 ? '  \u00B7 +' + previewExtra + ' more' : '');
+        }
+        wrap.appendChild(previewEl);
         // Child list (auto-expand if ≤8 techniques)
         var childList = document.createElement('div');
         childList.style.cssText = (_autoExpand ? 'display:block;' : 'display:none;') + 'padding-left:18px;';
@@ -6968,11 +6991,16 @@ window.initGraph3D = (function() {
           });
         }
         wrap.appendChild(childList);
-        // Toggle expand/collapse
-        var expanded = false;
+        // Toggle expand/collapse. The preview element is hidden whenever
+        // the full childList is visible so the user sees either a
+        // comma-list snapshot OR the full interactive list, never both.
+        var expanded = _autoExpand;
         item.addEventListener('click', function() {
           expanded = !expanded;
           childList.style.display = expanded ? 'block' : 'none';
+          if (previewNames.length > 0) {
+            previewEl.style.display = expanded ? 'none' : 'block';
+          }
           var chev = item.querySelector('.g3d-heading-chev');
           if (chev) chev.style.transform = expanded ? 'rotate(90deg)' : 'rotate(0deg)';
         });
