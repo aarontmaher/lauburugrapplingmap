@@ -1,0 +1,78 @@
+name: WHOOP workout tail poll
+
+# Why this workflow exists:
+# The WHOOP MCP backend (Railway) ingests recovery + sleep on a morning cycle
+# finalisation pull. Workouts arrive separately whenever the strap uploads a
+# session later in the day. Without an independent re-poll, workouts that
+# land after the morning pull sit invisible until the next morning cycle,
+# so Claude/ChatGPT consumers see stale workout_count=0 for "today".
+#
+# This workflow fires /diag/trigger-sync on a tight schedule so the backend
+# re-polls WHOOP's workout endpoint without waiting for the next cycle tick.
+# It does NOT replace or alter the existing morning cycle pull — it only
+# adds more frequent taps on the same idempotent sync endpoint.
+#
+# Fix lives in automation, not in the mobile app or the Railway MCP, per
+# scope constraints: "smallest safe fix", "keep existing recovery/sleep
+# morning sync intact", "do not touch unrelated mobile UI work".
+
+on:
+  schedule:
+    # Every 15 minutes, all hours UTC. The sync endpoint is idempotent and
+    # cheap; over-polling during Melbourne off-hours costs nothing and means
+    # we never have to reason about timezone-shifted cron windows.
+    - cron: '*/15 * * * *'
+  workflow_dispatch: {}
+
+# Prevent overlapping runs if a previous invocation hangs on the upstream
+# fetch. GitHub will cancel the in-progress run and start a fresh one so
+# we never queue up a backlog.
+concurrency:
+  group: whoop-workout-tail-poll
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  trigger-sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: POST /diag/trigger-sync to WHOOP MCP (via Supabase bridge)
+        env:
+          # Supabase anon key is already public (embedded in index.html).
+          # Using the bridge rather than hitting Railway directly keeps a
+          # single canonical entrypoint and matches how the website triggers
+          # sync from refreshWhoopFromBackend() in index.html.
+          SUPABASE_URL: https://rejalrfmievikabgsakf.supabase.co
+          SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJlamFscmZtaWV2aWthYmdzYWtmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzNTQ1NjYsImV4cCI6MjA4OTkzMDU2Nn0.dfE3EfP7PYTe4Pi07c65BxI1W-0NfE6vqZBFJJpL-fM
+        run: |
+          set -u
+          URL="${SUPABASE_URL}/functions/v1/whoop-bridge?path=%2Fdiag%2Ftrigger-sync"
+          echo "POST ${URL}"
+          HTTP_STATUS=$(curl -s -o /tmp/resp.json -w "%{http_code}" \
+            --max-time 30 \
+            -X POST \
+            -H "apikey: ${SUPABASE_ANON_KEY}" \
+            -H "Authorization: Bearer ${SUPABASE_ANON_KEY}" \
+            -H "Accept: application/json" \
+            -H "Content-Type: application/json" \
+            --data '{}' \
+            "${URL}")
+          echo "status=${HTTP_STATUS}"
+          if [ -f /tmp/resp.json ]; then
+            echo "--- response (first 500 bytes) ---"
+            head -c 500 /tmp/resp.json || true
+            echo
+          fi
+          # Treat 2xx as success; anything else is a soft failure we log but
+          # don't retry aggressively — the next scheduled run will try again
+          # in at most 15 minutes, and transient WHOOP/Railway hiccups don't
+          # warrant paging.
+          if [ "${HTTP_STATUS}" -ge 200 ] && [ "${HTTP_STATUS}" -lt 300 ]; then
+            echo "WHOOP tail-poll trigger succeeded"
+          else
+            echo "::warning::WHOOP tail-poll trigger returned HTTP ${HTTP_STATUS} — next run in ≤15min"
+            exit 0
+          fi
